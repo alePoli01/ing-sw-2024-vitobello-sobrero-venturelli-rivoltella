@@ -1,4 +1,4 @@
-package org.example;
+package it.polimi.CG13;
 
 /**
  * Hello world!

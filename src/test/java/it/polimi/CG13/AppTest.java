@@ -1,4 +1,4 @@
-package org.example;
+package it.polimi.CG13;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
