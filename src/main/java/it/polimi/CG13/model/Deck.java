@@ -1,11 +1,15 @@
 package it.polimi.CG13.model;
 
-import jdk.internal.loader.Resource;
+//import of the library of Google
+import java.util.*;
+import com.google.gson.Gson;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Deck {
-    ObjectiveCard[] objectiveDeck;
-    PlayableCard[] resourceDeck;
-    PlayableCard[] goldDeck;
-    PlayableCard[] startDeck;
+    ArrayList<ObjectiveCard> objectiveDeck;
+    ArrayList<PlayableCard> resourceDeck;
+    ArrayList<PlayableCard> goldDeck;
+    ArrayList<PlayableCard>  startDeck;
 
 }
