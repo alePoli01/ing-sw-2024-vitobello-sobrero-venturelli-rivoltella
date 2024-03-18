@@ -1,5 +1,7 @@
 package it.polimi.CG13.model;
 
+import it.polimi.CG13.exception.ForbiddenCoordinates;
+
 public class Coordinates {
     private int x,y;
 
@@ -17,7 +19,9 @@ public class Coordinates {
         this.y = y;
     }
 
-    public boolean evenVerifier() {
-        return (x + y) % 2 == 0; //potremmo sollevare eccezione qua, rendere il metodo void e poi propagarla al controller
+    public void evenVerifier() throws ForbiddenCoordinates {
+        if (!((x + y) % 2 == 0)) {
+            throw new ForbiddenCoordinates(this.x, this.y); // If coordinates are not even, throw expception
+        }
     }
 }

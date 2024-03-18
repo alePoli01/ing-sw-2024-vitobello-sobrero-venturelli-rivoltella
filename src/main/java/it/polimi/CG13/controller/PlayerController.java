@@ -1,6 +1,9 @@
 package it.polimi.CG13.controller;
 
 import it.polimi.CG13.enums.CardType;
+import it.polimi.CG13.exception.ForbiddenCoordinates;
+import it.polimi.CG13.exception.NoResourceAvailable;
+import it.polimi.CG13.exception.NotMyTurnException;
 import it.polimi.CG13.model.*;
 
 public class PlayerController {
@@ -8,25 +11,28 @@ public class PlayerController {
 
     //controller gets object from network, then calls the method accordingly
     public void placeCard(Board board, PlayableCard card, boolean isFlipped, Player player, Coordinates xy, int edge) {
+
         try {
-            player.isMyTurn();
-        } catch (Exception e) {
-            throw new RuntimeException(e); // NotMyTurn
+            player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
+        } catch (NotMyTurnException e) {
+            throw new RuntimeException();
         }
 
         try {
             xy.evenVerifier();
-        } catch (Exception e) {
-            throw new RuntimeException(e); // WrongCoordinates
+        } catch (ForbiddenCoordinates e) {
+            throw new RuntimeException(); // WrongCoordinates
         }
 
         if (card.getCardType().equals(CardType.GOLD)) {
             try {
-                //check risorse nella mano
-            } catch (Exception e) {
-                throw new RuntimeException(e); // NoResourceAvailable (anche questa possiamo propagarla dalla mano)
+                board.resourceVerifier(card);
+            } catch (NoResourceAvailable e) {
+                throw new RuntimeException(e); // NoResourceAvailable si può mettere che controlla tutte le risorse
             }
         }
+
+        // da continuare
 
         try {
             card.edgeAvailable(edge);

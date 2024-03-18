@@ -1,10 +1,13 @@
 package it.polimi.CG13.model;
 
+import it.polimi.CG13.enums.ReignType;
+import it.polimi.CG13.exception.NoResourceAvailable;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class Board {
-
+    private ReignType reignMissing;
     private HashMap <Coordinates,Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
@@ -46,10 +49,19 @@ public class Board {
         return reignsCollected[position];
     }
     public void setReignsCollected(int position,int value){
-        this.reignsCollected[position]=value;
+        this.reignsCollected[position] += value;
     }
 
     public void isPossibleToPlace() {
         // lavorare su mappa
+    }
+
+    public void resourceVerifier(PlayableCard card) throws NoResourceAvailable{
+        for (int position = 0; position<4; position++) {
+            if (card.getResourceNeeded(position) > getReignsCollected(position)) {
+                reignMissing = reignMissing.correspondingReignType(position);
+                throw new NoResourceAvailable(reignMissing);
+            }
+        }
     }
 }

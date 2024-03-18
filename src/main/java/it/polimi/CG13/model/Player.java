@@ -1,6 +1,7 @@
 package it.polimi.CG13.model;
 
 import it.polimi.CG13.enums.Color;
+import it.polimi.CG13.exception.*;
 
 import java.util.ArrayList;
 
@@ -53,12 +54,13 @@ public class Player {
         this.turnPlayed = turnPlayed;
     }
 
-    public boolean isMyTurn() {
-        return myTurn;
-    }
-
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
     }
 
+    public void checkMyTurn() throws NotMyTurnException {
+        if (!myTurn) {
+            throw new NotMyTurnException(this.getNickname());
+        }
+    }
 }

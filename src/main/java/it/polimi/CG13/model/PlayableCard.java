@@ -34,4 +34,8 @@ public class PlayableCard {
     public int getPointsGiven() {
         return pointsGiven;
     }
+
+    public int getResourceNeeded(int position) {
+        return resourceNeeded[position];
+    }
 }

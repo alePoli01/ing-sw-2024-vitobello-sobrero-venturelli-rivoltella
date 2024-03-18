@@ -5,7 +5,4 @@ public class NoCardsLeftException extends Exception {
         public NoCardsLeftException() {
             super();
         }
-        public NoCardsLeftException(String s) {
-            super(s);
-        }
 }
