@@ -2,7 +2,6 @@ package it.polimi.CG13.model;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class Board {
 
@@ -50,5 +49,7 @@ public class Board {
         this.reignsCollected[position]=value;
     }
 
-
+    public void isPossibleToPlace() {
+        // lavorare su mappa
+    }
 }

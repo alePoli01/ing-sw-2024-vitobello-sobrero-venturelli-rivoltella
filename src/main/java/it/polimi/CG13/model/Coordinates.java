@@ -16,4 +16,8 @@ public class Coordinates {
     public void setY(int y) {
         this.y = y;
     }
+
+    public boolean evenVerifier() {
+        return (x + y) % 2 == 0; //potremmo sollevare eccezione qua, rendere il metodo void e poi propagarla al controller
+    }
 }

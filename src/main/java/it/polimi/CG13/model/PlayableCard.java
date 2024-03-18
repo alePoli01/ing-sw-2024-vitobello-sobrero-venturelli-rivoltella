@@ -5,14 +5,13 @@ import it.polimi.CG13.enums.ObjectType;
 import it.polimi.CG13.enums.ReignType;
 
 public class PlayableCard {
-
+    final ReignType reign;
+    final CardType cardType;
+    final ReignType[] reignPointEdge;
+    final ObjectType[] objectType;
+    final int[] resourceNeeded;
+    final int pointsGiven;
     private boolean[] linkableEdge;
-    private ReignType reign;
-    private CardType cardType;
-    private ReignType[] reignPointEdge;
-    private ObjectType[] objectType;
-    private int[] resourceNeeded;
-    private int pointsGiven;
 
     public PlayableCard(boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectType, int[] resourceNeeded, int pointsGiven) {
         this.linkableEdge = linkableEdge;
@@ -22,5 +21,17 @@ public class PlayableCard {
         this.objectType = objectType;
         this.resourceNeeded = resourceNeeded;
         this.pointsGiven = pointsGiven;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public boolean edgeAvailable(int edge){
+        return linkableEdge[edge];
+    }
+
+    public int getPointsGiven() {
+        return pointsGiven;
     }
 }

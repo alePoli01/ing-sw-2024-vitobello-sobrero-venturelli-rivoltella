@@ -20,28 +20,45 @@ public class Player {
         this.turnPlayed = 0;
         this.myTurn = false;
     }
+
     public String getNickname() {
         return nickname;
     }
+
     public Color getToken() {
         return token;
     }
+
     public void setToken(Color token) {
         this.token = token;
     }
+
     public int getPosition() {
         return position;
     }
+
     public void setPosition(int position) {
         this.position = position;
     }
+
     public void setMyTurn() {
         this.myTurn = true;
     }
+
     public int getTurnPlayed() {
         return turnPlayed;
     }
+
     public void setTurnPlayed(int turnPlayed) {
         this.turnPlayed = turnPlayed;
     }
+
+    public boolean isMyTurn() {
+        return myTurn;
+    }
+
+    public void setMyTurn(boolean myTurn) {
+        this.myTurn = myTurn;
+    }
+
 }
