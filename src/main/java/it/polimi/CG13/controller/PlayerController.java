@@ -1,6 +1,7 @@
 package it.polimi.CG13.controller;
 
 import it.polimi.CG13.enums.CardType;
+import it.polimi.CG13.exception.EdgeNotFree;
 import it.polimi.CG13.exception.ForbiddenCoordinates;
 import it.polimi.CG13.exception.NoResourceAvailable;
 import it.polimi.CG13.exception.NotMyTurnException;
@@ -10,7 +11,7 @@ public class PlayerController {
 
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard card, boolean isFlipped, Player player, Coordinates xy, int edge) {
+    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy, int targetCardEdge) {
 
         try {
             player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
@@ -24,32 +25,33 @@ public class PlayerController {
             throw new RuntimeException(); // WrongCoordinates
         }
 
-        if (card.getCardType().equals(CardType.GOLD)) {
+        if (cardToPlace.getCardType().equals(CardType.GOLD)) {
             try {
-                board.resourceVerifier(card);
+                board.resourceVerifier(cardToPlace);
             } catch (NoResourceAvailable e) {
                 throw new RuntimeException(e); // NoResourceAvailable si può mettere che controlla tutte le risorse
             }
         }
 
-        // da continuare
-
+        /*
         try {
-            card.edgeAvailable(edge);
+            cardToPlace.edgeAvailable(targetCardEdge);
         } catch (Exception e) {
-            throw new RuntimeException(e); // da mettere exception giusta
+            throw new RuntimeException(e); // unito con metodo sotto
         }
+        */
 
         try {
-            board.isPossibleToPlace();
-        } catch (Exception e) {
+            board.isPossibleToPlace(cardToPlace, xy, targetCardEdge);
+        } catch (EdgeNotFree e) {
             throw new RuntimeException(e); // NoEdgeAvailable (possiamo anche mettere, in base a dove abbiamo errore, cosa non va)
         }
 
+        // da continuare
 
         // pop carta giocata dalla mano
         // sum / sub delle risorse / oggetti
-        board.setScore(board.getScore() + card.getPointsGiven()); // update player's scoreboard
+        board.setScore(board.getScore() + cardToPlace.getPointsGiven()); // update player's scoreboard
         // check if win
     }
 }
