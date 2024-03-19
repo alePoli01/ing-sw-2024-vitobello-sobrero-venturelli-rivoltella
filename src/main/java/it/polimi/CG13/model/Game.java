@@ -12,20 +12,11 @@ public class Game  {
     private Deck deck;
     private ObjectiveCard[] commonObjective;
     private int numPlayer;
-    private Player[] playerList;
+    private List<Player> playerList;
     private int round;
 
     public void randomizeArray(){
 
-    }
-    public void addPlayer(){
-
-    }
-    public void setPlayerList(Player[] playerList) {
-        this.playerList = playerList;
-    }
-    public Player[] getPlayerList() {
-        return playerList;
     }
 
     public void setNumPlayer(int numPlayer) {
