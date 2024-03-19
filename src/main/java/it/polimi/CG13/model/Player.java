@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Player {
     private final String nickname;  //username of the palyer
     private Color token; //token chosen by the Player
-    private ArrayList<PlayableCard> hand = new ArrayList<PlayableCard>(); //hand of the palyer ==> 3 cards max
+    private ArrayList<PlayableCard> hand; //hand of the palyer ==> 3 cards max
     private ObjectiveCard objectiveCard; //Hidden goal of the player
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
@@ -20,6 +20,7 @@ public class Player {
         this.token = null;
         this.turnPlayed = 0;
         this.myTurn = false;
+        this.hand = new ArrayList<PlayableCard>();
     }
 
     public String getNickname() {
@@ -67,4 +68,15 @@ public class Player {
     public void handUpdate(PlayableCard cardToPlace) {
         hand.remove(cardToPlace);
     }
+
+
+
+    public ObjectiveCard getObjectiveCard() {
+        return objectiveCard;
+    }
+
+    public void setObjectiveCard(ObjectiveCard objectiveCard) {
+        this.objectiveCard = objectiveCard;
+    }
+
 }
