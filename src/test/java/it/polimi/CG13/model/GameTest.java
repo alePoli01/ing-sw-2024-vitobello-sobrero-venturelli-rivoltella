@@ -9,16 +9,4 @@ public class GameTest extends TestCase {
 
     public void testAddPlayer() {
     }
-
-    public void testSetPlayerList() {
-    }
-
-    public void testGetPlayerList() {
-    }
-
-    public void testSetNumPlayer() {
-    }
-
-    public void testGetNumPlayer() {
-    }
 }
