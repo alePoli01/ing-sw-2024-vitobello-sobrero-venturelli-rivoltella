@@ -25,7 +25,7 @@ public class PlayableCard {
         this.pointsGiven = pointsGiven;
     }
 
-
+    // added to print the card has an error
     public int getSerialNumber() {
         return serialNumber;
     }
@@ -40,6 +40,10 @@ public class PlayableCard {
 
     public void setLinkableEdge(boolean linkableEdge, int edge) {
         this.linkableEdge[edge] = linkableEdge;
+    }
+
+    public boolean[] getLinkableEdge() {
+        return linkableEdge;
     }
 
     public int getPointsGiven() {

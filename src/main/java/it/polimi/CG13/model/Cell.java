@@ -1,13 +1,15 @@
 package it.polimi.CG13.model;
 
 public class Cell {
-
     private PlayableCard cardPointer;   //pointer to the card object
-    private int weight;                 //to be intended as 'z coordinate' or height of the pointed card
+    final int weight;                 //to be intended as 'z coordinate' or height of the pointed card
 
-    public void setWeight(int weight) {
+
+    public Cell(PlayableCard cardPointer, int weight) {
+        this.cardPointer = cardPointer;
         this.weight = weight;
     }
+
     public int getWeight() {
         return weight;
     }

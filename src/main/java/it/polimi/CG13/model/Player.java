@@ -63,4 +63,8 @@ public class Player {
             throw new NotMyTurnException(this.getNickname());
         }
     }
+
+    public void handUpdate(PlayableCard cardToPlace) {
+        hand.remove(cardToPlace);
+    }
 }

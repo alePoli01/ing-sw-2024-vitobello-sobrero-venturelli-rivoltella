@@ -1,15 +1,16 @@
 package it.polimi.CG13.model;
 
+import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ReignType;
 import it.polimi.CG13.exception.EdgeNotFree;
 import it.polimi.CG13.exception.NoResourceAvailable;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 public class Board {
-    private ReignType reignMissing;
-    private HashMap <Coordinates, Cell> boardMap;
+    private ReignType reignMissing;     // reignMissign to place goldCard
+    private Map<Coordinates, Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
     private int[] objectsCollected;     //counter for each type of object present on the board
@@ -18,9 +19,9 @@ public class Board {
     //initialize all the values to zero
     public Board() {
         this.owner = null;
-        this.score=0;
-        objectsCollected=new int[3];
-        reignsCollected=new int[4];
+        this.score = 0;
+        objectsCollected = new int[3];
+        reignsCollected = new int[4];
         Arrays.fill(objectsCollected, 0);
         Arrays.fill(objectsCollected, 0);
     }
@@ -28,29 +29,33 @@ public class Board {
     public int getScore() {
         return score;
     }
+
     public void setScore(int score) {
-        this.score=score;
+        this.score = score;
     }
 
     public Player getOwner() {
         return owner;
     }
+
     public void setOwner(Player owner) {
         this.owner = owner;
     }
 
-    public int getObjectsCollected(int position){
+    public int getObjectsCollected(int position) {
         return objectsCollected[position];
     }
-    public void setObjectsCollected(int position,int value){
-        this.objectsCollected[position]=value;
+
+    public void updateObjectsCollected(int position) {
+        this.objectsCollected[position] += 1;
     }
 
-    public int getReignsCollected(int position){
+    public int getReignsCollected(int position) {
         return reignsCollected[position];
     }
-    public void setReignsCollected(int position,int value){
-        this.reignsCollected[position] += value;
+
+    public void updateReignsCollected(int position) {
+        this.reignsCollected[position] += 1;
     }
 
     public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailable {
@@ -102,6 +107,36 @@ public class Board {
                 if (!spaceToCheck.edgeAvailable(targetCardEdge)) {
                     throw new EdgeNotFree(targetCard, targetCardEdge);
                 }
+            }
+        }
+    }
+
+    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace) {
+        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed());
+        boardMap.put(xy, newCell);
+    }
+
+    // simplified for cycle to update reigns and objects
+    public void resourceUpdate(PlayableCard cardToPlace, boolean isFlipped) {
+        if (!isFlipped) {
+            if (cardToPlace.getCardType().equals(CardType.GOLD)) {
+                for (int element : cardToPlace.resourceNeeded) {
+                    reignsCollected[element] -= cardToPlace.resourceNeeded[element]; // sub only for gold card
+                }
+            }
+
+            // add edgeReigns played to the board
+            for (boolean value : cardToPlace.getLinkableEdge()) {
+                if (value) {
+                    for (ReignType element : cardToPlace.reignPointEdge) {
+                        int position = element.ordinal();
+                        updateReignsCollected(position);
+                    }
+                }
+            }
+
+            for (int element : cardToPlace.resourceNeeded) {
+                reignsCollected[element] += cardToPlace.resourceNeeded[element];
             }
         }
     }

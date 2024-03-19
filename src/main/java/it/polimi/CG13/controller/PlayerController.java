@@ -25,7 +25,7 @@ public class PlayerController {
             throw new RuntimeException(); // WrongCoordinates
         }
 
-        if (cardToPlace.getCardType().equals(CardType.GOLD)) {
+        if (cardToPlace.getCardType().equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
             } catch (NoResourceAvailable e) {
@@ -47,11 +47,17 @@ public class PlayerController {
             throw new RuntimeException(e); // NoEdgeAvailable (possiamo anche mettere, in base a dove abbiamo errore, cosa non va)
         }
 
-        // da continuare
+        // card added to the board (eventualmente aggiungere exception per controllo)
+        board.addCardToBoard(xy, cardToPlace);
 
         // pop carta giocata dalla mano
+        player.handUpdate(cardToPlace);
+
         // sum / sub delle risorse / oggetti
-        board.setScore(board.getScore() + cardToPlace.getPointsGiven()); // update player's scoreboard
+        board.resourceUpdate(cardToPlace, isFlipped);
+
+        // update player's scoreboard
+        board.setScore(board.getScore() + cardToPlace.getPointsGiven());
         // check if win
     }
 }
