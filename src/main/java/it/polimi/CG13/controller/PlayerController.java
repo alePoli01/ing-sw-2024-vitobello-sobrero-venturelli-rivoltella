@@ -54,11 +54,14 @@ public class PlayerController {
         // card added to the board (eventualmente aggiungere exception per controllo)
         board.addCardToBoard(xy, cardToPlace);
 
+        // update other cards edges and sub resources from board map
+        board.edgesUpdate(xy);
+
         // pop carta giocata dalla mano
         player.handUpdate(cardToPlace);
 
-        // sum / sub delle risorse / oggetti
-        board.resourceUpdate(cardToPlace, isFlipped);
+        // sum risorse / oggetti
+        board.addResource(cardToPlace, isFlipped);
 
         // update player's scoreboard
         board.setScore(board.getScore() + cardToPlace.getPointsGiven());

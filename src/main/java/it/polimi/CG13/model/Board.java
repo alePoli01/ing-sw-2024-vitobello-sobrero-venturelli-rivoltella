@@ -82,7 +82,7 @@ public class Board {
         int[][] relativeCoordinates = {{1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
 
         for (int[] offset : relativeCoordinates) {
-            // Calculate the new coordinate to check
+            // Calculate coordinates to check
             Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
 
             // Check if the coordinate exists in the Map
@@ -100,23 +100,65 @@ public class Board {
     public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace) {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed());
         boardMap.put(xy, newCell);
-
     }
 
-    // simplified for cycle to update reigns and objects
-    public void resourceUpdate(PlayableCard cardToPlace, boolean isFlipped) {
+    // update surrounding cards edges
+    public void edgesUpdate(Coordinates coordinates) {
+        int counter = 0;
+        int myCardEdge = 2;
+
+        int[][] relativeCoordinates = {{1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+
+        for (int[] offset : relativeCoordinates) {
+            // Calculate coordinates to check
+            Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
+
+            // Check if the coordinate exists in the Map
+            if (this.boardMap.containsKey(coordinateToCheck)) {
+
+                // determine if a new covered edge has reign or object and in case remove it from availableResources
+                if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeAvailable(counter)) {
+                    for (ReignType element : this.boardMap.get(coordinateToCheck).getCardPointer().getReignPointEdge()) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().getReignPointEdge(counter).equals(element)) {
+                            reignsCollected.put(element, reignsCollected.get(element) - 1);
+                        }
+                    }
+
+                    for (ObjectType element : this.boardMap.get(coordinateToCheck).getCardPointer().getObjectPointEdge()) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().getObjectPointEdge(counter).equals(element)) {
+                            objectsCollected.put(element, objectsCollected.get(element) - 1);
+                        }
+                    }
+
+                    this.boardMap.get(coordinateToCheck).getCardPointer().setLinkableEdge(false, counter);
+                    this.boardMap.get(coordinateToCheck).getCardPointer().setLinkableEdge(false, myCardEdge);
+                }
+            }
+            counter++;
+            if (myCardEdge == 3) {
+                myCardEdge = 0;
+            } else {
+                myCardEdge++;
+            }
+        }
+    }
+
+    // simplified for cycles to update reigns and objects
+    public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
         if (!isFlipped) {
             // add card played reigns to the board
             for (boolean flag : cardToPlace.getLinkableEdge()) {
                 if (flag) {
-                    for (ReignType element : cardToPlace.reignPointEdge) {
+                    for (ReignType element : cardToPlace.getReignPointEdge()) {
                         reignsCollected.put(element, reignsCollected.get(element)+1);
                     }
-                    for (ObjectType element : cardToPlace.objectPointEdge) {
+                    for (ObjectType element : cardToPlace.getObjectPointEdge()) {
                         objectsCollected.put(element, objectsCollected.get(element)+1);
                     }
                 }
             }
+        } else {
+            reignsCollected.put(cardToPlace.getReign(), reignsCollected.get(cardToPlace.getReign())+1);
         }
     }
 }
