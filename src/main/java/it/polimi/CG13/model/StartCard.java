@@ -8,8 +8,8 @@ public class StartCard extends PlayableCard{
     private ReignType[] frontReigns;
     private ReignType[] reignBackPointEdge;
 
-    public StartCard(boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectType, int[] resourceNeeded, int pointsGiven) {
-        super(linkableEdge, reign, cardType, reignPointEdge, objectType, resourceNeeded, pointsGiven);
+    public StartCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectType, int[] resourceNeeded, int pointsGiven) {
+        super(serialNumber, linkableEdge, reign, cardType, reignPointEdge, objectType, resourceNeeded, pointsGiven);
     }
 
     //constructor aggiunto seguento intellij
