@@ -11,25 +11,28 @@ public class PlayerController {
 
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy, int targetCardEdge) {
+    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy, int targetCardEdge) throws NotMyTurnException, ForbiddenCoordinates, NoResourceAvailable, EdgeNotFree {
 
+        // check player turn
         try {
             player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
         } catch (NotMyTurnException e) {
-            throw new RuntimeException();
+            System.out.println(e.getMessage());
         }
 
+        // check coordinates are allowed
         try {
             xy.evenVerifier();
         } catch (ForbiddenCoordinates e) {
-            throw new RuntimeException(); // WrongCoordinates
+            System.out.println(e.getMessage()); // WrongCoordinates
         }
 
+        // Check player has enough resources to play the goldcard
         if (cardToPlace.getCardType().equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
             } catch (NoResourceAvailable e) {
-                throw new RuntimeException(e); // NoResourceAvailable si può mettere che controlla tutte le risorse
+                System.out.println(e.getMessage()); // NoResourceAvailable si può mettere che controlla tutte le risorse
             }
         }
 
@@ -41,10 +44,11 @@ public class PlayerController {
         }
         */
 
+        // check is possible to place the selected card
         try {
             board.isPossibleToPlace(cardToPlace, xy, targetCardEdge);
         } catch (EdgeNotFree e) {
-            throw new RuntimeException(e); // NoEdgeAvailable (possiamo anche mettere, in base a dove abbiamo errore, cosa non va)
+            System.out.println(e.getMessage()); // NoEdgeAvailable (possiamo anche mettere, in base a dove abbiamo errore, cosa non va)
         }
 
         // card added to the board (eventualmente aggiungere exception per controllo)

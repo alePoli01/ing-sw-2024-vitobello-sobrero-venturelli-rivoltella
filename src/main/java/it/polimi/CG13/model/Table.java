@@ -1,18 +1,20 @@
 package it.polimi.CG13.model;
 
 
+import java.util.Map;
+
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table {
-
-    //private int[] score={0,0,0,0}; //vector that keeps players scores
-    private PlayableCard[] resourceFacedUp={null,null}; //resource cards faced up that can be picked
-    private PlayableCard[] goldFacedUp={null,null}; //gold cards faced up that can be picked
+    private Map<String, Integer> score; //vector that keeps players scores
+    private PlayableCard[] resourceFacedUp; //resource cards faced up that can be picked
+    private PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
     private PlayableCard resourceFacedDown; //resource card on the top of the deck
     private PlayableCard goldFacedDown;//gold card on the top of the deck
 
     //constructor of table
     public Table() {
-
+        this.resourceFacedUp = new PlayableCard[2];
+        this.goldFacedUp = new PlayableCard[2];
     }
 
     /*

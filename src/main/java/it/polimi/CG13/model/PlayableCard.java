@@ -4,23 +4,26 @@ import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ObjectType;
 import it.polimi.CG13.enums.ReignType;
 
+import java.util.Map;
+
 public class PlayableCard {
     final int serialNumber;
     final ReignType reign;
     final CardType cardType;
     final ReignType[] reignPointEdge;
-    final ObjectType[] objectType;
-    final int[] resourceNeeded;
+    final ObjectType[] objectPointEdge;
+    private Map<ReignType, Integer> resourceNeeded;
     final int pointsGiven;
     private boolean[] linkableEdge;
+    private PlayableCard[] linkedCard;
 
-    public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectType, int[] resourceNeeded, int pointsGiven) {
+    public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven) {
         this.serialNumber = serialNumber;
         this.linkableEdge = linkableEdge;
         this.reign = reign;
         this.cardType = cardType;
         this.reignPointEdge = reignPointEdge;
-        this.objectType = objectType;
+        this.objectPointEdge = objectPointEdge;
         this.resourceNeeded = resourceNeeded;
         this.pointsGiven = pointsGiven;
     }
@@ -50,7 +53,7 @@ public class PlayableCard {
         return pointsGiven;
     }
 
-    public int getResourceNeeded(int position) {
-        return resourceNeeded[position];
+    public int getResourceNeeded(ReignType reign) {
+        return resourceNeeded.get(reign);
     }
 }

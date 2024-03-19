@@ -43,10 +43,6 @@ public class Player {
         this.position = position;
     }
 
-    public void setMyTurn() {
-        this.myTurn = true;
-    }
-
     public int getTurnPlayed() {
         return turnPlayed;
     }
@@ -59,12 +55,14 @@ public class Player {
         this.myTurn = myTurn;
     }
 
+    // check it is player's turn before playing
     public void checkMyTurn() throws NotMyTurnException {
         if (!myTurn) {
             throw new NotMyTurnException(this.getNickname());
         }
     }
 
+    // remove cardToPlace after it is placed on the board
     public void handUpdate(PlayableCard cardToPlace) {
         hand.remove(cardToPlace);
     }
