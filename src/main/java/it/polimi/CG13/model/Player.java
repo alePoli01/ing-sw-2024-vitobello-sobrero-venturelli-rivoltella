@@ -63,11 +63,12 @@ public class Player {
     }
 
     // remove cardToPlace after it is placed on the board
-    public void handUpdate(PlayableCard cardToPlace) {
+    public void handUpdate(PlayableCard cardToPlace) throws CardStillOnHand {
         hand.remove(cardToPlace);
+        if (hand.contains(cardToPlace)) {
+            throw new CardStillOnHand(cardToPlace);
+        }
     }
-
-
 
     public ObjectiveCard getObjectiveCard() {
         return objectiveCard;

@@ -3,6 +3,7 @@ package it.polimi.CG13.model;
 import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ObjectType;
 import it.polimi.CG13.enums.ReignType;
+import it.polimi.CG13.exception.CardNotPlaced;
 import it.polimi.CG13.exception.EdgeNotFree;
 import it.polimi.CG13.exception.NoResourceAvailable;
 
@@ -97,9 +98,12 @@ public class Board {
     }
 
     // add card to the board
-    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace) {
+    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace) throws CardNotPlaced {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed());
         boardMap.put(xy, newCell);
+        if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+            throw new CardNotPlaced(cardToPlace);
+        }
     }
 
     // update surrounding cards edges
@@ -161,4 +165,6 @@ public class Board {
             reignsCollected.put(cardToPlace.getReign(), reignsCollected.get(cardToPlace.getReign())+1);
         }
     }
+
+
 }
