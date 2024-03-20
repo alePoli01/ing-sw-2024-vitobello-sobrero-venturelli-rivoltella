@@ -12,7 +12,7 @@ public class StartCard extends PlayableCard{
         super(serialNumber, linkableEdge, reign, cardType, reignPointEdge, objectType, resourceNeeded, pointsGiven);
     }
 
-    //constructor aggiunto seguento intellij
+    //constructor aggiunto seguendo intellij
 
     public ReignType[] getFrontReigns() {
         return frontReigns;
