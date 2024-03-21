@@ -10,6 +10,6 @@ public class Deck {
     ArrayList<ObjectiveCard> objectiveDeck;
     ArrayList<PlayableCard> resourceDeck;
     ArrayList<PlayableCard> goldDeck;
-    ArrayList<PlayableCard>  startDeck;
+    ArrayList<PlayableCard> startDeck;
 
 }
