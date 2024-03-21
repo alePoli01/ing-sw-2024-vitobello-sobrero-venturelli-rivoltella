@@ -25,7 +25,7 @@ public class Coordinates {
     }
 
     public void evenVerifier() throws ForbiddenCoordinates {
-        if (!((x + y) % 2 == 0)) {
+        if (!((this.x + this.y) % 2 == 0)) {
             throw new ForbiddenCoordinates(this.x, this.y); // If coordinates are not even, throw expception
         }
     }

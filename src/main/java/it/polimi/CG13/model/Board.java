@@ -7,7 +7,9 @@ import it.polimi.CG13.exception.CardNotPlaced;
 import it.polimi.CG13.exception.EdgeNotFree;
 import it.polimi.CG13.exception.NoResourceAvailable;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public class Board {
     private Map<ReignType, Integer> reignMissing;     // reignMissign to place goldCard
@@ -15,7 +17,9 @@ public class Board {
     private Player owner;               //owner of the board
     private int score;
     private Map<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
-    private Map<ReignType, Integer> reignsCollected;      //counter for each type of reigns present on the board
+    private Map<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
+    private Set<Coordinates> availableCells;
+    private Set<Coordinates> notAvailableCells;
 
     //initialize all the values to zero
     public Board(Player owner) {
@@ -56,58 +60,70 @@ public class Board {
     }
 
     // call from the controller to verify it is possible to place the selected card
-    public void isPossibleToPlace(PlayableCard cardToPlace, Coordinates coordinates, int targetCardEdge) throws EdgeNotFree {
+    public void isPossibleToPlace(PlayableCard cardToPlace, Coordinates coordinates) throws EdgeNotFree {
 
-        int cardToPlaceEdge; // eventualmente si può mettere un cath exception anche qui, soprattutto da cli visto che target edge è messo a mano (come tutto il resto)
-
-        if (targetCardEdge == 0 || targetCardEdge == 1) {
-            cardToPlaceEdge = targetCardEdge + 2;
-        } else {
-            cardToPlaceEdge = targetCardEdge - 2;
-        }
-
-        // check that myCard has an actual availableEdge
-        if (!cardToPlace.edgeAvailable(cardToPlaceEdge)) {
-            throw new EdgeNotFree(cardToPlace, cardToPlaceEdge);
-        }
-
-        // check that targetCard has an availableEdge in targetCardEdge
-        PlayableCard targetCard = this.boardMap.get(coordinates).getCardPointer();
-        if (!targetCard.edgeAvailable(targetCardEdge)) {
-            throw new EdgeNotFree(targetCard, targetCardEdge);
-        }
-
-        // check spaceAround is free
-
-        // Define the relative coordinates to check (top-right, top-left, bottom-right, bottom-left)
-        int[][] relativeCoordinates = {{1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
-
-        for (int[] offset : relativeCoordinates) {
-            // Calculate coordinates to check
-            Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
-
-            // Check if the coordinate exists in the Map
-            if (this.boardMap.containsKey(coordinateToCheck)) {
-                PlayableCard spaceToCheck = this.boardMap.get(coordinateToCheck).getCardPointer();
-                // Check if the edge is not free
-                if (!spaceToCheck.edgeAvailable(targetCardEdge)) {
-                    throw new EdgeNotFree(targetCard, targetCardEdge);
-                }
-            }
+        if(notAvailableCells.contains(coordinates)){
+            throw new EdgeNotFree(coordinates);
         }
     }
 
+
     // add card to the board
-    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace) throws CardNotPlaced {
-        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed());
+    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlaced {
+        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new CardNotPlaced(cardToPlace);
         }
+
+        int i = 0;
+
+        for (boolean edgeValue : cardToPlace.getLinkableEdge()) {
+            Coordinates coordinateToCheck;
+            switch (i) {
+                case 0:
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
+                    if (edgeValue) {
+                        if (notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
+                        }
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    }
+                case 1:
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
+                    if (edgeValue) {
+                        if (notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
+                        }
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    }
+                case 2:
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
+                    if (edgeValue) {
+                        if (notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
+                        }
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    }
+                case 3:
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
+                    if (edgeValue) {
+                        if (notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
+                        }
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    }
+            }
+                i++;
+            }
     }
 
     // update surrounding cards edges
-    public void edgesUpdate(Coordinates coordinates) {
+    public void removeResources(Coordinates coordinates) {
         int counter = 0;
         int myCardEdge = 2;
 
@@ -118,7 +134,7 @@ public class Board {
             Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
 
             // Check if the coordinate exists in the Map
-            if (this.boardMap.containsKey(coordinateToCheck)) {
+            if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).getIsFlipped()) || this.boardMap.get(coordinateToCheck).getCardPointer().getCardType().equals(CardType.STARTER)) {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
                 if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeAvailable(counter)) {

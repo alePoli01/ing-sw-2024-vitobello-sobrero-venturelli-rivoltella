@@ -8,7 +8,7 @@ public class PlayerController {
 
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy, int targetCardEdge) throws NotMyTurnException, ForbiddenCoordinates, NoResourceAvailable, EdgeNotFree {
+    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy) throws NotMyTurnException, ForbiddenCoordinates, NoResourceAvailable, EdgeNotFree {
 
         try {
             // check player turn
@@ -30,11 +30,11 @@ public class PlayerController {
 
         try {
             // check is possible to place the selected card
-            board.isPossibleToPlace(cardToPlace, xy, targetCardEdge);
+            board.isPossibleToPlace(cardToPlace, xy);
             // add card to the board
-            board.addCardToBoard(xy, cardToPlace);
+            board.addCardToBoard(xy, cardToPlace, isFlipped);
             // update other cards edges and sub resources from board map
-            board.edgesUpdate(xy);
+            board.removeResources(xy);
             // pop carta giocata dalla mano
             player.handUpdate(cardToPlace);
             // sum risorse / oggetti
