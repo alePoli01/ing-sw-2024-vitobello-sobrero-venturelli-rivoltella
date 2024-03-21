@@ -7,17 +7,14 @@ import it.polimi.CG13.exception.CardNotPlaced;
 import it.polimi.CG13.exception.EdgeNotFree;
 import it.polimi.CG13.exception.NoResourceAvailable;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Board {
-    private Map<ReignType, Integer> reignMissing;     // reignMissign to place goldCard
     private Map<Coordinates, Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
-    private Map<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
-    private Map<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
+    private EnumMap<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
+    private EnumMap<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
     private Set<Coordinates> availableCells;
     private Set<Coordinates> notAvailableCells;
 
@@ -26,12 +23,16 @@ public class Board {
         this.owner = owner;
         this.score = 0;
         // populate map with 0 for each reign and object
-        for (ReignType value : ReignType.values()) {
-            reignsCollected.put(value, 0);
+        objectsCollected = new EnumMap<>(ObjectType.class);
+        for (ObjectType object : ObjectType.values()) {
+            objectsCollected.put(object, 0);
         }
-        for (ObjectType value : ObjectType.values()) {
-            objectsCollected.put(value, 0);
+        reignsCollected = new EnumMap<>(ReignType.class);
+        for (ReignType reign : ReignType.values()) {
+            reignsCollected.put(reign, 0);
         }
+        availableCells = new HashSet<>();
+        notAvailableCells = new HashSet<>();
     }
 
     public int getScore() {
@@ -60,15 +61,13 @@ public class Board {
     }
 
     // call from the controller to verify it is possible to place the selected card
-    public void isPossibleToPlace(PlayableCard cardToPlace, Coordinates coordinates) throws EdgeNotFree {
-
-        if(notAvailableCells.contains(coordinates)){
+    public void isPossibleToPlace (Coordinates coordinates) throws EdgeNotFree {
+        if (notAvailableCells.contains(coordinates)) {
             throw new EdgeNotFree(coordinates);
         }
     }
 
-
-    // add card to the board
+    // add card to the board and updates notAvailableCells and availableCells sets
     public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlaced {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
@@ -81,7 +80,7 @@ public class Board {
         for (boolean edgeValue : cardToPlace.getLinkableEdge()) {
             Coordinates coordinateToCheck;
             switch (i) {
-                case 0:
+                case 0: // bottom-left
                     coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
                     if (edgeValue) {
                         if (notAvailableCells.contains(coordinateToCheck)) {
@@ -90,7 +89,7 @@ public class Board {
                     } else {
                         notAvailableCells.add(coordinateToCheck);
                     }
-                case 1:
+                case 1: // bottom-right
                     coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
                     if (edgeValue) {
                         if (notAvailableCells.contains(coordinateToCheck)) {
@@ -99,7 +98,7 @@ public class Board {
                     } else {
                         notAvailableCells.add(coordinateToCheck);
                     }
-                case 2:
+                case 2: // top-right
                     coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
                     if (edgeValue) {
                         if (notAvailableCells.contains(coordinateToCheck)) {
@@ -108,7 +107,7 @@ public class Board {
                     } else {
                         notAvailableCells.add(coordinateToCheck);
                     }
-                case 3:
+                case 3: // top-left
                     coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
                     if (edgeValue) {
                         if (notAvailableCells.contains(coordinateToCheck)) {
@@ -149,9 +148,6 @@ public class Board {
                             objectsCollected.put(element, objectsCollected.get(element) - 1);
                         }
                     }
-
-                    this.boardMap.get(coordinateToCheck).getCardPointer().setLinkableEdge(false, counter);
-                    this.boardMap.get(coordinateToCheck).getCardPointer().setLinkableEdge(false, myCardEdge);
                 }
             }
             counter++;

@@ -8,7 +8,7 @@ public class PlayerController {
 
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy) throws NotMyTurnException, ForbiddenCoordinates, NoResourceAvailable, EdgeNotFree {
+    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy) {
 
         try {
             // check player turn
@@ -19,7 +19,7 @@ public class PlayerController {
             System.out.println(e.getMessage()); // WrongCoordinates
         }
 
-        // Check player has enough resources to play the goldcard
+        // Check player has enough resources to play the goldCard
         if (cardToPlace.getCardType().equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
@@ -30,14 +30,14 @@ public class PlayerController {
 
         try {
             // check is possible to place the selected card
-            board.isPossibleToPlace(cardToPlace, xy);
+            board.isPossibleToPlace(xy);
             // add card to the board
             board.addCardToBoard(xy, cardToPlace, isFlipped);
-            // update other cards edges and sub resources from board map
+            // removes covered reigns / objects from board map
             board.removeResources(xy);
-            // pop carta giocata dalla mano
+            // pop card played from hand
             player.handUpdate(cardToPlace);
-            // sum risorse / oggetti
+            // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
             board.setScore(board.getScore() + cardToPlace.getPointsGiven());
@@ -46,5 +46,18 @@ public class PlayerController {
         }
     }
 
-    public void drawCard(){}
+    public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
+        try {
+            // check player turn
+            player.checkMyTurn();
+            // draw the selected card from the table
+            table.drawCard(player, cardToDraw);
+            // add the selected card to player's hand
+            player.addToHand(cardToDraw);
+            // end player's turn
+            player.setMyTurn(false);
+        } catch (NotMyTurnException | CardNotDrawn | CardNotAddedToHand e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

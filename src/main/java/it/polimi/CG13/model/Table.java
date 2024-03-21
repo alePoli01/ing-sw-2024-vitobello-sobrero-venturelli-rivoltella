@@ -1,6 +1,10 @@
 package it.polimi.CG13.model;
 
 
+import it.polimi.CG13.enums.CardType;
+import it.polimi.CG13.exception.CardNotDrawn;
+
+import java.util.LinkedList;
 import java.util.Map;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
@@ -18,16 +22,15 @@ public class Table {
     }
 
     /*
-       DA DISCUTERE
-    return score of the player of position index
-    public int getScore(int index) {
-        return score[index];
-    }
-    //set score of the player of position index
-    public void setScore(int index,int score) {
-        this.score[index]= score;
-    }*/
-
+           DA DISCUTERE
+        return score of the player of position index
+        public int getScore(int index) {
+            return score[index];
+        }
+        //set score of the player of position index
+        public void setScore(int index,int score) {
+            this.score[index]= score;
+        }*/
 
     //return the resource card requested by parameter index(0 or 1)
     public PlayableCard getResourceFacedUp(int index) {
@@ -39,44 +42,46 @@ public class Table {
         resourceFacedUp[index] = card;
     }
 
-
     //return the gold card faced up by parameter index(0 or 1)
     public PlayableCard getGoldFacedUp(int index) {
         return goldFacedUp[index];
     }
+
     //set the gold card faced up by parameter index(0 or 1) and card(from deck)
     public void setGoldFacedUp(PlayableCard card, int index) {
         goldFacedUp[index] = card;
     }
 
-
     //return the card on the top of the resource deck
     public PlayableCard getResourceFacedDown() {
         return resourceFacedDown;
     }
+
     //set the top card of the gold deck(after a pick)
     public void setResourceFacedDown(PlayableCard card) {
         this.resourceFacedDown = card;
     }
 
-
     //return the card on the top of the gold deck
     public PlayableCard getGoldFacedDown() {
         return goldFacedDown;
     }
+
     //set the card on the top of the gold deck(after a pick)
     public void setGoldFacedDown(PlayableCard goldFacedDown) {
         this.goldFacedDown = goldFacedDown;
     }
 
-
     //method to pick a card from the table after
-    public PlayableCard getNewCard(Player player, PlayableCard card) {
-
-        return card;
+    public void drawCard(Player player, PlayableCard cardToDraw) throws CardNotDrawn {
+        if (cardToDraw.getCardType().equals(CardType.GOLD)) {
+            if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
+                throw new CardNotDrawn(cardToDraw);
+            }
+        } else {
+            if (!(cardToDraw.equals(resourceFacedUp[0]) || cardToDraw.equals(resourceFacedUp[1]) || cardToDraw.equals(resourceFacedDown))) {
+                throw new CardNotDrawn(cardToDraw);
+            }
+        }
     }
-
-
-    //test
-
 }

@@ -7,9 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Deck {
-    ArrayList<ObjectiveCard> objectiveDeck;
-    ArrayList<PlayableCard> resourceDeck;
-    ArrayList<PlayableCard> goldDeck;
-    ArrayList<PlayableCard> startDeck;
-
+    LinkedList<ObjectiveCard> objectiveDeck;
+    LinkedList<PlayableCard> startDeck;
+    LinkedList<PlayableCard> resourceDeck;
+    LinkedList<PlayableCard> goldDeck;
 }
