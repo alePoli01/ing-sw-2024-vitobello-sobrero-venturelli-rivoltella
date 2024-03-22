@@ -63,18 +63,18 @@ public class Player {
     }
 
     // remove placedCard after it is placed on the board
-    public void handUpdate(PlayableCard placedCard) throws CardStillOnHand {
+    public void handUpdate(PlayableCard placedCard) throws CardStillOnHandException {
         hand.remove(placedCard);
         if (hand.contains(placedCard)) {
-            throw new CardStillOnHand(placedCard);
+            throw new CardStillOnHandException(placedCard);
         }
     }
 
     // add drawnCard to the hand
-    public void addToHand(PlayableCard drawnCard) throws CardNotAddedToHand {
+    public void addToHand(PlayableCard drawnCard) throws CardNotAddedToHandExceprion {
         hand.add(drawnCard);
         if (!hand.contains(drawnCard)) {
-            throw new CardNotAddedToHand(drawnCard);
+            throw new CardNotAddedToHandExceprion(drawnCard);
         }
     }
 

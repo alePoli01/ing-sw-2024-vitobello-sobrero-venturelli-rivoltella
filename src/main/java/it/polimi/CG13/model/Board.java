@@ -3,9 +3,9 @@ package it.polimi.CG13.model;
 import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ObjectType;
 import it.polimi.CG13.enums.ReignType;
-import it.polimi.CG13.exception.CardNotPlaced;
-import it.polimi.CG13.exception.EdgeNotFree;
-import it.polimi.CG13.exception.NoResourceAvailable;
+import it.polimi.CG13.exception.CardNotPlacedException;
+import it.polimi.CG13.exception.EdgeNotFreeException;
+import it.polimi.CG13.exception.NoResourceAvailableException;
 
 import java.util.*;
 
@@ -52,27 +52,27 @@ public class Board {
     }
 
     // check goldCard has enough resource to be played
-    public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailable {
+    public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailableException {
         for (ReignType value : ReignType.values()) {
             if (reignsCollected.get(value) < cardToPlace.getResourceNeeded(value)) {
-                throw new NoResourceAvailable(value);
+                throw new NoResourceAvailableException(value);
             }
         }
     }
 
     // call from the controller to verify it is possible to place the selected card
-    public void isPossibleToPlace (Coordinates coordinates) throws EdgeNotFree {
+    public void isPossibleToPlace (Coordinates coordinates) throws EdgeNotFreeException {
         if (notAvailableCells.contains(coordinates)) {
-            throw new EdgeNotFree(coordinates);
+            throw new EdgeNotFreeException(coordinates);
         }
     }
 
     // add card to the board and updates notAvailableCells and availableCells sets
-    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlaced {
+    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlacedException {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
-            throw new CardNotPlaced(cardToPlace);
+            throw new CardNotPlacedException(cardToPlace);
         }
 
         int i = 0;

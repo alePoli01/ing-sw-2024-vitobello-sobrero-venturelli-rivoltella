@@ -1,6 +1,6 @@
 package it.polimi.CG13.model;
 
-import it.polimi.CG13.exception.ForbiddenCoordinates;
+import it.polimi.CG13.exception.ForbiddenCoordinatesException;
 
 public class Coordinates {
     private int x,y;
@@ -24,9 +24,9 @@ public class Coordinates {
         this.y = y;
     }
 
-    public void evenVerifier() throws ForbiddenCoordinates {
+    public void evenVerifier() throws ForbiddenCoordinatesException {
         if (!((this.x + this.y) % 2 == 0)) {
-            throw new ForbiddenCoordinates(this.x, this.y); // If coordinates are not even, throw expception
+            throw new ForbiddenCoordinatesException(this.x, this.y); // If coordinates are not even, throw expception
         }
     }
 }
