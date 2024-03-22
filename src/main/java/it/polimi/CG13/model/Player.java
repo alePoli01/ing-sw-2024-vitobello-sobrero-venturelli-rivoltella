@@ -71,10 +71,10 @@ public class Player {
     }
 
     // add drawnCard to the hand
-    public void addToHand(PlayableCard drawnCard) throws CardNotAddedToHandExceprion {
+    public void addToHand(PlayableCard drawnCard) throws CardNotAddedToHandException {
         hand.add(drawnCard);
         if (!hand.contains(drawnCard)) {
-            throw new CardNotAddedToHandExceprion(drawnCard);
+            throw new CardNotAddedToHandException(drawnCard);
         }
     }
 

@@ -15,7 +15,7 @@ public class PlayerController {
             player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
             // check coordinates are allowed
             xy.evenVerifier();
-        } catch (NotMyTurnException | ForbiddenCoordinates e) {
+        } catch (NotMyTurnException | ForbiddenCoordinatesException e) {
             System.out.println(e.getMessage()); // WrongCoordinates
         }
 
@@ -23,7 +23,7 @@ public class PlayerController {
         if (cardToPlace.getCardType().equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
-            } catch (NoResourceAvailable e) {
+            } catch (NoResourceAvailableException e) {
                 System.out.println(e.getMessage()); // Si può mettere che stampa tutte le risorse che non ha, non solo la prima che dà errore
             }
         }
@@ -41,7 +41,7 @@ public class PlayerController {
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
             board.setScore(board.getScore() + cardToPlace.getPointsGiven());
-        } catch (EdgeNotFree | CardNotPlaced | CardStillOnHand e) {
+        } catch (CardNotPlacedException | CardStillOnHandException | EdgeNotFreeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -58,7 +58,7 @@ public class PlayerController {
             table.getNewCard(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
-        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand | NoCardsLeftException e) {
+        } catch (NotMyTurnException | CardNotFoundException | CardNotAddedToHandException | NoCardsLeftException e) {
             System.out.println(e.getMessage());
        }
     }
