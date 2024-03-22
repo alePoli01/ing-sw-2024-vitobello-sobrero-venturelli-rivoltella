@@ -1,0 +1,17 @@
+package it.polimi.CG13.model;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+public class Server {
+    private ArrayList<Game>  gameList;
+    private Map<Player, Game> playersGameMap;
+
+    public ArrayList<Game> getGameList() {
+        return gameList;
+    }
+
+    public Map<Player, Game> getPlayersGameMap() {
+        return playersGameMap;
+    }
+}
