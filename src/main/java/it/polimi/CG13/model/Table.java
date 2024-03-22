@@ -98,6 +98,7 @@ public class Table {
         }
     }
 
+    // updates the drawn card on the table
     public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
         if (cardToReplace.getCardType().equals(CardType.GOLD)) {
             if (!deck.getGoldDeck().isEmpty()) {
