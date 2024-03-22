@@ -58,7 +58,7 @@ public class PlayerController {
             table.getNewCard(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
-        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand | NoOtherCards e) {
+        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand | NoCardsLeftException e) {
             System.out.println(e.getMessage());
        }
     }

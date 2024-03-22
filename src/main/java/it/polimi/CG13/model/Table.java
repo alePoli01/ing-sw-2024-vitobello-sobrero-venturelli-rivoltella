@@ -4,9 +4,10 @@ package it.polimi.CG13.model;
 import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.exception.CardNotAddedToHand;
 import it.polimi.CG13.exception.CardNotFound;
-import it.polimi.CG13.exception.NoOtherCards;
+import it.polimi.CG13.exception.NoCardsLeftException;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table {
@@ -97,24 +98,34 @@ public class Table {
         }
     }
 
-    public void getNewCard(PlayableCard cardToReplace) throws NoOtherCards {
+    public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
         if (cardToReplace.getCardType().equals(CardType.GOLD)) {
-            if (!deck.isEmptyGoldDeck()) {
-                if (goldFacedUp[0].equals(null)) {
-                    goldFacedUp[0] = deck.getNewGoldCard();
-                } else if (goldFacedUp[1].equals(null)) {
-                    goldFacedUp[1] = deck.getNewGoldCard();
-                } else {
-                    goldFacedDown = deck.getNewGoldCard();
+            if (!deck.getGoldDeck().isEmpty()) {
+                try {
+                    if (goldFacedUp[0] == null) {
+                        goldFacedUp[0] = deck.getGoldDeck().removeFirst();
+                    } else if (goldFacedUp[1] == null) {
+                        goldFacedUp[1] = deck.getGoldDeck().removeFirst();
+                    } else {
+                        goldFacedDown = deck.getGoldDeck().removeFirst();
+                    }
+                } catch (NoSuchElementException e) {
+                    throw new NoCardsLeftException("Deck");
                 }
             }
         }  else {
-            if (resourceFacedUp[0].equals(null)) {
-                resourceFacedUp[0] = deck.getNewResourceCard();
-            } else if (resourceFacedUp[1].equals(null)) {
-                resourceFacedUp[1] = deck.getNewResourceCard();
-            } else {
-                resourceFacedDown = deck.getNewResourceCard();
+            if (!deck.getResourceDeck().isEmpty()) {
+                try {
+                    if (resourceFacedUp[0] == null) {
+                        resourceFacedUp[0] = deck.getResourceDeck().removeFirst();
+                    } else if (resourceFacedUp[1] == null) {
+                        resourceFacedUp[1] = deck.getResourceDeck().removeFirst();
+                    } else {
+                        resourceFacedDown = deck.getResourceDeck().removeFirst();
+                    }
+                } catch (NoSuchElementException e) {
+                    throw new NoCardsLeftException("Resource");
+                }
             }
         }
     }
