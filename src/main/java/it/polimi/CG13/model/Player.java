@@ -1,6 +1,7 @@
 package it.polimi.CG13.model;
 
 import it.polimi.CG13.enums.Color;
+import it.polimi.CG13.enums.Position;
 import it.polimi.CG13.exception.*;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class Player {
     private ObjectiveCard objectiveCard; //Hidden goal of the player
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
-    private int position;  //position of the player (1-4)
+    private Position position;  //position of the player (1-4)
 
     //at the creation each player has only its nickname, everything else is defined in the setup phase
     public Player(String nickname) {
@@ -35,11 +36,11 @@ public class Player {
         this.token = token;
     }
 
-    public int getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 

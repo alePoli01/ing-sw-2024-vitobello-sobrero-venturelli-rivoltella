@@ -1,14 +1,17 @@
 package it.polimi.CG13.model;
 
+import it.polimi.CG13.enums.Color;
 import it.polimi.CG13.enums.FirstCardsNotGivenException;
 import it.polimi.CG13.enums.GameState;
+import it.polimi.CG13.enums.Position;
 import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.StartCardNotGivenException;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
-public class Game  {
+public class Game {
 
     /*TODO: controllare chi usa GameState(controll o model?)
             capire se ci deve essere un attributo che rappresenta in quale GameState sono
@@ -45,11 +48,13 @@ public class Game  {
         return table;
     }
 
-    public void randomizeArray(){
+    public void randomizeArray() {
     }
+
     public void setNumPlayer(int numPlayer) {
         this.numPlayer = numPlayer;
     }
+
     public int getNumPlayer() {
         return numPlayer;
     }
@@ -82,5 +87,13 @@ public class Game  {
     public void setCommonObjectiveCard() {
         this.getTable().setCommonObjectiveCard(0, getDeck().objectiveDeck.getFirst());
         this.getTable().setCommonObjectiveCard(1, getDeck().objectiveDeck.getFirst());
+    }
+
+    // set first player
+    public void setPlayersPosition() {
+        Random random = new Random();
+        int index = random.nextInt(playerList.size());
+        playerList.get(index).setPosition(Position.PRIMO);
+        playerList.get(index).setToken(Color.BLACK);
     }
 }

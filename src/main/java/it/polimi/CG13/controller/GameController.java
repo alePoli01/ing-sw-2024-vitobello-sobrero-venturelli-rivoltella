@@ -45,6 +45,7 @@ public class GameController {
             try {
                 game.giveFirstCards();
                 game.setCommonObjectiveCard();
+                game.setPlayersPosition();
             } catch (FirstCardsNotGivenException e) {
                 System.out.println(e.getMessage());
             }
