@@ -11,10 +11,19 @@ public class Game  {
     */
     private GameState gameState;
     private Deck deck;
-    private ObjectiveCard[] commonObjective;
+    private Table table;
     private int numPlayer;
     private List<Player> playerList;
     private int round;
+
+    public Game(GameState gameState, Deck deck, Table table, int numPlayer, List<Player> playerList, int round) {
+        this.gameState = gameState;
+        this.deck = deck;
+        this.table = table;
+        this.numPlayer = numPlayer;
+        this.playerList = playerList;
+        this.round = round;
+    }
 
     public void randomizeArray(){
     }

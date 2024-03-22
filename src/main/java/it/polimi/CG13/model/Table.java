@@ -14,11 +14,12 @@ public class Table {
     private PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
     private PlayableCard resourceFacedDown; //resource card on the top of the deck
     private PlayableCard goldFacedDown;//gold card on the top of the deck
-
+    private ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
     //constructor of table
     public Table() {
         this.resourceFacedUp = new PlayableCard[2];
         this.goldFacedUp = new PlayableCard[2];
+        this.commonObjectiveCard = new ObjectiveCard[2];
     }
 
     /*
@@ -70,6 +71,14 @@ public class Table {
     //set the card on the top of the gold deck(after a pick)
     public void setGoldFacedDown(PlayableCard goldFacedDown) {
         this.goldFacedDown = goldFacedDown;
+    }
+
+    public ObjectiveCard getCommonObjectiveCard(int index) {
+        return commonObjectiveCard[index];
+    }
+
+    public void setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
+        this.commonObjectiveCard[index] = objectiveCard;
     }
 
     //method to pick a card from the table after
