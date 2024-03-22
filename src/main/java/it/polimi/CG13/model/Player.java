@@ -85,5 +85,4 @@ public class Player {
     public void setObjectiveCard(ObjectiveCard objectiveCard) {
         this.objectiveCard = objectiveCard;
     }
-
 }

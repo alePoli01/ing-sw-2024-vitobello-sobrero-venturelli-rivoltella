@@ -14,4 +14,10 @@ public class Server {
     public Map<Player, Game> getPlayersGameMap() {
         return playersGameMap;
     }
+
+    public void addPlayerToGame(Player player, Game game) {
+        if (this.getGameList().contains(game)) {
+            this.getPlayersGameMap().put(player, game);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 package it.polimi.CG13.enums;
 
 public enum GameState {
-    START, MID, END
+    SETUP, DEALING_PHASE, START, MID, END
 }
