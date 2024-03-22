@@ -2,7 +2,8 @@ package it.polimi.CG13.model;
 
 
 import it.polimi.CG13.enums.CardType;
-import it.polimi.CG13.exception.CardNotAddedToHand;
+import it.polimi.CG13.exception.CardNotAddedToHandException;
+import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.CardNotFoundException;
 import it.polimi.CG13.exception.NoCardsLeftException;
 
@@ -86,7 +87,7 @@ public class Table {
     }
 
     //method to pick a card from the table after
-    public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHand {
+    public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHandException {
         if (cardToDraw.getCardType().equals(CardType.GOLD)) {
             if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
                 throw new CardNotFoundException(cardToDraw);
