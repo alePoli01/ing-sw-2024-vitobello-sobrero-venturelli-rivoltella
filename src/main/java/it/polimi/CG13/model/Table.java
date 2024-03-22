@@ -1,8 +1,6 @@
 package it.polimi.CG13.model;
 
-
 import it.polimi.CG13.enums.CardType;
-import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.CardNotFoundException;
 import it.polimi.CG13.exception.NoCardsLeftException;
