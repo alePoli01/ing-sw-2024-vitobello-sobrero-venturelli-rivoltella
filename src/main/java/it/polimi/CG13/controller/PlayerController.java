@@ -56,7 +56,7 @@ public class PlayerController {
             player.addToHand(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
-        } catch (NotMyTurnException | CardNotDrawn | CardNotAddedToHand e) {
+        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand e) {
             System.out.println(e.getMessage());
         }
     }

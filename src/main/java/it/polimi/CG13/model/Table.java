@@ -2,9 +2,9 @@ package it.polimi.CG13.model;
 
 
 import it.polimi.CG13.enums.CardType;
-import it.polimi.CG13.exception.CardNotDrawn;
+import it.polimi.CG13.exception.CardNotAddedToHand;
+import it.polimi.CG13.exception.CardNotFound;
 
-import java.util.LinkedList;
 import java.util.Map;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
@@ -82,14 +82,14 @@ public class Table {
     }
 
     //method to pick a card from the table after
-    public void drawCard(Player player, PlayableCard cardToDraw) throws CardNotDrawn {
+    public void drawCard(Player player, PlayableCard cardToDraw) throws CardNotFound, CardNotAddedToHand {
         if (cardToDraw.getCardType().equals(CardType.GOLD)) {
             if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
-                throw new CardNotDrawn(cardToDraw);
+                throw new CardNotFound(cardToDraw);
             }
         } else {
             if (!(cardToDraw.equals(resourceFacedUp[0]) || cardToDraw.equals(resourceFacedUp[1]) || cardToDraw.equals(resourceFacedDown))) {
-                throw new CardNotDrawn(cardToDraw);
+                throw new CardNotFound(cardToDraw);
             }
         }
     }
