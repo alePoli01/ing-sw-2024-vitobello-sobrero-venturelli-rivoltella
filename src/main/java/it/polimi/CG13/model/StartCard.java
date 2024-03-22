@@ -4,15 +4,15 @@ import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ObjectType;
 import it.polimi.CG13.enums.ReignType;
 
+import java.util.Map;
+
 public class StartCard extends PlayableCard{
     private ReignType[] frontReigns;
     private ReignType[] reignBackPointEdge;
 
-    public StartCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectType, int[] resourceNeeded, int pointsGiven) {
-        super(serialNumber, linkableEdge, reign, cardType, reignPointEdge, objectType, resourceNeeded, pointsGiven);
+    public StartCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven) {
+        super(serialNumber, linkableEdge, reign, cardType, reignPointEdge, objectPointEdge, resourceNeeded, pointsGiven);
     }
-
-    //constructor aggiunto seguendo intellij
 
     public ReignType[] getFrontReigns() {
         return frontReigns;

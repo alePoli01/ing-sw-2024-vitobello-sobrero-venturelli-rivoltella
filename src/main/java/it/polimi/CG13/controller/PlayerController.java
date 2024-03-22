@@ -51,13 +51,15 @@ public class PlayerController {
             // check player turn
             player.checkMyTurn();
             // draw the selected card from the table
-            table.drawCard(player, cardToDraw);
+            table.drawCard(cardToDraw);
             // add the selected card to player's hand
             player.addToHand(cardToDraw);
+            // add new card to the table
+            table.getNewCard(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
-        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand e) {
+        } catch (NotMyTurnException | CardNotFound | CardNotAddedToHand | NoOtherCards e) {
             System.out.println(e.getMessage());
-        }
+       }
     }
 }

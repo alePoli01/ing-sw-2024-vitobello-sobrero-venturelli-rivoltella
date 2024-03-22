@@ -19,9 +19,9 @@ public class PlayableCard {
 
     public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven) {
         this.serialNumber = serialNumber;
-        this.linkableEdge = linkableEdge;
         this.reign = reign;
         this.cardType = cardType;
+        this.linkableEdge = linkableEdge;
         this.reignPointEdge = reignPointEdge;
         this.objectPointEdge = objectPointEdge;
         this.resourceNeeded = resourceNeeded;

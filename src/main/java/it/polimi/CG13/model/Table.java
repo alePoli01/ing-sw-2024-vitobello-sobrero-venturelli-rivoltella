@@ -4,6 +4,7 @@ package it.polimi.CG13.model;
 import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.exception.CardNotAddedToHand;
 import it.polimi.CG13.exception.CardNotFound;
+import it.polimi.CG13.exception.NoOtherCards;
 
 import java.util.Map;
 
@@ -15,6 +16,8 @@ public class Table {
     private PlayableCard resourceFacedDown; //resource card on the top of the deck
     private PlayableCard goldFacedDown;//gold card on the top of the deck
     private ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
+    private Deck deck;
+
     //constructor of table
     public Table() {
         this.resourceFacedUp = new PlayableCard[2];
@@ -82,7 +85,7 @@ public class Table {
     }
 
     //method to pick a card from the table after
-    public void drawCard(Player player, PlayableCard cardToDraw) throws CardNotFound, CardNotAddedToHand {
+    public void drawCard(PlayableCard cardToDraw) throws CardNotFound, CardNotAddedToHand {
         if (cardToDraw.getCardType().equals(CardType.GOLD)) {
             if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
                 throw new CardNotFound(cardToDraw);
@@ -90,6 +93,28 @@ public class Table {
         } else {
             if (!(cardToDraw.equals(resourceFacedUp[0]) || cardToDraw.equals(resourceFacedUp[1]) || cardToDraw.equals(resourceFacedDown))) {
                 throw new CardNotFound(cardToDraw);
+            }
+        }
+    }
+
+    public void getNewCard(PlayableCard cardToReplace) throws NoOtherCards {
+        if (cardToReplace.getCardType().equals(CardType.GOLD)) {
+            if (!deck.isEmptyGoldDeck()) {
+                if (goldFacedUp[0].equals(null)) {
+                    goldFacedUp[0] = deck.getNewGoldCard();
+                } else if (goldFacedUp[1].equals(null)) {
+                    goldFacedUp[1] = deck.getNewGoldCard();
+                } else {
+                    goldFacedDown = deck.getNewGoldCard();
+                }
+            }
+        }  else {
+            if (resourceFacedUp[0].equals(null)) {
+                resourceFacedUp[0] = deck.getNewResourceCard();
+            } else if (resourceFacedUp[1].equals(null)) {
+                resourceFacedUp[1] = deck.getNewResourceCard();
+            } else {
+                resourceFacedDown = deck.getNewResourceCard();
             }
         }
     }
