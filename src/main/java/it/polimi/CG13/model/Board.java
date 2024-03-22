@@ -35,6 +35,10 @@ public class Board {
         notAvailableCells = new HashSet<>();
     }
 
+    public Map<Coordinates, Cell> getBoardMap() {
+        return boardMap;
+    }
+
     public int getScore() {
         return score;
     }
@@ -49,6 +53,14 @@ public class Board {
 
     public void setOwner(Player owner) {
         this.owner = owner;
+    }
+
+    public EnumMap<ObjectType, Integer> getObjectsCollected() {
+        return objectsCollected;
+    }
+
+    public EnumMap<ReignType, Integer> getReignsCollected() {
+        return reignsCollected;
     }
 
     // check goldCard has enough resource to be played

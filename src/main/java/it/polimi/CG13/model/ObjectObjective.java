@@ -9,18 +9,18 @@ public class ObjectObjective extends ObjectiveCard{
     private boolean allItems;
     private ObjectType object;
 
-    public int getObjectivePoints(EnumMap<ObjectType, Integer> objectsCollected) {
+    @Override
+    public int getObjectivePoints(Board board) {
         int combo;
         if(allItems){
-            combo= objectsCollected.get(object);//initialize min value
+            combo= board.getObjectsCollected().get(object);//initialize min value
             for(ObjectType objectType: ObjectType.values()){//check to find true min value
-                if(combo>objectsCollected.get(objectType)
-                            &&!(objectType.equals(ObjectType.NONE))){
-                    combo=objectsCollected.get(objectType);//update true min
+                if(combo>board.getObjectsCollected().get(objectType)){
+                    combo=board.getObjectsCollected().get(objectType);//update true min
                 }
             }
         }else{
-            combo=objectsCollected.get(object)/2;
+            combo=board.getObjectsCollected().get(object)/2;
         }
         return combo*getComboPoints();
     }

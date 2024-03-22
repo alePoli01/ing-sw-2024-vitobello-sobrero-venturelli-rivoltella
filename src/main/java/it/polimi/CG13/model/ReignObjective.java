@@ -7,8 +7,9 @@ import java.util.EnumMap;
 public class ReignObjective extends ObjectiveCard{
     private ReignType type; //Which reign is required
 
-    public int getObjectivePoints(EnumMap<ReignType,Integer> reignsCollected) {
-        int combo= reignsCollected.get(type)/3; //calculate how many times the obj. has been satisfied
+    @Override
+    public int getObjectivePoints(Board board) {
+        int combo= board.getReignsCollected().get(type)/3; //calculate how many times the obj. has been satisfied
         return combo*getComboPoints();
     }
     //constructor

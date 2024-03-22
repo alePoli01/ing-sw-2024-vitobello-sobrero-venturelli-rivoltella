@@ -9,7 +9,7 @@ public abstract class ObjectiveCard {
     public void setComboPoints(int comboPoints) {
         this.comboPoints = comboPoints;
     }
-    public int getObjectivePoints() {
+    public int getObjectivePoints(Board board) {
         return comboPoints;
     }
 }
