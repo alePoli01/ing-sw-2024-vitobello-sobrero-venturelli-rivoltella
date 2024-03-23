@@ -1,14 +1,13 @@
 package it.polimi.CG13.model;
 
 import it.polimi.CG13.enums.Color;
-import it.polimi.CG13.enums.FirstCardsNotGivenException;
+import it.polimi.CG13.exception.FirstCardsNotGivenException;
 import it.polimi.CG13.enums.GameState;
 import it.polimi.CG13.enums.Position;
 import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.StartCardNotGivenException;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Random;
 
 public class Game {

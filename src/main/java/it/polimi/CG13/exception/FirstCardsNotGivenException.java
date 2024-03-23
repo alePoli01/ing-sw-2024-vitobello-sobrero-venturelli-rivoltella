@@ -1,4 +1,4 @@
-package it.polimi.CG13.enums;
+package it.polimi.CG13.exception;
 
 import it.polimi.CG13.model.Player;
 

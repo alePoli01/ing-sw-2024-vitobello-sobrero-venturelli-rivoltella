@@ -1,6 +1,6 @@
 package it.polimi.CG13.controller;
 
-import it.polimi.CG13.enums.FirstCardsNotGivenException;
+import it.polimi.CG13.exception.FirstCardsNotGivenException;
 import it.polimi.CG13.enums.GameState;
 import it.polimi.CG13.exception.CardNotAddedToHandException;
 import it.polimi.CG13.exception.StartCardNotGivenException;
