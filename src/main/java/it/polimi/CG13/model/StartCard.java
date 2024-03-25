@@ -6,25 +6,22 @@ import it.polimi.CG13.enums.ReignType;
 
 import java.util.Map;
 
-public class StartCard extends PlayableCard{
-    private ReignType[] frontReigns;
-    private ReignType[] reignBackPointEdge;
+public class StartCard extends PlayableCard {
+    private final ReignType[] frontReigns;
+    private final ReignType[] reignBackPointEdge;
 
-    public StartCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven) {
+    public StartCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven, ReignType[] frontReigns, ReignType[] reignBackPointEdge) {
         super(serialNumber, linkableEdge, reign, cardType, reignPointEdge, objectPointEdge, resourceNeeded, pointsGiven);
+        this.frontReigns = frontReigns;
+        this.reignBackPointEdge = reignBackPointEdge;
     }
 
     public ReignType[] getFrontReigns() {
         return frontReigns;
     }
-    public void setFrontReigns(ReignType[] frontReigns) {
-        this.frontReigns = frontReigns;
-    }
 
     public ReignType[] getReignBackPointEdge() {
         return reignBackPointEdge;
     }
-    public void setReignBackPointEdge(ReignType[] reignBackPointEdge) {
-        this.reignBackPointEdge = reignBackPointEdge;
-    }
+
 }

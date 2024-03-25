@@ -12,15 +12,15 @@ public class ObjectObjective extends ObjectiveCard{
     @Override
     public int getObjectivePoints(Board board) {
         int combo;
-        if(allItems){
-            combo= board.getObjectsCollected().get(object);//initialize min value
-            for(ObjectType objectType: ObjectType.values()){//check to find true min value
-                if(combo>board.getObjectsCollected().get(objectType)){
+        if (allItems) {
+            combo = board.getObjectsCollected().get(object);//initialize min value
+            for (ObjectType objectType: ObjectType.values()){//check to find true min value
+                if (combo>board.getObjectsCollected().get(objectType)){
                     combo=board.getObjectsCollected().get(objectType);//update true min
                 }
             }
-        }else{
-            combo=board.getObjectsCollected().get(object)/2;
+        } else {
+            combo = board.getObjectsCollected().get(object) / 2;
         }
         return combo*getComboPoints();
     }
@@ -33,7 +33,7 @@ public class ObjectObjective extends ObjectiveCard{
     }
     public ObjectObjective(boolean allItems) {
         setComboPoints(3);
-        this.object=ObjectType.INKWELL;
+        this.object = ObjectType.INKWELL;
         this.allItems = allItems;
     }
 
