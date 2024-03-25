@@ -1,0 +1,2387 @@
+{
+  "resourceDeck": [
+    {"serialNumber": "01",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "FUNGI",
+        "",
+        "",
+        "FUNGI"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": "02",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "FUNGI",
+        "FUNGI"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    { "serialNumber": "03",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "FUNGI",
+        "FUNGI",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    { "serialNumber": "04",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "FUNGI",
+        "FUNGI",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": "05",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "PLANT",
+        "FUNGI",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "QUILL",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": "06",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "ANIMAL",
+        "FUNGI",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "INKWELL"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": "07",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "INSECT",
+        "FUNGI"
+      ],
+      "objectPointEdge": [
+        "MANUSCRIPT",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": "08",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "FUNGI",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {"serialNumber": "09",
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        "FUNGI"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {"serialNumber": 10,
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "FUNGI",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {"serialNumber": 11,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "PLANT",
+        "",
+        "",
+        "PLANT"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": 12,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "PLANT",
+        "PLANT"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": 13,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "PLANT",
+        "PLANT",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": 14,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "PLANT",
+        "PLANT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": 15,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "PLANT",
+        "INSECT",
+        ""
+      ],
+      "objectPointEdge": [
+        "QUILL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {"serialNumber": 16,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "PLANT",
+        "FUNGI"
+      ],
+      "objectPointEdge": [
+        "",
+        "INKWELL",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 17,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "PLANT",
+        "ANIMAL",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "MANUSCRIPT"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 18,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "PLANT",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 19,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "PLANT",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 20,
+      "reign": "PLANT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "PLANT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 21,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "ANIMAL",
+        "ANIMAL"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+    "serialNumber": 22,
+    "reign": "ANIMAL",
+    "cardType": "RESOURCE",
+    "linkableEdge": [
+      true,
+      true,
+      true,
+      false
+    ],
+    "reignPointEdge": [
+      "ANIMAL",
+      "ANIMAL",
+      "",
+      ""
+    ],
+    "objectPointEdge": [
+      "",
+      "",
+      "",
+      ""
+    ],
+    "resourceNeeded": {},
+    "pointsGiven": 0
+    },
+    {
+      "serialNumber": 23,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "ANIMAL",
+        "",
+        "",
+        "ANIMAL"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 24,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "ANIMAL",
+        "ANIMAL",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 25,
+      "reign": "FUNGI",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "ANIMAL",
+        "INSECT",
+        ""
+      ],
+      "objectPointEdge": [
+        "INKWELL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 26,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "ANIMAL",
+        "PLANT"
+      ],
+      "objectPointEdge": [
+        "",
+        "MANUSCRIPT",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 27,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "ANIMAL",
+        "FUNGI",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "QUILL"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 28,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "ANIMAL",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 29,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "ANIMAL",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 30,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "ANIMAL",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 31,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "INSECT",
+        "INSECT"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 32,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "INSECT",
+        "INSECT",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 33,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "INSECT",
+        "",
+        "",
+        "INSECT"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 34,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "INSECT",
+        "INSECT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 35,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "ANIMAL",
+        "INSECT",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "QUILL",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 36,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "FUNGI",
+        "INSECT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "MANUSCRIPT"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 37,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "PLANT",
+        "INSECT"
+      ],
+      "objectPointEdge": [
+        "INKWELL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0
+    },
+    {
+      "serialNumber": 38,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        "INSECT"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 39,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "INSECT",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 40,
+      "reign": "INSECT",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "INSECT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 1
+    }
+  ],
+
+
+
+
+
+  
+  "goldDeck": [
+    {
+      "serialNumber": 41,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "QUILL",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 2,
+        "PLANT": 0,
+        "ANIMAL": 1,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 42,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "INKWELL",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 2,
+        "PLANT": 1,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 43,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "MANUSCRIPT"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 2,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 1
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 44,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 0,
+        "ANIMAL": 1,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 45,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 1,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 46,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 1
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 47,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "INKWELL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 48,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "QUILL"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 49,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "MANUSCRIPT",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 3,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 50,
+      "reign": "FUNGI",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 5,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 5
+    },
+    {
+      "serialNumber": 51,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "QUILL"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 2,
+        "ANIMAL": 0,
+        "INSECT": 1
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 52,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "MANUSCRIPT",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 2,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 53,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "INKWELL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 2,
+        "ANIMAL": 1,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 54,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 3,
+        "ANIMAL": 0,
+        "INSECT": 1
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 55,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 3,
+        "ANIMAL": 1,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 56,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 3,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 57,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "QUILL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 3,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 58,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "MANUSCRIPT"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 3,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 59,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "INKWELL",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 3,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 60,
+      "reign": "PLANT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 5,
+        "ANIMAL": 0,
+        "INSECT": 0
+      },
+      "pointsGiven": 5
+    },
+    {
+      "serialNumber": 61,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "INKWELL"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 2,
+        "INSECT": 1
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 62,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "MANUSCRIPT",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 1,
+        "ANIMAL": 2,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 63,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "QUILL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 0,
+        "ANIMAL": 2,
+        "INSECT": 0
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 64,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 3,
+        "INSECT": 1
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 65,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 0,
+        "ANIMAL": 3,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 66,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 1,
+        "ANIMAL": 3,
+        "INSECT": 0
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 67,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "MANUSCRIPT",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 3,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 68,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "INKWELL",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 3,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 69,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "QUILL",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 3,
+        "INSECT": 0
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 70,
+      "reign": "ANIMAL",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 5,
+        "INSECT": 0
+      },
+      "pointsGiven": 5
+    },
+    {
+      "serialNumber": 71,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "QUILL",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 1,
+        "ANIMAL": 0,
+        "INSECT": 2
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 72,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "MANUSCRIPT",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 1,
+        "INSECT": 2
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 73,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "INKWELL",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 2
+      },
+      "pointsGiven": 1
+    },
+    {
+      "serialNumber": 74,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 1,
+        "INSECT": 3
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 75,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 1,
+        "ANIMAL": 0,
+        "INSECT": 3
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 76,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 1,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 3
+      },
+      "pointsGiven": 2
+    },
+    {
+      "serialNumber": 77,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        "INKWELL"
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 3
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 78,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "MANUSCRIPT",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 3
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 79,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "QUILL",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 3
+      },
+      "pointsGiven": 3
+    },
+    {
+      "serialNumber": 80,
+      "reign": "INSECT",
+      "cardType": "GOLD",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {
+        "FUNGI": 0,
+        "PLANT": 0,
+        "ANIMAL": 0,
+        "INSECT": 5
+      },
+      "pointsGiven": 5
+    }
+  ],
+
+
+  "startDeck": [
+     {
+      "serialNumber": 81,
+      "reign": "",
+      "cardType": "STARTER",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "INSECT",
+        "",
+        "PLANT",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "INSECT"
+      ],
+      "reignBackPointEdge": []
+    },
+    {
+      "serialNumber": 82,
+      "reign": "",
+      "cardType": "STARTER",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "FUNGI",
+        "",
+        "ANIMAL"
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "FUNGI"
+      ],
+      "reignBackPointEdge": []
+    },
+    {
+      "serialNumber": 83,
+      "reign": "",
+      "cardType": "STARTER",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "PLANT",
+        "FUNGI"
+      ],
+      "reignBackPointEdge": []
+    },
+    {
+      "serialNumber": 84,
+      "reign": "",
+      "cardType": "STARTER",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "ANIMAL",
+        "INSECT"
+      ],
+      "reignBackPointEdge": []
+    },
+    {
+      "serialNumber": 85,
+      "reign": "",
+      "cardType": "STARTER",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "ANIMAL",
+        "INSECT",
+        "PLANT"
+      ],
+      "reignBackPointEdge": []
+    },
+    {
+      "serialNumber": 86,
+      "reign": "",
+      "cardType": "START",
+      "linkableEdge": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "reignPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "frontReigns": [
+        "PLANT",
+        "ANIMAL",
+        "FUNGI"
+      ],
+      "reignBackPointEdge": []
+    }
+  ],
+
+  "objectiveDeck": [
+
+
+  ]
+
+  
+}
