@@ -89,13 +89,14 @@ public class Board {
 
         int i = 0;
 
+        // updates notAvailableCells and availableCells sets
         for (boolean edgeValue : cardToPlace.getLinkableEdge()) {
             Coordinates coordinateToCheck;
             switch (i) {
                 case 0: // bottom-left
                     coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
                     if (edgeValue) {
-                        if (notAvailableCells.contains(coordinateToCheck)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
                             availableCells.add(coordinateToCheck);
                         }
                     } else {
@@ -104,7 +105,7 @@ public class Board {
                 case 1: // bottom-right
                     coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
                     if (edgeValue) {
-                        if (notAvailableCells.contains(coordinateToCheck)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
                             availableCells.add(coordinateToCheck);
                         }
                     } else {
@@ -113,7 +114,7 @@ public class Board {
                 case 2: // top-right
                     coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
                     if (edgeValue) {
-                        if (notAvailableCells.contains(coordinateToCheck)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
                             availableCells.add(coordinateToCheck);
                         }
                     } else {
@@ -122,15 +123,46 @@ public class Board {
                 case 3: // top-left
                     coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
                     if (edgeValue) {
-                        if (notAvailableCells.contains(coordinateToCheck)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
                             availableCells.add(coordinateToCheck);
                         }
                     } else {
                         notAvailableCells.add(coordinateToCheck);
                     }
             }
-                i++;
+            i++;
+        }
+    }
+
+    // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
+    public int surroundingCardsNumber(Coordinates xy) {
+        int counter = 0;
+        for (int i = 0; i < 4; i++) {
+            Coordinates coordinateToCheck;
+            switch (i) {
+                case 0: // bottom-left
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
+                    if (this.getBoardMap().containsKey(coordinateToCheck)) {
+                        counter++;
+                    }
+                case 1: // bottom-left
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
+                    if (this.getBoardMap().containsKey(coordinateToCheck)) {
+                        counter++;
+                    }
+                case 2: // top-right
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
+                    if (this.getBoardMap().containsKey(coordinateToCheck)) {
+                        counter++;
+                    }
+                case 3: // top-left
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
+                    if (this.getBoardMap().containsKey(coordinateToCheck)) {
+                        counter++;;
+                    }
             }
+        }
+        return counter;
     }
 
     // update surrounding cards edges

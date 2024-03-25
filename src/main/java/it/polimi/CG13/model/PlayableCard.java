@@ -2,6 +2,7 @@ package it.polimi.CG13.model;
 
 import it.polimi.CG13.enums.CardType;
 import it.polimi.CG13.enums.ObjectType;
+import it.polimi.CG13.enums.PointsCondition;
 import it.polimi.CG13.enums.ReignType;
 
 import java.util.Map;
@@ -13,11 +14,12 @@ public class PlayableCard {
     private final ReignType[] reignPointEdge;
     private final ObjectType[] objectPointEdge;
     private final Map<ReignType, Integer> resourceNeeded;
-    final int pointsGiven;
+    private final int pointsGiven;
+    private final PointsCondition condition;
     private boolean[] linkableEdge;
     private PlayableCard[] linkedCard;
 
-    public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven) {
+    public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
         this.serialNumber = serialNumber;
         this.reign = reign;
         this.cardType = cardType;
@@ -26,6 +28,7 @@ public class PlayableCard {
         this.objectPointEdge = objectPointEdge;
         this.resourceNeeded = resourceNeeded;
         this.pointsGiven = pointsGiven;
+        this.condition = condition;
     }
 
     // added to print the card has an error
@@ -69,8 +72,21 @@ public class PlayableCard {
         return linkableEdge;
     }
 
+    public int getPointsGiven(Board board, Coordinates xy) {
+        if (this.condition != null) {
+            return switch (condition) {
+                case QUILL -> board.getObjectsCollected().get(ObjectType.QUILL) * pointsGiven;
+                case MANUSCRIPT -> board.getObjectsCollected().get(ObjectType.MANUSCRIPT) * pointsGiven;
+                case INKWELL -> board.getObjectsCollected().get(ObjectType.INKWELL) * pointsGiven;
+                case EDGE -> board.surroundingCardsNumber(xy) * pointsGiven;
+            };
+        } else {
+            return pointsGiven;
+        }
+    }
+
     public int getPointsGiven() {
-        return pointsGiven;
+            return pointsGiven;
     }
 
     public int getResourceNeeded(ReignType reign) {

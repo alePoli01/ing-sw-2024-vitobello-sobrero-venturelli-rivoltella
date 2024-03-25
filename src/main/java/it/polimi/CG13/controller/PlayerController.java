@@ -40,7 +40,14 @@ public class PlayerController {
             // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
-            board.setScore(board.getScore() + cardToPlace.getPointsGiven());
+            if (!isFlipped) {
+                // gold cards gives points differently
+                if (cardToPlace.getCardType().equals(CardType.GOLD)) {
+                    board.setScore(board.getScore() + cardToPlace.getPointsGiven(board, xy));
+                } else {
+                    board.setScore(board.getScore() + cardToPlace.getPointsGiven());
+                }
+            }
         } catch (CardNotPlacedException | CardStillOnHandException | EdgeNotFreeException e) {
             System.out.println(e.getMessage());
         }
