@@ -43,6 +43,10 @@ public class GameController {
     public void startGame2(Game game) throws CardNotAddedToHandException {
         if (game.getGameState().equals(GameState.DEALING_PHASE)) {
             try {
+                /* TODO
+                    1. levare prima le due carte dal mazzo gold e da quello risorsa
+                    2. consegna delle carte obiettivo
+                */
                 game.giveFirstCards();
                 game.setCommonObjectiveCard();
                 game.setPlayersPosition();
