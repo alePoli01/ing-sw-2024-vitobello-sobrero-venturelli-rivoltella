@@ -70,11 +70,5 @@ public class Deck {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
-
-
 }
-
-
