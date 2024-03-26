@@ -1,0 +1,102 @@
+{
+  "objectiveDeck": [
+    {
+      "serialNumber": 87,
+      "comboPoints": 2,
+      "diagonal": true,
+      "orientation": 0
+    },
+    {
+      "serialNumber": 88,
+      "comboPoints": 2,
+      "diagonal": true,
+      "orientation": 3
+    },
+    {
+      "serialNumber": 89,
+      "comboPoints": 2,
+      "diagonal": true,
+      "orientation": 2
+    },
+    {
+      "serialNumber": 90,
+      "comboPoints": 2,
+      "diagonal": true,
+      "orientation": 1
+    },
+    {
+      "serialNumber": 91,
+      "comboPoints": 3,
+      "diagonal": false,
+      "orientation": 1
+    },
+    {
+      "serialNumber": 92,
+      "comboPoints": 3,
+      "diagonal": false,
+      "orientation": 0
+    },
+    {
+      "serialNumber": 93,
+      "comboPoints": 3,
+      "diagonal": false,
+      "orientation": 2
+    },
+    {
+      "serialNumber": 94,
+      "comboPoints": 3,
+      "diagonal": false,
+      "orientation": 3
+    },
+    {
+      "serialNumber": 95,
+      "comboPoints": 2,
+      "type": "FUNGI"
+    },
+    {
+      "serialNumber": 96,
+      "comboPoints": 2,
+      "type": "PLANT"
+    },
+    {
+      "serialNumber": 97,
+      "comboPoints": 2,
+      "type": "ANIMAL"
+    },
+    {
+      "serialNumber": 98,
+      "comboPoints": 2,
+      "type": "INSECT"
+    },
+    {
+      "serialNumber": 99,
+      "comboPoints": 3,
+      "object": [
+        "QUILL",
+        "INKWELL",
+        "MANUSCRIPT"
+      ]
+    },
+    {
+      "serialNumber": 100,
+      "comboPoints": 2,
+      "object": [
+        "MANUSCRIPT"
+      ]
+    },
+    {
+      "serialNumber": 101,
+      "comboPoints": 2,
+      "object": [
+        "INKWELL"
+      ]
+    },
+    {
+      "serialNumber": 102,
+      "comboPoints": 2,
+      "object": [
+        "QUILL"
+      ]
+    }
+  ]
+}

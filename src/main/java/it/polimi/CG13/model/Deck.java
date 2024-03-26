@@ -16,10 +16,10 @@ public class Deck {
     private LinkedList<PlayableCard> goldDeck;
 
     public Deck() {
-        this.objectiveDeck = new LinkedList<ObjectiveCard>();
-        this.startDeck = new LinkedList<StartCard>();
-        this.resourceDeck = new LinkedList<PlayableCard>();
-        this.goldDeck = new LinkedList<PlayableCard>();
+        this.objectiveDeck = new LinkedList<>();
+        this.startDeck = new LinkedList<>();
+        this.resourceDeck = new LinkedList<>();
+        this.goldDeck = new LinkedList<>();
     }
 
     public LinkedList<PlayableCard> getResourceDeck() {
@@ -52,7 +52,7 @@ public class Deck {
         try {
             FileReader reader = new FileReader("src/main/resources/Decks.json");
             FileReader reader2 = new FileReader("src/main/resources/Starter.json");
-
+            FileReader reader3 = new FileReader("src/main/resources/Objective.json");
 
             // resource / gold Deck initialization
             Type type = new TypeToken<Map<String, LinkedList<PlayableCard>>>(){}.getType();
@@ -62,9 +62,13 @@ public class Deck {
             Type type2 = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
             Map<String, LinkedList<StartCard>> map2 = gson.fromJson(reader2, type2);
 
+            Type type3 = new TypeToken<Map<String, LinkedList<ObjectiveCard>>>(){}.getType();
+            Map<String, LinkedList<ObjectiveCard>> map3 = gson.fromJson(reader2, type3);
+
             this.resourceDeck = map.get("resourceDeck");
             this.goldDeck = map.get("goldDeck");
             this.startDeck = map2.get("startDeck");
+            this.objectiveDeck = map3.get("objectiveDeck");
 
             reader.close();
         } catch (IOException e) {

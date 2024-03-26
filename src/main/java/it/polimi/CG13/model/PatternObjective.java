@@ -7,6 +7,16 @@ public class PatternObjective extends ObjectiveCard{
     private boolean diagonal;  //what kind of disposition is required
     private int orientation; //orientation of the disposition
 
+//prova
+    public PatternObjective(int serialNumber, int comboPoints, boolean diagonal, int orientation) {
+        super(serialNumber, comboPoints);
+        this.diagonal = diagonal;
+        this.orientation = orientation;
+    }
+
+
+
+
     @Override
     public int getObjectivePoints(Board board) {
         int X_max = 50, X_min = 50, Y_max = 50, Y_min = 50;
@@ -181,10 +191,11 @@ public class PatternObjective extends ObjectiveCard{
         return getComboPoints();
     }
 
+ /*
     public PatternObjective(Boolean isDiagonal) {
         this.diagonal = isDiagonal;
     }
-
+*/
 
 
 
