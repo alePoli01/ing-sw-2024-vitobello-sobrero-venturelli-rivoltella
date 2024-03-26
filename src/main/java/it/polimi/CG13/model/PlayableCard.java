@@ -31,10 +31,6 @@ public class PlayableCard {
         this.condition = condition;
     }
     
-    public void setLinkableEdge(boolean linkableEdge, int edge) {
-        this.linkableEdge[edge] = linkableEdge;
-    }
-
     public boolean[] getLinkableEdge() {
         return linkableEdge;
     }
