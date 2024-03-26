@@ -1,7 +1,6 @@
 package it.polimi.CG13.model;
 
 import it.polimi.CG13.enums.ReignType;
-import it.polimi.CG13.enums.TypePattern;
 
 //TODO controllare le condizioni dei for
 public class PatternObjective extends ObjectiveCard{
