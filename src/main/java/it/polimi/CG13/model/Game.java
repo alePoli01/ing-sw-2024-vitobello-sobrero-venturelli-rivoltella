@@ -84,8 +84,8 @@ public class Game {
 
     // add common objective card to the table
     public void setCommonObjectiveCard() {
-        this.getTable().setCommonObjectiveCard(0, getDeck().objectiveDeck.getFirst());
-        this.getTable().setCommonObjectiveCard(1, getDeck().objectiveDeck.getFirst());
+        this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().getFirst());
+        this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().getFirst());
     }
 
     // set first player

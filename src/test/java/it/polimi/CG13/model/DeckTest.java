@@ -11,13 +11,13 @@ public class DeckTest extends TestCase {
 
         deck.parseJSON();
 
-        assertNotNull(deck.resourceDeck);
-        assertNotNull(deck.goldDeck);
-        assertNotNull(deck.startDeck);
+        assertNotNull(deck.getResourceDeck());
+        assertNotNull(deck.getGoldDeck());
+        assertNotNull(deck.getStartDeck());
         //assertNotNull(deck.objectiveDeck);
 
 
-        for(PlayableCard card : deck.resourceDeck){
+        for(PlayableCard card : deck.getResourceDeck()){
             System.out.println("Serial Number: " + card.serialNumber);
             System.out.println("Card Type: " + card.cardType);
             System.out.println("Reign: " + card.reign);
@@ -42,7 +42,7 @@ public class DeckTest extends TestCase {
             System.out.println("-----------------------");
         }
 
-        for(PlayableCard card : deck.goldDeck){
+        for(PlayableCard card : deck.getGoldDeck()){
             System.out.println("Serial Number: " + card.serialNumber);
             System.out.println("Card Type: " + card.cardType);
             System.out.println("Reign: " + card.reign);
@@ -71,7 +71,7 @@ public class DeckTest extends TestCase {
             System.out.println("-----------------------");
         }
 
-        for(PlayableCard card : deck.startDeck){
+        for(StartCard card : deck.getStartDeck()){
             System.out.println("Serial Number: " + card.serialNumber);
             System.out.println("Card Type: " + card.cardType);
             System.out.println("Reign: " + card.reign);
@@ -79,19 +79,23 @@ public class DeckTest extends TestCase {
 
 
 
-            System.out.println("edge available");
+            System.out.println("-EDGE AVAILABLE-");
             for(int i=0; i<4; i++){
                 System.out.println(card.linkableEdge[i]);
             }
-            System.out.println("reign edge");
+            System.out.println("-REIGN EDGE-");
             for(int i=0; i<4; i++){
                 System.out.println(card.reignPointEdge[i]);
             }
-            System.out.println("object point edge");
+            System.out.println("-OBJECT EDGE-");
             for(int i=0; i<4; i++){
                 System.out.println(card.objectPointEdge[i]);
             }
 
+            System.out.println("-FRONT REIGN-");
+            for(int i = 0; i<card.frontReigns.size(); i++) {
+                System.out.println(card.frontReigns.get(i));
+            }
 
             System.out.println("-----------------------");
         }

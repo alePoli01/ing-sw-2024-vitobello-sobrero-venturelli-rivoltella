@@ -10,16 +10,16 @@ import java.io.IOException;
 import java.util.*;
 
 public class Deck {
-    LinkedList<ObjectiveCard> objectiveDeck;
-    LinkedList<PlayableCard> startDeck;
-    LinkedList<PlayableCard> resourceDeck;
-    LinkedList<PlayableCard> goldDeck;
+    private LinkedList<ObjectiveCard> objectiveDeck;
+    private LinkedList<StartCard> startDeck;
+    private LinkedList<PlayableCard> resourceDeck;
+    private LinkedList<PlayableCard> goldDeck;
 
     public Deck() {
-        this.objectiveDeck = null;
-        this.startDeck = null;
-        this.resourceDeck = null;
-        this.goldDeck = null;
+        this.objectiveDeck = new LinkedList<ObjectiveCard>();
+        this.startDeck = new LinkedList<StartCard>();
+        this.resourceDeck = new LinkedList<PlayableCard>();
+        this.goldDeck = new LinkedList<PlayableCard>();
     }
 
     public LinkedList<PlayableCard> getResourceDeck() {
@@ -34,7 +34,7 @@ public class Deck {
         return objectiveDeck;
     }
 
-    public LinkedList<PlayableCard> getStartDeck() {
+    public LinkedList<StartCard> getStartDeck() {
         return startDeck;
     }
 
@@ -51,14 +51,20 @@ public class Deck {
         //lettura carte risorsa (
         try {
             FileReader reader = new FileReader("src/main/resources/Decks.json");
+            FileReader reader2 = new FileReader("src/main/resources/Starter.json");
 
-            // Definisci il tipo per deserializzare
+
+            // resource / gold Deck initialization
             Type type = new TypeToken<Map<String, LinkedList<PlayableCard>>>(){}.getType();
             Map<String, LinkedList<PlayableCard>> map = gson.fromJson(reader, type);
 
+            // start Deck initialization
+            Type type2 = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
+            Map<String, LinkedList<StartCard>> map2 = gson.fromJson(reader2, type2);
+
             this.resourceDeck = map.get("resourceDeck");
             this.goldDeck = map.get("goldDeck");
-            this.startDeck = map.get("startDeck");
+            this.startDeck = map2.get("startDeck");
 
             reader.close();
         } catch (IOException e) {
