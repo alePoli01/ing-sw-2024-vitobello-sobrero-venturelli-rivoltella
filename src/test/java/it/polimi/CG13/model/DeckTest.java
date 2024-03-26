@@ -22,6 +22,7 @@ public class DeckTest extends TestCase {
             System.out.println("Card Type: " + card.cardType);
             System.out.println("Reign: " + card.reign);
             System.out.println("Points: " + card.pointsGiven);
+            System.out.println("Condition: " + card.condition);
 
 
             System.out.println("-EDGE AVAILABLE-");

@@ -22,7 +22,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": "02",
       "reign": "FUNGI",
@@ -70,7 +71,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     { "serialNumber": "04",
       "reign": "FUNGI",
@@ -118,7 +120,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": "06",
       "reign": "FUNGI",
@@ -142,7 +145,8 @@
         "INKWELL"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": "07",
       "reign": "FUNGI",
@@ -166,7 +170,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": "08",
       "reign": "FUNGI",
@@ -214,7 +219,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {"serialNumber": 10,
       "reign": "FUNGI",
@@ -238,7 +244,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {"serialNumber": 11,
       "reign": "PLANT",
@@ -262,7 +269,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": 12,
       "reign": "PLANT",
@@ -286,7 +294,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": 13,
       "reign": "PLANT",
@@ -310,7 +319,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": 14,
       "reign": "PLANT",
@@ -334,7 +344,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": 15,
       "reign": "PLANT",
@@ -358,7 +369,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {"serialNumber": 16,
       "reign": "PLANT",
@@ -382,7 +394,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 17,
@@ -407,7 +420,8 @@
         "MANUSCRIPT"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 18,
@@ -432,7 +446,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 19,
@@ -457,7 +472,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 20,
@@ -482,7 +498,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 21,
@@ -507,32 +524,34 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
-    "serialNumber": 22,
-    "reign": "ANIMAL",
-    "cardType": "RESOURCE",
-    "linkableEdge": [
-      true,
-      true,
-      true,
-      false
-    ],
-    "reignPointEdge": [
-      "ANIMAL",
-      "ANIMAL",
-      "",
-      ""
-    ],
-    "objectPointEdge": [
-      "",
-      "",
-      "",
-      ""
-    ],
-    "resourceNeeded": {},
-    "pointsGiven": 0
+      "serialNumber": 22,
+      "reign": "ANIMAL",
+      "cardType": "RESOURCE",
+      "linkableEdge": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "reignPointEdge": [
+        "ANIMAL",
+        "ANIMAL",
+        "",
+        ""
+      ],
+      "objectPointEdge": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 23,
@@ -557,7 +576,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 24,
@@ -582,7 +602,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 25,
@@ -607,7 +628,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 26,
@@ -632,7 +654,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 27,
@@ -657,7 +680,8 @@
         "QUILL"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 28,
@@ -682,7 +706,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 29,
@@ -707,7 +732,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 30,
@@ -732,7 +758,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 31,
@@ -757,7 +784,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 32,
@@ -782,7 +810,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 33,
@@ -807,7 +836,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 34,
@@ -832,7 +862,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 35,
@@ -857,7 +888,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 36,
@@ -882,7 +914,8 @@
         "MANUSCRIPT"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 37,
@@ -907,7 +940,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": ""
     },
     {
       "serialNumber": 38,
@@ -932,7 +966,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     },
     {
       "serialNumber": 39,
@@ -982,7 +1017,8 @@
         ""
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": ""
     }
   ],
 
