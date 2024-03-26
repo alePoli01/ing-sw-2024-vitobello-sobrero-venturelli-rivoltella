@@ -30,10 +30,6 @@ public class PlayableCard {
         this.pointsGiven = pointsGiven;
         this.condition = condition;
     }
-    
-    public boolean[] getLinkableEdge() {
-        return linkableEdge;
-    }
 
     public int getPointsGiven(Board board, Coordinates xy) {
         if (this.condition != null) {

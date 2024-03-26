@@ -90,7 +90,7 @@ public class Board {
         int i = 0;
 
         // updates notAvailableCells and availableCells sets
-        for (boolean edgeValue : cardToPlace.getLinkableEdge()) {
+        for (boolean edgeValue : cardToPlace.linkableEdge) {
             Coordinates coordinateToCheck;
             switch (i) {
                 case 0: // bottom-left
@@ -207,7 +207,7 @@ public class Board {
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
         if (!isFlipped) {
             // add card played reigns to the board
-            for (boolean flag : cardToPlace.getLinkableEdge()) {
+            for (boolean flag : cardToPlace.linkableEdge) {
                 if (flag) {
                     for (ReignType element : cardToPlace.reignPointEdge) {
                         reignsCollected.put(element, reignsCollected.get(element)+1);
