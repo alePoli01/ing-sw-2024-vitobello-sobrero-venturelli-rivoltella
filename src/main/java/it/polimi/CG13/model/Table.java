@@ -86,7 +86,7 @@ public class Table {
 
     //method to pick a card from the table after
     public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHandException {
-        if (cardToDraw.getCardType().equals(CardType.GOLD)) {
+        if (cardToDraw.cardType.equals(CardType.GOLD)) {
             if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
                 throw new CardNotFoundException(cardToDraw);
             }
@@ -99,7 +99,7 @@ public class Table {
 
     // updates the drawn card on the table
     public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
-        if (cardToReplace.getCardType().equals(CardType.GOLD)) {
+        if (cardToReplace.cardType.equals(CardType.GOLD)) {
             if (!deck.getGoldDeck().isEmpty()) {
                 try {
                     if (goldFacedUp[0] == null) {

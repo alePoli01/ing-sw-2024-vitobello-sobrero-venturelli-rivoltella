@@ -18,23 +18,23 @@ public class DeckTest extends TestCase {
 
 
         for(PlayableCard card : deck.resourceDeck){
-            System.out.println("Serial Number: " + card.getSerialNumber());
-            System.out.println("Card Type: " + card.getCardType());
-            System.out.println("Reign: " + card.getReign());
-            System.out.println("Points: " + card.getPointsGiven());
+            System.out.println("Serial Number: " + card.serialNumber);
+            System.out.println("Card Type: " + card.cardType);
+            System.out.println("Reign: " + card.reign);
+            System.out.println("Points: " + card.pointsGiven);
 
 
             System.out.println("-EDGE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.edgeAvailable(i));
+                System.out.println(i+": "+card.linkableEdge[i]);
             }
             System.out.println("-REIGN EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.getReignPointEdge(i));
+                System.out.println(i+": "+card.reignPointEdge[i]);
             }
             System.out.println("-OBJECT EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.getObjectPointEdge(i));
+                System.out.println(i+": " + card.objectPointEdge[i]);
             }
 
 
@@ -42,28 +42,28 @@ public class DeckTest extends TestCase {
         }
 
         for(PlayableCard card : deck.goldDeck){
-            System.out.println("Serial Number: " + card.getSerialNumber());
-            System.out.println("Card Type: " + card.getCardType());
-            System.out.println("Reign: " + card.getReign());
-            System.out.println("Points: " + card.getPointsGiven());
+            System.out.println("Serial Number: " + card.serialNumber);
+            System.out.println("Card Type: " + card.cardType);
+            System.out.println("Reign: " + card.reign);
+            System.out.println("Points: " + card.pointsGiven);
 
-            if(card.getCardType().equals(CardType.GOLD)) {
+            if(card.cardType.equals(CardType.GOLD)) {
                 for (ReignType reign : ReignType.values()) {
-                    System.out.println("Resource Needed of "+reign.toString()+": "+ card.getResourceNeeded(reign));
+                    System.out.println("Resource Needed of "+reign.toString()+": "+ card.resourceNeeded.get(reign));
                 }
             }
 
             System.out.println("-EDGE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.edgeAvailable(i));
+                System.out.println(i+": "+card.linkableEdge[i]);
             }
             System.out.println("-REIGN EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.getReignPointEdge(i));
+                System.out.println(i+": "+card.reignPointEdge[i]);
             }
             System.out.println("-OBJECT EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.getObjectPointEdge(i));
+                System.out.println(i+": "+card.objectPointEdge[i]);
             }
 
 
@@ -71,24 +71,24 @@ public class DeckTest extends TestCase {
         }
 
         for(PlayableCard card : deck.startDeck){
-            System.out.println("Serial Number: " + card.getSerialNumber());
-            System.out.println("Card Type: " + card.getCardType());
-            System.out.println("Reign: " + card.getReign());
-            System.out.println("Points: " + card.getPointsGiven());
+            System.out.println("Serial Number: " + card.serialNumber);
+            System.out.println("Card Type: " + card.cardType);
+            System.out.println("Reign: " + card.reign);
+            System.out.println("Points: " + card.pointsGiven);
 
 
 
             System.out.println("edge available");
             for(int i=0; i<4; i++){
-                System.out.println(card.edgeAvailable(i));
+                System.out.println(card.linkableEdge[i]);
             }
             System.out.println("reign edge");
             for(int i=0; i<4; i++){
-                System.out.println(card.getReignPointEdge(i));
+                System.out.println(card.reignPointEdge[i]);
             }
             System.out.println("object point edge");
             for(int i=0; i<4; i++){
-                System.out.println(card.getObjectPointEdge(i));
+                System.out.println(card.objectPointEdge[i]);
             }
 
 

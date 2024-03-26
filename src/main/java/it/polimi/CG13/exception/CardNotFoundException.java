@@ -4,6 +4,6 @@ import it.polimi.CG13.model.PlayableCard;
 
 public class CardNotFoundException extends Exception {
     public CardNotFoundException(PlayableCard card) {
-        super("Error model" + card.getSerialNumber() +  "not drawn.");
+        super("Error model" + card.serialNumber +  "not drawn.");
     }
 }

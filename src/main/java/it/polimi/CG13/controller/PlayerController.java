@@ -20,7 +20,7 @@ public class PlayerController {
         }
 
         // Check player has enough resources to play the goldCard
-        if (cardToPlace.getCardType().equals(CardType.GOLD) && isFlipped) {
+        if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
             } catch (NoResourceAvailableException e) {
@@ -42,10 +42,10 @@ public class PlayerController {
             // update player's scoreboard
             if (!isFlipped) {
                 // gold cards gives points differently
-                if (cardToPlace.getCardType().equals(CardType.GOLD)) {
+                if (cardToPlace.cardType.equals(CardType.GOLD)) {
                     board.setScore(board.getScore() + cardToPlace.getPointsGiven(board, xy));
                 } else {
-                    board.setScore(board.getScore() + cardToPlace.getPointsGiven());
+                    board.setScore(board.getScore() + cardToPlace.pointsGiven);
                 }
             }
         } catch (CardNotPlacedException | CardStillOnHandException | EdgeNotFreeException e) {

@@ -16,7 +16,7 @@ public class PlayableCard {
     public final Map<ReignType, Integer> resourceNeeded;
     public final int pointsGiven;
     public final PointsCondition condition;
-    private boolean[] linkableEdge;
+    public final boolean[] linkableEdge;
     private PlayableCard[] linkedCard;
 
     public PlayableCard(int serialNumber, boolean[] linkableEdge, ReignType reign, CardType cardType, ReignType[] reignPointEdge, ObjectType[] objectPointEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
@@ -30,40 +30,7 @@ public class PlayableCard {
         this.pointsGiven = pointsGiven;
         this.condition = condition;
     }
-
-    // added to print the card has an error
-    public int getSerialNumber() {
-        return serialNumber;
-    }
-
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public ObjectType[] getObjectPointEdge() {
-        return objectPointEdge;
-    }
-
-    public ReignType[] getReignPointEdge() {
-        return reignPointEdge;
-    }
-
-    public ObjectType getObjectPointEdge(int position) {
-        return objectPointEdge[position];
-    }
-
-    public ReignType getReignPointEdge(int position) {
-        return reignPointEdge[position];
-    }
-
-    public ReignType getReign() {
-        return reign;
-    }
-
-    public boolean edgeAvailable(int edge){
-        return linkableEdge[edge];
-    }
-
+    
     public void setLinkableEdge(boolean linkableEdge, int edge) {
         this.linkableEdge[edge] = linkableEdge;
     }
@@ -83,13 +50,5 @@ public class PlayableCard {
         } else {
             return pointsGiven;
         }
-    }
-
-    public int getPointsGiven() {
-            return pointsGiven;
-    }
-
-    public int getResourceNeeded(ReignType reign) {
-        return resourceNeeded.get(reign);
     }
 }

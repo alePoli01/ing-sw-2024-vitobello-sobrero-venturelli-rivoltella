@@ -52,7 +52,7 @@ public class PatternObjective extends ObjectiveCard{
                    for (int d = 0; d < Y_max - y_offset; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
-                             if (board.getBoardMap().get(mover).getCardPointer().getReign().equals(color)) {
+                             if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)) {
                                 flag++;
                              } else {
                                  flag = 0;
@@ -82,7 +82,7 @@ public class PatternObjective extends ObjectiveCard{
                    for (int d = 0; d<X_max - x_offset; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
-                           if (board.getBoardMap().get(mover).getCardPointer().getReign().equals(color)){
+                           if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
                                flag++;
                            } else {
                                flag = 0;
@@ -121,7 +121,7 @@ public class PatternObjective extends ObjectiveCard{
                    for (int d = 0; d<Y_max - y_offset; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
-                           if (board.getBoardMap().get(mover).getCardPointer().getReign().equals(color)){
+                           if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
                                flag++;
                            } else {
                                flag = 0;
@@ -152,7 +152,7 @@ public class PatternObjective extends ObjectiveCard{
                    for (int d = 0; d < (X_max) - x_offset; d++) {
 
                        if (board.getBoardMap().containsKey(mover)){
-                           if (board.getBoardMap().get(mover).getCardPointer().getReign().equals(color)){
+                           if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
                                flag++;
                            } else {
                                flag = 0;

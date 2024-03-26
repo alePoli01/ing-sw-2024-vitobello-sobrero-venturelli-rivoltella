@@ -66,7 +66,7 @@ public class Board {
     // check goldCard has enough resource to be played
     public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailableException {
         for (ReignType value : ReignType.values()) {
-            if (reignsCollected.get(value) < cardToPlace.getResourceNeeded(value)) {
+            if (reignsCollected.get(value) < cardToPlace.resourceNeeded.get(value)) {
                 throw new NoResourceAvailableException(value);
             }
         }
@@ -177,18 +177,18 @@ public class Board {
             Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
 
             // Check if the coordinate exists in the Map
-            if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).getIsFlipped()) || this.boardMap.get(coordinateToCheck).getCardPointer().getCardType().equals(CardType.STARTER)) {
+            if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).getIsFlipped()) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
-                if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeAvailable(counter)) {
-                    for (ReignType element : this.boardMap.get(coordinateToCheck).getCardPointer().getReignPointEdge()) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().getReignPointEdge(counter).equals(element)) {
+                if (this.boardMap.get(coordinateToCheck).getCardPointer().linkableEdge[counter]) {
+                    for (ReignType element : this.boardMap.get(coordinateToCheck).getCardPointer().reignPointEdge) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().reignPointEdge[counter].equals(element)) {
                             reignsCollected.put(element, reignsCollected.get(element) - 1);
                         }
                     }
 
-                    for (ObjectType element : this.boardMap.get(coordinateToCheck).getCardPointer().getObjectPointEdge()) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().getObjectPointEdge(counter).equals(element)) {
+                    for (ObjectType element : this.boardMap.get(coordinateToCheck).getCardPointer().objectPointEdge) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().objectPointEdge[counter].equals(element)) {
                             objectsCollected.put(element, objectsCollected.get(element) - 1);
                         }
                     }
@@ -209,16 +209,16 @@ public class Board {
             // add card played reigns to the board
             for (boolean flag : cardToPlace.getLinkableEdge()) {
                 if (flag) {
-                    for (ReignType element : cardToPlace.getReignPointEdge()) {
+                    for (ReignType element : cardToPlace.reignPointEdge) {
                         reignsCollected.put(element, reignsCollected.get(element)+1);
                     }
-                    for (ObjectType element : cardToPlace.getObjectPointEdge()) {
+                    for (ObjectType element : cardToPlace.objectPointEdge) {
                         objectsCollected.put(element, objectsCollected.get(element)+1);
                     }
                 }
             }
         } else {
-            reignsCollected.put(cardToPlace.getReign(), reignsCollected.get(cardToPlace.getReign())+1);
+            reignsCollected.put(cardToPlace.reign, reignsCollected.get(cardToPlace.reign)+1);
         }
     }
 

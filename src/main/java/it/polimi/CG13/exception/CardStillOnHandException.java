@@ -4,6 +4,6 @@ import it.polimi.CG13.model.PlayableCard;
 
     public class CardStillOnHandException extends Exception {
         public CardStillOnHandException(PlayableCard card) {
-            super("Error model" + card.getSerialNumber() +  "not placed.");
+            super("Error model" + card.serialNumber +  "not placed.");
         }
 }
