@@ -8,14 +8,14 @@ import it.polimi.CG13.enums.ReignType;
 import java.util.Map;
 
 public class PlayableCard {
-    private final int serialNumber;
-    private final ReignType reign;
-    private final CardType cardType;
-    private final ReignType[] reignPointEdge;
-    private final ObjectType[] objectPointEdge;
-    private final Map<ReignType, Integer> resourceNeeded;
-    private final int pointsGiven;
-    private final PointsCondition condition;
+    public final int serialNumber;
+    public final ReignType reign;
+    public final CardType cardType;
+    public final ReignType[] reignPointEdge;
+    public final ObjectType[] objectPointEdge;
+    public final Map<ReignType, Integer> resourceNeeded;
+    public final int pointsGiven;
+    public final PointsCondition condition;
     private boolean[] linkableEdge;
     private PlayableCard[] linkedCard;
 

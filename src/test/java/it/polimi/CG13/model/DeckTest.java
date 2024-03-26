@@ -23,23 +23,18 @@ public class DeckTest extends TestCase {
             System.out.println("Reign: " + card.getReign());
             System.out.println("Points: " + card.getPointsGiven());
 
-            if(card.getCardType().equals(CardType.GOLD)) {
-                for (ReignType reign : ReignType.values()) {
-                    System.out.println("Resource Needed: "+ card.getResourceNeeded(reign));
-                }
-            }
 
-            System.out.println("edge available");
+            System.out.println("-EDGE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.edgeAvailable(i));
+                System.out.println(i+": "+card.edgeAvailable(i));
             }
-            System.out.println("reign edge");
+            System.out.println("-REIGN EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.getReignPointEdge(i));
+                System.out.println(i+": "+card.getReignPointEdge(i));
             }
-            System.out.println("object point edge");
+            System.out.println("-OBJECT EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.getObjectPointEdge(i));
+                System.out.println(i+": "+card.getObjectPointEdge(i));
             }
 
 
@@ -54,21 +49,21 @@ public class DeckTest extends TestCase {
 
             if(card.getCardType().equals(CardType.GOLD)) {
                 for (ReignType reign : ReignType.values()) {
-                    System.out.println("Resource Needed: "+ card.getResourceNeeded(reign));
+                    System.out.println("Resource Needed of "+reign.toString()+": "+ card.getResourceNeeded(reign));
                 }
             }
 
-            System.out.println("edge available");
+            System.out.println("-EDGE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.edgeAvailable(i));
+                System.out.println(i+": "+card.edgeAvailable(i));
             }
-            System.out.println("reign edge");
+            System.out.println("-REIGN EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.getReignPointEdge(i));
+                System.out.println(i+": "+card.getReignPointEdge(i));
             }
-            System.out.println("object point edge");
+            System.out.println("-OBJECT EDGE-");
             for(int i=0; i<4; i++){
-                System.out.println(card.getObjectPointEdge(i));
+                System.out.println(i+": "+card.getObjectPointEdge(i));
             }
 
 
@@ -81,11 +76,7 @@ public class DeckTest extends TestCase {
             System.out.println("Reign: " + card.getReign());
             System.out.println("Points: " + card.getPointsGiven());
 
-            if(card.getCardType().equals(CardType.GOLD)) {
-                for (ReignType reign : ReignType.values()) {
-                    System.out.println("Resource Needed: "+ card.getResourceNeeded(reign));
-                }
-            }
+
 
             System.out.println("edge available");
             for(int i=0; i<4; i++){
