@@ -5,7 +5,6 @@ public class Cell {
     public final int weight;
     private boolean isFlipped;//to be intended as 'z coordinate' or height of the pointed card
 
-
     public Cell(PlayableCard cardPointer, int weight, boolean isFlipped) {
         this.cardPointer = cardPointer;
         this.weight = weight;

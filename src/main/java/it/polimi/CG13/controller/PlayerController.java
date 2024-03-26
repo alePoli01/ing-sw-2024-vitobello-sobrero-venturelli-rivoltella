@@ -6,13 +6,22 @@ import it.polimi.CG13.model.*;
 
 public class PlayerController {
 
+    // place start card on the board in default position
+    public void placeStartCard(Board board, StartCard cardToPlace, boolean isFlipped) {
+        try {
+            board.addCardToBoard(null, cardToPlace, isFlipped);
+            board.addResource(cardToPlace, isFlipped);
+        } catch (CardNotPlacedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Player player, Coordinates xy) {
+    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
 
         try {
             // check player turn
-            player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
+            board.getOwner().checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
             // check coordinates are allowed
             xy.evenVerifier();
         } catch (NotMyTurnException | ForbiddenCoordinatesException e) {
@@ -36,7 +45,7 @@ public class PlayerController {
             // removes covered reigns / objects from board map
             board.removeResources(xy);
             // pop card played from hand
-            player.handUpdate(cardToPlace);
+            board.getOwner().handUpdate(cardToPlace);
             // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
@@ -53,6 +62,7 @@ public class PlayerController {
         }
     }
 
+    // draw resource / gold card
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         try {
             // check player turn

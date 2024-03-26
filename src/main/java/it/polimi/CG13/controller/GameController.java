@@ -32,8 +32,8 @@ public class GameController {
     }
 
     // update gameStatus given current status
-    public void updateGameStatus(Game game, GameState currentGameStatus) {
-        switch (currentGameStatus) {
+    public void updateGameStatus(Game game, GameState currentGameState) {
+        switch (currentGameState) {
             case SETUP -> game.setGameState(GameState.DEALING_PHASE);
             case DEALING_PHASE -> game.setGameState(GameState.START);
         }

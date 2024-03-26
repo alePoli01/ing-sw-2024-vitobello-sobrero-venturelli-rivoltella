@@ -81,56 +81,67 @@ public class Board {
 
     // add card to the board and updates notAvailableCells and availableCells sets
     public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlacedException {
-        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-        boardMap.put(xy, newCell);
-        if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
-            throw new CardNotPlacedException(cardToPlace);
-        }
-
-        int i = 0;
-
-        // updates notAvailableCells and availableCells sets
-        for (boolean edgeValue : cardToPlace.linkableEdge) {
-            Coordinates coordinateToCheck;
-            switch (i) {
-                case 0: // bottom-left
-                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                    if (edgeValue) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    }
-                case 1: // bottom-right
-                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                    if (edgeValue) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    }
-                case 2: // top-right
-                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                    if (edgeValue) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    }
-                case 3: // top-left
-                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                    if (edgeValue) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    }
+        // if statement for startCard placed in position 50,50 (board center)
+        if (cardToPlace instanceof StartCard) {
+            xy.setX(50);
+            xy.setY(50);
+            Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
+            boardMap.put(xy, newCell);
+            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+                throw new CardNotPlacedException(cardToPlace);
             }
-            i++;
+        } else {
+            Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
+            boardMap.put(xy, newCell);
+            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+                throw new CardNotPlacedException(cardToPlace);
+            }
+
+            int i = 0;
+
+            // updates notAvailableCells and availableCells sets
+            for (boolean edgeValue : cardToPlace.linkableEdge) {
+                Coordinates coordinateToCheck;
+                switch (i) {
+                    case 0: // bottom-left
+                        coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
+                        if (edgeValue) {
+                            if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
+                                availableCells.add(coordinateToCheck);
+                            }
+                        } else {
+                            notAvailableCells.add(coordinateToCheck);
+                        }
+                    case 1: // bottom-right
+                        coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
+                        if (edgeValue) {
+                            if (!notAvailableCells.contains(coordinateToCheck)) {
+                                availableCells.add(coordinateToCheck);
+                            }
+                        } else {
+                            notAvailableCells.add(coordinateToCheck);
+                        }
+                    case 2: // top-right
+                        coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
+                        if (edgeValue) {
+                            if (!notAvailableCells.contains(coordinateToCheck)) {
+                                availableCells.add(coordinateToCheck);
+                            }
+                        } else {
+                            notAvailableCells.add(coordinateToCheck);
+                        }
+                    case 3: // top-left
+                        coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
+                        if (edgeValue) {
+                            if (!notAvailableCells.contains(coordinateToCheck)) {
+                                availableCells.add(coordinateToCheck);
+                            }
+                        } else {
+                            notAvailableCells.add(coordinateToCheck);
+                        }
+                }
+                i++;
+            }
         }
     }
 
@@ -205,21 +216,33 @@ public class Board {
 
     // simplified for cycles to update reigns and objects
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
-        if (!isFlipped) {
-            // add card played reigns to the board
-            for (boolean flag : cardToPlace.linkableEdge) {
-                if (flag) {
-                    for (ReignType element : cardToPlace.reignPointEdge) {
-                        reignsCollected.put(element, reignsCollected.get(element)+1);
-                    }
-                    for (ObjectType element : cardToPlace.objectPointEdge) {
-                        objectsCollected.put(element, objectsCollected.get(element)+1);
-                    }
+        // if statement for start card, else for gold / resources
+        if (cardToPlace instanceof StartCard) {
+            if (isFlipped) {
+                for (ReignType element : ((StartCard) cardToPlace).reignBackPointEdge) {
+                    reignsCollected.put(element, reignsCollected.get(element) + 1);
+                }
+            } else {
+                for (ReignType element : ((StartCard) cardToPlace).frontReigns) {
+                    reignsCollected.put(element, reignsCollected.get(element) + 1);
                 }
             }
         } else {
-            reignsCollected.put(cardToPlace.reign, reignsCollected.get(cardToPlace.reign)+1);
+            if (!isFlipped) {
+                // add card played reigns to the board
+                for (boolean flag : cardToPlace.linkableEdge) {
+                    if (flag) {
+                        for (ReignType element : cardToPlace.reignPointEdge) {
+                            reignsCollected.put(element, reignsCollected.get(element) + 1);
+                        }
+                        for (ObjectType element : cardToPlace.objectPointEdge) {
+                            objectsCollected.put(element, objectsCollected.get(element) + 1);
+                        }
+                    }
+                }
+            } else {
+                reignsCollected.put(cardToPlace.reign, reignsCollected.get(cardToPlace.reign) + 1);
+            }
         }
     }
-
 }
