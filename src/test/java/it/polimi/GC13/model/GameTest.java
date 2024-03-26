@@ -1,0 +1,12 @@
+package it.polimi.GC13.model;
+
+import junit.framework.TestCase;
+
+public class GameTest extends TestCase {
+
+    public void testRandomizeArray() {
+    }
+
+    public void testAddPlayer() {
+    }
+}
