@@ -3,23 +3,11 @@
     {"serialNumber": "01",
       "reign": "FUNGI",
       "cardType": "RESOURCE",
-      "linkableEdge": [
-        true,
-        false,
-        true,
-        true
-      ],
-      "reignPointEdge": [
+      "edgeResource": [
         "FUNGI",
-        "",
-        "",
+        "NULL",
+        "EMPTY",
         "FUNGI"
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -28,23 +16,11 @@
     {"serialNumber": "02",
       "reign": "FUNGI",
       "cardType": "RESOURCE",
-      "linkableEdge": [
-        false,
-        true,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
-        "",
+      "edgeResource": [
+        "NULL",
+        "EMPTY",
         "FUNGI",
         "FUNGI"
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
       ],
       "resourceNeeded": {},
       "pointsGiven": 0
@@ -52,23 +28,11 @@
     { "serialNumber": "03",
       "reign": "FUNGI",
       "cardType": "RESOURCE",
-      "linkableEdge": [
-        true,
-        true,
-        false,
-        true
-      ],
-      "reignPointEdge": [
+      "edgeResource": [
         "FUNGI",
         "FUNGI",
-        "",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+        "NULL",
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
