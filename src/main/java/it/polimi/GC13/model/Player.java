@@ -14,14 +14,16 @@ public class Player {
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
     private Position position;  //position of the player (1-4)
+    private Board board;
 
     //at the creation each player has only its nickname, everything else is defined in the setup phase
-    public Player(String nickname) {
+    public Player(String nickname, Board board) {
         this.nickname = nickname;
         this.token = null;
         this.turnPlayed = 0;
         this.myTurn = false;
         this.hand = new ArrayList<PlayableCard>();
+        this.board = board;
     }
 
     public String getNickname() {
@@ -50,6 +52,10 @@ public class Player {
 
     public void setTurnPlayed(int turnPlayed) {
         this.turnPlayed = turnPlayed;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     public void setMyTurn(boolean myTurn) {

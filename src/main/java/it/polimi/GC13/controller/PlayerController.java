@@ -7,21 +7,21 @@ import it.polimi.GC13.model.*;
 public class PlayerController {
 
     // place start card on the board in default position
-    public void placeStartCard(Board board, StartCard cardToPlace, boolean isFlipped) {
+    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
         try {
-            board.addCardToBoard(null, cardToPlace, isFlipped);
-            board.addResource(cardToPlace, isFlipped);
+            player.getBoard().addCardToBoard(null, cardToPlace, isFlipped);
+            player.getBoard().addResource(cardToPlace, isFlipped);
         } catch (CardNotPlacedException e) {
             System.out.println(e.getMessage());
         }
     }
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Board board, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
+    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
 
         try {
             // check player turn
-            board.getOwner().checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
+            player.getBoard().getOwner().checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
             // check coordinates are allowed
             xy.evenVerifier();
         } catch (NotMyTurnException | ForbiddenCoordinatesException e) {
@@ -31,7 +31,7 @@ public class PlayerController {
         // Check player has enough resources to play the goldCard
         if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
             try {
-                board.resourceVerifier(cardToPlace);
+                player.getBoard().resourceVerifier(cardToPlace);
             } catch (NoResourceAvailableException e) {
                 System.out.println(e.getMessage()); // Si può mettere che stampa tutte le risorse che non ha, non solo la prima che dà errore
             }
@@ -39,22 +39,22 @@ public class PlayerController {
 
         try {
             // check is possible to place the selected card
-            board.isPossibleToPlace(xy);
+            player.getBoard().isPossibleToPlace(xy);
             // add card to the board
-            board.addCardToBoard(xy, cardToPlace, isFlipped);
+            player.getBoard().addCardToBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
-            board.removeResources(xy);
+            player.getBoard().removeResources(xy);
             // pop card played from hand
-            board.getOwner().handUpdate(cardToPlace);
+            player.getBoard().getOwner().handUpdate(cardToPlace);
             // sum reigns / objects
-            board.addResource(cardToPlace, isFlipped);
+            player.getBoard().addResource(cardToPlace, isFlipped);
             // update player's scoreboard
             if (!isFlipped) {
                 // gold cards gives points differently
                 if (cardToPlace.cardType.equals(CardType.GOLD)) {
-                    board.setScore(board.getScore() + cardToPlace.getPointsGiven(board, xy));
+                    player.getBoard().setScore(player.getBoard().getScore() + cardToPlace.getPointsGiven(player.getBoard(), xy));
                 } else {
-                    board.setScore(board.getScore() + cardToPlace.pointsGiven);
+                    player.getBoard().setScore(player.getBoard().getScore() + cardToPlace.pointsGiven);
                 }
             }
         } catch (CardNotPlacedException | CardStillOnHandException | EdgeNotFreeException e) {
