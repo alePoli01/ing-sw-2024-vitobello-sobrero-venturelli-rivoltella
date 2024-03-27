@@ -98,7 +98,7 @@ public class Board {
             int i = 0;
 
             // updates notAvailableCells and availableCells sets
-            for (Resource edgeValue : cardToPlace.resourceEdge) {
+            for (Resource edgeValue : cardToPlace.edgeResource) {
                 Coordinates coordinateToCheck;
                 switch (i) {
                     case 0: // bottom-left
@@ -189,9 +189,9 @@ public class Board {
             if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).isFlipped) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
-                if (!(this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge[counter].equalsAny())) {
-                    for (Resource element : this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge[counter].equals(element)) {
+                if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equalsAny())) {
+                    for (Resource element : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equals(element)) {
                             if (element instanceof ReignType) {
                                 reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
                             } else {
@@ -226,9 +226,9 @@ public class Board {
         } else {
             if (!isFlipped) {
                 // add card played reigns to the board
-                for (Resource resource : cardToPlace.resourceEdge) {
+                for (Resource resource : cardToPlace.edgeResource) {
                     if (!resource.equalsAny()) {
-                        for (Resource element : cardToPlace.resourceEdge) {
+                        for (Resource element : cardToPlace.edgeResource) {
                             if (element instanceof ReignType) {
                                 reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
                             } else {
