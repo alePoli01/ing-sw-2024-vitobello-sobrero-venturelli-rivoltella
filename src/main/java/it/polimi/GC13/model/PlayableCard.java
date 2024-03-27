@@ -24,6 +24,7 @@ public class PlayableCard {
         this.condition = condition;
     }
 
+    // method to calculate points given after a gold card is placed
     public int getPointsGiven(Board board, Coordinates xy) {
         if (this.condition != null) {
             return switch (condition) {
