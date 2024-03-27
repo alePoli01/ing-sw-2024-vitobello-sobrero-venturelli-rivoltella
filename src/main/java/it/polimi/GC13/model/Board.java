@@ -1,8 +1,6 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.CardType;
-import it.polimi.GC13.enums.ObjectType;
-import it.polimi.GC13.enums.ReignType;
+import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.EdgeNotFreeException;
 import it.polimi.GC13.exception.NoResourceAvailableException;
@@ -100,12 +98,12 @@ public class Board {
             int i = 0;
 
             // updates notAvailableCells and availableCells sets
-            for (boolean edgeValue : cardToPlace.linkableEdge) {
+            for (Resource edgeValue : cardToPlace.resourceEdge) {
                 Coordinates coordinateToCheck;
                 switch (i) {
                     case 0: // bottom-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                        if (edgeValue) {
+                        if (!edgeValue.equals(NullEmpty.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
                                 availableCells.add(coordinateToCheck);
                             }
@@ -114,7 +112,7 @@ public class Board {
                         }
                     case 1: // bottom-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                        if (edgeValue) {
+                        if (!edgeValue.equals(NullEmpty.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -123,7 +121,7 @@ public class Board {
                         }
                     case 2: // top-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                        if (edgeValue) {
+                        if (!edgeValue.equals(NullEmpty.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -132,7 +130,7 @@ public class Board {
                         }
                     case 3: // top-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                        if (edgeValue) {
+                        if (!edgeValue.equals(NullEmpty.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -188,19 +186,17 @@ public class Board {
             Coordinates coordinateToCheck = new Coordinates(coordinates.getX() + offset[0], coordinates.getY() + offset[1]);
 
             // Check if the coordinate exists in the Map
-            if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).getIsFlipped()) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
+            if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).isFlipped) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
-                if (this.boardMap.get(coordinateToCheck).getCardPointer().linkableEdge[counter]) {
-                    for (ReignType element : this.boardMap.get(coordinateToCheck).getCardPointer().reignPointEdge) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().reignPointEdge[counter].equals(element)) {
-                            reignsCollected.put(element, reignsCollected.get(element) - 1);
-                        }
-                    }
-
-                    for (ObjectType element : this.boardMap.get(coordinateToCheck).getCardPointer().objectPointEdge) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().objectPointEdge[counter].equals(element)) {
-                            objectsCollected.put(element, objectsCollected.get(element) - 1);
+                if (!(this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge[counter].equalsAny())) {
+                    for (Resource element : this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().resourceEdge[counter].equals(element)) {
+                            if (element instanceof ReignType) {
+                                reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
+                            } else {
+                                objectsCollected.put((ObjectType) element, objectsCollected.get(element) - 1);
+                            }
                         }
                     }
                 }
@@ -230,13 +226,14 @@ public class Board {
         } else {
             if (!isFlipped) {
                 // add card played reigns to the board
-                for (boolean flag : cardToPlace.linkableEdge) {
-                    if (flag) {
-                        for (ReignType element : cardToPlace.reignPointEdge) {
-                            reignsCollected.put(element, reignsCollected.get(element) + 1);
-                        }
-                        for (ObjectType element : cardToPlace.objectPointEdge) {
-                            objectsCollected.put(element, objectsCollected.get(element) + 1);
+                for (Resource resource : cardToPlace.resourceEdge) {
+                    if (!resource.equalsAny()) {
+                        for (Resource element : cardToPlace.resourceEdge) {
+                            if (element instanceof ReignType) {
+                                reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
+                            } else {
+                                objectsCollected.put((ObjectType) element, objectsCollected.get(element) - 1);
+                            }
                         }
                     }
                 }
