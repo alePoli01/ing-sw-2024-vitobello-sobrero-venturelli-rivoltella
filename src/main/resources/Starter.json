@@ -4,23 +4,11 @@
       "serialNumber": 81,
       "reign": "",
       "cardType": "STARTER",
-      "linkableEdge": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "reignPointEdge": [
+      "edgeResource": [
         "INSECT",
-        "",
+        "EMPTY",
         "PLANT",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -39,23 +27,11 @@
       "serialNumber": 82,
       "reign": "",
       "cardType": "STARTER",
-      "linkableEdge": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
+      "edgeResource": [
+        "EMPTY",
         "FUNGI",
-        "",
+        "EMPTY",
         "ANIMAL"
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -74,23 +50,11 @@
       "serialNumber": 83,
       "reign": "",
       "cardType": "STARTER",
-      "linkableEdge": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
-        "",
-        "",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+      "edgeResource": [
+        "EMPTY",
+        "EMPTY",
+        "EMPTY",
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -110,23 +74,11 @@
       "serialNumber": 84,
       "reign": "",
       "cardType": "STARTER",
-      "linkableEdge": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
-        "",
-        "",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+      "edgeResource": [
+        "EMPTY",
+        "EMPTY",
+        "EMPTY",
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -146,23 +98,11 @@
       "serialNumber": 85,
       "reign": "",
       "cardType": "STARTER",
-      "linkableEdge": [
-        false,
-        false,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
-        "",
-        "",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+      "edgeResource": [
+        "NULL",
+        "NULL",
+        "EMPTY",
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
@@ -183,23 +123,11 @@
       "serialNumber": 86,
       "reign": "",
       "cardType": "START",
-      "linkableEdge": [
-        false,
-        false,
-        true,
-        true
-      ],
-      "reignPointEdge": [
-        "",
-        "",
-        "",
-        ""
-      ],
-      "objectPointEdge": [
-        "",
-        "",
-        "",
-        ""
+      "edgeResource": [
+        "NULL",
+        "NULL",
+        "EMPTY",
+        "EMPTY"
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
