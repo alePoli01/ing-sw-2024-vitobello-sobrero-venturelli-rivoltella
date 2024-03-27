@@ -100,5 +100,26 @@ public class DeckTest extends TestCase {
             System.out.println("-----------------------");
         }
 
+        //test of ObjectiveCard
+        for(ObjectiveCard card:deck.getObjectiveDeck()){
+            System.out.println("Serial Number: " + card.serialNumber);
+            System.out.println("Combo Points: " + card.comboPoints);
+
+            if(card instanceof PatternObjective){
+                System.out.println("Diagonal: " + ((PatternObjective) card).diagonal);
+                System.out.println("Orientation: " + ((PatternObjective) card).orientation);
+            }
+            if(card instanceof ReignObjective){
+                System.out.println("Type: " + ((ReignObjective) card).type);
+            }
+            if(card instanceof ObjectObjective){
+                for(int i=0;i<((ObjectObjective) card).object.size();i++){
+                    System.out.println("Object required: " + ((ObjectObjective) card).object.get(i));
+                }
+            }
+
+            System.out.println("-----------------------");
+        }
+
     }
 }

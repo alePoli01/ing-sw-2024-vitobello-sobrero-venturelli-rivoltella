@@ -1,5 +1,5 @@
 {
-  "objectiveDeck": [
+  "PatternDeck": [
     {
       "serialNumber": 87,
       "comboPoints": 2,
@@ -47,56 +47,7 @@
       "comboPoints": 3,
       "diagonal": false,
       "orientation": 3
-    },
-    {
-      "serialNumber": 95,
-      "comboPoints": 2,
-      "type": "FUNGI"
-    },
-    {
-      "serialNumber": 96,
-      "comboPoints": 2,
-      "type": "PLANT"
-    },
-    {
-      "serialNumber": 97,
-      "comboPoints": 2,
-      "type": "ANIMAL"
-    },
-    {
-      "serialNumber": 98,
-      "comboPoints": 2,
-      "type": "INSECT"
-    },
-    {
-      "serialNumber": 99,
-      "comboPoints": 3,
-      "object": [
-        "QUILL",
-        "INKWELL",
-        "MANUSCRIPT"
-      ]
-    },
-    {
-      "serialNumber": 100,
-      "comboPoints": 2,
-      "object": [
-        "MANUSCRIPT"
-      ]
-    },
-    {
-      "serialNumber": 101,
-      "comboPoints": 2,
-      "object": [
-        "INKWELL"
-      ]
-    },
-    {
-      "serialNumber": 102,
-      "comboPoints": 2,
-      "object": [
-        "QUILL"
-      ]
     }
-  ]
-}
+    ]
+
+    }

@@ -1,0 +1,24 @@
+{
+  "ReignDeck": [
+    {
+      "serialNumber": 95,
+      "comboPoints": 2,
+      "type": "FUNGI"
+    },
+    {
+      "serialNumber": 96,
+      "comboPoints": 2,
+      "type": "PLANT"
+    },
+    {
+      "serialNumber": 97,
+      "comboPoints": 2,
+      "type": "ANIMAL"
+    },
+    {
+      "serialNumber": 98,
+      "comboPoints": 2,
+      "type": "INSECT"
+    }
+  ]
+}

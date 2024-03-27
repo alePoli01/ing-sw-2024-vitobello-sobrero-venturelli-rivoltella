@@ -4,8 +4,8 @@ import it.polimi.GC13.enums.ReignType;
 
 //TODO controllare le condizioni dei for
 public class PatternObjective extends ObjectiveCard{
-    private boolean diagonal;  //what kind of disposition is required
-    private int orientation; //orientation of the disposition
+    public final boolean diagonal;  //what kind of disposition is required
+    public final int orientation; //orientation of the disposition
 
 //prova
     public PatternObjective(int serialNumber, int comboPoints, boolean diagonal, int orientation) {

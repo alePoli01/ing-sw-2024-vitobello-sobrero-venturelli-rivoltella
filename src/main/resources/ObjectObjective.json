@@ -1,0 +1,34 @@
+{
+  "ObjectDeck": [
+    {
+      "serialNumber": 99,
+      "comboPoints": 3,
+      "object": [
+        "QUILL",
+        "INKWELL",
+        "MANUSCRIPT"
+      ]
+    },
+    {
+      "serialNumber": 100,
+      "comboPoints": 2,
+      "object": [
+        "MANUSCRIPT"
+      ]
+    },
+    {
+      "serialNumber": 101,
+      "comboPoints": 2,
+      "object": [
+        "INKWELL"
+      ]
+    },
+    {
+      "serialNumber": 102,
+      "comboPoints": 2,
+      "object": [
+        "QUILL"
+      ]
+    }
+  ]
+}

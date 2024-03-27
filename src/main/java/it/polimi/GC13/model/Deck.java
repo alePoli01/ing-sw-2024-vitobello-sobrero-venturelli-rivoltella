@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Deck {
     private LinkedList<ObjectiveCard> objectiveDeck;
@@ -50,27 +52,50 @@ public class Deck {
 
         //lettura carte risorsa (
         try {
-            FileReader reader = new FileReader("src/main/resources/Decks.json");
-            FileReader reader2 = new FileReader("src/main/resources/Starter.json");
-            FileReader reader3 = new FileReader("src/main/resources/Objective.json");
+            FileReader readerPlayable = new FileReader("src/main/resources/Decks.json");
+            FileReader readerStarter = new FileReader("src/main/resources/Starter.json");
+            FileReader readerPattern = new FileReader("src/main/resources/PatternObjective.json");
+            FileReader readerReign = new FileReader("src/main/resources/ReignObjective.json");
+            FileReader readerObject = new FileReader("src/main/resources/ObjectObjective.json");
+
+            LinkedList<PatternObjective> PatternDeck;
+            LinkedList<ReignObjective> ReignDeck;
+            LinkedList<ObjectObjective> ObjectDeck;
 
             // resource / gold Deck initialization
-            Type type = new TypeToken<Map<String, LinkedList<PlayableCard>>>(){}.getType();
-            Map<String, LinkedList<PlayableCard>> map = gson.fromJson(reader, type);
+            Type playable = new TypeToken<Map<String, LinkedList<PlayableCard>>>(){}.getType();
+            Map<String, LinkedList<PlayableCard>> mapPlayable = gson.fromJson(readerPlayable, playable);
 
             // start Deck initialization
-            Type type2 = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
-            Map<String, LinkedList<StartCard>> map2 = gson.fromJson(reader2, type2);
+            Type starter = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
+            Map<String, LinkedList<StartCard>> mapStarter = gson.fromJson(readerStarter, starter);
 
-            Type type3 = new TypeToken<Map<String, LinkedList<ObjectiveCard>>>(){}.getType();
-            Map<String, LinkedList<ObjectiveCard>> map3 = gson.fromJson(reader2, type3);
+            Type pattern = new TypeToken<Map<String, LinkedList<PatternObjective>>>(){}.getType();
+            Map<String, LinkedList<PatternObjective>> mapPattern = gson.fromJson(readerPattern, pattern);
 
-            this.resourceDeck = map.get("resourceDeck");
-            this.goldDeck = map.get("goldDeck");
-            this.startDeck = map2.get("startDeck");
-            this.objectiveDeck = map3.get("objectiveDeck");
+            Type reign = new TypeToken<Map<String, LinkedList<ReignObjective>>>(){}.getType();
+            Map<String, LinkedList<ReignObjective>> mapReign = gson.fromJson(readerReign, reign);
 
-            reader.close();
+            Type object = new TypeToken<Map<String, LinkedList<ObjectObjective>>>(){}.getType();
+            Map<String, LinkedList<ObjectObjective>> mapObject = gson.fromJson(readerObject, object);
+
+            this.resourceDeck = mapPlayable.get("resourceDeck");
+            this.goldDeck = mapPlayable.get("goldDeck");
+            this.startDeck = mapStarter.get("startDeck");
+
+            PatternDeck = mapPattern.get("PatternDeck");
+            ReignDeck = mapReign.get("ReignDeck");
+            ObjectDeck = mapObject.get("ObjectDeck");
+            this.objectiveDeck.addAll(PatternDeck);
+            this.objectiveDeck.addAll(ReignDeck);
+            this.objectiveDeck.addAll(ObjectDeck);
+
+            readerPlayable.close();
+            readerStarter.close();
+            readerPattern.close();
+            readerReign.close();
+            readerObject.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

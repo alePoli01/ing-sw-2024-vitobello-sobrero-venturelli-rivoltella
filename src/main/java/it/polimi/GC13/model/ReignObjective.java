@@ -3,7 +3,7 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.ReignType;
 
 public class ReignObjective extends ObjectiveCard{
-    private ReignType type; //Which reign is required
+    public final ReignType type; //Which reign is required
 
 
     //prova
