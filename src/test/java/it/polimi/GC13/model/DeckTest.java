@@ -14,8 +14,6 @@ public class DeckTest extends TestCase {
         assertNotNull(deck.getResourceDeck());
         assertNotNull(deck.getGoldDeck());
         assertNotNull(deck.getStartDeck());
-        //assertNotNull(deck.objectiveDeck);
-
 
         for(PlayableCard card : deck.getResourceDeck()){
             System.out.println("Serial Number: " + card.serialNumber);
