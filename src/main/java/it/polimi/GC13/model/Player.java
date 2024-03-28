@@ -1,45 +1,52 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.Color;
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
-
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Player {
-    private final String nickname;  //username of the palyer
-    private Color token; //token chosen by the Player
-    private ArrayList<PlayableCard> hand; //hand of the palyer ==> 3 cards max
-    private ObjectiveCard objectiveCard; //Hidden goal of the player
+    private final String nickname;  //username of the player
+    private TokenColor token; //token chosen by the Player
+    private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max
+    private LinkedList<ObjectiveCard> objectiveCard; // need an array to present 2 objective cards to the player
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
     private Position position;  //position of the player (1-4)
-    private Board board;
+    private Game game;
+
 
     //at the creation each player has only its nickname, everything else is defined in the setup phase
-    public Player(String nickname, Board board) {
+    public Player(String nickname) {
         this.nickname = nickname;
-        this.token = null;
         this.turnPlayed = 0;
         this.myTurn = false;
         this.hand = new ArrayList<PlayableCard>();
-        this.board = board;
     }
 
     public String getNickname() {
         return nickname;
     }
 
-    public Color getToken() {
+    public TokenColor getToken() {
         return token;
     }
 
-    public void setToken(Color token) {
+    public void setToken(TokenColor token) {
         this.token = token;
     }
 
     public Position getPosition() {
         return position;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public LinkedList<ObjectiveCard> getObjectiveCard() {
+        return objectiveCard;
     }
 
     public void setPosition(Position position) {
@@ -54,8 +61,16 @@ public class Player {
         this.turnPlayed = turnPlayed;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     public Board getBoard() {
-        return board;
+        return this.game.getTable().getPlayerBoardMap().get(this);
+    }
+
+    public Table getTable() {
+        return this.game.getTable();
     }
 
     public void setMyTurn(boolean myTurn) {
@@ -85,11 +100,4 @@ public class Player {
         }
     }
 
-    public ObjectiveCard getObjectiveCard() {
-        return objectiveCard;
-    }
-
-    public void setObjectiveCard(ObjectiveCard objectiveCard) {
-        this.objectiveCard = objectiveCard;
-    }
 }

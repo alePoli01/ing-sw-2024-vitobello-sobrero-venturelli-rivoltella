@@ -1,5 +1,5 @@
 package it.polimi.GC13.enums;
 
-public enum Color {
+public enum TokenColor {
     GREEN, BLUE, YELLOW, RED, BLACK
 }

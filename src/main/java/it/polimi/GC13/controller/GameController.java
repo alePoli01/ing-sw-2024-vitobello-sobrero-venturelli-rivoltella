@@ -1,56 +1,56 @@
 package it.polimi.GC13.controller;
 
-import it.polimi.GC13.exception.FirstCardsNotGivenException;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.StartCardNotGivenException;
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 
 public class GameController {
     private Server serverId;
 
-    /* TODO
-        capire come il game parte e viene settato a valido, ovvero c'è il numero di giocatori prestabilito
-     */
+    public void createNewGame(Player player, int playersNumber) {
+        serverId.createGame(player, playersNumber);
+    }
 
-    public void addPlayerToGame(Server serverId, Game game, Player player) {
-        if (game.getGameState().equals(GameState.SETUP)) {
-            serverId.addPlayerToGame(player, game);
+    public void addPlayerToGame(Game game, Player player) {
+        try {
+            game.addPlayerToGame(player);
+            if (game.numPlayer == game.getCurrNumPlayer()) {
+                game.updateGameStatus();
+            }
+        } catch (PlayerNotAddedException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     /* TODO
         capire come aspettare che il giocatore posizioni la carta start per andare avanti
      */
-    public void startGame(Game game) {
-        try {
-            game.getDeck().shuffleDecks();
-            game.giveStartCard();
-        } catch (StartCardNotGivenException e) {
-            System.out.println(e.getMessage());
+
+    // deal start card to all players in the selected game
+    public void dealingPhase(Game game) {
+        if (game.getGameState().equals(GameState.TABLE_SETUP)) {
+            try {
+                game.getDeck().shuffleDecks();
+                game.getTable().tableSetup();
+                game.giveStartCard();
+                game.updateGameStatus();
+            } catch (CardNotAddedToHandException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
-    // update gameStatus given current status
-    public void updateGameStatus(Game game, GameState currentGameState) {
-        switch (currentGameState) {
-            case SETUP -> game.setGameState(GameState.DEALING_PHASE);
-            case DEALING_PHASE -> game.setGameState(GameState.START);
-        }
-    }
-
-    // second game phase, after all players placed start card
-    public void startGame2(Game game) throws CardNotAddedToHandException {
+    // second game phase, deal resource and gold cards to all players after start card is placed
+    public void startGame(Game game) throws CardNotAddedToHandException {
         if (game.getGameState().equals(GameState.DEALING_PHASE)) {
             try {
-                /* TODO
-                    1. levare prima le due carte dal mazzo gold e da quello risorsa
-                    2. consegna delle carte obiettivo
-                */
+                game.giveStartCard();
                 game.giveFirstCards();
-                game.setCommonObjectiveCard();
+                game.setCommonObjectiveCards();
+                game.givePrivateObjectiveCards();
                 game.setPlayersPosition();
-            } catch (FirstCardsNotGivenException e) {
+            } catch (CardNotAddedToHandException e){
                 System.out.println(e.getMessage());
             }
         }

@@ -1,10 +1,32 @@
 package it.polimi.GC13.controller;
 
+import com.google.gson.reflect.TypeToken;
 import it.polimi.GC13.enums.CardType;
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
 
+import java.util.Arrays;
+
 public class PlayerController {
+
+    // player chooses his objective card
+    public void choosePrivateObjective(Player player, ObjectiveCard card) {
+        if (player.getObjectiveCard().getFirst().equals(card)) {
+            player.getObjectiveCard().remove(1);
+        } else {
+            player.getObjectiveCard().removeFirst();
+        }
+    }
+
+    // player chooses his token, it can be done if its token is empty
+    public void chooseToken(Player player, TokenColor token) {
+        if (player.getToken().describeConstable().isEmpty())
+            if (player.getGame().getTable().getTokenColors().contains(token)) {
+                player.setToken(token);
+                player.getTable().getTokenColors().remove(token);
+            }
+    }
 
     // place start card on the board in default position
     public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {

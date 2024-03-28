@@ -11,10 +11,10 @@ public class Board {
     private Map<Coordinates, Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
-    private EnumMap<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
-    private EnumMap<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
-    private Set<Coordinates> availableCells;
-    private Set<Coordinates> notAvailableCells;
+    private final EnumMap<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
+    private final EnumMap<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
+    private final Set<Coordinates> availableCells;
+    private final Set<Coordinates> notAvailableCells;
 
     //initialize all the values to zero
     public Board(Player owner) {

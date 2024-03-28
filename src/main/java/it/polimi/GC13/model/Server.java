@@ -1,23 +1,25 @@
 package it.polimi.GC13.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
-    private ArrayList<Game>  gameList;
-    private Map<Player, Game> playersGameMap;
 
-    public ArrayList<Game> getGameList() {
-        return gameList;
+    private final Map<Player, Game> playersGameMap;
+
+    public Server() {
+        this.playersGameMap = new HashMap<>();
     }
 
     public Map<Player, Game> getPlayersGameMap() {
         return playersGameMap;
     }
 
-    public void addPlayerToGame(Player player, Game game) {
-        if (this.getGameList().contains(game)) {
-            this.getPlayersGameMap().put(player, game);
-        }
+    // create the game when the first player joins and it adds him to the GameMap
+    public void createGame(Player player, int playersNumber) {
+        Game newGame = new Game(player, playersNumber);
+        this.getPlayersGameMap().put(player, newGame);
+        player.setGame(newGame);
     }
 }

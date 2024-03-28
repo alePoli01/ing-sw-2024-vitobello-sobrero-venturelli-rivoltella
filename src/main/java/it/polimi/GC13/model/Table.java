@@ -1,28 +1,35 @@
 package it.polimi.GC13.model;
 
+import com.google.gson.reflect.TypeToken;
 import it.polimi.GC13.enums.CardType;
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotFoundException;
 import it.polimi.GC13.exception.NoCardsLeftException;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table {
     private Map<String, Integer> score; //vector that keeps players scores
-    private PlayableCard[] resourceFacedUp; //resource cards faced up that can be picked
-    private PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
+    private final PlayableCard[] resourceFacedUp; //resource cards faced up that can be picked
+    private final PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
     private PlayableCard resourceFacedDown; //resource card on the top of the deck
     private PlayableCard goldFacedDown;//gold card on the top of the deck
-    private ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
-    private Deck deck;
+    private final ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
+    private final Deck deck;
+    private final ArrayList<TokenColor> tokenColors;
+    private final Map<Player, Board> playerBoardMap;
 
     //constructor of table
     public Table() {
+        this.playerBoardMap = new HashMap<>();
+        this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
         this.resourceFacedUp = new PlayableCard[2];
         this.goldFacedUp = new PlayableCard[2];
         this.commonObjectiveCard = new ObjectiveCard[2];
+        this.deck = new Deck();
+        this.deck.parseJSON();
     }
 
     /*
@@ -36,48 +43,30 @@ public class Table {
             this.score[index]= score;
         }*/
 
-    //return the resource card requested by parameter index(0 or 1)
-    public PlayableCard getResourceFacedUp(int index) {
-        return resourceFacedUp[index];
-    }
-
-    //set the new resource card by parameter index(0 or 1) and card(from the deck)
-    public void setResourceFacedUp(int index,PlayableCard card ) {
-        resourceFacedUp[index] = card;
-    }
-
-    //return the gold card faced up by parameter index(0 or 1)
-    public PlayableCard getGoldFacedUp(int index) {
-        return goldFacedUp[index];
-    }
-
-    //set the gold card faced up by parameter index(0 or 1) and card(from deck)
-    public void setGoldFacedUp(PlayableCard card, int index) {
-        goldFacedUp[index] = card;
-    }
-
-    //return the card on the top of the resource deck
-    public PlayableCard getResourceFacedDown() {
-        return resourceFacedDown;
-    }
-
-    //set the top card of the gold deck(after a pick)
-    public void setResourceFacedDown(PlayableCard card) {
-        this.resourceFacedDown = card;
-    }
-
-    //return the card on the top of the gold deck
-    public PlayableCard getGoldFacedDown() {
-        return goldFacedDown;
-    }
-
-    //set the card on the top of the gold deck(after a pick)
-    public void setGoldFacedDown(PlayableCard goldFacedDown) {
-        this.goldFacedDown = goldFacedDown;
-    }
-
     public ObjectiveCard getCommonObjectiveCard(int index) {
         return commonObjectiveCard[index];
+    }
+
+    public ArrayList<TokenColor> getTokenColors() {
+        return tokenColors;
+    }
+
+    public Map<Player, Board> getPlayerBoardMap() {
+        return playerBoardMap;
+    }
+
+    public Deck getDeck() {
+        return this.deck;
+    }
+
+    // initialize drawable card on the table
+    public void tableSetup() {
+        for (int i = 0; i < 2; i++) {
+            this.resourceFacedUp[i] = this.deck.getResourceDeck().removeFirst();
+            this.goldFacedUp[i] = this.deck.getGoldDeck().removeFirst();
+        }
+        this.resourceFacedDown = this.deck.getResourceDeck().removeFirst();
+        this.goldFacedDown = this.deck.getGoldDeck().removeFirst();
     }
 
     public void setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
@@ -110,7 +99,7 @@ public class Table {
                         goldFacedDown = deck.getGoldDeck().removeFirst();
                     }
                 } catch (NoSuchElementException e) {
-                    throw new NoCardsLeftException("Deck");
+                    throw new NoCardsLeftException("Gold");
                 }
             }
         }  else {
@@ -129,4 +118,5 @@ public class Table {
             }
         }
     }
+
 }
