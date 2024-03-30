@@ -12,7 +12,8 @@ public class ObjectObjective extends ObjectiveCard{
 //prova
     public ObjectObjective(int serialNumber, int comboPoints, ArrayList<ObjectType> object) {
         super(serialNumber, comboPoints);
-        this.object = new ArrayList<>();
+        this.object = new ArrayList<>();//initialize and copy the objects into the card
+        this.object.addAll(object);
     }
 
     public int getObjectivePoints(Board board) {

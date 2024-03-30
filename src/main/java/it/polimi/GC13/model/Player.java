@@ -73,6 +73,10 @@ public class Player {
         return this.game.getTable();
     }
 
+    public ArrayList<PlayableCard> getHand() {
+        return this.hand;
+    }
+
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
     }
@@ -99,5 +103,6 @@ public class Player {
             throw new CardNotAddedToHandException(drawnCard);
         }
     }
+
 
 }
