@@ -39,13 +39,12 @@ public class PatternObjective extends ObjectiveCard{
 
         //start to check the patterns by dividing the 2 cases
         if (diagonal) {
-
+            int flag = 0, points = 0;
             //checking the diagonals going to the right
            if (orientation == 0 || orientation == 2) {
 
-               Coordinates iterable = new Coordinates(X_min,Y_min);
+               Coordinates iterable = new Coordinates(X_min,Y_max);
                ReignType color;
-               int flag = 0, points = 0;
 
                if (orientation == 0) {
                    color = ReignType.FUNGI;
@@ -56,9 +55,9 @@ public class PatternObjective extends ObjectiveCard{
                Coordinates mover = iterable;
 
                 //checking the diagonals of the upper part of the board
-               for (int y_offset = 0; y_offset < (Y_max - 2) - Y_min; y_offset++){
+               for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min; y_offset++){
                   mover = iterable;
-                   for (int d = 0; d < Y_max - y_offset; d++) {
+                   for (int d = 1; d <= Y_max - Y_min; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
                              if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)) {
@@ -74,21 +73,23 @@ public class PatternObjective extends ObjectiveCard{
                            flag = 0;
                        }
                        mover.setX(iterable.getX() + d);
-                       mover.setY(iterable.getY() + d);
+                       mover.setY(iterable.getY() - d);
                    }
-                   iterable.setY(Y_min + y_offset);
+                   iterable.setY(Y_max - y_offset);
+                   flag=0;
                }
+
                //resetting variables except points
                iterable.setX(X_min + 1);
-               iterable.setY(Y_min);
+               iterable.setY(Y_max);
                flag=0;
 
                //checking the diagonals of the lower part of the board
-               for (int x_offset = 0; x_offset < (X_max - 2) - (X_min + 1); x_offset++){
+               for (int x_offset = 1; x_offset < ((X_max - 2) - (X_min))-1; x_offset++){
 
                    mover = iterable;
 
-                   for (int d = 0; d<X_max - x_offset; d++) {
+                   for (int d = 1; d<X_max - X_min; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
                            if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
@@ -104,17 +105,17 @@ public class PatternObjective extends ObjectiveCard{
                            flag = 0;
                        }
                        mover.setX(iterable.getX() + d);
-                       mover.setY(iterable.getY() + d);
+                       mover.setY(iterable.getY() - d);
                    }
                    iterable.setX(X_min + x_offset);
+                   flag=0;
                }
+               return points;
 
            } else {//check the direction going to the left
 
-               Coordinates iterable = new Coordinates(X_max, Y_min);
+               Coordinates iterable = new Coordinates(X_max, Y_max);
                ReignType color;
-
-               int flag = 0, points = 0;
 
                if (orientation == 1){
                    color = ReignType.INSECT;
@@ -125,9 +126,9 @@ public class PatternObjective extends ObjectiveCard{
                Coordinates mover = iterable;
 
                //checking the diagonals of the upper part of the board
-               for (int y_offset = 0; y_offset < (Y_max - 2) - Y_min; y_offset++){
+               for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min; y_offset++){
                    mover = iterable;
-                   for (int d = 0; d<Y_max - y_offset; d++) {
+                   for (int d = 1; d<=Y_max - Y_min; d++) {
 
                        if (board.getBoardMap().containsKey(mover)) {
                            if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
@@ -143,22 +144,23 @@ public class PatternObjective extends ObjectiveCard{
                            flag = 0;
                        }
                        mover.setX(iterable.getX() - d);
-                       mover.setY(iterable.getY() + d);
+                       mover.setY(iterable.getY() - d);
                    }
-                   iterable.setY(Y_min+y_offset);
+                   iterable.setY(Y_min-y_offset);
+                   flag=0;
                }
 
                //resetting variables except points
                iterable.setX(X_max - 1);
-               iterable.setY(Y_min);
+               iterable.setY(Y_max);
                flag = 0;
 
                //checking the diagonals of the lower part of the board
-               for (int x_offset = 0; x_offset < (X_max - 1) - (X_min + 2); x_offset++){
+               for (int x_offset = 1; x_offset < (X_max) - (X_min + 2); x_offset++){
 
                    mover = iterable;
 
-                   for (int d = 0; d < (X_max) - x_offset; d++) {
+                   for (int d = 1; d <= (X_max) - X_min; d++) {
 
                        if (board.getBoardMap().containsKey(mover)){
                            if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)){
@@ -174,16 +176,17 @@ public class PatternObjective extends ObjectiveCard{
                            flag = 0;
                        }
                        mover.setX(iterable.getX() - d);
-                       mover.setY(iterable.getY() + d);
+                       mover.setY(iterable.getY() - d);
+                       flag=0;
                    }
-                   iterable.setX(X_min - x_offset);
+                   iterable.setX(X_max - x_offset);
                }
-
+            return points;
            }
 
         } else {//checking the L pattern
-        //filler
 
+            int points=0,flag=0;
 
 
         }
