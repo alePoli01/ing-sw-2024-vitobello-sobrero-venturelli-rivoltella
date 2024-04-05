@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Board {
     private Map<Coordinates, Cell> boardMap;
-    private Player owner;               //owner of the board
+    private final Player owner;               //owner of the board
     private int score;
     private final EnumMap<Resource, Integer> collectedResources;     //counter for each type of object present on the board
     private final Set<Coordinates> availableCells;
@@ -75,11 +75,10 @@ public class Board {
     public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlacedException {
         // if statement for startCard placed in position 50,50 (board center)
         if (cardToPlace instanceof StartCard) {
-            xy.setX(50);
-            xy.setY(50);
+            Coordinates startXY = new Coordinates(50, 50);
             Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-            boardMap.put(xy, newCell);
-            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+            boardMap.put(startXY, newCell);
+            if (!boardMap.get(startXY).getCardPointer().equals(cardToPlace)) {
                 throw new CardNotPlacedException(cardToPlace);
             }
         } else {
