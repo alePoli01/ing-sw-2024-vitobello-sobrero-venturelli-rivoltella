@@ -217,10 +217,10 @@ public class Board {
             }
         } else {
             if (!isFlipped) {
-                // add card played reigns to the board
+                // add card played resource to the board
                 for (Resource resource : cardToPlace.edgeResource) {
                     if (!resource.isNullOrEmpty()) {
-                        collectedResources.put(resource, collectedResources.get(resource) - 1);
+                        collectedResources.put(resource, collectedResources.get(resource) + 1);
                     }
                 }
             } else {
