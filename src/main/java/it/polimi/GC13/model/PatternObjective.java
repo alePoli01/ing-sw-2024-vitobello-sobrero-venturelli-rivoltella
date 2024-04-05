@@ -1,9 +1,10 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.ReignType;
+import it.polimi.GC13.enums.Resource;
 
 //TODO controllare le condizioni dei for
 public class PatternObjective extends ObjectiveCard{
+
     public final boolean diagonal;  //what kind of disposition is required
     public final int orientation; //orientation of the disposition
 
@@ -13,9 +14,6 @@ public class PatternObjective extends ObjectiveCard{
         this.diagonal = diagonal;
         this.orientation = orientation;
     }
-
-
-
 
     @Override
     public int getObjectivePoints(Board board) {
@@ -44,12 +42,12 @@ public class PatternObjective extends ObjectiveCard{
            if (orientation == 0 || orientation == 2) {
 
                Coordinates iterable = new Coordinates(X_min,Y_max);
-               ReignType color;
+               Resource color;
 
                if (orientation == 0) {
-                   color = ReignType.FUNGI;
+                   color = Resource.FUNGI;
                } else {
-                   color = ReignType.ANIMAL;
+                   color = Resource.ANIMAL;
                }
 
                Coordinates mover = iterable;
@@ -110,17 +108,17 @@ public class PatternObjective extends ObjectiveCard{
                    iterable.setX(X_min + x_offset);
                    flag=0;
                }
-               return points;
+               return points*getComboPoints();
 
            } else {//check the direction going to the left
 
                Coordinates iterable = new Coordinates(X_max, Y_max);
-               ReignType color;
+               Resource color;
 
                if (orientation == 1){
-                   color = ReignType.INSECT;
+                   color = Resource.INSECT;
                } else {
-                   color = ReignType.PLANT;
+                   color = Resource.PLANT;
                }
 
                Coordinates mover = iterable;
@@ -181,17 +179,85 @@ public class PatternObjective extends ObjectiveCard{
                    }
                    iterable.setX(X_max - x_offset);
                }
-            return points;
+               return points*getComboPoints();
            }
 
         } else {//checking the L pattern
 
             int points=0,flag=0;
 
+            Resource color = null;
+            Resource colordiagonal = null;
+
+            switch (orientation){
+                case(0):
+                    color=Resource.PLANT;
+                    colordiagonal=Resource.INSECT;
+                case(1):
+                    color=Resource.FUNGI;
+                    colordiagonal=Resource.PLANT;
+                case(2):
+                    color=Resource.ANIMAL;
+                    colordiagonal=Resource.FUNGI;
+                case(3):
+                    color=Resource.INSECT;
+                    colordiagonal=Resource.ANIMAL;
+            }
+
+            Coordinates iterable= new Coordinates(X_min,Y_min);
+            Coordinates mover,moverdiagonal = null;
+
+            for(int x_offset=1;x_offset<X_max-X_min;x_offset++) {
+
+                mover = iterable;
+
+                for (int y_offset=1; y_offset <= (Y_max - Y_min); y_offset++) {
+                    if (board.getBoardMap().containsKey(mover)) {
+                        if (board.getBoardMap().get(mover).getCardPointer().reign.equals(color)) {
+                            flag++;
+                        } else {
+                            flag = 0;
+                        }
+                    } else {
+                        flag = 0;
+                    }
+                    if (flag == 2) {
+                        switch (orientation) {
+                            case (0):
+                                moverdiagonal=mover;
+                                moverdiagonal.setX(mover.getX()-1);
+                                moverdiagonal.setY(mover.getY()+1);
+                            case (1):
+                                moverdiagonal=mover;
+                                moverdiagonal.setX(mover.getX()+1);
+                                moverdiagonal.setY(mover.getY()+1);
+                            case (2):
+                                moverdiagonal=mover;
+                                moverdiagonal.setX(mover.getX()+1);
+                                moverdiagonal.setY(mover.getY()-2);
+                            case (3):
+                                moverdiagonal=mover;
+                                moverdiagonal.setX(mover.getX()-1);
+                                moverdiagonal.setY(mover.getY()-2);
+                        }
+
+                        if(board.getBoardMap().containsKey(moverdiagonal)){
+                            if(board.getBoardMap().get(moverdiagonal).getCardPointer().reign.equals(colordiagonal)){
+                                points++;
+                            }
+                        }
+                        flag=0;
+                    }
+                    mover.setY(iterable.getY()+y_offset);
+                }
+                iterable.setX(X_min+x_offset);
+                flag=0;
+            }
+            return points*getComboPoints();
 
         }
 
-        return getComboPoints();
+
     }
 
  /*

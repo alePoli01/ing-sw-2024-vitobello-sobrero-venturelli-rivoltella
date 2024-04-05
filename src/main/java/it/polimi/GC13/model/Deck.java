@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Deck {
-    private LinkedList<ObjectiveCard> objectiveDeck;
+    private final LinkedList<ObjectiveCard> objectiveDeck;
     private LinkedList<StartCard> startDeck;
     private LinkedList<PlayableCard> resourceDeck;
     private LinkedList<PlayableCard> goldDeck;

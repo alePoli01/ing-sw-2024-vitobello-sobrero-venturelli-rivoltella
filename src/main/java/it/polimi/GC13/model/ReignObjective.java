@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.ReignType;
 import it.polimi.GC13.enums.Resource;
 
 public class ReignObjective extends ObjectiveCard{
