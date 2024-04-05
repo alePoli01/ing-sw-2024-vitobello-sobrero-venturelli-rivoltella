@@ -1,7 +1,7 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.CardType;
-import it.polimi.GC13.enums.ReignType;
+import it.polimi.GC13.enums.Resource;
 import junit.framework.TestCase;
 
 public class DeckTest extends TestCase {
@@ -38,8 +38,10 @@ public class DeckTest extends TestCase {
             System.out.println("Points: " + card.pointsGiven);
 
             if(card.cardType.equals(CardType.GOLD)) {
-                for (ReignType reign : ReignType.values()) {
-                    System.out.println("Resource Needed of "+reign.toString()+": "+ card.resourceNeeded.get(reign));
+                for (Resource reign : Resource.values()) {
+                    if (reign.isReign()) {
+                        System.out.println("Resource Needed of " + reign + ": " + card.resourceNeeded.get(reign));
+                    }
                 }
             }
 
