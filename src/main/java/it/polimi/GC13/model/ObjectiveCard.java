@@ -10,6 +10,10 @@ public abstract class ObjectiveCard {
         this.comboPoints = comboPoints;
     }
 
+    public int getSerialNumber() {
+        return this.serialNumber;
+    }
+
     public int getComboPoints(){
         return this.comboPoints;
     }

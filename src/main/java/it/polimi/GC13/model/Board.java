@@ -19,6 +19,7 @@ public class Board {
     public Board(Player owner) {
         this.owner = owner;
         this.score = 0;
+        this.boardMap=new HashMap<>();
         // populate map with 0 for each reign and object
         collectedResources = new EnumMap<>(Resource.class);
         for (Resource resource : Resource.values()) {
