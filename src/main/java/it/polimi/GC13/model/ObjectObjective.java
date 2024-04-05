@@ -1,16 +1,16 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.EdgeResources;
+import it.polimi.GC13.enums.Resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class ObjectObjective extends ObjectiveCard {
-    public final ArrayList<EdgeResources> object;
+    public final ArrayList<Resource> object;
 
     //prova
-    public ObjectObjective(int serialNumber, int comboPoints, ArrayList<EdgeResources> object) {
+    public ObjectObjective(int serialNumber, int comboPoints, ArrayList<Resource> object) {
         super(serialNumber, comboPoints);
         this.object = new ArrayList<>();//initialize and copy the objects into the card
         this.object.addAll(object);
@@ -18,9 +18,9 @@ public class ObjectObjective extends ObjectiveCard {
 
     public int getObjectivePoints(Board board) {
         int combo;
-        if (this.object.containsAll(Arrays.asList(EdgeResources.values()))) {
+        if (this.object.containsAll(Arrays.asList(Resource.values()))) {
             combo = board.getCollectedResources().get(object.getFirst());//initialize min value
-            for (EdgeResources objectType : EdgeResources.values()) {//check to find true min value
+            for (Resource objectType : Resource.values()) {//check to find true min value
                 if (objectType.isObject()) {
                     if (combo > board.getCollectedResources().get(object.getFirst())) {
                         combo = board.getCollectedResources().get(objectType);//update true min

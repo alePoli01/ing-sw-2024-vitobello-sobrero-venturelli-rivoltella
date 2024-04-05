@@ -11,7 +11,7 @@ public class Board {
     private Map<Coordinates, Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
-    private final EnumMap<EdgeResources, Integer> collectedResources;     //counter for each type of object present on the board
+    private final EnumMap<Resource, Integer> collectedResources;     //counter for each type of object present on the board
     private final Set<Coordinates> availableCells;
     private final Set<Coordinates> notAvailableCells;
 
@@ -20,8 +20,8 @@ public class Board {
         this.owner = owner;
         this.score = 0;
         // populate map with 0 for each reign and object
-        collectedResources = new EnumMap<>(EdgeResources.class);
-        for (EdgeResources resource : EdgeResources.values()) {
+        collectedResources = new EnumMap<>(Resource.class);
+        for (Resource resource : Resource.values()) {
             if (resource.isObject() || resource.isReign()) {
                 collectedResources.put(resource, 0);
             }
@@ -50,13 +50,13 @@ public class Board {
         this.owner = owner;
     }
 
-    public EnumMap<EdgeResources, Integer> getCollectedResources() {
+    public EnumMap<Resource, Integer> getCollectedResources() {
         return this.collectedResources;
     }
 
     // check goldCard has enough resource to be played
     public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailableException {
-        for (EdgeResources reign : EdgeResources.values()) {
+        for (Resource reign : Resource.values()) {
             if (reign.isReign() && collectedResources.get(reign) < cardToPlace.resourceNeeded.get(reign)) {
                 throw new NoResourceAvailableException(reign);
             }
@@ -91,12 +91,12 @@ public class Board {
             int i = 0;
 
             // updates notAvailableCells and availableCells sets
-            for (EdgeResources edgeValue : cardToPlace.edgeResource) {
+            for (Resource edgeValue : cardToPlace.edgeResource) {
                 Coordinates coordinateToCheck;
                 switch (i) {
                     case 0: // bottom-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                        if (!edgeValue.equals(EdgeResources.NULL)) {
+                        if (!edgeValue.equals(Resource.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
                                 availableCells.add(coordinateToCheck);
                             }
@@ -105,7 +105,7 @@ public class Board {
                         }
                     case 1: // bottom-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                        if (!edgeValue.equals(EdgeResources.NULL)) {
+                        if (!edgeValue.equals(Resource.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -114,7 +114,7 @@ public class Board {
                         }
                     case 2: // top-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                        if (!edgeValue.equals(EdgeResources.NULL)) {
+                        if (!edgeValue.equals(Resource.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -123,7 +123,7 @@ public class Board {
                         }
                     case 3: // top-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                        if (!edgeValue.equals(EdgeResources.NULL)) {
+                        if (!edgeValue.equals(Resource.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -183,7 +183,7 @@ public class Board {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
                 if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].isNullOrEmpty())) {
-                    for (EdgeResources resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
+                    for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
                         if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equals(resource)) {
                             if (resource.isReign() || resource.isObject()) {
                                 collectedResources.put(resource, collectedResources.get(resource) - 1);
@@ -206,18 +206,18 @@ public class Board {
         // if statement for start card, else for gold / resources
         if (cardToPlace instanceof StartCard) {
             if (isFlipped) {
-                for (EdgeResources element : ((StartCard) cardToPlace).reignBackPointEdge) {
+                for (Resource element : ((StartCard) cardToPlace).reignBackPointEdge) {
                     collectedResources.put(element, collectedResources.get(element) + 1);
                 }
             } else {
-                for (EdgeResources element : ((StartCard) cardToPlace).frontReigns) {
+                for (Resource element : ((StartCard) cardToPlace).frontReigns) {
                     collectedResources.put(element, collectedResources.get(element) + 1);
                 }
             }
         } else {
             if (!isFlipped) {
                 // add card played reigns to the board
-                for (EdgeResources resource : cardToPlace.edgeResource) {
+                for (Resource resource : cardToPlace.edgeResource) {
                     if (!resource.isNullOrEmpty()) {
                         collectedResources.put(resource, collectedResources.get(resource) - 1);
                     }

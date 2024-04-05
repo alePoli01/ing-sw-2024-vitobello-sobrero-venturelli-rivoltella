@@ -1,6 +1,6 @@
 package it.polimi.GC13.enums;
 
-public enum EdgeResources {
+public enum Resource {
 
     NULL, EMPTY, ANIMAL, FUNGI, INSECT, PLANT, INKWELL, MANUSCRIPT, QUILL;
 
