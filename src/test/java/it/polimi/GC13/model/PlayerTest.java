@@ -2,7 +2,7 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.CardType;
 import it.polimi.GC13.enums.PointsCondition;
-import it.polimi.GC13.enums.ReignType;
+
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardStillOnHandException;
@@ -18,10 +18,10 @@ public class PlayerTest extends TestCase {
 
     //dummy variables to create a playable card
     Resource []a = new Resource[0];
-    Map<ReignType, Integer> resourceNeeded = null;
+    Map<Resource, Integer> resourceNeeded = null;
 
     //create a playable card
-    PlayableCard card=new PlayableCard(1234, ReignType.ANIMAL, CardType.STARTER, a, resourceNeeded, 0, PointsCondition.EDGE);
+    PlayableCard card=new PlayableCard(1234, Resource.ANIMAL, CardType.STARTER, a, resourceNeeded, 0, PointsCondition.EDGE);
 
     public void testAddToHand(){
         //test if card is added to hand
