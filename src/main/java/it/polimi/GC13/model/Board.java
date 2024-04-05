@@ -11,8 +11,7 @@ public class Board {
     private Map<Coordinates, Cell> boardMap;
     private Player owner;               //owner of the board
     private int score;
-    private final EnumMap<ObjectType, Integer> objectsCollected;     //counter for each type of object present on the board
-    private final EnumMap<ReignType, Integer> reignsCollected;  //counter for each type of reigns present on the board
+    private final EnumMap<EdgeResources, Integer> collectedResources;     //counter for each type of object present on the board
     private final Set<Coordinates> availableCells;
     private final Set<Coordinates> notAvailableCells;
 
@@ -21,13 +20,11 @@ public class Board {
         this.owner = owner;
         this.score = 0;
         // populate map with 0 for each reign and object
-        objectsCollected = new EnumMap<>(ObjectType.class);
-        for (ObjectType object : ObjectType.values()) {
-            objectsCollected.put(object, 0);
-        }
-        reignsCollected = new EnumMap<>(ReignType.class);
-        for (ReignType reign : ReignType.values()) {
-            reignsCollected.put(reign, 0);
+        collectedResources = new EnumMap<>(EdgeResources.class);
+        for (EdgeResources resource : EdgeResources.values()) {
+            if (resource.isObject() || resource.isReign()) {
+                collectedResources.put(resource, 0);
+            }
         }
         availableCells = new HashSet<>();
         notAvailableCells = new HashSet<>();
@@ -53,19 +50,15 @@ public class Board {
         this.owner = owner;
     }
 
-    public EnumMap<ObjectType, Integer> getObjectsCollected() {
-        return objectsCollected;
-    }
-
-    public EnumMap<ReignType, Integer> getReignsCollected() {
-        return reignsCollected;
+    public EnumMap<EdgeResources, Integer> getCollectedResources() {
+        return this.collectedResources;
     }
 
     // check goldCard has enough resource to be played
     public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailableException {
-        for (ReignType value : ReignType.values()) {
-            if (reignsCollected.get(value) < cardToPlace.resourceNeeded.get(value)) {
-                throw new NoResourceAvailableException(value);
+        for (EdgeResources reign : EdgeResources.values()) {
+            if (reign.isReign() && collectedResources.get(reign) < cardToPlace.resourceNeeded.get(reign)) {
+                throw new NoResourceAvailableException(reign);
             }
         }
     }
@@ -98,12 +91,12 @@ public class Board {
             int i = 0;
 
             // updates notAvailableCells and availableCells sets
-            for (Resource edgeValue : cardToPlace.edgeResource) {
+            for (EdgeResources edgeValue : cardToPlace.edgeResource) {
                 Coordinates coordinateToCheck;
                 switch (i) {
                     case 0: // bottom-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                        if (!edgeValue.equals(NullEmpty.NULL)) {
+                        if (!edgeValue.equals(EdgeResources.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
                                 availableCells.add(coordinateToCheck);
                             }
@@ -112,7 +105,7 @@ public class Board {
                         }
                     case 1: // bottom-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                        if (!edgeValue.equals(NullEmpty.NULL)) {
+                        if (!edgeValue.equals(EdgeResources.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -121,7 +114,7 @@ public class Board {
                         }
                     case 2: // top-right
                         coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                        if (!edgeValue.equals(NullEmpty.NULL)) {
+                        if (!edgeValue.equals(EdgeResources.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -130,7 +123,7 @@ public class Board {
                         }
                     case 3: // top-left
                         coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                        if (!edgeValue.equals(NullEmpty.NULL)) {
+                        if (!edgeValue.equals(EdgeResources.NULL)) {
                             if (!notAvailableCells.contains(coordinateToCheck)) {
                                 availableCells.add(coordinateToCheck);
                             }
@@ -189,13 +182,11 @@ public class Board {
             if (this.boardMap.containsKey(coordinateToCheck) && (!this.boardMap.get(coordinateToCheck).isFlipped) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
 
                 // determine if a new covered edge has reign or object and in case remove it from availableResources
-                if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equalsAny())) {
-                    for (Resource element : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
-                        if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equals(element)) {
-                            if (element instanceof ReignType) {
-                                reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
-                            } else {
-                                objectsCollected.put((ObjectType) element, objectsCollected.get(element) - 1);
+                if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].isNullOrEmpty())) {
+                    for (EdgeResources resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
+                        if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[counter].equals(resource)) {
+                            if (resource.isReign() || resource.isObject()) {
+                                collectedResources.put(resource, collectedResources.get(resource) - 1);
                             }
                         }
                     }
@@ -215,30 +206,24 @@ public class Board {
         // if statement for start card, else for gold / resources
         if (cardToPlace instanceof StartCard) {
             if (isFlipped) {
-                for (ReignType element : ((StartCard) cardToPlace).reignBackPointEdge) {
-                    reignsCollected.put(element, reignsCollected.get(element) + 1);
+                for (EdgeResources element : ((StartCard) cardToPlace).reignBackPointEdge) {
+                    collectedResources.put(element, collectedResources.get(element) + 1);
                 }
             } else {
-                for (ReignType element : ((StartCard) cardToPlace).frontReigns) {
-                    reignsCollected.put(element, reignsCollected.get(element) + 1);
+                for (EdgeResources element : ((StartCard) cardToPlace).frontReigns) {
+                    collectedResources.put(element, collectedResources.get(element) + 1);
                 }
             }
         } else {
             if (!isFlipped) {
                 // add card played reigns to the board
-                for (Resource resource : cardToPlace.edgeResource) {
-                    if (!resource.equalsAny()) {
-                        for (Resource element : cardToPlace.edgeResource) {
-                            if (element instanceof ReignType) {
-                                reignsCollected.put((ReignType) element, reignsCollected.get(element) - 1);
-                            } else {
-                                objectsCollected.put((ObjectType) element, objectsCollected.get(element) - 1);
-                            }
-                        }
+                for (EdgeResources resource : cardToPlace.edgeResource) {
+                    if (!resource.isNullOrEmpty()) {
+                        collectedResources.put(resource, collectedResources.get(resource) - 1);
                     }
                 }
             } else {
-                reignsCollected.put(cardToPlace.reign, reignsCollected.get(cardToPlace.reign) + 1);
+                collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
             }
         }
     }

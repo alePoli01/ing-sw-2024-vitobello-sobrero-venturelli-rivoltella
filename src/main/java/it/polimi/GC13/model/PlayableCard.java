@@ -6,15 +6,15 @@ import java.util.Map;
 
 public class PlayableCard {
     public final int serialNumber;
-    public final ReignType reign;
+    public final EdgeResources reign;
     public final CardType cardType;
-    public final Resource[] edgeResource;
-    public final Map<ReignType, Integer> resourceNeeded;
+    public final EdgeResources[] edgeResource;
+    public final Map<EdgeResources, Integer> resourceNeeded;
     public final int pointsGiven;
     public final PointsCondition condition;
     private PlayableCard[] linkedCard;
 
-    public PlayableCard(int serialNumber, ReignType reign, CardType cardType, Resource[] edgeResource, Map<ReignType, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
+    public PlayableCard(int serialNumber, EdgeResources reign, CardType cardType, EdgeResources[] edgeResource, Map<EdgeResources, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
         this.serialNumber = serialNumber;
         this.reign = reign;
         this.cardType = cardType;
@@ -28,9 +28,9 @@ public class PlayableCard {
     public int getPointsGiven(Board board, Coordinates xy) {
         if (this.condition != null) {
             return switch (condition) {
-                case QUILL -> board.getObjectsCollected().get(ObjectType.QUILL) * pointsGiven;
-                case MANUSCRIPT -> board.getObjectsCollected().get(ObjectType.MANUSCRIPT) * pointsGiven;
-                case INKWELL -> board.getObjectsCollected().get(ObjectType.INKWELL) * pointsGiven;
+                case QUILL -> board.getCollectedResources().get(EdgeResources.QUILL) * pointsGiven;
+                case MANUSCRIPT -> board.getCollectedResources().get(EdgeResources.MANUSCRIPT) * pointsGiven;
+                case INKWELL -> board.getCollectedResources().get(EdgeResources.INKWELL) * pointsGiven;
                 case EDGE -> board.surroundingCardsNumber(xy) * pointsGiven;
             };
         } else {

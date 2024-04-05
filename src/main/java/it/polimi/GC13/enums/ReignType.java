@@ -1,10 +1,6 @@
 package it.polimi.GC13.enums;
 
-public enum ReignType implements Resource{
+public enum ReignType {
     ANIMAL, FUNGI, INSECT, PLANT;
 
-    @Override
-    public boolean equalsAny() {
-        return false;
-    }
 }

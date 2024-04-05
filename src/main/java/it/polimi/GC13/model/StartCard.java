@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.ArrayList;
 
 public class StartCard extends PlayableCard {
-    public final ArrayList<ReignType> frontReigns;
-    public final ReignType[] reignBackPointEdge;
+    public final ArrayList<EdgeResources> frontReigns;
+    public final EdgeResources[] reignBackPointEdge;
 
 
-    public StartCard(int serialNumber, ReignType reign, CardType cardType, Resource[] resourceEdge, Map<ReignType, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, ArrayList<ReignType> frontReigns, ReignType[] reignBackPointEdge) {
-        super(serialNumber, reign, cardType, resourceEdge, resourceNeeded, pointsGiven, condition);
+    public StartCard(int serialNumber, EdgeResources reign, CardType cardType, EdgeResources[] edgeResource, Map<EdgeResources, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, ArrayList<EdgeResources> frontReigns, EdgeResources[] reignBackPointEdge) {
+        super(serialNumber, reign, cardType, edgeResource, resourceNeeded, pointsGiven, condition);
         this.frontReigns = frontReigns;
         this.reignBackPointEdge = reignBackPointEdge;
     }

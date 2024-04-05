@@ -1,7 +1,9 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.controller.gameStateController.GamePhase;
+import it.polimi.GC13.controller.gameStateController.JoiningPhase;
 import it.polimi.GC13.enums.GameState;
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
@@ -9,10 +11,6 @@ import it.polimi.GC13.exception.PlayerNotAddedException;
 import java.util.*;
 
 public class Game {
-
-    /*TODO: controllare chi usa GameState(controll o model?)
-            capire se ci deve essere un attributo che rappresenta in quale GameState sono
-    */
     private GameState gameState;
     private final Deck deck;
     private final Table table;
@@ -22,7 +20,7 @@ public class Game {
     private int round;
 
     public Game(Player player, int numPlayer) {
-        this.gameState = GameState.CREATION;
+        this.gameState = GameState.JOINING;
         this.table = new Table();
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>(){{add(player);}};
@@ -31,12 +29,12 @@ public class Game {
         this.round = 0;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public void setGameState(GameState newState) {
+        this.gameState = newState;
     }
 
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
+    public GameState getGameState() {
+        return this.gameState;
     }
 
     public Deck getDeck() {
@@ -94,14 +92,6 @@ public class Game {
             if (!this.playerList.contains(player)) {
                 throw new PlayerNotAddedException(player);
             }
-        }
-    }
-
-    // update gameStatus given current status
-    public void updateGameStatus() {
-        switch (this.getGameState()) {
-            case CREATION -> this.setGameState(GameState.TABLE_SETUP);
-            case DEALING_PHASE -> this.setGameState(GameState.START);
         }
     }
 

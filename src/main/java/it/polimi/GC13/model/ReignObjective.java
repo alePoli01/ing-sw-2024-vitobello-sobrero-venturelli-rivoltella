@@ -27,7 +27,7 @@ public class ReignObjective extends ObjectiveCard{
 
     @Override
     public int getObjectivePoints(Board board) {
-        int combo = board.getReignsCollected().get(type)/3; //calculate how many times the obj. has been satisfied
+        int combo = board.getCollectedResources().get(type)/3; //calculate how many times the obj. has been satisfied
         return combo * getComboPoints();
     }
     //constructor
