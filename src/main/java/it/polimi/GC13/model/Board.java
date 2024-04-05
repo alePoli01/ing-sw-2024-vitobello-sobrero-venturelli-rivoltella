@@ -47,10 +47,6 @@ public class Board {
         return owner;
     }
 
-    public void setOwner(Player owner) {
-        this.owner = owner;
-    }
-
     public EnumMap<Resource, Integer> getCollectedResources() {
         return this.collectedResources;
     }
@@ -218,7 +214,7 @@ public class Board {
             if (!isFlipped) {
                 // add card played resource to the board
                 for (Resource resource : cardToPlace.edgeResource) {
-                    if (!resource.isNullOrEmpty()) {
+                    if (resource.isObject() || resource.isReign()) {
                         collectedResources.put(resource, collectedResources.get(resource) + 1);
                     }
                 }

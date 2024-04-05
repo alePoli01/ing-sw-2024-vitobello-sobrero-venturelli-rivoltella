@@ -14,6 +14,6 @@ public enum Resource {
     }
 
     public boolean isObject() {
-        return (this.equals(ANIMAL) || this.equals(FUNGI) || this.equals(INSECT) || this.equals(PLANT));
+        return (this.equals(INKWELL) || this.equals(MANUSCRIPT) || this.equals(QUILL));
     }
 }
