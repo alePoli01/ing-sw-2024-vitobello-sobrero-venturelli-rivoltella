@@ -223,4 +223,21 @@ public class Board {
             }
         }
     }
+    public boolean containskeyofvalue(int x,int y){
+        for(Coordinates xy : this.getBoardMap().keySet()){
+            if(xy.getX()==x && xy.getY()==y){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Coordinates get(int x,int y){
+        for(Coordinates xy : this.getBoardMap().keySet()){
+            if(xy.getX()==x && xy.getY()==y){
+                return xy;
+            }
+        }
+        return null;
+    }
 }

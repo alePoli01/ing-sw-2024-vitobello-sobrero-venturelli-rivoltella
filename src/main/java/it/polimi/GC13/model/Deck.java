@@ -22,6 +22,8 @@ public class Deck {
         this.startDeck = new LinkedList<>();
         this.resourceDeck = new LinkedList<>();
         this.goldDeck = new LinkedList<>();
+        this.parseJSON();
+        //this.shuffleDecks();
     }
 
     public LinkedList<PlayableCard> getResourceDeck() {

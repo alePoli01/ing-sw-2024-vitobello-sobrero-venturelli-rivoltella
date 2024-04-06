@@ -21,7 +21,7 @@ public class SetupPhase implements GamePhase {
     @Override
     public void prepareTable(Game game) throws CardNotAddedToHandException {
         try {
-            game.getDeck().shuffleDecks();
+
             game.getTable().tableSetup();
             game.giveStartCard();
             /*
