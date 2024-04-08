@@ -14,7 +14,6 @@ public PatternObjective(int serialNumber, int comboPoints, boolean diagonal, int
     this.orientation = orientation;
 }
 
-@Override
 public int getObjectivePoints(Board board) {
 
     int X_max = 50, X_min = 50, Y_max = 50, Y_min = 50;

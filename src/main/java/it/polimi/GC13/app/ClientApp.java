@@ -2,7 +2,9 @@ package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.rmi.RMIClient;
+import it.polimi.GC13.view.login.LoginFrame;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,11 +18,12 @@ public class ClientApp {
         int choice = 0;
 
         do {
-            System.out.println("Chose the connection \n[1] RMI\n[2] SOCKET");
+            System.out.println("Chose the connection \n[1] RMI\n[2] SOCKET \nYour choice: ");
             try {
                 choice = Integer.parseInt(reader.readLine());
+
                 if (choice == 1) {
-                    System.out.println("Chose a nickname");
+                    //System.out.println("Chose a nickname");
                     ClientInterface client = new RMIClient(reader.readLine());
                     try {
                         ((RMIClient) client).startRMIConnection();
@@ -29,8 +32,13 @@ public class ClientApp {
                         System.out.println("Binding with server failed");
                     }
                 } else if (choice == 2) {
-                    System.out.println("Chose a nickname");
+                    //System.out.println("Chose a nickname");
+                    System.out.println("You chose Socket!");
                     // socket
+
+
+
+
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Invalid value!");
@@ -38,6 +46,27 @@ public class ClientApp {
         } while (choice == 1 || choice == 2);
 
 
+
+
+
+        do {
+            System.out.println("Chose the interface \n[1] TUI\n[2] GUI \nYour choice: ");
+            try {
+                choice = Integer.parseInt(reader.readLine());
+                if (choice == 1) {
+                    //System.out.println("Chose a nickname");
+                    //TUI interface configuration
+
+                } else if (choice == 2) {
+                    //SwingUtilities.invokeLater(LoginFrame::new); //non so se si inserisce qui
+
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid value!");
+            }
+        } while (choice == 1 || choice == 2);
+
+        //SwingUtilities.invokeLater(LoginFrame::new); //serve per far partire il frame della GUI
 
     }
 }
