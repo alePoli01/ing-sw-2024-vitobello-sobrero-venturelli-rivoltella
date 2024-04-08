@@ -2,6 +2,7 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.CardType;
 import it.polimi.GC13.enums.GameState;
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
@@ -11,6 +12,12 @@ public class MidPhase implements GamePhase {
 
     public MidPhase(Controller controller) {
         this.controller = controller;
+        // set first player to play
+        for (Player player : this.controller.getGame().getPlayerList()) {
+            if (player.getPosition().equals(Position.FIRST)) {
+                player.setMyTurn(true);
+            }
+        }
     }
 
     @Override
