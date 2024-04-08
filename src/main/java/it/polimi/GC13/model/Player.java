@@ -57,8 +57,8 @@ public class Player {
         return turnPlayed;
     }
 
-    public void setTurnPlayed(int turnPlayed) {
-        this.turnPlayed = turnPlayed;
+    public void increaseTurnPlayed() {
+        this.turnPlayed += 1;
     }
 
     public Game getGame() {

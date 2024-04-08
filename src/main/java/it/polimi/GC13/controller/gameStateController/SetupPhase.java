@@ -8,27 +8,17 @@ import it.polimi.GC13.model.*;
 
 public class SetupPhase implements GamePhase {
 
-    @Override
-    public void updateState(Game game) {
-        game.setGameState(GameState.DEALING_CARDS);
-    }
+    private final Controller controller;
 
-    @Override
-    public void startGame(Game game) throws CardNotAddedToHandException {
-        System.out.println("Prepare Table first");
+    public SetupPhase(Controller controller) {
+        this.controller = controller;
     }
 
     @Override
     public void prepareTable(Game game) throws CardNotAddedToHandException {
         try {
-
             game.getTable().tableSetup();
             game.giveStartCard();
-            /*
-                TODO capire come passare a dealing phase solo quando la start card è stata posizionata
-             */
-            this.updateState(game);
-
         } catch (CardNotAddedToHandException e){
             System.out.println(e.getMessage());
         }
@@ -39,10 +29,20 @@ public class SetupPhase implements GamePhase {
         try {
             player.getBoard().addCardToBoard(null, cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
-            this.updateState(player.getGame());
+            nextPhaseChecker(player);
         } catch (CardNotPlacedException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    // check that all players in the same game positioned the start card
+    public boolean playersPlacedStartCard(Player player) {
+        for (Player element : player.getGame().getPlayerList()) {
+            if (!element.getBoard().containskeyofvalue(50, 50)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -51,22 +51,53 @@ public class SetupPhase implements GamePhase {
             if (player.getGame().getTable().getTokenColors().contains(token)) {
                 player.setToken(token);
                 player.getTable().getTokenColors().remove(token);
+                nextPhaseChecker(player);
             }
         }
     }
 
+    // check that all players in the same game chose a token
+    public boolean playersChoseToken(Player player) {
+        for (Player element : player.getGame().getPlayerList()) {
+            if (element.getToken().describeConstable().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    // check if conditions to next phase are met, if so it updates the Controller
+    public void nextPhaseChecker(Player player){
+        if (playersChoseToken(player) && playersPlacedStartCard(player)) {
+            this.controller.updateController(new DealingPhase(this.controller));
+            this.controller.getGame().setGameState(GameState.DEALING_CARDS);
+        }
+    }
+
+    @Override
+    public void dealCards() throws CardNotAddedToHandException {
+        System.out.println("Prepare Table first");
+    }
+
     @Override
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
-
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     @Override
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
-
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     @Override
     public void choosePrivateObjective(Player player, ObjectiveCard card) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
 
+    @Override
+    public boolean addPlayerToExistingGame(Player player, Game existingGame) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        return false;
     }
 }

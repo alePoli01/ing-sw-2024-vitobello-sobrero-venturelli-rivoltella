@@ -1,7 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.controller.gameStateController.GamePhase;
-import it.polimi.GC13.controller.gameStateController.JoiningPhase;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
@@ -17,7 +15,7 @@ public class Game {
     public final int numPlayer;
     private int currNumPlayer;
     private final List<Player> playerList;
-    private int round;
+    private int lastRound;
 
     public Game(Player player, int numPlayer) {
         this.gameState = GameState.JOINING;
@@ -26,7 +24,6 @@ public class Game {
         this.playerList = new ArrayList<>(){{add(player);}};
         this.deck = new Deck();
         this.currNumPlayer = 1;
-        this.round = 0;
     }
 
     public void setGameState(GameState newState) {
@@ -47,6 +44,10 @@ public class Game {
 
     public int getCurrNumPlayer() {
         return currNumPlayer;
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
     }
 
     // give firsts 3 cards and start card to each player
@@ -81,13 +82,30 @@ public class Game {
         }
     }
 
-    public void totalRound(int round) {
-        this.round += 1;
+    // updates players turn at the end of every round
+    public void setPlayerTurn(Player player) {
+        int index = this.playerList.indexOf(player);
+        if (index == 3) {
+            this.playerList.getFirst().setMyTurn(true);
+        } else {
+            this.playerList.get(index + 1).setMyTurn(true);
+        }
     }
 
+    // sets game's last round
+    public void setLastRound(Player player) {
+        this.lastRound = player.getTurnPlayed() + 1;
+    }
+
+    public int getLastRound() {
+        return this.lastRound;
+    }
+
+    // add the selected player to the game
     public void addPlayerToGame(Player player) throws PlayerNotAddedException {
         if (currNumPlayer < numPlayer) {
             this.playerList.add(player);
+            player.setGame(this);
             currNumPlayer++;
             if (!this.playerList.contains(player)) {
                 throw new PlayerNotAddedException(player);

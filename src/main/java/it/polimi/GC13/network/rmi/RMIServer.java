@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Server;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -31,7 +32,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
     }
 
     @Override
-    public void createGame(ClientInterface client) throws IOException {
+    public void createGame(ClientInterface client) throws IOException, PlayerNotAddedException {
         this.server.getLobbyController().addPlayerToGame(client.getPlayer());
     }
 

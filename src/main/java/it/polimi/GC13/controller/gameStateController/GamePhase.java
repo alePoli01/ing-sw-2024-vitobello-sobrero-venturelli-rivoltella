@@ -1,8 +1,8 @@
 package it.polimi.GC13.controller.gameStateController;
 
-import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 
 public interface GamePhase {
@@ -22,11 +22,12 @@ public interface GamePhase {
     // draw resource / gold card
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
-    void updateState(Game game);
-
     // second game phase, deal resource and gold cards to all players after start card is placed
-    void startGame(Game game) throws CardNotAddedToHandException;
+    void dealCards() throws CardNotAddedToHandException;
 
     // deal start card to all players in the selected game
     void prepareTable(Game game) throws CardNotAddedToHandException;
+
+    // add player to an existing game
+    boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException;
 }

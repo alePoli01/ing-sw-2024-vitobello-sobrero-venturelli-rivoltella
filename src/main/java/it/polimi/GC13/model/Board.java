@@ -10,7 +10,7 @@ import java.util.*;
 public class Board {
     private Map<Coordinates, Cell> boardMap;
     private final Player owner;               //owner of the board
-    private int score;
+    private int playerScore;
     private final EnumMap<Resource, Integer> collectedResources;     //counter for each type of object present on the board
     private final Set<Coordinates> availableCells;
     private final Set<Coordinates> notAvailableCells;
@@ -18,7 +18,7 @@ public class Board {
     //initialize all the values to zero
     public Board(Player owner) {
         this.owner = owner;
-        this.score = 0;
+        this.playerScore = 0;
         this.boardMap=new HashMap<>();
         // populate map with 0 for each reign and object
         collectedResources = new EnumMap<>(Resource.class);
@@ -35,12 +35,12 @@ public class Board {
         return boardMap;
     }
 
-    public int getScore() {
-        return score;
+    public int getPlayerScore() {
+        return playerScore;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setPlayerScore(int playerScore) {
+        this.playerScore = playerScore;
     }
 
     public Player getOwner() {
