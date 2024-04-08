@@ -32,9 +32,6 @@ public int getObjectivePoints(Board board) {
         if (xy.getY() < Y_min) {
             Y_min = xy.getY();
         }
-        if (board.getBoardMap().containsKey(xy)) {
-            System.out.println(board.getBoardMap().get(xy).getCardPointer().serialNumber);
-        }
     }
 
 
@@ -57,7 +54,7 @@ public int getObjectivePoints(Board board) {
             Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
 
             //checking the diagonals of the upper part of the board
-            for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min; y_offset++) {
+            for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min+1; y_offset++) {
 
                 mover.setX(iterable.getX());
                 mover.setY(iterable.getY());
@@ -207,32 +204,53 @@ public int getObjectivePoints(Board board) {
             case (0):
                 color = Resource.PLANT;
                 colordiagonal = Resource.INSECT;
+                break;
             case (1):
                 color = Resource.FUNGI;
                 colordiagonal = Resource.PLANT;
+                break;
             case (2):
                 color = Resource.ANIMAL;
                 colordiagonal = Resource.FUNGI;
+                break;
             case (3):
                 color = Resource.INSECT;
                 colordiagonal = Resource.ANIMAL;
+                break;
         }
-
+        System.out.println(color);
+        System.out.println(colordiagonal);
         Coordinates iterable = new Coordinates(X_min, Y_min);
         Coordinates mover=new Coordinates(iterable.getX(), iterable.getY());
         Coordinates moverdiagonal = new Coordinates(iterable.getX(), iterable.getY());
 
-        for (int x_offset = 1; x_offset < X_max - X_min; x_offset++) {
-
+        for (int x_offset = 1; x_offset <= X_max - X_min; x_offset++) {
+            
             mover.setX(iterable.getX());
-            mover.setY(iterable.getY());
-
-            for (int y_offset = 1; y_offset <= (Y_max - Y_min); y_offset++) {
+            if(iterable.getY()%2==0) {
+                if (mover.getX() % 2 == 0) {
+                    //System.out.println("A");
+                    mover.setY(iterable.getY());
+                } else {
+                    //System.out.println("B");
+                    mover.setY(iterable.getY() + 1);
+                }
+            }else{
+                if (mover.getX() % 2 != 0) {
+                    //System.out.println("C");
+                    mover.setY(iterable.getY());
+                } else {
+                    //System.out.println("D");
+                    mover.setY(iterable.getY() + 1);
+                }
+            }
+            //System.out.println(mover.getX()+" "+ mover.getY());
+            for (int y_offset = 2; y_offset <= (Y_max - Y_min)+1; y_offset=y_offset+2) {
 
                 if (board.containskeyofvalue(mover.getX(), mover.getY())) {
-
                     if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                         flag++;
+                        //System.out.println(flag);
                     } else {
                         flag = 0;
                     }
@@ -244,17 +262,21 @@ public int getObjectivePoints(Board board) {
                         case (0):
                             moverdiagonal.setX(mover.getX() - 1);
                             moverdiagonal.setY(mover.getY() + 1);
+                            break;
                         case (1):
                             moverdiagonal.setX(mover.getX() + 1);
                             moverdiagonal.setY(mover.getY() + 1);
+                            break;
                         case (2):
                             moverdiagonal.setX(mover.getX() + 1);
-                            moverdiagonal.setY(mover.getY() - 2);
+                            moverdiagonal.setY(mover.getY() - 3);
+                            break;
                         case (3):
                             moverdiagonal.setX(mover.getX() - 1);
-                            moverdiagonal.setY(mover.getY() - 2);
+                            moverdiagonal.setY(mover.getY() - 3);
+                            break;
                     }
-
+                    //System.out.println(moverdiagonal.getX()+" "+ moverdiagonal.getY());
                     if (board.containskeyofvalue(moverdiagonal.getX(), moverdiagonal.getY())) {
                         if (board.getBoardMap().get(board.get(moverdiagonal.getX(), moverdiagonal.getY())).getCardPointer().reign.equals(colordiagonal)) {
                             points++;
@@ -262,9 +284,26 @@ public int getObjectivePoints(Board board) {
                     }
                     flag = 0;
                 }
-                mover.setY(iterable.getY() + y_offset);
+                if(iterable.getY()%2==0) {
+                    if (mover.getX() % 2 == 0) {
+                        mover.setY(iterable.getY() + y_offset);
+                    }else{
+                        mover.setY(iterable.getY() + y_offset+1);
+                    }
+                }
+                else{
+                    //System.out.println("ciao");
+                    if (mover.getX() % 2 == 0){
+                    mover.setY(iterable.getY() + y_offset+1);
+                    }else{
+                        mover.setY(iterable.getY() + y_offset);
+                    }
+
+                }
+                //System.out.println(mover.getX()+" "+ mover.getY());
             }
             iterable.setX(X_min + x_offset);
+            //System.out.println("---------------");
             flag = 0;
         }
         return points * getComboPoints();

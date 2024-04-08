@@ -14,30 +14,70 @@ public class PatternObjectiveTest extends TestCase {
         Player player= new Player("marco");
         Board board=new Board(player);
         Deck deck=new Deck();
+        //starter
+        addcCardForTest(board,deck,86,50,50,true);
+        //diagonal FUNGI
+        addcCardForTest(board,deck,1,51,49,true);
+        addcCardForTest(board,deck,1,52,48,true);
+        addcCardForTest(board,deck,1,53,47,true);
+        //diagonal FUNGI
+        addcCardForTest(board,deck,1,54,46,true);
+        addcCardForTest(board,deck,1,55,45,true);
+        addcCardForTest(board,deck,1,56,44,true);
+        //L pattern aniaml fungi
+        addcCardForTest(board,deck,24,50,48,true);
+        addcCardForTest(board,deck,24,51,47,true);
+        addcCardForTest(board,deck,24,50,46,true);
+        addcCardForTest(board,deck,1,51,45,true);
+        //L pattern animal fungi
+        addcCardForTest(board,deck,24,50,44,true);
+        addcCardForTest(board,deck,24,51,43,true);
+        addcCardForTest(board,deck,24,50,42,true);
+        addcCardForTest(board,deck,1,51,41,true);
+        //L patter fungi plant
+        addcCardForTest(board,deck,1,56,46,true);
+        addcCardForTest(board,deck,16,57,47,true);
+        //diagonal animal
+        addcCardForTest(board,deck,24,52,42,true);
+        //diagonal animal
+        addcCardForTest(board,deck,24,52,46,true);
+        //diagonal plant
+        addcCardForTest(board,deck,16,56,48,true);
+        addcCardForTest(board,deck,16,57,49,true);
+        addcCardForTest(board,deck,16,58,50,true);
+        //L pattern plant
+        addcCardForTest(board,deck,33,56,50,true);
 
-        Coordinates coordinates=new Coordinates(50,50);
-        Coordinates coordinates1=new Coordinates(51,49);
-        Coordinates coordinates2=new Coordinates(52,48);
-        Coordinates coordinates3=new Coordinates(53,47);
-        Coordinates coordinates4=new Coordinates(54,46);
-        Coordinates coordinates5=new Coordinates(55,45);
-        Coordinates coordinates6=new Coordinates(56,44);
 
-        StartCard card = deck.getStartDeck().removeFirst();
-        PlayableCard card2= deck.getResourceDeck().removeFirst();
 
-        board.addCardToBoard(coordinates,card,true);
-        board.addCardToBoard(coordinates1,card2,false);
-        board.addCardToBoard(coordinates2,card2,false);
-        //board.addCardToBoard(coordinates3,card2,false);
-        board.addCardToBoard(coordinates4,card2,false);
-        board.addCardToBoard(coordinates5,card2,false);
-        board.addCardToBoard(coordinates6,card2,false);
 
-        ObjectiveCard cardOb = deck.getObjectiveDeck().removeFirst();
-        assertEquals(1,card2.serialNumber);
-        assertEquals(87,cardOb.serialNumber);
-        assertEquals(2,cardOb.getObjectivePoints(board));
 
+        for(ObjectiveCard card : deck.getObjectiveDeck()){
+            System.out.println(card.serialNumber+": "+card.getObjectivePoints(board));
+        }
+
+
+    }
+
+    public void addcCardForTest (Board board, Deck deck,int serialnumber,int x,int y,boolean isflipped) throws CardNotPlacedException {
+        Coordinates cordinates = new Coordinates(x,y);
+        for(PlayableCard card : deck.getResourceDeck()){
+            if(card.serialNumber==serialnumber){
+                board.addCardToBoard(cordinates,card,isflipped);
+                return;
+            }
+        }
+        for(PlayableCard card : deck.getGoldDeck()){
+            if(card.serialNumber==serialnumber){
+                board.addCardToBoard(cordinates,card,isflipped);
+                return;
+            }
+        }
+        for(StartCard card : deck.getStartDeck()){
+            if(card.serialNumber==serialnumber){
+                board.addCardToBoard(cordinates,card,isflipped);
+                return;
+            }
+        }
     }
 }

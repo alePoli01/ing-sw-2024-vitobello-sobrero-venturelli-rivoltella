@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 import java.rmi.NotBoundException;
 
-public class ClientApp {
+public class  ClientApp {
     public static void main( String[] args ) throws IOException {
         System.out.println("Hello from Client");
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
