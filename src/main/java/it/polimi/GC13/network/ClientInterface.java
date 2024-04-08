@@ -1,5 +1,6 @@
 package it.polimi.GC13.network;
 
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Player;
 
 import java.io.IOException;
@@ -11,5 +12,5 @@ public interface ClientInterface extends Remote {
 
     Player getPlayer();
 
-    void startRMIConnection() throws IOException, NotBoundException;
+    void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
 }

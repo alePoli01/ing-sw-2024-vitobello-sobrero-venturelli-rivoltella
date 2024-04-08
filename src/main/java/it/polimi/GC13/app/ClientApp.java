@@ -1,5 +1,6 @@
 package it.polimi.GC13.app;
 
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.rmi.RMIClient;
 import it.polimi.GC13.view.login.LoginFrame;
@@ -30,6 +31,8 @@ public class  ClientApp {
                         System.out.println("You chose RMI!");
                     } catch (NotBoundException e) {
                         System.out.println("Binding with server failed");
+                    } catch (PlayerNotAddedException e) {
+                        System.out.println(e.getMessage());
                     }
                 } else if (choice == 2) {
                     //System.out.println("Chose a nickname");

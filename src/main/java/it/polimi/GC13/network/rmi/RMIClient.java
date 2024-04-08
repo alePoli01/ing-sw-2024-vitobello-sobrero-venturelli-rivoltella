@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
+import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -24,7 +25,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
-    public void startRMIConnection() throws IOException, NotBoundException {
+    public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
         Registry registry;
         registry = LocateRegistry.getRegistry("127.0.0.1", 1234);
         this.rmiServer = (RMIServerInterface) registry.lookup("server");
