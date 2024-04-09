@@ -131,12 +131,12 @@ public int getObjectivePoints(Board board) {
             Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
 
             //checking the diagonals of the upper part of the board
-            for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min; y_offset++) {
+            for (int y_offset = 1; y_offset <= (Y_max - 2) - Y_min+1; y_offset++) {
 
                 mover.setX(iterable.getX());
                 mover.setY(iterable.getY());
 
-                for (int d = 1; d <= Y_max - Y_min; d++) {
+                for (int d = 1; d <= (Y_max - Y_min)+1; d++) {
 
                     if (board.containskeyofvalue(mover.getX(), mover.getY())) {
                         if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
@@ -154,7 +154,7 @@ public int getObjectivePoints(Board board) {
                     mover.setX(iterable.getX() - d);
                     mover.setY(iterable.getY() - d);
                 }
-                iterable.setY(Y_min - y_offset);
+                iterable.setY(Y_max - y_offset);
                 flag = 0;
             }
 
@@ -164,12 +164,12 @@ public int getObjectivePoints(Board board) {
             flag = 0;
 
             //checking the diagonals of the lower part of the board
-            for (int x_offset = 1; x_offset < (X_max) - (X_min + 2); x_offset++) {
+            for (int x_offset = 1; x_offset <= (X_max) - (X_min + 2)+1; x_offset++) {
 
                 mover.setX(iterable.getX());
                 mover.setY(iterable.getY());
 
-                for (int d = 1; d <= (X_max) - X_min; d++) {
+                for (int d = 1; d <= (X_max - X_min)+1; d++) {
 
                     if (board.containskeyofvalue(mover.getX(), mover.getY())) {
                         if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
@@ -218,13 +218,12 @@ public int getObjectivePoints(Board board) {
                 colordiagonal = Resource.ANIMAL;
                 break;
         }
-        System.out.println(color);
-        System.out.println(colordiagonal);
+
         Coordinates iterable = new Coordinates(X_min, Y_min);
         Coordinates mover=new Coordinates(iterable.getX(), iterable.getY());
         Coordinates moverdiagonal = new Coordinates(iterable.getX(), iterable.getY());
 
-        for (int x_offset = 1; x_offset <= X_max - X_min; x_offset++) {
+        for (int x_offset = 1; x_offset <= (X_max - X_min)+1; x_offset++) {
             
             mover.setX(iterable.getX());
             if(iterable.getY()%2==0) {
@@ -244,13 +243,12 @@ public int getObjectivePoints(Board board) {
                     mover.setY(iterable.getY() + 1);
                 }
             }
-            //System.out.println(mover.getX()+" "+ mover.getY());
+            //ystem.out.println(mover.getX()+" "+ mover.getY());
             for (int y_offset = 2; y_offset <= (Y_max - Y_min)+1; y_offset=y_offset+2) {
 
                 if (board.containskeyofvalue(mover.getX(), mover.getY())) {
                     if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                         flag++;
-                        //System.out.println(flag);
                     } else {
                         flag = 0;
                     }
@@ -284,6 +282,7 @@ public int getObjectivePoints(Board board) {
                     }
                     flag = 0;
                 }
+
                 if(iterable.getY()%2==0) {
                     if (mover.getX() % 2 == 0) {
                         mover.setY(iterable.getY() + y_offset);

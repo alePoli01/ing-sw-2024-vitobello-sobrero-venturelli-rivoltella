@@ -47,13 +47,28 @@ public class PatternObjectiveTest extends TestCase {
         addcCardForTest(board,deck,16,58,50,true);
         //L pattern plant
         addcCardForTest(board,deck,33,56,50,true);
-
-
-
-
+        //diagonal insect
+        addcCardForTest(board,deck,33,57,51,true);
+        addcCardForTest(board,deck,33,55,49,true);
+        //diagonal animal
+        addcCardForTest(board,deck,24,49,51,true);
+        addcCardForTest(board,deck,24,48,52,true);
+        addcCardForTest(board,deck,24,47,53,true);
+        //L pattern plant insect
+        addcCardForTest(board,deck,16,58,48,true);
+        //L pattern insect animal
+        addcCardForTest(board,deck,33,49,41,true);
+        addcCardForTest(board,deck,33,48,40,true);
+        addcCardForTest(board,deck,33,49,39,true);
+        addcCardForTest(board,deck,24,48,38,true);
 
         for(ObjectiveCard card : deck.getObjectiveDeck()){
-            System.out.println(card.serialNumber+": "+card.getObjectivePoints(board));
+            if(card instanceof PatternObjective){
+                System.out.println(((PatternObjective) card).orientation+" "+((PatternObjective) card).diagonal);
+                System.out.println(card.serialNumber+": "+card.getObjectivePoints(board));
+            }
+
+
         }
 
 
