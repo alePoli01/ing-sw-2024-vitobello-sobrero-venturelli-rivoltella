@@ -20,7 +20,6 @@ public class MidPhase implements GamePhase {
         }
     }
 
-    @Override
     //controller gets object from network, then calls the method accordingly
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         Board board = player.getBoard();
@@ -75,7 +74,6 @@ public class MidPhase implements GamePhase {
         }
     }
 
-    @Override
     // draw resource / gold card
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         try {
@@ -100,34 +98,28 @@ public class MidPhase implements GamePhase {
             System.out.println(e.getMessage());
         }
     }
-
-    @Override
+    
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Token already chosen");
     }
 
-    @Override
     // player chooses his objective card
     public void choosePrivateObjective(Player player, ObjectiveCard card) {
         System.out.println("You cannot change your objective card");
     }
 
-    @Override
     public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
         System.out.println("You cannot replace the start card");
     }
-
-    @Override
+    
     public void dealCards() throws CardNotAddedToHandException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void prepareTable(Game game) throws CardNotAddedToHandException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public boolean addPlayerToExistingGame(Player player, Game existingGame) {
         return false;
     }

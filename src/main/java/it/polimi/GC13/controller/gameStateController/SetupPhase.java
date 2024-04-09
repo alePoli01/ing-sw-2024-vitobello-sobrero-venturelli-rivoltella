@@ -13,8 +13,7 @@ public class SetupPhase implements GamePhase {
     public SetupPhase(Controller controller) {
         this.controller = controller;
     }
-
-    @Override
+    
     public void prepareTable(Game game) throws CardNotAddedToHandException {
         try {
             game.getTable().tableSetup();
@@ -24,7 +23,6 @@ public class SetupPhase implements GamePhase {
         }
     }
 
-    @Override
     public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
         try {
             player.getBoard().addCardToBoard(null, cardToPlace, isFlipped);
@@ -45,7 +43,6 @@ public class SetupPhase implements GamePhase {
         return true;
     }
 
-    @Override
     public void chooseToken(Player player, TokenColor token) {
         if (player.getToken().describeConstable().isEmpty()) {
             if (player.getGame().getTable().getTokenColors().contains(token)) {
@@ -66,7 +63,6 @@ public class SetupPhase implements GamePhase {
         return true;
     }
 
-
     // check if conditions to next phase are met, if so it updates the Controller
     public void nextPhaseChecker(Player player){
         if (playersChoseToken(player) && playersPlacedStartCard(player)) {
@@ -75,27 +71,22 @@ public class SetupPhase implements GamePhase {
         }
     }
 
-    @Override
     public void dealCards() throws CardNotAddedToHandException {
         System.out.println("Prepare Table first");
     }
 
-    @Override
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void choosePrivateObjective(Player player, ObjectiveCard card) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public boolean addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
         return false;
