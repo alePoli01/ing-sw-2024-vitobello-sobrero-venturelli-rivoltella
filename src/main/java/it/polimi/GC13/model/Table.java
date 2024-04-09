@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import com.google.gson.reflect.TypeToken;
 import it.polimi.GC13.enums.CardType;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
@@ -33,7 +32,8 @@ public class Table {
     }
 
     /*
-           DA DISCUTERE
+    TODO: tableSetup potrebbe essere sostituito con getNewCard(chiamato più volte)?
+    DA DISCUTERE:
         return score of the player of position index
         public int getScore(int index) {
             return score[index];
@@ -59,6 +59,22 @@ public class Table {
         return this.deck;
     }
 
+    public PlayableCard[] getResourceFacedUp() {
+        return resourceFacedUp;
+    }
+
+    public PlayableCard[] getGoldFacedUp() {
+        return goldFacedUp;
+    }
+
+    public PlayableCard getResourceFacedDown() {
+        return resourceFacedDown;
+    }
+
+    public PlayableCard getGoldFacedDown() {
+        return goldFacedDown;
+    }
+
     // initialize drawable card on the table
     public void tableSetup() {
         for (int i = 0; i < 2; i++) {
@@ -73,24 +89,52 @@ public class Table {
         this.commonObjectiveCard[index] = objectiveCard;
     }
 
-    //method to pick a card from the table after
+    //method to pick(remove) a card from the table
     public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHandException {
+        /**
+         * 1. check which type of card has been chosen
+         * 2. check every possible position in which it can be
+         * 3. if found: delete it; if not throw exception
+         */
         if (cardToDraw.cardType.equals(CardType.GOLD)) {
-            if (!(cardToDraw.equals(goldFacedUp[0]) || cardToDraw.equals(goldFacedUp[1]) || cardToDraw.equals(goldFacedDown))) {
+            if (cardToDraw.equals(goldFacedUp[0])) {
+                goldFacedUp[0] = null;
+            } else if (cardToDraw.equals(goldFacedUp[1])) {
+                goldFacedUp[1] = null;
+            } else if (cardToDraw.equals(goldFacedDown)) {
+                goldFacedDown = null;
+            } else {
                 throw new CardNotFoundException(cardToDraw);
             }
         } else {
-            if (!(cardToDraw.equals(resourceFacedUp[0]) || cardToDraw.equals(resourceFacedUp[1]) || cardToDraw.equals(resourceFacedDown))) {
-                throw new CardNotFoundException(cardToDraw);
+            // cardToDraw if of type RESOURCE
+            if (cardToDraw.cardType.equals(CardType.RESOURCE)) {
+                if (cardToDraw.equals(resourceFacedUp[0])) {
+                    resourceFacedUp[0] = null;
+                } else if (cardToDraw.equals(resourceFacedUp[1])) {
+                    resourceFacedUp[1] = null;
+                } else if (cardToDraw.equals(resourceFacedDown)) {
+                    resourceFacedDown = null;
+                } else {
+                    throw new CardNotFoundException(cardToDraw);
+                }
             }
         }
     }
-
     // updates the drawn card on the table
     public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
-        if (cardToReplace.cardType.equals(CardType.GOLD)) {
-            if (!deck.getGoldDeck().isEmpty()) {
-                try {
+        /**
+         * 1. check if both decks are empty, if true there's nothing to be done (else branch)
+         * 2. check which type of card needs to be replaced
+         * 3. use the first deck available( for gold check goldDeck first,similar for resource)
+         *
+         * the method doesn't check if the card to replace is already on the table, the controller will make sure it isn't
+         */
+        if (!this.deck.getGoldDeck().isEmpty() || !this.deck.getResourceDeck().isEmpty()) {
+            //one or both decks are NOT empty
+            if (cardToReplace.cardType.equals(CardType.GOLD)) {
+                if (!deck.getGoldDeck().isEmpty()) {
+                    //the gold card is drawn from the gold deck
                     if (goldFacedUp[0] == null) {
                         goldFacedUp[0] = deck.getGoldDeck().removeFirst();
                     } else if (goldFacedUp[1] == null) {
@@ -98,13 +142,20 @@ public class Table {
                     } else {
                         goldFacedDown = deck.getGoldDeck().removeFirst();
                     }
-                } catch (NoSuchElementException e) {
-                    throw new NoCardsLeftException("Gold");
+                } else {
+                    //the gold card is drawn from the resource deck
+                    if (goldFacedUp[0] == null) {
+                        goldFacedUp[0] = deck.getResourceDeck().removeFirst();
+                    } else if (goldFacedUp[1] == null) {
+                        goldFacedUp[1] = deck.getResourceDeck().removeFirst();
+                    } else {
+                        goldFacedDown = deck.getResourceDeck().removeFirst();
+                    }
                 }
-            }
-        }  else {
-            if (!deck.getResourceDeck().isEmpty()) {
-                try {
+            } else {
+                //cardToReplace is RESOURCE
+                if (!deck.getResourceDeck().isEmpty()) {
+                    //the resource card is drawn from the resource deck
                     if (resourceFacedUp[0] == null) {
                         resourceFacedUp[0] = deck.getResourceDeck().removeFirst();
                     } else if (resourceFacedUp[1] == null) {
@@ -112,10 +163,20 @@ public class Table {
                     } else {
                         resourceFacedDown = deck.getResourceDeck().removeFirst();
                     }
-                } catch (NoSuchElementException e) {
-                    throw new NoCardsLeftException("Resource");
+                } else {
+                    //the resource card is drawn from the gold deck
+                    if (resourceFacedUp[0] == null) {
+                        resourceFacedUp[0] = deck.getGoldDeck().removeFirst();
+                    } else if (resourceFacedUp[1] == null) {
+                        resourceFacedUp[1] = deck.getGoldDeck().removeFirst();
+                    } else {
+                        resourceFacedDown = deck.getGoldDeck().removeFirst();
+                    }
                 }
             }
+        } else {
+            throw new NoCardsLeftException("Every ");
+
         }
     }
 
