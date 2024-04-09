@@ -12,12 +12,10 @@ public class DealingPhase implements GamePhase {
         this.controller = controller;
     }
 
-    @Override
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     // player chooses his objective card
     public void choosePrivateObjective(Player player, ObjectiveCard card) {
         if (!(player.getObjectiveCard().size() < 2 || player.getObjectiveCard().isEmpty())) {
@@ -45,22 +43,18 @@ public class DealingPhase implements GamePhase {
         return true;
     }
 
-    @Override
     public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public void dealCards() throws CardNotAddedToHandException {
         try {
             Game game = this.controller.getGame();
@@ -74,12 +68,10 @@ public class DealingPhase implements GamePhase {
         }
     }
 
-    @Override
     public void prepareTable(Game game) throws CardNotAddedToHandException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    @Override
     public boolean addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
         return false;
