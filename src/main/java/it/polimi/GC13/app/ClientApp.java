@@ -69,7 +69,7 @@ public class  ClientApp {
             }
         } while (choice == 1 || choice == 2);
 
-        //SwingUtilities.invokeLater(LoginFrame::new); //serve per far partire il frame della GUI
+        //SwingUtilities.invokeLater(MainPage::new); //serve per far partire il frame della GUI
 
     }
 }

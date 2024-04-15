@@ -10,9 +10,9 @@ import java.rmi.RemoteException;
 
 public interface ClientInterface extends Remote {
     //methods that the client invokes to play
-    /*Player getPlayer();
+    Player getPlayer();
 
     void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
-    */
+    /**/
 
 }

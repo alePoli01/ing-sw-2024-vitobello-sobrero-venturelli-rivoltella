@@ -1,5 +1,7 @@
 package it.polimi.GC13.view.login;
 
+import it.polimi.GC13.view.BackgroundPanel;
+
 import javax.swing.JFrame;
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +14,6 @@ import java.awt.*;
 public class LoginFrame extends JFrame {
     private JTextField nicknameField;
     private JButton loginButton;
-    //private ColorFrame colorFrame;
 
 
     public LoginFrame(){
@@ -24,7 +25,10 @@ public class LoginFrame extends JFrame {
 
 
         //Set the background image
-        BackgroundPanel backgroundPanel = new BackgroundPanel();
+        //BackgroundPanel backgroundPanel = new BackgroundPanel(); //versione precedente
+
+        BackgroundPanel backgroundPanel = new BackgroundPanel(new ImageIcon("src/main/utils/CodexLogo.jpg").getImage(), "Inserisci il tuo nickname di gioco:", true); //prova
+
         add(backgroundPanel);
         backgroundPanel.setLayout(new GridBagLayout());
 
@@ -53,27 +57,43 @@ public class LoginFrame extends JFrame {
         // Add the login button to the login panel
         //TODO: modificare l'icona del bottone
         gbc2.gridy++;
-        //ImageIcon icon = new ImageIcon("src/main/utils/button.png");
+      //ImageIcon icon = new ImageIcon("src/main/utils/start_btn.png");
 
-        /*
         // Ridimensiona l'immagine
-        Image originalImage = icon.getImage();
-        Image resizedImage = originalImage.getScaledInstance(150, 60, Image.SCALE_SMOOTH);
+      /*Image originalImage = icon.getImage();
+        Image resizedImage = originalImage.getScaledInstance(80, 50, Image.SCALE_SMOOTH);
         ImageIcon resizedIcon = new ImageIcon(resizedImage);
-        */
 
-        loginButton = new JButton("Start!");
-        /*
+        loginButton = new JButton(resizedIcon);
+
+
         loginButton.setIcon(resizedIcon); // Imposta l'immagine come sfondo del bottone
         //loginButton.setBorderPainted(false); // Rimuovi il bordo del bottone
         loginButton.setFocusPainted(false); // Rimuovi il feedback di focus
-        loginButton.setContentAreaFilled(false); // Rimuovi il riempimento del contenuto del bottone
-        */
+        //loginButton.setContentAreaFilled(false); // Rimuovi il riempimento del contenuto del bottone
+
+        //loginButton.setBackground(new Color(221,225,229,255));*/
+
+        loginButton = new JButton("Start!");
+
         gbc2.insets = new Insets(20, 10, 0, 10); // Padding top only
         loginPanel.add(loginButton, gbc2);
 
 
         setVisible(true);
+
+
+        //call the method to change the background color of the frame (se serve)
+        /*
+        colorFrame = new ColorFrame();
+        mainPanel = colorFrame.printTheBackGround();
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+
+        //Drawing shapes in the frame (se serve)
+        GeometricalShapes panel = new GeometricalShapes();
+        add(panel);
+        */
 
 
     }

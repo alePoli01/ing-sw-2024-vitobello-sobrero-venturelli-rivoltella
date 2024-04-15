@@ -1,10 +1,13 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.ServerMessage;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.NotBoundException;
 import java.util.concurrent.*;
 
 public class ClientSocketImplementation implements Runnable, ClientInterface {
@@ -41,5 +44,15 @@ public class ClientSocketImplementation implements Runnable, ClientInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public Player getPlayer() {
+        return null;
+    }
+
+    @Override
+    public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
+
     }
 }
