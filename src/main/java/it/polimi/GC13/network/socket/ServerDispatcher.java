@@ -3,7 +3,7 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 
-public class ServeDispatcher implements ServerDispatcherInterface {
+public class ServerDispatcher implements ServerDispatcherInterface {
 
     @Override
     public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) {

@@ -14,5 +14,7 @@ public class ServerApp {
 
         RMIServerInterface rmiServer = new RMIServer(RMIport, new Server());
         rmiServer.startServer();
+
+        SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort, lobbyController);
     }
 }
