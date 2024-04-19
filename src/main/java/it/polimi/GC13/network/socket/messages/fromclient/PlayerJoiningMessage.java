@@ -1,11 +1,9 @@
 package it.polimi.GC13.network.socket.messages.fromclient;
 
 import it.polimi.GC13.exception.PlayerNotAddedException;
-import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ServerDispatcherInterface;
-import it.polimi.GC13.network.socket.messages.ServerMessage;
 
 import java.io.IOException;
 

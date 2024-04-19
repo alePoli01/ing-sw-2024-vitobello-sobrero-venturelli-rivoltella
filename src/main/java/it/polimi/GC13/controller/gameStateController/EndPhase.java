@@ -10,9 +10,10 @@ public class EndPhase implements GamePhase {
 
     public EndPhase(Controller controller) {
         this.controller = controller;
+        this.setWinner();
     }
 
-    public Player setWinner() {
+    private Player setWinner() {
         finalScoreCalculation();
         Player winner = this.controller.getGame().getPlayerList().getFirst();
         for (Player player : this.controller.getGame().getPlayerList()) {
@@ -23,11 +24,10 @@ public class EndPhase implements GamePhase {
         return winner;
     }
 
-    public void finalScoreCalculation() {
+    private void finalScoreCalculation() {
         for (Player player : this.controller.getGame().getPlayerList()) {
-            /*
-            TODO invocation to methods to calculate players final score
-             */
+            //set player score = player score + player's objective points(based on his board)
+            player.getBoard().setPlayerScore(player.getBoard().getPlayerScore()+player.getObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) );
         }
     }
 

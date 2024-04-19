@@ -1,4 +1,4 @@
-package it.polimi.GC13.network.socket.messages;
+package it.polimi.GC13.network.socket.messages.fromserver;
 
 import java.io.Serializable;
 
