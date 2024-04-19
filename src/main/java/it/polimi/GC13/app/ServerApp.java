@@ -13,11 +13,11 @@ public class ServerApp {
     public static void main(String[] args) throws IOException {
         System.out.println("Hello from Server");
 
-        int RMIport = 1234;
+        int RMIport = 456;
         RMIServerInterface rmiServer = new RMIServer(RMIport, new Server());
         rmiServer.startServer();
 
-        int socketPort=0;
+        int socketPort = 123;
         //link a lobby controller to the controller dispathcer
         LobbyController lobbyController = new LobbyController();
         ControllerDispatcher controllerDispatcher = new ControllerDispatcher(lobbyController);
