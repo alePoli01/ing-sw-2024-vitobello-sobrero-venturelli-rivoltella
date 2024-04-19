@@ -51,14 +51,6 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void dealCards() throws CardNotAddedToHandException {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-
     public boolean addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
         return false;

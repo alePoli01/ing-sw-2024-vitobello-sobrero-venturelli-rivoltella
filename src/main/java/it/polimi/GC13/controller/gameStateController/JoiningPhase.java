@@ -2,8 +2,11 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
+import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
+
+import javax.swing.*;
 
 public class JoiningPhase implements GamePhase {
 
@@ -31,14 +34,6 @@ public class JoiningPhase implements GamePhase {
     
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-    
-    public void dealCards() throws CardNotAddedToHandException {
-        System.out.println("Game has been already created.");
-    }
-    
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
-        System.out.println("Game already started." + game.getCurrNumPlayer() + "more players are needed to begin dealing phase");
     }
 
     public boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException {

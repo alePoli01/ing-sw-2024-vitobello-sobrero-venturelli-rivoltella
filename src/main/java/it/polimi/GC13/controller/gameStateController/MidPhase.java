@@ -111,14 +111,6 @@ public class MidPhase implements GamePhase {
     public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
         System.out.println("You cannot replace the start card");
     }
-    
-    public void dealCards() throws CardNotAddedToHandException {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
 
     public boolean addPlayerToExistingGame(Player player, Game existingGame) {
         return false;

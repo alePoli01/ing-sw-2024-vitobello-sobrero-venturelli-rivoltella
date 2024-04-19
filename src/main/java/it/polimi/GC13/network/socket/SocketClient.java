@@ -4,12 +4,22 @@ import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.model.Server;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.ServerMessage;
 
 import java.io.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SocketClient implements ClientInterface, Runnable {
+    /*
+   class that represents the "virtual client" for the server
+
+   clients calls the methods of this class
+   the class then creates the messages and sends them to the
+   server where they'll be elaborated
+    */
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     private final ServerDispatcherInterface serverDispatcher;
@@ -20,10 +30,6 @@ public class SocketClient implements ClientInterface, Runnable {
         this.serverDispatcher = serverDispatcher;
     }
 
-    @Override
-    public Player getPlayer() {
-        return null;
-    }
 
     @Override
     public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
@@ -32,24 +38,33 @@ public class SocketClient implements ClientInterface, Runnable {
 
     @Override
     public void run() {
-        /*ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newCachedThreadPool();
         while (true) {
-            try {
+            /*try {
                 synchronized (this) {
                     if(!OPEN){
                         break;
                     }
-                }
+                }*/
+            try {
                 ServerMessage message = (ServerMessage) ois.readObject();
-                executorService.submit(()->message.dispatch(serverDispatcher, this));
-            } catch (Exception e) {
-                synchronized (this) {
+                executorService.submit(()-> {
+                    try {
+                        message.dispatch(serverDispatcher, this);
+                    } catch (IOException | PlayerNotAddedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            /*} catch (Exception e) {
+                /*synchronized (this) {
                     if(OPEN) {
                         OPEN = false;
                         onConnectionLostListener.onConnectionLost(this);
                     }
-                }
-            }
-        }*/
+                }*/
+        }
     }
 }

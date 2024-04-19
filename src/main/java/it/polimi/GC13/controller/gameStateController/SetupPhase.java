@@ -12,9 +12,10 @@ public class SetupPhase implements GamePhase {
 
     public SetupPhase(Controller controller) {
         this.controller = controller;
+        this.prepareTable(this.controller.getGame());
     }
     
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
+    private void prepareTable(Game game) {
         try {
             game.getTable().tableSetup();
             game.giveStartCard();
@@ -69,10 +70,6 @@ public class SetupPhase implements GamePhase {
             this.controller.updateController(new DealingPhase(this.controller));
             this.controller.getGame().setGameState(GameState.DEALING_CARDS);
         }
-    }
-
-    public void dealCards() throws CardNotAddedToHandException {
-        System.out.println("Prepare Table first");
     }
 
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {

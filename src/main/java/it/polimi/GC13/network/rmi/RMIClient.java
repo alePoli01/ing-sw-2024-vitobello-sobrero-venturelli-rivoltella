@@ -20,15 +20,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
-    public Player getPlayer() {
-        return player;
-    }
-
-    @Override
     public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
         Registry registry;
         registry = LocateRegistry.getRegistry("127.0.0.1", 1234);
         this.rmiServer = (RMIServerInterface) registry.lookup("server");
-        this.rmiServer.createGame(this);
+        //this.rmiServer.createGame(this, getPlayer());
     }
 }

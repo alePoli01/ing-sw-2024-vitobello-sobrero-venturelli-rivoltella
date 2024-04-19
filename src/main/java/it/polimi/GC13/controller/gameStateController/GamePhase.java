@@ -22,12 +22,6 @@ public interface GamePhase {
     // draw resource / gold card
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
-    // second game phase, deal resource and gold cards to all players after start card is placed
-    void dealCards() throws CardNotAddedToHandException;
-
-    // deal start card to all players in the selected game
-    void prepareTable(Game game) throws CardNotAddedToHandException;
-
     // add player to an existing game
     boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException;
 }

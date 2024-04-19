@@ -10,6 +10,20 @@ public class DealingPhase implements GamePhase {
 
     public DealingPhase(Controller controller) {
         this.controller = controller;
+        this.dealCards();
+    }
+
+    private void dealCards() {
+        try {
+            Game game = this.controller.getGame();
+            game.giveStartCard();
+            game.giveFirstCards();
+            game.setCommonObjectiveCards();
+            game.givePrivateObjectiveCards();
+            game.setPlayersPosition();
+        } catch (CardNotAddedToHandException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public void chooseToken(Player player, TokenColor token) {
@@ -52,23 +66,6 @@ public class DealingPhase implements GamePhase {
     }
 
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-
-    public void dealCards() throws CardNotAddedToHandException {
-        try {
-            Game game = this.controller.getGame();
-            game.giveStartCard();
-            game.giveFirstCards();
-            game.setCommonObjectiveCards();
-            game.givePrivateObjectiveCards();
-            game.setPlayersPosition();
-        } catch (CardNotAddedToHandException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

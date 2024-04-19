@@ -1,6 +1,7 @@
 package it.polimi.GC13.controller.gameStateController;
 
 
+import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
@@ -9,15 +10,21 @@ import it.polimi.GC13.model.*;
 public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;
+    private LobbyController lobbyController;
 
     // add a new created game to the game manager with its respective controller
-    public Controller(Game game) {
+    public Controller(Game game, LobbyController lobbyController) {
         this.gameController = new JoiningPhase();
         this.game = game;
+        this.lobbyController = lobbyController;
     }
 
     public Game getGame() {
         return game;
+    }
+
+    public GamePhase getGameController() {
+        return gameController;
     }
 
     public void updateController(GamePhase newGameController) {
@@ -42,14 +49,6 @@ public class Controller implements GamePhase {
 
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
         this.gameController.drawCard(player, table, cardToDraw);
-    }
-
-    public void dealCards() throws CardNotAddedToHandException {
-        this.gameController.dealCards();
-    }
-
-    public void prepareTable(Game game) throws CardNotAddedToHandException {
-        this.gameController.prepareTable(game);
     }
 
     public boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException {
