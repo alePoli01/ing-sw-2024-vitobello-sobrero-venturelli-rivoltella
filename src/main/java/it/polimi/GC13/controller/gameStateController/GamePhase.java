@@ -2,6 +2,7 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 
@@ -23,5 +24,5 @@ public interface GamePhase {
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
     // add player to an existing game
-    boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException;
+    boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException;
 }

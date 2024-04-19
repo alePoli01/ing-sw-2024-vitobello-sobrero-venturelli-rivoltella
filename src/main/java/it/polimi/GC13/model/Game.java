@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 
 import java.util.*;
@@ -124,6 +125,14 @@ public class Game {
         for (Player player : playerList) {
             player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
             player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
+        }
+    }
+
+    public void checkNickname(String nickname) throws NicknameAlreadyTakenException {
+        for (Player player : playerList) {
+            if (player.getNickname().equals(nickname)) {
+                throw new NicknameAlreadyTakenException();
+            }
         }
     }
 }

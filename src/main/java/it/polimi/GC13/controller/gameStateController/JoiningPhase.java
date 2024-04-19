@@ -3,6 +3,7 @@ package it.polimi.GC13.controller.gameStateController;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotPlacedException;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 
@@ -36,8 +37,9 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException {
+    public boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
         // it adds players to the existing game
+        existingGame.checkNickname(player.getNickname());
         existingGame.addPlayerToGame(player);
         if (existingGame.numPlayer == existingGame.getCurrNumPlayer()) {
             this.controller.updateController(new SetupPhase(this.controller));

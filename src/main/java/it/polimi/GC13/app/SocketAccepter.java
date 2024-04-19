@@ -27,7 +27,6 @@ public class SocketAccepter implements Runnable {
             while (true) {
                 try {
                     Socket socket = serverSocket.accept(); // waits for a client to connect
-                    socket.setSoTimeout(10000);
                     System.out.println("Client connection accepted...");
 
                     SocketClient socketClient = new SocketClient(socket, serverDispatcher);

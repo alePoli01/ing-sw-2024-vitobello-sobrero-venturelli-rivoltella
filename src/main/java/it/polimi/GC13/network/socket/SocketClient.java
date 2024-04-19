@@ -1,8 +1,9 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.ServerMessage;
+import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,6 +30,7 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
 
+
     @Override
     public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
 
@@ -45,12 +47,14 @@ public class SocketClient implements ClientInterface, Runnable {
                     }
                 }*/
             try {
-                ServerMessage message = (ServerMessage) ois.readObject();
+                MessagesFromClient message = (MessagesFromClient) ois.readObject();
                 executorService.submit(()-> {
                     try {
                         message.dispatch(serverDispatcher, this);
                     } catch (IOException | PlayerNotAddedException e) {
                         throw new RuntimeException(e);
+                    } catch (NicknameAlreadyTakenException e) {
+
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {

@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
@@ -14,7 +15,7 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     }
 
     @Override
-    public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException {
+    public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         //now the server knows what to do
         controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer());
     }

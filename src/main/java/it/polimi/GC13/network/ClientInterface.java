@@ -10,5 +10,4 @@ import java.rmi.RemoteException;
 
 public interface ClientInterface extends Remote {
     void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
-
 }

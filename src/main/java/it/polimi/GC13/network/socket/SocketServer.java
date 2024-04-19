@@ -1,24 +1,15 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.model.Player;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.ClientMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-/**
- *
- * DEPRECATO
- *
- *
- *
- *
- *
- */
-public class SocketServer implements ServerInterface,  Runnable {
+public class SocketServer implements ServerInterface, Runnable {
     /*
     class that represents the "virtual server" for the client
 
@@ -35,8 +26,8 @@ public class SocketServer implements ServerInterface,  Runnable {
     }
 
     @Override
-    public void addPlayerToGame(Player player) {
-        PlayerJoiningMessage playerJoiningMessage=new PlayerJoiningMessage(player);
+    public void addPlayerToGame(String nickname) throws NicknameAlreadyTakenException {
+        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname);
         try {
             outputStream.writeObject(playerJoiningMessage);
             outputStream.flush();
@@ -46,7 +37,6 @@ public class SocketServer implements ServerInterface,  Runnable {
              */
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -64,12 +54,12 @@ public class SocketServer implements ServerInterface,  Runnable {
 
     }
 
-    @Override
+    // LISTEN CALLS FROM SERVER
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         while(true){
             try{
-                ClientMessage message=(ClientMessage) inputStream.readObject();//reads the incoming message(including object type and parameters)
+                MessagesFromServer message = (MessagesFromServer) inputStream.readObject();//reads the incoming message(including object type and parameters)
                 /* clientDispatcher */
                 executorService.submit(message::dispatch);
             }catch(Exception e){

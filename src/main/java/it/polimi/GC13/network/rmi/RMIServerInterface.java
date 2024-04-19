@@ -11,6 +11,4 @@ import java.rmi.RemoteException;
 public interface RMIServerInterface extends Remote {
 
     void startServer() throws RemoteException;
-
-    void createGame(ClientInterface client, Player player) throws IOException, PlayerNotAddedException;
 }

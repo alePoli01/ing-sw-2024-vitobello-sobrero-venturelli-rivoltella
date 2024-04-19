@@ -1,7 +1,7 @@
 package it.polimi.GC13.app;
 
 import it.polimi.GC13.controller.LobbyController;
-import it.polimi.GC13.model.Server;
+import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIServer;
 import it.polimi.GC13.network.rmi.RMIServerInterface;
 import it.polimi.GC13.network.socket.ControllerDispatcher;
@@ -14,8 +14,8 @@ public class ServerApp {
         System.out.println("Hello from Server");
 
         int RMIport = 456;
-        RMIServerInterface rmiServer = new RMIServer(RMIport, new Server());
-        rmiServer.startServer();
+        ServerInterface rmiServer = new RMIServer(RMIport);
+        //((RMIServer) rmiServer).startServer();
 
         int socketPort = 123;
         //link a lobby controller to the controller dispathcer

@@ -2,6 +2,7 @@ package it.polimi.GC13.controller;
 
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.GamePhase;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
@@ -33,7 +34,7 @@ public class LobbyController implements  LobbyControllerInterface {
     }
 
     // create a new game if there is no one available, else it creates a new one
-    public void addPlayerToGame(ClientInterface client, Player player) throws IOException, PlayerNotAddedException {
+    public void addPlayerToGame(ClientInterface client, Player player) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         // if there is no existing game, a new one is created
         if (noExistingGame) {
             System.out.println("There is no game in waiting list. You are creating a new game, how many players will play? [2-4]");
@@ -60,7 +61,7 @@ public class LobbyController implements  LobbyControllerInterface {
         }
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameController.getFirst());
-        // updates client, gamePhase
+        // updates ClientGameMap adding <client, gamePhase>
         controllerDispatcher.getClientGameMap().put(client, this.gameController.getFirst());
     }
 }

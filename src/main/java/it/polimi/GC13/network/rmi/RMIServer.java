@@ -1,27 +1,40 @@
 package it.polimi.GC13.network.rmi;
 
-import it.polimi.GC13.exception.PlayerNotAddedException;
-import it.polimi.GC13.model.Player;
-import it.polimi.GC13.model.Server;
-import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.ServerInterface;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
-    private final Server server;
+public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     private Registry registry;
     private final int port;
 
-    public RMIServer(int port, Server server) throws RemoteException {
-        this.server = server;
+    public RMIServer(int port) throws RemoteException {
         this.port = port;
     }
 
     @Override
+    public void addPlayerToGame(String nickname) {
+
+    }
+
+    @Override
+    public void quitGame() {
+
+    }
+
+    @Override
+    public void writeMessage() {
+
+    }
+
+    @Override
+    public void drawCard() {
+
+    }
+
     public void startServer() throws RemoteException {
         try {
             this.registry = LocateRegistry.createRegistry(this.port);
@@ -31,10 +44,4 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         }
         System.out.println("Server ready");
     }
-
-    @Override
-    public void createGame(ClientInterface client, Player player) throws IOException, PlayerNotAddedException {
-        this.server.getLobbyController().addPlayerToGame(client, player);
-    }
-
 }

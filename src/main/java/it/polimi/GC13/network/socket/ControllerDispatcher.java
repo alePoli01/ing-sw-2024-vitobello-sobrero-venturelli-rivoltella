@@ -5,6 +5,7 @@ import it.polimi.GC13.controller.LobbyControllerInterface;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
@@ -26,7 +27,7 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface view,Player player) throws IOException, PlayerNotAddedException {
+    public void addPlayerToGame(ClientInterface view,Player player) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         lobbyController.addPlayerToGame(view, player);
     }
 
