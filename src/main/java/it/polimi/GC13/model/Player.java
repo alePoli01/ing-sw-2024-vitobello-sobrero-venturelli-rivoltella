@@ -22,7 +22,8 @@ public class Player {
         this.nickname = nickname;
         this.turnPlayed = 0;
         this.myTurn = false;
-        this.hand = new ArrayList<PlayableCard>();
+        this.hand = new ArrayList<>();
+        this.objectiveCard = new LinkedList<>();
     }
 
     public String getNickname() {

@@ -1,4 +1,4 @@
-package it.polimi.GC13.view;
+package it.polimi.GC13.view.GUI;
 
 import javax.swing.*;
 import java.awt.*;
