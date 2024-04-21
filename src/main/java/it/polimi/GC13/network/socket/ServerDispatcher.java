@@ -3,6 +3,7 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 
 import java.io.IOException;
@@ -16,7 +17,12 @@ public class ServerDispatcher implements ServerDispatcherInterface {
 
     @Override
     public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-        //now the server knows what to do
+        //unpack the message and propagate to che controllerDispatcher (some messages are for the model, others are for the Lobby)
         controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer());
+    }
+
+    @Override
+    public void dispatch(CheckForExistingGameMessage checkForExistingGameMessage, ClientInterface client) {
+        controllerDispatcher.checkForExistingGame(client);
     }
 }

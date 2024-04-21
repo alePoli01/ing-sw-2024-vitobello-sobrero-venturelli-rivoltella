@@ -1,12 +1,12 @@
 package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.socket.ServerDispatcher;
+import it.polimi.GC13.network.socket.ServerImpulse;
 import it.polimi.GC13.network.socket.SocketClient;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 public class SocketAccepter implements Runnable {
 
@@ -27,11 +27,18 @@ public class SocketAccepter implements Runnable {
             while (true) {
                 try {
                     Socket socket = serverSocket.accept(); // waits for a client to connect
-                    System.out.println("Client connection accepted...");
-
+                    System.out.println("\t\tClient connection accepted...");
                     SocketClient socketClient = new SocketClient(socket, serverDispatcher);
                     //the socketClient (it's on the server) will wait for incoming messages from the client
                     new Thread(socketClient).start();
+                    /*
+                    TODO: L'impulso potrebbe servire per capire quando la connessione viene persa, ma è da discutere
+                     */
+//                    System.out.println("\t\tCreating an Impulse generator");
+//                    ServerImpulse serverImpulse= new ServerImpulse(socketClient);
+//                    System.out.println("\t\tStarting the Impulse generator Thread");
+//                    new Thread(serverImpulse).start();
+                    System.out.println("\t\tClient connection is done\nSocketAccepter running...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

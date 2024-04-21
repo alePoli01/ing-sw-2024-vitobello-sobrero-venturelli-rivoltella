@@ -32,6 +32,11 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
+    public void checkForExistingGame(ClientInterface client) {
+        lobbyController.checkForExistingGame(client);
+    }
+
+    @Override
     public void chooseToken(ClientInterface client, Player player, TokenColor token) {
         this.clientGameMap.get(client).chooseToken(player, token);
     }

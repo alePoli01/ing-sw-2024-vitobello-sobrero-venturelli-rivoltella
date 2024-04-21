@@ -9,4 +9,5 @@ import java.io.IOException;
 
 public interface LobbyControllerInterface {
     void addPlayerToGame (ClientInterface client , Player player) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException;
+    void checkForExistingGame(ClientInterface client);
 }

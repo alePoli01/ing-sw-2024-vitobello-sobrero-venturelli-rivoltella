@@ -3,10 +3,12 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Player {
+public class Player implements Serializable {
     private final String nickname;  //username of the player
     private TokenColor token; //token chosen by the Player
     private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max

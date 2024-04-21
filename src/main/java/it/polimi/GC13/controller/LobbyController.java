@@ -32,36 +32,56 @@ public class LobbyController implements  LobbyControllerInterface {
     public void setControllerDispatcher(ControllerDispatcher controllerDispatcher) {
         this.controllerDispatcher = controllerDispatcher;
     }
+/*
+idea di come fare la registrazione del giocatore
+1. ricevo messaggio di check per l'esistenza di un game
+    se c'è rispondo si altrimenti no (il client si occuperà di capire cosa fare dopo)
+2. in base a quello che ho risposto -> ricevo un messaggio col nickname del player da aggiungere
+                                       (se nel frattempo qualcuno si è unito e la stanza è piena bisogna riprovare)
+                                    -> ricevo un messaggio col nickname del player e un int
+                                       (già controllato dal client) per i giocatori della partita
+ */
 
+    public void checkForExistingGame(ClientInterface client) {
+        //upon check just provide the answer
+        client.onPlayerJoining(noExistingGame);
+    }
     // create a new game if there is no one available, else it creates a new one
     public void addPlayerToGame(ClientInterface client, Player player) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         // if there is no existing game, a new one is created
         if (noExistingGame) {
-            System.out.println("There is no game in waiting list. You are creating a new game, how many players will play? [2-4]");
-            int playersNumber = 0;
-            do {//read the number of players that will play with the client
-                BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
-                try {
-                    playersNumber = Integer.parseInt(reader.readLine());
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid value!");
-                }
-            } while (playersNumber > 4 || playersNumber < 1);
-            // once playersNumber is valid [2-4], then the game is created and adds player to the model
-            Game newGame = new Game(player, playersNumber);
-            // adds the controller to the list
-            this.gameController.addFirst(new Controller(newGame, this));
-            // updates model
-            newGame.addPlayerToGame(player);
+            /*
+            TODO: tutta questa parte non funzia \('u')/ (funziona ma le cose vengono chieste sul server quindi è da cambiare un po)
+                    dobbiamo chiedere le cose sul client, ho lasciato il cambio di noExistingGame così sul client si vede che è stato creato un game
+                    ma in realtà non si crea nulla
+             */
+//            System.out.println("There is no game in waiting list. You are creating a new game, how many players will play? [2-4]");
+//            int playersNumber = 0;
+//            do {//read the number of players that will play with the client
+//                BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
+//                try {
+//                    playersNumber = Integer.parseInt(reader.readLine());
+//                } catch (NumberFormatException e) {
+//                    System.err.println("Invalid value!");
+//                }
+//            } while (playersNumber > 4 || playersNumber < 1);
+//            // once playersNumber is valid [2-4], then the game is created and adds player to the model
+//            Game newGame = new Game(player, playersNumber);
+//            // adds the controller to the list
+//            this.gameController.addFirst(new Controller(newGame, this));
+//            // updates model
+//            newGame.addPlayerToGame(player);
             noExistingGame = false;
-            existingGame = newGame;
+//            existingGame = newGame;
         } else {
             // add the player to the existing game and updates noExistingGame for the next player that wants to play
             noExistingGame = gameController.getFirst().getGameController().addPlayerToExistingGame(player, existingGame);
+
         }
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameController.getFirst());
         // updates ClientGameMap adding <client, gamePhase>
         controllerDispatcher.getClientGameMap().put(client, this.gameController.getFirst());
+
     }
 }

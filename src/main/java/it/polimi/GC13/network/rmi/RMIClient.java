@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     public RMIServerInterface rmiServer;
@@ -25,5 +26,21 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
         registry = LocateRegistry.getRegistry("127.0.0.1", 1234);
         this.rmiServer = (RMIServerInterface) registry.lookup("server");
         //this.rmiServer.createGame(this, getPlayer());
+    }
+
+    @Override
+    public void onPlayerJoining(List<Player> playerList, String message) {
+
+    }
+
+    @Override
+    public void onPlayerJoining(boolean noExistingGames) {
+
+    }
+
+
+    @Override
+    public void poke() throws IOException {
+
     }
 }

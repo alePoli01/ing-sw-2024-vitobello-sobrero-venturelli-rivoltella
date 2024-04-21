@@ -16,7 +16,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void addPlayerToGame(String nickname) {
+    public void addPlayerToGame(String nickname, int numofPlayers) {
+
+    }
+
+    @Override
+    public void checkForExistingGame() {
 
     }
 
