@@ -33,11 +33,12 @@ public class SocketAccepter implements Runnable {
                     new Thread(socketClient).start();
                     /*
                     TODO: L'impulso potrebbe servire per capire quando la connessione viene persa, ma è da discutere
+                    edit: se non c'è l'impulso non va niente
                      */
-//                    System.out.println("\t\tCreating an Impulse generator");
-//                    ServerImpulse serverImpulse= new ServerImpulse(socketClient);
-//                    System.out.println("\t\tStarting the Impulse generator Thread");
-//                    new Thread(serverImpulse).start();
+                    System.out.println("\t\tCreating an Impulse generator");
+                    ServerImpulse serverImpulse= new ServerImpulse(socketClient);
+                    System.out.println("\t\tStarting the Impulse generator Thread");
+                    new Thread(serverImpulse).start();
                     System.out.println("\t\tClient connection is done\nSocketAccepter running...");
                 } catch (Exception e) {
                     e.printStackTrace();
