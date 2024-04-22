@@ -30,7 +30,7 @@ public class OnPlayerJoiningMessage implements MessagesFromServer{
     }
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispathcer, ServerInterface server) {
-        clientDispathcer.dispatch(this,server);
+    public void dispatch(ClientDispatcherInterface clientDispatcher, ServerInterface server) {
+        clientDispatcher.dispatch(this,server);
     }
 }
