@@ -7,8 +7,11 @@ import it.polimi.GC13.network.rmi.RMIClient;
 import it.polimi.GC13.network.rmi.RMIServer;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
+import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.TUI.TUI;
 
+
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -70,5 +73,6 @@ public class ClientApp {
         } else {
             System.out.println("You chose GUI!");
         }
+        //SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
     }
 }

@@ -1,5 +1,7 @@
 package it.polimi.GC13.view.GUI.game;
 
+import it.polimi.GC13.model.Game;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 
 import javax.swing.*;
@@ -7,7 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
+
+
+
 
 //qui andrà la grafica della partita
 public class MainPage extends JFrame implements ActionListener {
@@ -16,11 +20,8 @@ public class MainPage extends JFrame implements ActionListener {
     final static String PANEL2 = "Scoreboard";
     private JButton buttonToMainPage;
     private JButton buttonToScoreBoard;
-    private ArrayList<TokenGUI> tokenPlayerList;
-    private String[] imageFile = {"src/main/utils/token/yellow_token.png", "src/main/utils/token/blue_token.png", "src/main/utils/token/red_token.png", "src/main/utils/token/green_token.png"};
-    ;
-
-
+    private TokenManager tokenManager;
+    private Game game;
 
 
 
@@ -35,11 +36,23 @@ public class MainPage extends JFrame implements ActionListener {
         add(panelContainer);
 
         // Creazione delle due schermate
-        JPanel panel1 = new JPanel(null);
+
+        //VERSIONE CORRETTA, DA INSERIRE DOPO AVER TESTATO
+        /*JPanel panel1 = new JPanel(null);
         JPanel panel2 = new BackgroundPanel(new ImageIcon("src/main/utils/scoreboard.png").getImage(), false);
-        panel2.setLayout(null);
+        panel2.setLayout(null);*/
+
+        //VERSIONE DI PROVA: DA ELIMINARE QUANDO FINITO
+        JPanel panel2 = new JPanel(null);
+        JPanel panel1 = new BackgroundPanel(new ImageIcon("src/main/utils/scoreboard.png").getImage(), false);
+        panel1.setLayout(null); //fino a qui
+
+
+        panelContainer.add(panel1, PANEL1);
+        panelContainer.add(panel2, PANEL2);
 
         //pagina 1: Game
+        panel1.setBackground(new Color(237,230,188,255));
 
         //aggiunta del tasto per tornare alla pagina del gioco
         buttonToScoreBoard = new JButton("Go to scoreboard");
@@ -49,15 +62,6 @@ public class MainPage extends JFrame implements ActionListener {
         buttonToScoreBoard.setBounds(10, 10, widthb1, heigthb1);
 
         panel1.add(buttonToScoreBoard);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,28 +75,39 @@ public class MainPage extends JFrame implements ActionListener {
         buttonToMainPage.setBounds(10, 10, widthb2, heigthb2);
         panel2.add(buttonToMainPage);
 
-        panelContainer.add(panel1, PANEL1);
-        panelContainer.add(panel2, PANEL2);
-
-
-
-
 
         //inserimento dei token nella pagina
 
-        tokenPlayerList = new ArrayList<>();
-        //TODO: mettere la condizione che per ogni giocatore viene assegnato un token
+        //TODO: fare in modo che ad ogni giocatore venga assegnato un token
 
-        while(imageFile.length>0) {
-            Random random = new Random();
-            int randomIndex = random.nextInt(imageFile.length);
-            TokenGUI token = new TokenGUI(new ImageIcon(imageFile[randomIndex]).getImage());
-            tokenPlayerList.add(token);
+        //int numPlayer = game.numPlayer; //devo usare numPlayer o .getCurrNumPlayer() ?
+
+        tokenManager = new TokenManager();
+        for(int i=0; i</*game.numPlayer*/4; i++) {
+            JLabel label = new JLabel();
+            tokenManager.createToken(/*player loggato,*/ label);
+            Image img = new ImageIcon(tokenManager.getTokenInGame().get(i).getDirectoryImage()).getImage();
+            ImageIcon tokenIcon = new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+            //JLabel label = new JLabel(tokenIcon);
+            tokenManager.getTokenInGame().get(i).getLabel().setIcon(tokenIcon);
+            //label.setIcon(tokenIcon);
+            tokenManager.getTokenInGame().get(i).getLabel().setBounds(tokenManager.getTokenInGame().get(i).getX(), tokenManager.getTokenInGame().get(i).getY(), tokenIcon.getIconWidth(), tokenIcon.getIconHeight());
+            panel1.add(tokenManager.getTokenInGame().get(i).getLabel());
+
 
         }
 
+        /*
+        //PROVA MOVIMENTO TOKEN
+        //movimento orizzontale
+        tokenManager.moveHorizontal(tokenManager.getTokenInGame().get(0));
 
+        //movimento verticale
+        tokenManager.moveVertical(tokenManager.getTokenInGame().get(0));
 
+        //movimento diagonale
+        tokenManager.moveDiagonal(tokenManager.getTokenInGame().get(0));
+        */
 
 
 
