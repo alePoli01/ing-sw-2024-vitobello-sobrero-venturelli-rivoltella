@@ -58,7 +58,8 @@ public class LobbyController implements  LobbyControllerInterface {
     }
 
     private void playerAddedToGame() {
-        for (ClientInterface client : clientGamePhaseMap.keySet()) {
+        for (ClientInterface client : this.clientGamePhaseMap.keySet()) {
+            System.out.println("I am sending message to " + client);
             client.onPlayerAddedToGame(waitingPlayers);
         }
     }
