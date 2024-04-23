@@ -80,7 +80,7 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
         while (true) {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
-                executorService.submit(() -> message.dispatch(clientDispatcher,this));
+                executorService.submit(() -> message.dispatch(clientDispatcher));
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
