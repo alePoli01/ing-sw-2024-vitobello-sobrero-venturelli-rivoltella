@@ -15,7 +15,7 @@ public class OnCheckForExistingGameMessage implements MessagesFromServer {
     }
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher, ServerInterface server) {
-        clientDispatcher.dispatch(this, server);
+    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+        clientDispatcher.dispatch(this);
     }
 }

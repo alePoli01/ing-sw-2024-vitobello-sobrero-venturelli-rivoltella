@@ -16,7 +16,7 @@ public class OnPlayerAddedToGameMessage implements MessagesFromServer {
     }
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher, ServerInterface server) {
+    public void dispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dipatch(this);
     }
 }
