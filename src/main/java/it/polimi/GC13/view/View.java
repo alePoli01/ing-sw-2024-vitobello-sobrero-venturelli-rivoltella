@@ -6,9 +6,9 @@ import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMess
 import java.io.IOException;
 
 public interface View {
-    public void display() throws IOException;
+    void display() throws IOException;
 
-    public void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, boolean noExistingGame) throws IOException;
+    void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, int waitingPlayers) throws IOException;
 
-    void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage);
+    void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException;
 }

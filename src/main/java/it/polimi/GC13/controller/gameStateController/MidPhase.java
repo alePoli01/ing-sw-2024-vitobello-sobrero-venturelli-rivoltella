@@ -24,6 +24,8 @@ public class MidPhase implements GamePhase {
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         Board board = player.getBoard();
 
+        // TODO controllo che la carta passata sia in mano al player
+
         // increase players turn
         player.increaseTurnPlayed();
 
@@ -112,7 +114,7 @@ public class MidPhase implements GamePhase {
         System.out.println("You cannot replace the start card");
     }
 
-    public boolean addPlayerToExistingGame(Player player, Game existingGame) {
-        return false;
+    public int addPlayerToExistingGame(Player player, Game existingGame) {
+        return 0;
     }
 }

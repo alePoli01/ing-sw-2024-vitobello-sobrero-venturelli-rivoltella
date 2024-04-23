@@ -19,7 +19,7 @@ public class TUI implements View {
     }
 
     @Override
-    public void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, boolean noExistingGame) throws IOException {
+    public void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, int waitingPlayers) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String nickname, confirm;
         int playersNumber = -1;
@@ -30,7 +30,7 @@ public class TUI implements View {
             confirm = reader.readLine();
         } while (!(confirm.equals("y")));
 
-        if (noExistingGame) {
+        if (waitingPlayers == 0) {
             //getting number of players
             System.out.println("Choose Number of players in the game [min 2, max 4]:");
             do {
@@ -44,20 +44,21 @@ public class TUI implements View {
                 }
             } while (playersNumber < 2 || playersNumber > 4);
         }
-        do {
             try {
                 virtualServer.addPlayerToGame(nickname, playersNumber);
                 System.out.println("++Sent: addPlayerToGame");
             } catch (NicknameAlreadyTakenException e) {
                 System.out.println(e.getMessage());
-                break;
             }
-        } while (true);
     }
 
     @Override
-    public void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        System.out.println("Vari metodi di gioco");
+    public void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException {
+        if (waitingPlayers == 0) {
+            System.out.println("Vari metodi di gioco");
+        } else {
+            System.out.println("waiting players: " + waitingPlayers);
+        }
     }
 
     @Override

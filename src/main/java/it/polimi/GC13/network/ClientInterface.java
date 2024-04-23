@@ -9,9 +9,9 @@ import java.rmi.Remote;
 public interface ClientInterface extends Remote {
     void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
 
-    void onCheckForExistingGame(boolean noExistingGames);
+    void onCheckForExistingGame(int waitingPlayers);
 
-    void onPlayerAddedToGame();
+    void onPlayerAddedToGame(int waitingPlayers);
 
     void poke() throws IOException;
 }

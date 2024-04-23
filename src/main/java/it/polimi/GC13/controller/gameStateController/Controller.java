@@ -52,7 +52,7 @@ public class Controller implements GamePhase {
         this.gameController.drawCard(player, table, cardToDraw);
     }
 
-    public boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
+    public int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
         return this.gameController.addPlayerToExistingGame(player, existingGame);
     }
 }

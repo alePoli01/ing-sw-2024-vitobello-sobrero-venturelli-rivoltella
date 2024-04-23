@@ -7,7 +7,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMess
 public interface ClientDispatcherInterface {
     void dispatch(String message);//used by PokeMessage
 
-    void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage, ServerInterface server);
+    void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage);
 
     void dipatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage);
 }

@@ -25,10 +25,9 @@ public class ClientDispatcher implements ClientDispatcherInterface {
     }
 
     @Override
-    public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage, ServerInterface server) {
-        //System.out.println("--Received: checkForExistingGame: " + onCheckForExistingGameMessage.getNoExistingGames());
+    public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
         try {
-            view.display(onCheckForExistingGameMessage, onCheckForExistingGameMessage.getNoExistingGames());
+            view.display(onCheckForExistingGameMessage, onCheckForExistingGameMessage.getWaitingPlayers());
         } catch(IOException e) {
             System.out.println("Error dispatching game: " + e.getMessage());
         }
@@ -36,6 +35,10 @@ public class ClientDispatcher implements ClientDispatcherInterface {
 
     @Override
     public void dipatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        view.update(onPlayerAddedToGameMessage);
+        try {
+            view.update(onPlayerAddedToGameMessage, onPlayerAddedToGameMessage.getWaitingPlayers());
+        } catch(IOException e) {
+            System.out.println("Error adding players to game: " + e.getMessage());
+        }
     }
 }

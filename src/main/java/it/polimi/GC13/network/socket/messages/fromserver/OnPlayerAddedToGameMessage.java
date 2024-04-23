@@ -5,8 +5,14 @@ import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
 public class OnPlayerAddedToGameMessage implements MessagesFromServer {
+    int waitingPlayers;
 
-    public OnPlayerAddedToGameMessage() {
+    public OnPlayerAddedToGameMessage(int waitingPlayers) {
+        this.waitingPlayers = waitingPlayers;
+    }
+
+    public int getWaitingPlayers() {
+        return waitingPlayers;
     }
 
     @Override

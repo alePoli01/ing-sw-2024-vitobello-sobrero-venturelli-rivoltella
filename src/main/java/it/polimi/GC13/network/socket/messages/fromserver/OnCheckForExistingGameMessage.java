@@ -4,14 +4,14 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
 public class OnCheckForExistingGameMessage implements MessagesFromServer {
-    private final Boolean noExistingGames;
+    private int waitingPlayers;
 
-    public OnCheckForExistingGameMessage(Boolean noExistingGames) {
-        this.noExistingGames = noExistingGames;
+    public OnCheckForExistingGameMessage(int noExistingGames) {
+        this.waitingPlayers = noExistingGames;
     }
 
-    public Boolean getNoExistingGames() {
-        return noExistingGames;
+    public int getWaitingPlayers() {
+        return this.waitingPlayers;
     }
 
     @Override

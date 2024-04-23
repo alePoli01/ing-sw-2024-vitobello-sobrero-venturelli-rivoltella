@@ -13,14 +13,14 @@ import java.util.*;
 
 public class LobbyController implements  LobbyControllerInterface {
     private final Map<ClientInterface, Controller> clientGamePhaseMap;//links a client to his gamephase
-    private boolean noExistingGame; // true if there is not an existingGame that needs players, false if not
+    private int waitingPlayers; // true if there is not an existingGame that needs players, false if not
     private Game existingGame;
     private final ArrayList<Controller> gameController;//contains all ongoing games
     private ControllerDispatcher controllerDispatcher;
     // create Controller List and Players <-> Game Map
 
     public LobbyController() {
-        this.noExistingGame = true;
+        this.waitingPlayers = 0;
         this.clientGamePhaseMap = new HashMap<>();
         this.gameController = new ArrayList<>();
     }
@@ -31,7 +31,7 @@ public class LobbyController implements  LobbyControllerInterface {
 
     public void checkForExistingGame(ClientInterface client) {
         //upon check just provide the answer
-        client.onCheckForExistingGame(noExistingGame);
+        client.onCheckForExistingGame(this.waitingPlayers);
     }
 
     // create a new game if there is no one available, else it creates a new one
@@ -43,22 +43,23 @@ public class LobbyController implements  LobbyControllerInterface {
             // updates model
             newGame.addPlayerToGame(player);
             this.gameController.addFirst(new Controller(newGame, this));
-            noExistingGame = false;
+            this.waitingPlayers++;
             existingGame = newGame;
         } else {
             // add the player to the existing game and updates noExistingGame for the next player that wants to play
-            noExistingGame = gameController.getFirst().getGameController().addPlayerToExistingGame(player, existingGame);
-
+            waitingPlayers = gameController.getFirst().getGameController().addPlayerToExistingGame(player, existingGame);
         }
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameController.getFirst());
         // updates ClientGameMap adding <client, gamePhase>
         controllerDispatcher.getClientGameMap().put(client, this.gameController.getFirst());
         System.out.println("Player " + player + " added to the game");
-        this.playerAddedToGame(client);
+        this.playerAddedToGame();
     }
 
-    private void playerAddedToGame(ClientInterface client) {
-        client.onPlayerAddedToGame();
+    private void playerAddedToGame() {
+        for (ClientInterface client : clientGamePhaseMap.keySet()) {
+            client.onPlayerAddedToGame(waitingPlayers);
+        }
     }
 }

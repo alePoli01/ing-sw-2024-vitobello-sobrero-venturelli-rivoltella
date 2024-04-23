@@ -49,15 +49,15 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void onCheckForExistingGame(boolean noExistingGames) {
+    public void onCheckForExistingGame(int waitingPlayers) {
         //sent when responding to check for existing game message
-        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(noExistingGames);
+        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(waitingPlayers);
         this.sendMessage(onCheckForExistingGameMessage);
     }
 
     @Override
-    public void onPlayerAddedToGame() {
-        OnPlayerAddedToGameMessage onPlayerAddedToGameMessage = new OnPlayerAddedToGameMessage();
+    public void onPlayerAddedToGame(int waitingPlayers) {
+        OnPlayerAddedToGameMessage onPlayerAddedToGameMessage = new OnPlayerAddedToGameMessage(waitingPlayers);
         this.sendMessage(onPlayerAddedToGameMessage);
     }
 

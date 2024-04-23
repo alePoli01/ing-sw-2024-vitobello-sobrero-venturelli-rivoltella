@@ -24,5 +24,5 @@ public interface GamePhase {
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
     // add player to an existing game
-    boolean addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException;
+    int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException;
 }

@@ -84,8 +84,8 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public boolean addPlayerToExistingGame(Player player, Game existingGame) {
+    public int addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-        return false;
+        return 0;
     }
 }
