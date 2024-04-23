@@ -18,7 +18,7 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     private final LobbyController lobbyController;
     private final Map<ClientInterface, Controller> clientGameMap = new ConcurrentHashMap<>();
 
-    public  ControllerDispatcher(LobbyController lobbyController){
+    public ControllerDispatcher(LobbyController lobbyController){
         this.lobbyController = lobbyController;
     }
 
@@ -27,8 +27,8 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface view,Player player) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-        lobbyController.addPlayerToGame(view, player);
+    public void addPlayerToGame(ClientInterface view, Player player, int playersNumber) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
+        lobbyController.addPlayerToGame(view, player, playersNumber);
     }
 
     @Override

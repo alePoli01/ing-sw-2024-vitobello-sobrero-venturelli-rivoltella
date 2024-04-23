@@ -12,13 +12,13 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     private final ControllerDispatcher controllerDispatcher;
 
     public ServerDispatcher(ControllerDispatcher controllerDispatcher) {
-        this.controllerDispatcher=controllerDispatcher;
+        this.controllerDispatcher = controllerDispatcher;
     }
 
     @Override
     public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         //unpack the message and propagate to che controllerDispatcher (some messages are for the model, others are for the Lobby)
-        controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer());
+        controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer(), playerJoiningMessage.getNumOfPlayers());
     }
 
     @Override

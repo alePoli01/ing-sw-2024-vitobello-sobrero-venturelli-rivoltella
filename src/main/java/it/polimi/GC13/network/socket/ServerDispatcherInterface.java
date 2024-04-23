@@ -9,6 +9,8 @@ import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 import java.io.IOException;
 
 public interface ServerDispatcherInterface {
-    void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException;
-    void dispatch(CheckForExistingGameMessage checkForExistingGameMessage,ClientInterface client);
+
+    void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface client) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException;
+
+    void dispatch(CheckForExistingGameMessage checkForExistingGameMessage, ClientInterface client);
 }

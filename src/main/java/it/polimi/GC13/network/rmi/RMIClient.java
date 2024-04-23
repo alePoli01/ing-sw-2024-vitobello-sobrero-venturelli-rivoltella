@@ -29,15 +29,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
-    public void onPlayerJoining(List<Player> playerList, String message) {
-
+    public void onCheckForExistingGame(boolean noExistingGames) {
     }
-
-    @Override
-    public void onPlayerJoining(boolean noExistingGames) {
-
-    }
-
 
     @Override
     public void poke() throws IOException {

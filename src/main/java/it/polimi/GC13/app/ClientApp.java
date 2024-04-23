@@ -7,11 +7,7 @@ import it.polimi.GC13.network.rmi.RMIClient;
 import it.polimi.GC13.network.rmi.RMIServer;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
-import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.TUI.TUI;
-
-
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +21,8 @@ public class ClientApp {
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
 
         int choice = 0;
-        ServerInterface virtualServer = null;
+        ServerInterface virtualServer;
+        ClientDispatcher clientDispatcher = null;
 
         // INTERNET PROTOCOL CHOICE
         do {
@@ -50,7 +47,7 @@ public class ClientApp {
             }
         } else {
             Socket socket = new Socket("localhost", 123); // creating socket that represents the server
-            ClientDispatcher clientDispatcher = new ClientDispatcher();
+            clientDispatcher = new ClientDispatcher();
             virtualServer = new SocketServer(socket, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
             new Thread((SocketServer) virtualServer).start();
             System.out.println("--|You chose Socket!|--");
@@ -69,7 +66,9 @@ public class ClientApp {
 
         if (choice == 1) {
             System.out.println("You chose TUI!");
-            TUI tui = new TUI(virtualServer);
+            if (clientDispatcher != null) {
+                clientDispatcher.setView(new TUI(virtualServer));
+            }
         } else {
             System.out.println("You chose GUI!");
         }

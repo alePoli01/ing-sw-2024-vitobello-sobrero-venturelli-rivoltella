@@ -2,16 +2,16 @@ package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
-import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerJoiningMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.PokeMessage;
 
 import java.io.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,6 +33,15 @@ public class SocketClient implements ClientInterface, Runnable {
         this.serverDispatcher = serverDispatcher;
     }
 
+    // Generic method to send messages from server to client
+    private void sendMessage(MessagesFromServer message) {
+        try {
+            oos.writeObject(message);
+            oos.flush();
+        } catch (IOException e) {
+            System.out.println("Error sending message: " + e.getMessage());
+        }
+    }
 
     @Override
     public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
@@ -40,33 +49,16 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void onPlayerJoining(List<Player> playerList, String message) {
-        //sent when responding to join request
-        OnPlayerJoiningMessage playerJoinedMessage = new OnPlayerJoiningMessage(playerList, message,true);
-        try {
-            oos.writeObject(playerJoinedMessage);
-            oos.flush();
-        } catch (IOException e) {
-            /*
-            TODO: use an update to notify client's listener instead of throwing exception
-             */
-            throw new RuntimeException(e);
-        }
+    public void onCheckForExistingGame(boolean noExistingGames) {
+        //sent when responding to check for existing game message
+        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(noExistingGames);
+        this.sendMessage(onCheckForExistingGameMessage);
     }
 
     @Override
-    public void onPlayerJoining(boolean noExistingGames) {
-        //sent when responding to check for existing game message
-        OnPlayerJoiningMessage playerJoiningMessage = new OnPlayerJoiningMessage(null, null, noExistingGames);
-        try {
-            oos.writeObject(playerJoiningMessage);
-            oos.flush();
-        } catch (IOException e) {
-            /*
-            TODO: use an update to notify client's listener instead of throwing exception
-             */
-            throw new RuntimeException(e);
-        }
+    public void onPlayerAddedToGame() {
+        OnPlayerAddedToGameMessage onPlayerAddedToGameMessage = new OnPlayerAddedToGameMessage();
+        this.sendMessage(onPlayerAddedToGameMessage);
     }
 
     @Override

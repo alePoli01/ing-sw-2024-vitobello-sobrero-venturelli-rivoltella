@@ -8,6 +8,6 @@ import java.io.Serializable;
 
 public interface MessagesFromServer extends Serializable {
     //void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface view);
-    void dispatch(ClientDispatcherInterface clientDispathcer, ServerInterface server);
+    void dispatch(ClientDispatcherInterface clientDispatcher, ServerInterface server);
 
 }
