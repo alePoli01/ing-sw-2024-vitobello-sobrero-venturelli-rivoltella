@@ -11,12 +11,16 @@ import it.polimi.GC13.view.TUI.TUI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import it.polimi.GC13.view.GUI.game.*;
+import it.polimi.GC13.view.GUI.login.*;
+import javax.swing.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 
 public class ClientApp {
     public static void main(String[] args) throws IOException {
+        //SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
+        //SwingUtilities.invokeLater(LoginFrame::new);
         System.out.println("Hello from Client");
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
 
@@ -72,6 +76,7 @@ public class ClientApp {
         } else {
             System.out.println("You chose GUI!");
         }
-        //SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
+
+
     }
 }

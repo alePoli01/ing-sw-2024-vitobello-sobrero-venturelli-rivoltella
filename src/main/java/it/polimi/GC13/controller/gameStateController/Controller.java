@@ -53,6 +53,7 @@ public class Controller implements GamePhase {
     }
 
     public int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
+        System.out.println("perche non runni bastardo controller");
         return this.gameController.addPlayerToExistingGame(player, existingGame);
     }
 }

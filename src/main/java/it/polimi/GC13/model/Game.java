@@ -111,6 +111,8 @@ public class Game {
             if (!this.playerList.contains(player)) {
                 throw new PlayerNotAddedException(player);
             }
+        }else{
+            System.out.println("Error; max number of player reached: "+currNumPlayer);
         }
     }
 

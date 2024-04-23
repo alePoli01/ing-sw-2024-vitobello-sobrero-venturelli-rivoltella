@@ -6,6 +6,7 @@ import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import javax.swing.*;
 
@@ -14,6 +15,7 @@ public class JoiningPhase implements GamePhase {
     private Controller controller;
 
     public void setController(Controller controller) {
+
         this.controller = controller;
     }
 
@@ -39,10 +41,12 @@ public class JoiningPhase implements GamePhase {
 
     public int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
         // it adds players to the existing game
+        System.out.println("perche non runni bastardo");
         existingGame.checkNickname(player.getNickname());
         existingGame.addPlayerToGame(player);
         if (existingGame.numPlayer == existingGame.getCurrNumPlayer()) {
             this.controller.updateController(new SetupPhase(this.controller));
+            System.out.println("perche non runni bastardo");
             return 0;
         } else {
             return existingGame.getCurrNumPlayer();

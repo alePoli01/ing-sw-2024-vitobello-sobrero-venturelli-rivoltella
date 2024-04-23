@@ -30,7 +30,7 @@ public class LoginFrame extends JFrame {
 
         //aggiunta testo al frame
         text = new JLabel("Inserisci nickname di gioco: ");
-        text.setFont(new Font("PlainGermanica", Font.BOLD, 25));
+        text.setFont(new Font("Old English Text MT", Font.BOLD, 25));
         int width1 = 345;
         int heigth1 = 25;
         text.setBounds(getWidth()/2 - width1/2 +5, getHeight()/2 - heigth1/2 - 35, width1, heigth1);
@@ -46,11 +46,11 @@ public class LoginFrame extends JFrame {
         backgroundPanel.add(nicknameField); // Aggiungi il textfield al frame
 
         //customizza e aggiungi il bottone al frame
-        loginButton = new JButton("Start!");
+        loginButton = new JButton("Start");
         int width3 = 80;
         int heigth3 = 28;
         loginButton.setBounds(getWidth()/2 - width3/2 - 10, getHeight()/2 + 35, width3, heigth3);
-        loginButton.setFont(new Font("PlainGermanica", Font.BOLD, 15));
+        loginButton.setFont(new Font("Old English Text MT", Font.BOLD, 15));
         loginButton.setBackground(new Color(177,163,28, 128));
         backgroundPanel.add(loginButton);
 

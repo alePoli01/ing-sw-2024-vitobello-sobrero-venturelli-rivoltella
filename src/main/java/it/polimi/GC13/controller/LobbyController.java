@@ -41,13 +41,15 @@ public class LobbyController implements  LobbyControllerInterface {
             Game newGame = new Game(player, playersNumber);
             // adds the controller to the list
             // updates model
-            newGame.addPlayerToGame(player);
+            //newGame.addPlayerToGame(player);
             this.gameController.addFirst(new Controller(newGame, this));
             this.waitingPlayers++;
             existingGame = newGame;
         } else {
             // add the player to the existing game and updates noExistingGame for the next player that wants to play
+            System.out.println("vediamo se runna qui");
             waitingPlayers = gameController.getFirst().getGameController().addPlayerToExistingGame(player, existingGame);
+            System.out.println("vediamo se runna anche qui");
         }
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameController.getFirst());
