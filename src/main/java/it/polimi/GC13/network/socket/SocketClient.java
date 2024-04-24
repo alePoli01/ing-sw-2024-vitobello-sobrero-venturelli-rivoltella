@@ -91,7 +91,7 @@ public class SocketClient implements ClientInterface, Runnable {
                 MessagesFromClient message = (MessagesFromClient) ois.readObject();
                 executorService.submit(()-> {
                     try {
-                        System.out.println("ciao");
+                        System.out.println("invio messaggio da server...");
                         message.dispatch(serverDispatcher, this);
                     } catch (IOException | PlayerNotAddedException e) {
                         throw new RuntimeException(e);

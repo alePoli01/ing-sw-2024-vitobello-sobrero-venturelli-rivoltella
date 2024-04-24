@@ -15,7 +15,7 @@ public class LobbyController implements  LobbyControllerInterface {
     private final Map<ClientInterface, Controller> clientGamePhaseMap;//links a client to his gamephase
     private int waitingPlayers; // true if there is not an existingGame that needs players, false if not
     private Game existingGame;
-    private final ArrayList<Controller> gameController;//contains all ongoing games
+    private final ArrayList<Controller> gameController; //contains all ongoing games controller
     private ControllerDispatcher controllerDispatcher;
     // create Controller List and Players <-> Game Map
 
@@ -40,28 +40,23 @@ public class LobbyController implements  LobbyControllerInterface {
         if (playersNumber >= 2 && playersNumber <= 4) {
             Game newGame = new Game(player, playersNumber);
             // adds the controller to the list
-            // updates model
-            //newGame.addPlayerToGame(player);
             this.gameController.addFirst(new Controller(newGame, this));
             this.waitingPlayers++;
             existingGame = newGame;
         } else {
             // add the player to the existing game and updates noExistingGame for the next player that wants to play
-            System.out.println("vediamo se runna qui");
             waitingPlayers = gameController.getFirst().getGameController().addPlayerToExistingGame(player, existingGame);
-            System.out.println("vediamo se runna anche qui");
+            System.out.println("waiting players:" + waitingPlayers);
         }
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameController.getFirst());
         // updates ClientGameMap adding <client, gamePhase>
         controllerDispatcher.getClientGameMap().put(client, this.gameController.getFirst());
-        System.out.println("Player " + player + " added to the game");
         this.playerAddedToGame();
     }
 
     private void playerAddedToGame() {
         for (ClientInterface client : this.clientGamePhaseMap.keySet()) {
-            System.out.println("I am sending message to " + client);
             client.onPlayerAddedToGame(waitingPlayers);
         }
     }

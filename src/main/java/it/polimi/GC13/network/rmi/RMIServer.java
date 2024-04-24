@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.ServerInterface;
 
 import java.rmi.RemoteException;
@@ -26,7 +27,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void quitGame() {
+    public void chooseToken(TokenColor tokenColor) {
+
+    }
+
+    @Override
+    public void placeStartCard(boolean side) {
 
     }
 

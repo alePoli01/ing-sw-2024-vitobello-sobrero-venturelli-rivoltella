@@ -1,8 +1,11 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
+import it.polimi.GC13.network.socket.messages.fromclient.TokenChoiceMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 
@@ -23,44 +26,43 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
     private final ClientDispatcherInterface clientDispatcher;
 
     public SocketServer(Socket socket, ClientDispatcher clientDispatcher) throws IOException {
-
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
     }
 
-    @Override
-    public synchronized void addPlayerToGame(String nickname, int numOfPlayers) throws NicknameAlreadyTakenException {
-        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname,numOfPlayers);
+    /*
+        TODO gestione eccezioni in modo intelligiente: creare metodo eccezioni nella tui
+     */
+
+    private void sendMessage(MessagesFromClient messages) {
         try {
-            outputStream.writeObject(playerJoiningMessage);
+            outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            /*
-            TODO: use an update to notify client's listener instead of throwing exception
-             */
-            System.out.println("invio messaggio fallito");
-            e.printStackTrace();
         }
+    }
+
+    @Override
+    public synchronized void addPlayerToGame(String nickname, int numOfPlayers) {
+        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname,numOfPlayers);
+        this.sendMessage(playerJoiningMessage);
     }
 
     @Override
     public void checkForExistingGame() {
         CheckForExistingGameMessage checkForExistingGame = new CheckForExistingGameMessage() ;
-        try {
-            outputStream.writeObject(checkForExistingGame);
-            outputStream.flush();
-        } catch (IOException e) {
-            /*
-            TODO: use an update to notify client's listener instead of throwing exception
-             */
-            System.out.println("invio messaggio fallito");
-            e.printStackTrace();
-        }
+        this.sendMessage(checkForExistingGame);
     }
 
     @Override
-    public void quitGame() {
+    public void chooseToken(TokenColor tokenColor) {
+        TokenChoiceMessage tokenChoiceMessage = new TokenChoiceMessage(tokenColor);
+        this.sendMessage(tokenChoiceMessage);
+    }
+
+    @Override
+    public void placeStartCard(boolean side) {
 
     }
 

@@ -15,7 +15,7 @@ public class Controller implements GamePhase {
 
     // add a new created game to the game manager with its respective controller
     public Controller(Game game, LobbyController lobbyController) {
-        this.gameController = new JoiningPhase();
+        this.gameController = new JoiningPhase(this);
         this.game = game;
         this.lobbyController = lobbyController;
     }
