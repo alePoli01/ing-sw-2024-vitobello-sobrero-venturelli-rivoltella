@@ -85,7 +85,7 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> message.dispatch(clientDispatcher));
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println(e.getMessage() + "error listening messages from server");
+                System.out.println(e.getMessage() + " error listening messages from server");
             }
         }
     }

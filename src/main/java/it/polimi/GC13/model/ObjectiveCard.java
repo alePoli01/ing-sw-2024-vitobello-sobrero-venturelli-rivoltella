@@ -1,6 +1,8 @@
 package it.polimi.GC13.model;
 
-public abstract class ObjectiveCard {
+import java.io.Serializable;
+
+public abstract class ObjectiveCard implements Serializable {
     public final int serialNumber;
     public final int comboPoints; //points given by the card
 

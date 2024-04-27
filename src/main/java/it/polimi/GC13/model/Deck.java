@@ -3,6 +3,8 @@ package it.polimi.GC13.model;
 //import of the library of Google
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Deck {
+public class Deck implements Serializable {
     private final LinkedList<ObjectiveCard> objectiveDeck;
     private LinkedList<StartCard> startDeck;
     private LinkedList<PlayableCard> resourceDeck;

@@ -7,9 +7,11 @@ import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public class Game {
+public class Game implements Serializable {
     private GameState gameState;
     private final Deck deck;
     private final Table table;

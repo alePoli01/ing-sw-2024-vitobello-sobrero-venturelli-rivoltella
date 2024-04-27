@@ -6,10 +6,11 @@ import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotFoundException;
 import it.polimi.GC13.exception.NoCardsLeftException;
 
+import java.io.Serializable;
 import java.util.*;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
-public class Table {
+public class Table implements Serializable {
     private Map<Player, Integer> score; //vector that keeps players scores
     private final PlayableCard[] resourceFacedUp; //resource cards faced up that can be picked
     private final PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
