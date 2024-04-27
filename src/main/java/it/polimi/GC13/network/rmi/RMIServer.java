@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.network.ServerInterface;
 
 import java.rmi.RemoteException;
@@ -17,7 +18,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void addPlayerToGame(String nickname, int numofPlayers) {
+    public void addPlayerToGame(String nickname, int numOfPlayers, String gameName) throws NicknameAlreadyTakenException {
 
     }
 
