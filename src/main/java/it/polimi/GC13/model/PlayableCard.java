@@ -2,9 +2,10 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.*;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class PlayableCard {
+public class PlayableCard implements Serializable {
     public final int serialNumber;
     public final Resource reign;
     public final CardType cardType;

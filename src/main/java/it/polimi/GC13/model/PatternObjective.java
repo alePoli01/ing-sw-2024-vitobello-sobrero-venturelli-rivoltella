@@ -2,8 +2,10 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.Resource;
 
+import java.io.Serializable;
+
 //TODO controllare le condizioni dei for
-public class PatternObjective extends ObjectiveCard{
+public class PatternObjective  extends ObjectiveCard {
 
     public final boolean diagonal;  //what kind of disposition is required
     public final int orientation; //orientation of the disposition
