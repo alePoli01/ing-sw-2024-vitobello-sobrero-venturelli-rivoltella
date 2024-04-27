@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface View {
-    void display() throws IOException;
 
-    void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException;
+    void setupPhase(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException;
 
     void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
+
+    void printExceptionError(Exception e);
 }

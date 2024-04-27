@@ -6,7 +6,6 @@ import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.ControllerDispatcher;
 
 import java.io.IOException;
 import java.util.*;
@@ -52,16 +51,18 @@ public class LobbyController implements  LobbyControllerInterface {
             workingGame = joinableGameMap.get(gameName);
             // updates waiting players in waitingPlayersMap and the model
             this.waitingPlayersMap.put(workingGame, this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, joinableGameMap.get(gameName)));
-            // removes the game from the selectable
+            // removes the game from the selectable when all players needed join
             if (this.waitingPlayersMap.get(workingGame) == 0) {
                 this.joinableGameMap.remove(gameName, workingGame);
             }
             System.out.println("waiting players:" + waitingPlayersMap);
         }
+        // updates controller dispatcher client <-> player Map
+        this.controllerDispatcher.getClientPlayerMap().put(client, player);
         // update map with the client and the correct controller
         this.clientGamePhaseMap.put(client, this.gameControllerMap.get(workingGame));
         // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
-        this.controllerDispatcher.getClientGameMap().put(client, this.gameControllerMap.get(workingGame));
+        this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
         // notify other players when someone connects and how many players are still needed
         this.playerAddedToGame();
     }

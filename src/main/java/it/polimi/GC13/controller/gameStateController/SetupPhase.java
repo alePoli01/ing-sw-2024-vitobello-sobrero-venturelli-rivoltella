@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotPlacedException;
+import it.polimi.GC13.exception.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 
 public class SetupPhase implements GamePhase {
@@ -44,12 +45,14 @@ public class SetupPhase implements GamePhase {
         return true;
     }
 
-    public void chooseToken(Player player, TokenColor token) {
+    public void chooseToken(Player player, TokenColor tokenColor) throws TokenAlreadyChosenException {
         if (player.getToken().describeConstable().isEmpty()) {
-            if (player.getGame().getTable().getTokenColors().contains(token)) {
-                player.setToken(token);
-                player.getTable().getTokenColors().remove(token);
+            if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
+                player.setToken(tokenColor);
+                player.getTable().getTokenColors().remove(tokenColor);
                 nextPhaseChecker(player);
+            } else {
+                throw new TokenAlreadyChosenException(tokenColor);
             }
         }
     }

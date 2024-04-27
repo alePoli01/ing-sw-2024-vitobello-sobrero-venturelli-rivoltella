@@ -6,6 +6,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 
 public class Controller implements GamePhase {
@@ -32,7 +33,7 @@ public class Controller implements GamePhase {
         this.gameController = newGameController;
     }
 
-    public void chooseToken(Player player, TokenColor token) {
+    public void chooseToken(Player player, TokenColor token) throws TokenAlreadyChosenException {
         this.gameController.chooseToken(player, token);
     }
 
@@ -53,7 +54,6 @@ public class Controller implements GamePhase {
     }
 
     public int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
-        System.out.println("perche non runni bastardo controller");
         return this.gameController.addPlayerToExistingGame(player, existingGame);
     }
 }

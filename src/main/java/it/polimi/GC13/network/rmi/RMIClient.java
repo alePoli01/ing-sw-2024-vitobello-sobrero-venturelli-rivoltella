@@ -45,4 +45,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     public void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
 
     }
+
+    @Override
+    public void exceptionHandler(Exception e) {
+
+    }
 }

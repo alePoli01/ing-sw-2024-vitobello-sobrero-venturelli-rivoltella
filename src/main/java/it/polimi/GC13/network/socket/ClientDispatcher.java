@@ -1,7 +1,7 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnExceptionMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 import it.polimi.GC13.view.View;
 
@@ -34,11 +34,16 @@ public class ClientDispatcher implements ClientDispatcherInterface {
     }
 
     @Override
-    public void dipatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
+    public void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
         try {
-            view.update(onPlayerAddedToGameMessage, onPlayerAddedToGameMessage.getWaitingPlayers());
-        } catch(IOException e) {
+            view.setupPhase(onPlayerAddedToGameMessage, onPlayerAddedToGameMessage.getWaitingPlayers());
+        } catch (IOException e) {
             System.out.println("Error adding players to game: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void dispatch(OnExceptionMessage onExceptionMessage) {
+        view.printExceptionError(onExceptionMessage.getException());
     }
 }

@@ -11,6 +11,7 @@ import it.polimi.GC13.view.View;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Map;
 
 public class TUI implements View {
@@ -21,6 +22,10 @@ public class TUI implements View {
         this.virtualServer.checkForExistingGame();
     }
 
+    /* shows 2 options to the player
+    [1] create new game
+    [2] join an existing one
+     */
     @Override
     public void display(OnCheckForExistingGameMessage onCheckForExistingGameMessage, Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -60,11 +65,11 @@ public class TUI implements View {
                     System.out.println("There is no existing game");
                 } else {
                     System.out.println("Here is the list of the existing Games: ");
-                    joinableGameMap.forEach((string, game) -> System.out.println("game:" + string + " " + "waiting players:" + waitingPlayersMap.get(game)));
+                    joinableGameMap.forEach((string, game) -> System.out.println("game: " + string + " waiting players: " + waitingPlayersMap.get(game)));
                     do {
                         System.out.println("Select the game to join with its name");
                         gameName = reader.readLine();
-                    } while (joinableGameMap.containsKey(gameName));
+                    } while (!joinableGameMap.containsKey(gameName));
                 }
             } else {
                 System.out.println("Error: Please choose 1 or 2");
@@ -79,9 +84,17 @@ public class TUI implements View {
         }
     }
 
+    /*
+    shows SETUP PHASE methods to the player
+    [1] chose the token
+    [2] place the start card
+     */
     @Override
-    public void update(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException {
+    public void setupPhase(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage, int waitingPlayers) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String tokenColorChosen;
+        boolean flag = false;
+
         if (waitingPlayers == 0) {
             System.out.println("--- SETUP PHASE ---");
             System.out.println("[1] to choose token");
@@ -89,7 +102,18 @@ public class TUI implements View {
             switch (Integer.parseInt(reader.readLine())) {
                 case 1: {
                     System.out.println("Write your token color:");
-                    this.virtualServer.chooseToken(TokenColor.valueOf(reader.readLine()));
+                    do {
+                        tokenColorChosen = reader.readLine();
+                        String finalTokenColor = tokenColorChosen;
+                        if (Arrays.stream(TokenColor.values()).anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
+                            flag = true;
+                            // calls the controller to update the model
+                            this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
+                        } else {
+                            System.out.println("Color not valid, you can chose" + Arrays.toString(TokenColor.values()));
+                        }
+                    } while (!flag);
+
                     /*
                     TODO risposta del server nel caso il token sia già stato selezionato.
                            se vogliamo gestirlo con le eccezioni, dobbiamo creare un metodo nella tui che viene usato
@@ -109,14 +133,9 @@ public class TUI implements View {
         }
     }
 
+    // used to print exception caught by the controller
     @Override
-    public void display() throws IOException {
-        /*
-        TODO: BISOGNA CAPIRE COME FAR ARRIVARE ALLA VIEW IL CONTENUTO DEL MESSAGGIO DAL SERVER
-              qui controllo se esiste un gioco e nel caso chiedo solo il nick, ma bisogna capire come fare
-         */
-
-        System.out.println("++Sending: checkForExistingGame");
-        virtualServer.checkForExistingGame();
+    public void printExceptionError(Exception e) {
+        System.out.println(e.getMessage());
     }
 }

@@ -8,7 +8,7 @@ import it.polimi.GC13.network.ClientInterface;
 
 public interface ControllerInterface {
 
-    void chooseToken(ClientInterface client, Player player, TokenColor token);
+    void chooseToken(ClientInterface client, TokenColor token);
 
     void choosePrivateObjective(ClientInterface client, Player player, ObjectiveCard card);
 

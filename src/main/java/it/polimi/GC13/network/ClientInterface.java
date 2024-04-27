@@ -16,4 +16,6 @@ public interface ClientInterface extends Remote {
     void poke() throws IOException;
 
     void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap);
+
+    void exceptionHandler(Exception e);
 }

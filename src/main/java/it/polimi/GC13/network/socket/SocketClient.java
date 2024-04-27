@@ -5,10 +5,7 @@ import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
-import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
-import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.PokeMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -53,15 +50,12 @@ public class SocketClient implements ClientInterface, Runnable {
     @Override
     public void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
         //sent when responding to check for existing game message
-        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(joinableGameMap, waitingPlayersMap);
-        System.out.println("created the onCheckForExistingGameMessage");
-        this.sendMessage(onCheckForExistingGameMessage);
+        this.sendMessage(new OnCheckForExistingGameMessage(joinableGameMap, waitingPlayersMap));
     }
 
     @Override
     public void onPlayerAddedToGame(int waitingPlayers) {
-        OnPlayerAddedToGameMessage onPlayerAddedToGameMessage = new OnPlayerAddedToGameMessage(waitingPlayers);
-        this.sendMessage(onPlayerAddedToGameMessage);
+        this.sendMessage(new OnPlayerAddedToGameMessage(waitingPlayers));
     }
 
     @Override
@@ -70,6 +64,11 @@ public class SocketClient implements ClientInterface, Runnable {
         PokeMessage message = new PokeMessage("Try finger but hole");
         oos.writeObject(message);
         oos.flush();
+    }
+
+    @Override
+    public void exceptionHandler(Exception e) {
+        this.sendMessage(new OnExceptionMessage(e));
     }
 
     @Override

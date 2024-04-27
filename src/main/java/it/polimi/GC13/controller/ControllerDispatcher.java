@@ -1,29 +1,34 @@
-package it.polimi.GC13.network.socket;
+package it.polimi.GC13.controller;
 
-import it.polimi.GC13.controller.LobbyController;
-import it.polimi.GC13.controller.LobbyControllerInterface;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ControllerDispatcher implements LobbyControllerInterface, ControllerInterface {
     private final LobbyController lobbyController;
-    private final Map<ClientInterface, Controller> clientGameMap = new ConcurrentHashMap<>();
+    private final Map<ClientInterface, Controller> clientControllerMap = new ConcurrentHashMap<>();
+    private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>();
 
     public ControllerDispatcher(LobbyController lobbyController){
         this.lobbyController = lobbyController;
     }
 
-    public Map<ClientInterface, Controller> getClientGameMap() {
-        return clientGameMap;
+    public Map<ClientInterface, Controller> getClientControllerMap() {
+        return clientControllerMap;
+    }
+
+    public Map<ClientInterface, Player> getClientPlayerMap() {
+        return clientPlayerMap;
     }
 
     @Override
@@ -37,28 +42,32 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void chooseToken(ClientInterface client, Player player, TokenColor token) {
-        this.clientGameMap.get(client).chooseToken(player, token);
+    public void chooseToken(ClientInterface client, TokenColor token) {
+        try {
+            this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), token);
+        } catch (TokenAlreadyChosenException e) {
+            client.exceptionHandler(e);
+        }
     }
 
     @Override
     public void choosePrivateObjective(ClientInterface client, Player player, ObjectiveCard card) {
-        this.clientGameMap.get(client).choosePrivateObjective(player, card);
+        this.clientControllerMap.get(client).choosePrivateObjective(player, card);
     }
 
     @Override
     public void placeStartCard(ClientInterface client, Player player, StartCard cardToPlace, boolean isFlipped) {
-        this.clientGameMap.get(client).placeStartCard(player, cardToPlace, isFlipped);
+        this.clientControllerMap.get(client).placeStartCard(player, cardToPlace, isFlipped);
     }
 
     @Override
     public void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
-        this.clientGameMap.get(client).placeCard(player, cardToPlace, isFlipped, xy);
+        this.clientControllerMap.get(client).placeCard(player, cardToPlace, isFlipped, xy);
     }
 
     @Override
     public void drawCard(ClientInterface client, Player player, Table table, PlayableCard cardToDraw) {
-        this.clientGameMap.get(client).drawCard(player, table, cardToDraw);
+        this.clientControllerMap.get(client).drawCard(player, table, cardToDraw);
     }
 
     @Override

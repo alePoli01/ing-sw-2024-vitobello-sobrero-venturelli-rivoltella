@@ -14,8 +14,12 @@ public class TokenChoiceMessage implements MessagesFromClient {
         this.tokenColor = tokenColor;
     }
 
+    public TokenColor getTokenColor() {
+        return tokenColor;
+    }
+
     @Override
     public void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface client) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-
+        serverDispatcher.dispatch(this, client);
     }
 }

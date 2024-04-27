@@ -3,7 +3,7 @@ package it.polimi.GC13.app;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIServer;
-import it.polimi.GC13.network.socket.ControllerDispatcher;
+import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.network.socket.ServerDispatcher;
 
 import java.io.IOException;

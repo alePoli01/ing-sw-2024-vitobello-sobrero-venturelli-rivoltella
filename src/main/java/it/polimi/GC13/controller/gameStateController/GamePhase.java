@@ -4,12 +4,13 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 
 public interface GamePhase {
 
     // player chooses his token, it can be done if its token is empty
-    void chooseToken(Player player, TokenColor token);
+    void chooseToken(Player player, TokenColor token) throws TokenAlreadyChosenException;
 
     // player chooses his objective card
     void choosePrivateObjective(Player player, ObjectiveCard card);
