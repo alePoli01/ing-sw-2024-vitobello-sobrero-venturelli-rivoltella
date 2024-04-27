@@ -42,7 +42,7 @@ public class JoiningPhase implements GamePhase {
         // it adds players to the existing game
         existingGame.checkNickname(player.getNickname());
         existingGame.addPlayerToGame(player);
-        System.out.println("player list:" + existingGame.getPlayerList());
+        //System.out.println("player list:" + existingGame.getPlayerList());
         if (existingGame.numPlayer == existingGame.getCurrNumPlayer()) {
             this.controller.updateController(new SetupPhase(this.controller));
             return 0;

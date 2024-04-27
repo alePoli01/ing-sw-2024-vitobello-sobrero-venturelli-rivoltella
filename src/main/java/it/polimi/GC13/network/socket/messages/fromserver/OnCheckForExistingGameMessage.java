@@ -1,17 +1,26 @@
 package it.polimi.GC13.network.socket.messages.fromserver;
 
-import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
-public class OnCheckForExistingGameMessage implements MessagesFromServer {
-    private int waitingPlayers;
+import java.util.HashMap;
+import java.util.Map;
 
-    public OnCheckForExistingGameMessage(int noExistingGames) {
-        this.waitingPlayers = noExistingGames;
+public class OnCheckForExistingGameMessage implements MessagesFromServer {
+    private final Map<String, Game> joinableGame = new HashMap<>();
+    private final Map<Game, Integer> waitingPlayers = new HashMap<>();
+
+    public OnCheckForExistingGameMessage(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
+        this.joinableGame.putAll(joinableGameMap);
+        this.waitingPlayers.putAll(waitingPlayersMap);
     }
 
-    public int getWaitingPlayers() {
-        return this.waitingPlayers;
+    public Map<String, Game> getJoinableGameMap() {
+        return joinableGame;
+    }
+
+    public Map<Game, Integer> getWaitingPlayersMap() {
+        return waitingPlayers;
     }
 
     @Override

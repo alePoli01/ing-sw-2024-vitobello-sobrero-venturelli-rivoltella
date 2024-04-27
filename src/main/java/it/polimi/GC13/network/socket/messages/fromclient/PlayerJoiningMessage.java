@@ -16,10 +16,12 @@ public class PlayerJoiningMessage implements MessagesFromClient {
      */
     private final Player player;
     private final int numOfPlayers;
+    private final String gameName;
 
-    public PlayerJoiningMessage(String nickname, int numOfPlayers) {
+    public PlayerJoiningMessage(String nickname, int numOfPlayers, String gameName) {
         this.player = new Player(nickname);
         this.numOfPlayers = numOfPlayers;
+        this.gameName = gameName;
     }
 
     public Player getPlayer() {
@@ -28,6 +30,10 @@ public class PlayerJoiningMessage implements MessagesFromClient {
 
     public int getNumOfPlayers() {
         return numOfPlayers;
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 
     @Override

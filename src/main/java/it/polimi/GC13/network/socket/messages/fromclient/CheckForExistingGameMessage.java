@@ -10,6 +10,6 @@ import java.io.IOException;
 public class CheckForExistingGameMessage implements MessagesFromClient{
     @Override
     public void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface client) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-        serverDispatcher.dispatch(this,client);
+        serverDispatcher.dispatch(this, client);
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
@@ -12,6 +13,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.PokeMessage;
 import java.io.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,9 +51,10 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void onCheckForExistingGame(int waitingPlayers) {
+    public void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
         //sent when responding to check for existing game message
-        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(waitingPlayers);
+        OnCheckForExistingGameMessage onCheckForExistingGameMessage = new OnCheckForExistingGameMessage(joinableGameMap, waitingPlayersMap);
+        System.out.println("created the onCheckForExistingGameMessage");
         this.sendMessage(onCheckForExistingGameMessage);
     }
 

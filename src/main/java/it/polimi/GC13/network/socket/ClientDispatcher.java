@@ -27,7 +27,7 @@ public class ClientDispatcher implements ClientDispatcherInterface {
     @Override
     public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
         try {
-            view.display(onCheckForExistingGameMessage, onCheckForExistingGameMessage.getWaitingPlayers());
+            view.display(onCheckForExistingGameMessage, onCheckForExistingGameMessage.getWaitingPlayersMap(), onCheckForExistingGameMessage.getJoinableGameMap());
         } catch(IOException e) {
             System.out.println("Error dispatching game: " + e.getMessage());
         }

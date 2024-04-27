@@ -6,7 +6,7 @@ import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 public interface ServerInterface {
     // Methods that can be called by the client
 
-    void addPlayerToGame(String nickname, int numOfPlayers) throws NicknameAlreadyTakenException;
+    void addPlayerToGame(String nickname, int numOfPlayers, String gameName) throws NicknameAlreadyTakenException;
 
     void checkForExistingGame();
 

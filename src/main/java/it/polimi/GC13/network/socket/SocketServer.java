@@ -40,12 +40,13 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
+            System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
         }
     }
 
     @Override
-    public synchronized void addPlayerToGame(String nickname, int numOfPlayers) {
-        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname,numOfPlayers);
+    public synchronized void addPlayerToGame(String nickname, int numOfPlayers, String gameName) {
+        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname,numOfPlayers, gameName);
         this.sendMessage(playerJoiningMessage);
     }
 
@@ -84,7 +85,7 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> message.dispatch(clientDispatcher));
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                System.out.println(e.getMessage() + "error listening messages from server");
             }
         }
     }

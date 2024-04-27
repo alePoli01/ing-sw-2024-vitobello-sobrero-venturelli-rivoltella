@@ -8,6 +8,6 @@ import it.polimi.GC13.network.ClientInterface;
 import java.io.IOException;
 
 public interface LobbyControllerInterface {
-    void addPlayerToGame (ClientInterface client, Player player, int playersNumber) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException;
+    void addPlayerToGame (ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException;
     void checkForExistingGame(ClientInterface client);
 }

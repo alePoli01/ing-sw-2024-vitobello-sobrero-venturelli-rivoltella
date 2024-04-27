@@ -18,7 +18,7 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     @Override
     public void dispatch(PlayerJoiningMessage playerJoiningMessage, ClientInterface view) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         //unpack the message and propagate to che controllerDispatcher (some messages are for the model, others are for the Lobby)
-        controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer(), playerJoiningMessage.getNumOfPlayers());
+        controllerDispatcher.addPlayerToGame(view, playerJoiningMessage.getPlayer(), playerJoiningMessage.getNumOfPlayers(), playerJoiningMessage.getGameName());
     }
 
     @Override

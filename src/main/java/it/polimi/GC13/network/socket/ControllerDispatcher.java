@@ -27,8 +27,8 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface view, Player player, int playersNumber) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-        lobbyController.addPlayerToGame(view, player, playersNumber);
+    public void addPlayerToGame(ClientInterface view, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
+        lobbyController.addPlayerToGame(view, player, playersNumber, gameName);
     }
 
     @Override
