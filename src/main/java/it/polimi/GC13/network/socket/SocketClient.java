@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.network.LostConnectionToClientInterface;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
@@ -25,19 +26,26 @@ public class SocketClient implements ClientInterface, Runnable {
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     private final ServerDispatcherInterface serverDispatcher;
+    private final LostConnectionToClientInterface connectionStatus;
+    private boolean connectionOpen = true;
 
-    public SocketClient(Socket socket, ServerDispatcher serverDispatcher) throws IOException {
+    public SocketClient(Socket socket, ServerDispatcher serverDispatcher, LostConnectionToClientInterface connectionStatus) throws IOException {
         this.oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         this.ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
         this.serverDispatcher = serverDispatcher;
+        this.connectionStatus = connectionStatus;
     }
 
     // Generic method to send messages from server to client
     private void sendMessage(MessagesFromServer message) {
         try {
+            if (!connectionOpen) {
+                return;
+            }
             oos.writeObject(message);
             oos.flush();
         } catch (IOException e) {
+            connectionOpen = false;
             System.out.println("Error sending message: " + e.getMessage());
         }
     }
@@ -59,11 +67,9 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public synchronized void poke() throws IOException {
+    public synchronized void poke() {
         //empty message sent by the Impulse (read comment in SocketAccepter)
-        PokeMessage message = new PokeMessage("Try finger but hole");
-        oos.writeObject(message);
-        oos.flush();
+        this.sendMessage(new PokeMessage());
     }
 
     @Override
@@ -83,34 +89,24 @@ public class SocketClient implements ClientInterface, Runnable {
          */
         ExecutorService executorService = Executors.newCachedThreadPool();
         while (true) {
-            /*try {
-                synchronized (this) {
-                    if(!OPEN){
-                        break;
-                    }
-                }*/
             try {
+                if (!connectionOpen) break;
                 MessagesFromClient message = (MessagesFromClient) ois.readObject();
-                executorService.submit(()-> {
+                executorService.submit(() -> {
                     try {
-                        System.out.println("invio messaggio da server...");
                         message.dispatch(serverDispatcher, this);
                     } catch (IOException | PlayerNotAddedException e) {
                         throw new RuntimeException(e);
                     } catch (NicknameAlreadyTakenException e) {
-
+                        System.out.println(e.getMessage() + "(this message should be sent to client)");
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                if(connectionOpen){
+                    connectionOpen = false;
+                    connectionStatus.connectionLost(this);
+                }
             }
-            /*} catch (Exception e) {
-                /*synchronized (this) {
-                    if(OPEN) {
-                        OPEN = false;
-                        onConnectionLostListener.onConnectionLost(this);
-                    }
-                }*/
         }
     }
 }

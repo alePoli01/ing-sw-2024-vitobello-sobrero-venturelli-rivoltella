@@ -4,10 +4,10 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
 public class PokeMessage implements MessagesFromServer {
-    private String message;
+    private final String message;
 
-    public PokeMessage(String message) {
-        this.message = message;
+    public PokeMessage() {
+        this.message = null;
     }
 
     @Override

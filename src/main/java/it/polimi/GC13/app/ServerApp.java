@@ -26,7 +26,7 @@ public class ServerApp {
         ServerDispatcher serverDispatcher= new ServerDispatcher(controllerDispatcher);
         //create an Accepter that will connect the server port and dispatcher to a client
         System.out.println("Starting the Accepter...");
-        SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort);
+        SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort,lobbyController);
         //link the lobby the serverDispatcher that will be linked to the client, so that the lobby will be able to connect the client to the game
         lobbyController.setControllerDispatcher(controllerDispatcher);
         //start waiting for a client to connect

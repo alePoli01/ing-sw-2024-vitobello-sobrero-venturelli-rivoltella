@@ -1,7 +1,7 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.Player;
+import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
@@ -13,7 +13,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-public class SocketServer implements ServerInterface, Runnable, Serializable {
+public class SocketServer implements ServerInterface, Runnable {
     /*
     class that represents the "virtual server" for the client
 
@@ -24,11 +24,13 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ClientDispatcherInterface clientDispatcher;
-
-    public SocketServer(Socket socket, ClientDispatcher clientDispatcher) throws IOException {
+    private final LostConnectionToServerInterface connectionStatus;
+    private boolean connectionOpen=true;
+    public SocketServer(Socket socket, ClientDispatcher clientDispatcher, LostConnectionToServerInterface connectionStatus) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
+        this.connectionStatus=connectionStatus;
     }
 
     /*
@@ -37,10 +39,13 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
 
     private void sendMessage(MessagesFromClient messages) {
         try {
+            if(!connectionOpen) {return;}
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
+            connectionOpen=false;
             System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
+            connectionStatus.connectionLost(this);
         }
     }
 
@@ -81,11 +86,15 @@ public class SocketServer implements ServerInterface, Runnable, Serializable {
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         while (true) {
+            if(!connectionOpen)break;
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> message.dispatch(clientDispatcher));
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println(e.getMessage() + " error listening messages from server");
+                if(connectionOpen){
+                    connectionOpen = false;
+                    connectionStatus.connectionLost(this);
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package it.polimi.GC13.app;
 
+import it.polimi.GC13.network.LostConnectionToClientInterface;
 import it.polimi.GC13.network.socket.ServerDispatcher;
 import it.polimi.GC13.network.socket.ServerImpulse;
 import it.polimi.GC13.network.socket.SocketClient;
@@ -11,12 +12,13 @@ import java.net.Socket;
 public class SocketAccepter implements Runnable {
 
     private final ServerDispatcher serverDispatcher;
-
+    private final LostConnectionToClientInterface connectionStatus;
     private final int port;
 
-    public SocketAccepter(ServerDispatcher serverDispatcher, int port) {
+    public SocketAccepter(ServerDispatcher serverDispatcher, int port,LostConnectionToClientInterface connectionStatus) {
         this.port = port;
         this.serverDispatcher = serverDispatcher;
+        this.connectionStatus = connectionStatus;
     }
 
     @Override
@@ -27,8 +29,9 @@ public class SocketAccepter implements Runnable {
             while (true) {
                 try {
                     Socket socket = serverSocket.accept(); // waits for a client to connect
-                    System.out.println("\t\tClient connection accepted...");
-                    SocketClient socketClient = new SocketClient(socket, serverDispatcher);
+
+                    System.out.println("Client connection accepted...");
+                    SocketClient socketClient = new SocketClient(socket, serverDispatcher,connectionStatus);
                     //the socketClient (it's on the server) will wait for incoming messages from the client
                     new Thread(socketClient).start();
                     /*
@@ -39,7 +42,7 @@ public class SocketAccepter implements Runnable {
                     ServerImpulse serverImpulse= new ServerImpulse(socketClient);
                     System.out.println("\t\tStarting the Impulse generator Thread");
                     new Thread(serverImpulse).start();
-                    System.out.println("\t\tClient connection is done\nSocketAccepter running...");
+                    System.out.println("\t\tClient connection is done");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -40,7 +40,7 @@ public class PlayerJoiningMessage implements MessagesFromClient {
     public void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface client) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
         //calls the server dispatcher using 'this' as parameter, the dispatcher called will know what to do
         //what the dispatch method will do changes based on the parameters ('this')
-        System.out.println("PlayerJoiningMessage received: " + player.getNickname());
+
         serverDispatcher.dispatch(this, client);
     }
 }

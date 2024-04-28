@@ -52,7 +52,7 @@ public class ClientApp {
         } else {
             Socket socket = new Socket("localhost", 123); // creating socket that represents the server
             clientDispatcher = new ClientDispatcher();
-            virtualServer = new SocketServer(socket, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
+            virtualServer = new SocketServer(socket, clientDispatcher,clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
             new Thread((SocketServer) virtualServer).start();
             System.out.println("--|You chose Socket!|--");
         }
