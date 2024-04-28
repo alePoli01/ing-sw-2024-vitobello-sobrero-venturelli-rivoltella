@@ -1,6 +1,7 @@
 package it.polimi.GC13.network;
 
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
 
 import java.io.IOException;
@@ -17,5 +18,5 @@ public interface ClientInterface extends Remote {
 
     void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap);
 
-    void exceptionHandler(Exception e);
+    void inputExceptionHandler(InputException e);
 }

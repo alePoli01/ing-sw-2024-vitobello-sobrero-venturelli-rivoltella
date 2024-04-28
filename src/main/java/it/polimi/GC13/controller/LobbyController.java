@@ -59,7 +59,7 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
             if (this.waitingPlayersMap.get(workingGame) == 0) {
                 this.joinableGameMap.remove(gameName, workingGame);
             }
-            System.out.println("waiting players:" + waitingPlayersMap);
+            //System.out.println("waiting players:" + waitingPlayersMap);
         }
         // updates controller dispatcher client <-> player Map
         this.controllerDispatcher.getClientPlayerMap().put(client, player);

@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
@@ -73,8 +74,8 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void exceptionHandler(Exception e) {
-        this.sendMessage(new OnExceptionMessage(e));
+    public void inputExceptionHandler(InputException e) {
+        this.sendMessage(new OnInputExceptionMessage(e));
     }
 
     @Override

@@ -1,8 +1,9 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnExceptionMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnInputExceptionMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
 
 public interface ClientDispatcherInterface {
 
@@ -13,5 +14,7 @@ public interface ClientDispatcherInterface {
 
     void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage);
 
-    void dispatch(OnExceptionMessage onExceptionMessage);
+    void dispatch(OnInputExceptionMessage onInputExceptionMessage);
+
+    void dispatch(OnTokenChoiceMessage onTokenChoiceMessage);
 }

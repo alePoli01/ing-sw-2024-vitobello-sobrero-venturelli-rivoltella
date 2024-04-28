@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
@@ -11,7 +12,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 import java.util.Map;
 
 public class RMIClient extends UnicastRemoteObject implements ClientInterface {
@@ -47,7 +47,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
-    public void exceptionHandler(Exception e) {
+    public void inputExceptionHandler(InputException e) {
 
     }
 }

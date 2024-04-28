@@ -1,16 +1,17 @@
 package it.polimi.GC13.network.socket.messages.fromserver;
 
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
 
-public class OnExceptionMessage implements MessagesFromServer {
-    private final Exception exception;
+public class OnInputExceptionMessage implements MessagesFromServer {
+    private final InputException exception;
 
-    public OnExceptionMessage(Exception e) {
+    public OnInputExceptionMessage(InputException e) {
         this.exception = e;
     }
 
-    public Exception getException() {
+    public InputException getException() {
         return this.exception;
     }
 

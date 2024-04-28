@@ -26,6 +26,7 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ClientDispatcherInterface clientDispatcher;
     private final LostConnectionToServerInterface connectionStatus;
     private boolean connectionOpen=true;
+
     public SocketServer(Socket socket, ClientDispatcher clientDispatcher, LostConnectionToServerInterface connectionStatus) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());

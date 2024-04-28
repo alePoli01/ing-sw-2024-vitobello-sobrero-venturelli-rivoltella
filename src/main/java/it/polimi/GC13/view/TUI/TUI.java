@@ -2,16 +2,16 @@ package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 import it.polimi.GC13.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class TUI implements View {
@@ -28,7 +28,7 @@ public class TUI implements View {
     [2] join an existing one
      */
     @Override
-    public void display( Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException {
+    public void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int choice = 0;
 
@@ -120,53 +120,58 @@ public class TUI implements View {
     [2] place the start card
      */
     @Override
-    public void setupPhase( int waitingPlayers) throws IOException {
+    public void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String tokenColorChosen;
         boolean flag = false;
 
         if (waitingPlayers == 0) {
-            System.out.println("\n--- SETUP PHASE ---");
-            System.out.println("[1] to choose token");
-            System.out.println("[2] to place start card");
-            switch (Integer.parseInt(reader.readLine())) {
-                case 1: {
-                    System.out.println("Write your token color:");
-                    do {
-                        tokenColorChosen = reader.readLine();
-                        String finalTokenColor = tokenColorChosen;
-                        if (Arrays.stream(TokenColor.values()).anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
-                            flag = true;
-                            // calls the controller to update the model
-                            this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
-                        } else {
-                            System.out.println("Color not valid, you can chose" + Arrays.toString(TokenColor.values()));
-                        }
-                    } while (!flag);
+            System.out.println("\n--- SETUP PHASE [1/2]---");
+            System.out.println("Choose your token color:");
+            tokenColorList.forEach(System.out::println);
+            do {
+                tokenColorChosen = reader.readLine();
+                System.out.println("Letto input dal client");
+                String finalTokenColor = tokenColorChosen;
+                if (Arrays.stream(TokenColor.values()).anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
+                    flag = true;
+                    System.out.println("Colore ricevuto correttamente: " + finalTokenColor + "\n++Sending to controller");
+                    // calls the controller to update the model
+                    try {
+                        this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                    }
 
-                    /*
-                    TODO risposta del server nel caso il token sia già stato selezionato.
-                           se vogliamo gestirlo con le eccezioni, dobbiamo creare un metodo nella tui che viene usato
-                           dal server per propagare le eccezioni e stamparle all'utente
-                     */
+                } else {
+                    System.out.println("Color not valid, you can chose" + Arrays.toString(TokenColor.values()));
                 }
-                case 2: {
-                    System.out.println("Choose which side you would like to place your start card.\n[1] front [2] back");
-                    /*
-                    TODO tutto
-                     */
-                }
-                default:
-                    System.out.println("Error select: [1] to choose token, [2] to place start card");
-            }
+            } while (!flag);
         } else {
             System.out.println("waiting players: " + waitingPlayers);
         }
     }
 
-    // used to print exception caught by the controller
     @Override
-    public void printExceptionError(Exception e) {
-        System.out.println(e.getMessage());
+    public void startCardSetupPhase(TokenColor tokenColor) throws IOException {
+        /*
+            TODO tutto
+        */
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("\n--- SETUP PHASE [2/2]---");
+        System.out.println("Choose which side you would like to place your start card.\n[1] front\n[2] back\n[3] show card");
+    }
+
+
+    // used to print any input error (at the moment handles token color) and recall the method from the TUI
+    @Override
+    public void exceptionHandler(InputException e) {
+        System.out.println("sono nella tui a rilanciare");
+        try {
+            System.out.println(e.getMessage());
+            e.methodToRecall(this);
+        } catch (IOException e1) {
+            throw new RuntimeException(e1);
+        }
     }
 }

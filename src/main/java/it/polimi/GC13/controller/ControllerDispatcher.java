@@ -5,7 +5,7 @@ import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
-import it.polimi.GC13.exception.TokenAlreadyChosenException;
+import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -46,7 +46,7 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
         try {
             this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), token);
         } catch (TokenAlreadyChosenException e) {
-            client.exceptionHandler(e);
+            client.inputExceptionHandler(e);
         }
     }
 

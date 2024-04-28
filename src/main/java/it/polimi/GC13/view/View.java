@@ -1,17 +1,20 @@
 package it.polimi.GC13.view;
 
+import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
-import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface View {
 
-    void setupPhase(int waitingPlayers) throws IOException;
+    void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList) throws IOException;
 
-    void display(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
+    void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
 
-    void printExceptionError(Exception e);
+    void startCardSetupPhase(TokenColor tokenColor) throws IOException;
+
+    void exceptionHandler(InputException e);
 }

@@ -1,13 +1,17 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnExceptionMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnInputExceptionMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
 import it.polimi.GC13.view.View;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class ClientDispatcher implements ClientDispatcherInterface, LostConnectionToServerInterface {
     View view;
@@ -29,7 +33,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
         try {
-            view.display(onCheckForExistingGameMessage.getWaitingPlayersMap(), onCheckForExistingGameMessage.getJoinableGameMap());
+            view.joiningPhase(onCheckForExistingGameMessage.getWaitingPlayersMap(), onCheckForExistingGameMessage.getJoinableGameMap());
         } catch(IOException e) {
             System.out.println("Error dispatching game: " + e.getMessage());
         }
@@ -38,15 +42,25 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
         try {
-            view.setupPhase(onPlayerAddedToGameMessage.getWaitingPlayers());
+            List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
+            view.tokenSetupPhase(onPlayerAddedToGameMessage.getWaitingPlayers(), tokenColorList);
         } catch (IOException e) {
             System.out.println("Error adding players to game: " + e.getMessage());
         }
     }
 
     @Override
-    public void dispatch(OnExceptionMessage onExceptionMessage) {
-        view.printExceptionError(onExceptionMessage.getException());
+    public void dispatch(OnInputExceptionMessage onInputExceptionMessage) {
+        view.exceptionHandler(onInputExceptionMessage.getException());
+    }
+
+    @Override
+    public void dispatch(OnTokenChoiceMessage onTokenChoiceMessage) {
+        try {
+            view.startCardSetupPhase(onTokenChoiceMessage.getTokenColor());
+        } catch (IOException e) {
+            System.out.println("Error choosing the token color: " + e.getMessage());
+        }
     }
 
     @Override

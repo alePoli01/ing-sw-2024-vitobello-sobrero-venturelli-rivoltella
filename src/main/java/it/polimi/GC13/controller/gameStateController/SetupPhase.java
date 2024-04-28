@@ -4,8 +4,11 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotPlacedException;
-import it.polimi.GC13.exception.TokenAlreadyChosenException;
+import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SetupPhase implements GamePhase {
 
@@ -46,13 +49,23 @@ public class SetupPhase implements GamePhase {
     }
 
     public void chooseToken(Player player, TokenColor tokenColor) throws TokenAlreadyChosenException {
+        System.out.println("player's token color before method " + player.getToken() + " " + player.getToken().describeConstable().isEmpty());
+        System.out.println("token chosen by the player " + tokenColor);
         if (player.getToken().describeConstable().isEmpty()) {
             if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
                 player.setToken(tokenColor);
                 player.getTable().getTokenColors().remove(tokenColor);
                 nextPhaseChecker(player);
+                System.out.println(tokenColor + " chosen.");
             } else {
-                throw new TokenAlreadyChosenException(tokenColor);
+                List<TokenColor> tokenColorsList = new ArrayList<>();
+                for (TokenColor tc : TokenColor.values()) {
+                    if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
+                        tokenColorsList.add(tc);
+                    }
+                }
+                System.out.println("entrato nell'eccezione");
+                throw new TokenAlreadyChosenException(tokenColor, tokenColorsList);
             }
         }
     }
