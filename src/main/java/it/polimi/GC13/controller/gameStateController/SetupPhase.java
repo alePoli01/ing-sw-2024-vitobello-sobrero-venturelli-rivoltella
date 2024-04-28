@@ -49,18 +49,19 @@ public class SetupPhase implements GamePhase {
     }
 
     public void chooseToken(Player player, TokenColor tokenColor) throws TokenAlreadyChosenException {
-        System.out.println("player's token color before method " + player.getToken() + " " + player.getToken().describeConstable().isEmpty());
-        System.out.println("token chosen by the player " + tokenColor);
-        if (player.getToken().describeConstable().isEmpty()) {
+        //System.out.println("player's token color before method " + player.getToken());
+        //System.out.println("token chosen by the player " + tokenColor);
+        if (player.getToken() == null) {
             if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
                 player.setToken(tokenColor);
                 player.getTable().getTokenColors().remove(tokenColor);
                 nextPhaseChecker(player);
                 System.out.println(tokenColor + " chosen.");
             } else {
-                List<TokenColor> tokenColorsList = new ArrayList<>();
+                ArrayList<TokenColor> tokenColorsList = new ArrayList<>();
                 for (TokenColor tc : TokenColor.values()) {
-                    if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
+                    System.out.println(tc.toString());
+                    if (player.getGame().getTable().getTokenColors().contains(tc)) {
                         tokenColorsList.add(tc);
                     }
                 }
@@ -73,7 +74,7 @@ public class SetupPhase implements GamePhase {
     // check that all players in the same game chose a token
     public boolean playersChoseToken(Player player) {
         for (Player element : player.getGame().getPlayerList()) {
-            if (element.getToken().describeConstable().isEmpty()) {
+            if (element.getToken() == null) {
                 return false;
             }
         }

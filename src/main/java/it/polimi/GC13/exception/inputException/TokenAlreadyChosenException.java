@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TokenAlreadyChosenException extends Exception implements InputException {
-    private final List<TokenColor> availableTokenColors = new ArrayList<>();
-    public TokenAlreadyChosenException(TokenColor token, List<TokenColor> tokenColors) {
+    private final List<TokenColor> availableTokenColors;
+
+    public TokenAlreadyChosenException(TokenColor token, ArrayList<TokenColor> tokenColors) {
         super(token.toString() + " is already chosen. Available colors are:");
-        this.availableTokenColors.addAll(tokenColors);
+        this.availableTokenColors = tokenColors;
     }
 
     @Override
