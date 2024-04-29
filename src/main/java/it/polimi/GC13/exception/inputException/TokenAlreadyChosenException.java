@@ -17,7 +17,7 @@ public class TokenAlreadyChosenException extends Exception implements InputExcep
 
     @Override
     public void methodToRecall(View TUI) throws IOException {
-        TUI.tokenSetupPhase(0, availableTokenColors);
+        TUI.tokenSetupPhase(0, availableTokenColors,0);
     }
 
     @Override

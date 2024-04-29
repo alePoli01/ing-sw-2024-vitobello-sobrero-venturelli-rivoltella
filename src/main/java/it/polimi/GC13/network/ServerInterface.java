@@ -1,7 +1,7 @@
 package it.polimi.GC13.network;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 
 public interface ServerInterface {
     // Methods that can be called by the client

@@ -1,7 +1,7 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;

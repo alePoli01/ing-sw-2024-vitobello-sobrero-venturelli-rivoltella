@@ -51,9 +51,11 @@ public class SetupPhase implements GamePhase {
     public void chooseToken(Player player, TokenColor tokenColor) throws TokenAlreadyChosenException {
         if (player.getToken() == null) {
             if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
+                //color can be taken, assign it to player and remove it from take-able colors
                 player.setToken(tokenColor);
                 player.getTable().getTokenColors().remove(tokenColor);
             } else {
+                //case: color already taken
                 ArrayList<TokenColor> tokenColorsList = new ArrayList<>();
                 for (TokenColor tc : TokenColor.values()) {
                     if (player.getGame().getTable().getTokenColors().contains(tc)) {

@@ -3,7 +3,6 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
@@ -64,8 +63,8 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void onPlayerAddedToGame(int waitingPlayers) {
-        this.sendMessage(new OnPlayerAddedToGameMessage(waitingPlayers));
+    public void onPlayerAddedToGame(int waitingPlayers, int numPlayers) {
+        this.sendMessage(new OnPlayerAddedToGameMessage(waitingPlayers,numPlayers));
     }
 
     @Override
@@ -104,8 +103,6 @@ public class SocketClient implements ClientInterface, Runnable {
                         message.dispatch(serverDispatcher, this);
                     } catch (IOException | PlayerNotAddedException e) {
                         throw new RuntimeException(e);
-                    } catch (NicknameAlreadyTakenException e) {
-                        System.out.println(e.getMessage() + "(this message should be sent to client)");
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {

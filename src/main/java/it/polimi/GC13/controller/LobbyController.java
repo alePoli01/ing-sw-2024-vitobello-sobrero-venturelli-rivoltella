@@ -1,7 +1,7 @@
 package it.polimi.GC13.controller;
 
 import it.polimi.GC13.controller.gameStateController.Controller;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
@@ -40,7 +40,7 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
     }
 
     // create a new game if there is no one available, else it creates a new one
-    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
+    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
         System.out.println("--Received: PlayerJoiningMessage: [player:" + player.getNickname()+"]");
         // if there is no existing game, a new one is created
         if (playersNumber >= 2 && playersNumber <= 4) {
@@ -52,9 +52,19 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
             this.workingGame = newGame;
         } else {
             // adds the player to the model and updates noExistingGame for the next player that wants to play
+            if(joinableGameMap.get(gameName).getNumPlayer()==joinableGameMap.get(gameName).getCurrNumPlayer()){
+                //if the game started while the player was joining the request gets rejected (missing parameters)
+                System.out.println("\tGame is already full, rejecting add request");
+                client.onCheckForExistingGame(this.joinableGameMap, this.waitingPlayersMap);
+            }
             workingGame = joinableGameMap.get(gameName);
             // updates waiting players in waitingPlayersMap and the model
-            this.waitingPlayersMap.put(workingGame, this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, joinableGameMap.get(gameName)));
+            try {
+                this.waitingPlayersMap.put(workingGame, this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, joinableGameMap.get(gameName)));
+            }catch (NicknameAlreadyTakenException e) {
+                //create a new version of the exception with all the data needed and send a message
+                client.inputExceptionHandler(new NicknameAlreadyTakenException(e.getPlayerList(),waitingPlayersMap,joinableGameMap));
+            }
             // removes the game from the selectable when all players needed have joined
             if (this.waitingPlayersMap.get(workingGame) == 0) {
                 this.joinableGameMap.remove(gameName, workingGame);
@@ -69,12 +79,15 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
         // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
         this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
         // notify other players when someone connects and how many players are still needed
-        this.playerAddedToGame();
+        this.playerAddedToGame(playersNumber);
     }
 
-    private void playerAddedToGame() {
+    private void playerAddedToGame(int playersNumber) {
+        /*
+        TODO: FILTRARE I GIOCATORI DA NOTIFICARE IN BASE AL GIOCO
+         */
         for (ClientInterface client : this.clientGamePhaseMap.keySet()) {
-            client.onPlayerAddedToGame(this.waitingPlayersMap.get(workingGame));
+            client.onPlayerAddedToGame(this.waitingPlayersMap.get(workingGame),workingGame.getNumPlayer());
         }
     }
 

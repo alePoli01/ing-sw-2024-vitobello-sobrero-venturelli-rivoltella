@@ -17,6 +17,4 @@ public interface ControllerInterface {
     void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy);
     
     void drawCard(ClientInterface client, Player player, Table table, PlayableCard cardToDraw);
-
-    boolean addPlayerToExistingGame(ClientInterface client, Player player, Game existingGame) throws PlayerNotAddedException;
  }

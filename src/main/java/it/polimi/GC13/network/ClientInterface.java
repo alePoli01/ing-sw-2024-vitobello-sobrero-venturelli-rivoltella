@@ -14,7 +14,7 @@ public interface ClientInterface extends Remote {
 
     void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
 
-    void onPlayerAddedToGame(int waitingPlayers);
+    void onPlayerAddedToGame(int waitingPlayers, int numPlayers);
 
     void poke() throws IOException;
 

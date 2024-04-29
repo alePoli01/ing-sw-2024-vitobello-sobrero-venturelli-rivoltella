@@ -10,10 +10,11 @@ import java.util.Map;
 
 public interface View {
 
-    void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList) throws IOException;
+    void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList,int playersNeeded);
 
     void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
 
+    void joinExistingGame(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
     void startCardSetupPhase(TokenColor tokenColor) throws IOException;
 
     void exceptionHandler(InputException e);

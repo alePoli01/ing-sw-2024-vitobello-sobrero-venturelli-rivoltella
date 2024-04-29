@@ -1,7 +1,7 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.network.ServerInterface;
 
 import java.rmi.RemoteException;

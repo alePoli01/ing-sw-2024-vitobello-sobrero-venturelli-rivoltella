@@ -4,10 +4,9 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -47,6 +46,10 @@ public class Game implements Serializable {
 
     public int getCurrNumPlayer() {
         return currNumPlayer;
+    }
+
+    public int getNumPlayer() {
+        return numPlayer;
     }
 
     public List<Player> getPlayerList() {
@@ -135,7 +138,7 @@ public class Game implements Serializable {
     public void checkNickname(String nickname) throws NicknameAlreadyTakenException {
         for (Player player : playerList) {
             if (player.getNickname().equals(nickname)) {
-                throw new NicknameAlreadyTakenException();
+                throw new NicknameAlreadyTakenException(playerList,null,null);//LobbyController will fill the holes
             }
         }
     }

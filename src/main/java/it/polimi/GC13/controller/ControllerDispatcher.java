@@ -3,7 +3,7 @@ package it.polimi.GC13.controller;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
@@ -32,8 +32,8 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface view, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException, NicknameAlreadyTakenException {
-        lobbyController.addPlayerToGame(view, player, playersNumber, gameName);
+    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
+        lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
     }
 
     @Override
@@ -71,8 +71,5 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
         this.clientControllerMap.get(client).drawCard(player, table, cardToDraw);
     }
 
-    @Override
-    public boolean addPlayerToExistingGame(ClientInterface client, Player player, Game existingGame) throws PlayerNotAddedException {
-        return false;
-    }
+
 }

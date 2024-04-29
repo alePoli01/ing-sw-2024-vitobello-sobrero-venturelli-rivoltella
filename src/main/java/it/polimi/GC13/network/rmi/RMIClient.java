@@ -33,7 +33,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
 
 
     @Override
-    public void onPlayerAddedToGame(int waitingPlayers) {
+    public void onPlayerAddedToGame(int waitingPlayers,int numPlayers) {
 
     }
 

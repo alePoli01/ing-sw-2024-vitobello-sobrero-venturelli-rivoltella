@@ -1,14 +1,9 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.CardNotPlacedException;
-import it.polimi.GC13.exception.NicknameAlreadyTakenException;
+import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
-
-import javax.swing.*;
 
 public class JoiningPhase implements GamePhase {
     private final Controller controller;
