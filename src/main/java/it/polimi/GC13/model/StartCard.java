@@ -6,11 +6,11 @@ import java.util.Map;
 import java.util.ArrayList;
 
 public class StartCard extends PlayableCard {
-    public final ArrayList<Resource> frontReigns;
+    public final Resource[] frontReigns;
     public final Resource[] reignBackPointEdge;
 
 
-    public StartCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, ArrayList<Resource> frontReigns, Resource[] reignBackPointEdge) {
+    public StartCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, Resource[] frontReigns, Resource[] reignBackPointEdge) {
         super(serialNumber, reign, cardType, edgeResource, resourceNeeded, pointsGiven, condition);
         this.frontReigns = frontReigns;
         this.reignBackPointEdge = reignBackPointEdge;
@@ -44,19 +44,19 @@ public class StartCard extends PlayableCard {
         Croce: ┼ (U+253C)
         */
 
-        if (isflipped) {
+        if (!isflipped) {
             System.out.println("╔═══╦═════════╦═══╗");
-            System.out.println("║" + this.edgeResource[3].toString() + "║    " + gold + this.pointsGiven + reset + "    ║" + this.edgeResource[2].toString() + "║");
-            System.out.println("╠═══╝         ╚═══╣");
+            System.out.println("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+            System.out.println("╠═══╝  │"+ this.frontReigns[0].toString() +this.frontReigns[1].toString() +this.frontReigns[2].toString() +"│  ╚═══╣");
             System.out.println("╠═══╗         ╔═══╣");
-            System.out.println("║" + this.edgeResource[0].toString() + "║         ║" + this.edgeResource[1].toString() + "║");
+            System.out.println("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
             System.out.println("╚═══╩═════════╩═══╝");
         } else {
             System.out.println("╔═══╦═════════╦═══╗");
-            System.out.println("║   ║         ║   ║");
-            System.out.println("╠═══╝   " + this.reign.toString() + "   ╚═══╣");
+            System.out.println("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+            System.out.println("╠═══╝         ╚═══╣");
             System.out.println("╠═══╗         ╔═══╣");
-            System.out.println("║   ║         ║   ║");
+            System.out.println("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
             System.out.println("╚═══╩═════════╩═══╝");
         }
 

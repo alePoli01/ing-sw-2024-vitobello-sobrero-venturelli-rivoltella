@@ -39,31 +39,31 @@ public enum Resource {
     public String toString(){
         switch (this){
             case FUNGI -> {
-                return red+" F "+reset;
+                return red+"F"+reset;
             }
             case ANIMAL -> {
-                return blue+" A "+reset;
+                return blue+"A"+reset;
             }
             case INSECT -> {
-                return magenta+" I "+reset;
+                return magenta+"I"+reset;
             }
             case PLANT -> {
-                return green+" P "+reset;
+                return green+"P"+reset;
             }
             case NULL -> {
-                return " X ";
+                return "X";
             }
             case EMPTY -> {
-                return "   ";
+                return " ";
             }
             case INKWELL -> {
-                return gold+" I "+reset;
+                return gold+"I"+reset;
             }
             case QUILL -> {
-                return gold+" F "+reset;
+                return gold+"F"+reset;
             }
             case MANUSCRIPT -> {
-                return gold+" M "+reset;
+                return gold+"M"+reset;
             }
 
         }

@@ -14,7 +14,9 @@
       "pointsGiven": 0,
       "condition": "",
       "frontReigns": [
-        "INSECT"
+        "EMPTY",
+        "INSECT",
+        "EMPTY"
       ],
       "reignBackPointEdge": [
         "INSECT",
@@ -37,7 +39,9 @@
       "pointsGiven": 0,
       "condition": "",
       "frontReigns": [
-        "FUNGI"
+        "EMPTY",
+        "FUNGI",
+        "EMPTY"
       ],
       "reignBackPointEdge": [
         "FUNGI",
@@ -61,6 +65,7 @@
       "condition": "",
       "frontReigns": [
         "PLANT",
+        "EMPTY",
         "FUNGI"
       ],
       "reignBackPointEdge": [
@@ -85,6 +90,7 @@
       "condition": "",
       "frontReigns": [
         "ANIMAL",
+        "EMPTY",
         "INSECT"
       ],
       "reignBackPointEdge": [

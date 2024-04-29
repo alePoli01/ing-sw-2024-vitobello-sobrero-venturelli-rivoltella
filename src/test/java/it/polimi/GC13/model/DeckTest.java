@@ -67,8 +67,8 @@ public class DeckTest extends TestCase {
             }
 
             System.out.println("-FRONT REIGN-");
-            for(int i = 0; i<card.frontReigns.size(); i++) {
-                System.out.println(card.frontReigns.get(i));
+            for(int i = 0; i<card.frontReigns.length; i++) {
+                System.out.println(card.frontReigns[i]);
             }
 
             System.out.println("-----------------------");
@@ -103,16 +103,22 @@ public class DeckTest extends TestCase {
         deck.parseJSON();
 
         for(PlayableCard card: deck.getResourceDeck()){
+            System.out.println("CARD "+card.serialNumber);
             card.cardPrinter(true);
             card.cardPrinter(false);
+            System.out.println("_______________");
         }
         for(PlayableCard card: deck.getGoldDeck()){
+            System.out.println("CARD "+card.serialNumber);
             card.cardPrinter(true);
             card.cardPrinter(false);
+            System.out.println("_______________");
         }
         for(PlayableCard card: deck.getStartDeck()){
+            System.out.println("CARD "+card.serialNumber);
             card.cardPrinter(true);
             card.cardPrinter(false);
+            System.out.println("_______________");
         }
     }
 

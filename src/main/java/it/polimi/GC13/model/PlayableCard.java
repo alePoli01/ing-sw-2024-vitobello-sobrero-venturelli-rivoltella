@@ -72,15 +72,15 @@ public class PlayableCard implements Serializable {
 
             if (isflipped) {
                 System.out.println("╔═══╦═════════╦═══╗");
-                System.out.println("║" + this.edgeResource[3].toString() + "║    " + gold + this.pointsGiven + reset + "    ║" + this.edgeResource[2].toString() + "║");
+                System.out.println("║ " + this.edgeResource[3].toString() + " ║    " + gold + this.pointsGiven + reset + "    ║ " + this.edgeResource[2].toString() + " ║");
                 System.out.println("╠═══╝         ╚═══╣");
                 System.out.println("╠═══╗         ╔═══╣");
-                System.out.println("║" + this.edgeResource[0].toString() + "║         ║" + this.edgeResource[1].toString() + "║");
+                System.out.println("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
                 System.out.println("╚═══╩═════════╩═══╝");
             } else {
                 System.out.println("╔═══╦═════════╦═══╗");
                 System.out.println("║   ║         ║   ║");
-                System.out.println("╠═══╝   " + this.reign.toString() + "   ╚═══╣");
+                System.out.println("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
                 System.out.println("╠═══╗         ╔═══╣");
                 System.out.println("║   ║         ║   ║");
                 System.out.println("╚═══╩═════════╩═══╝");
@@ -90,19 +90,17 @@ public class PlayableCard implements Serializable {
         }
         if (this.serialNumber > 40 && this.serialNumber <= 80) {
             //gold card
-
-
             if (isflipped) {
                 System.out.println("╔═══╦════╦════╦═══╗");
-                System.out.println("║" + this.edgeResource[3].toString() + "║   " + gold + this.pointsGiven + reset + "║" + gold + this.condition.toString() + reset + "   ║" + this.edgeResource[2].toString() + "║");
+                System.out.println("║ " + this.edgeResource[3].toString() + " ║   " + gold + this.pointsGiven + reset + "║" + gold + this.condition.toString() + reset + "   ║ " + this.edgeResource[2].toString() + " ║");
                 System.out.println("╠═══╝         ╚═══╣");
                 System.out.println("╠═══╗         ╔═══╣");
-                System.out.println("║" + this.edgeResource[0].toString() + "║         ║" + this.edgeResource[1].toString() + "║");
+                System.out.println("║ " + this.edgeResource[0].toString() + " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ║ " + this.edgeResource[1].toString() + " ║");
                 System.out.println("╚═══╩═════════╩═══╝");
             } else {
                 System.out.println("╔═══╦═════════╦═══╗");
                 System.out.println("║   ║         ║   ║");
-                System.out.println("╠═══╝   " + this.reign.toString() + "   ╚═══╣");
+                System.out.println("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
                 System.out.println("╠═══╗         ╔═══╣");
                 System.out.println("║   ║         ║   ║");
                 System.out.println("╚═══╩═════════╩═══╝");
