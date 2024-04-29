@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.IOException;
@@ -24,4 +25,6 @@ public interface ClientInterface extends Remote {
     void onTokenChoiceMessage(TokenColor tokenColor);
 
     void inputExceptionHandler(InputException e);
+
+    void onPlaceStartCardMessage(OnPlaceStartCardMessage onPlaceStartCardMessage);
 }

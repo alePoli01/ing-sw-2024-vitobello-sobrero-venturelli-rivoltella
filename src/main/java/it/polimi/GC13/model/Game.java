@@ -113,12 +113,13 @@ public class Game implements Serializable {
             this.playerList.add(player);
             player.setGame(this);
             currNumPlayer++;
+            this.table.getPlayerBoardMap().put(player, new Board(player));
             if (!this.playerList.contains(player)) {
                 System.out.println("lancio eccezione");
                 throw new PlayerNotAddedException(player);
             }
         } else {
-            System.out.println("Error; max number of player reached: "+currNumPlayer);
+            System.out.println("Error; max number of player reached: " + currNumPlayer);
         }
     }
 

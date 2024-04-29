@@ -3,10 +3,7 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnInputExceptionMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.view.View;
 
 import java.io.IOException;
@@ -42,7 +39,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
         List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
-        view.tokenSetupPhase(onPlayerAddedToGameMessage.getConnectedPlayers(), tokenColorList, onPlayerAddedToGameMessage.getNumPlayersNeeded());
+        view.tokenSetupPhase(onPlayerAddedToGameMessage.connectedPlayers(), tokenColorList, onPlayerAddedToGameMessage.numPlayersNeeded());
     }
 
     @Override
@@ -57,6 +54,11 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
         } catch (IOException e) {
             System.out.println("Error choosing the token color: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage) {
+      view.chosePrivateObjectiveCard(onPlaceStartCardMessage.readyPlayers(), onPlaceStartCardMessage.neededPlayers(), onPlaceStartCardMessage.isFlipped());
     }
 
     @Override

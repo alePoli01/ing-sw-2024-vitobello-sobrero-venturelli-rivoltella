@@ -84,6 +84,11 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
+    public void onPlaceStartCardMessage(OnPlaceStartCardMessage onPlaceStartCardMessage) {
+        this.sendMessage(onPlaceStartCardMessage);
+    }
+
+    @Override
     public void run() {
         /*
         the methods above are for sending messages to the client

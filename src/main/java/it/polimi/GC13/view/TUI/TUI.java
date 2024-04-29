@@ -16,6 +16,7 @@ import java.util.StringJoiner;
 
 public class TUI implements View {
     ServerInterface virtualServer;
+    boolean firstNotify = false;
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -75,7 +76,7 @@ public class TUI implements View {
 
         System.out.print("Choose a name for the new Game: ");
         gameName = reader.readLine();
-        System.out.println("Choose Number of players in the game [min 2, max 4]:");
+        System.out.print("Choose Number of players in the game [min 2, max 4]: ");
         do {
             try {
                 playersNumber = Integer.parseInt(reader.readLine());
@@ -101,7 +102,7 @@ public class TUI implements View {
         String nickname, gameName;
         int playersNumber = -1;
 
-        System.out.print("Choose a nickname:");
+        System.out.print("Choose a nickname: ");
         nickname = reader.readLine();
         System.out.println("Joinable Games:");
         joinableGameMap.forEach((string, game) -> System.out.println("\t>game:[" + string + "] --|players in waiting room: " + waitingPlayersMap.get(game)+"|"));
@@ -120,18 +121,17 @@ public class TUI implements View {
     }
 
     /*
-    shows SETUP PHASE methods to the player
-    [1] chose the token
-    [2] place the start card
+        SETUP PHASE methods to the player
+        tokenSetupPhase to chose your token
      */
     @Override
-    public void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList, int playersNeeded) {
+    public void tokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String tokenColorChosen;
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
 
-        if (waitingPlayers == playersNeeded) {
+        if (readyPlayers == neededPlayers) {
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
             System.out.println("Choose your token color: " + joiner);
@@ -145,7 +145,6 @@ public class TUI implements View {
                 String finalTokenColor = tokenColorChosen; //per debugging
                 if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
                     flag = true;
-                    System.out.println("Colore ricevuto correttamente: " + finalTokenColor + "\n++Sending to controller");
                     // calls the controller to update the model
                     this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
                 } else {
@@ -153,14 +152,19 @@ public class TUI implements View {
                 }
             } while (!flag);
         } else {
-            System.out.println("--|players in waiting room: " + waitingPlayers + "/" + playersNeeded);
+            System.out.println("--|players in waiting room: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
+    /*
+        SETUP PHASE methods to the player
+        startCardSetupPhase to chose which side to place your card
+     */
     @Override
     public void startCardSetupPhase(TokenColor tokenColor) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int choice = 0;
+        System.out.println("You chose " + tokenColor + " token");
         System.out.println("\n--- SETUP PHASE [2/2]---");
         System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back\n[3] show card");
 
@@ -183,6 +187,20 @@ public class TUI implements View {
         }
     }
 
+
+    @Override
+    public void chosePrivateObjectiveCard(int readyPlayers, int neededPlayers, boolean isFlipped) {
+        if (readyPlayers == neededPlayers) {
+            this.firstNotify = false;
+            System.out.println("Chose private objective Card:\n\t[1] to show first choice\n\t[2] to show second choice");
+
+        } else if (!this.firstNotify) {
+            this.firstNotify = true;
+            System.out.println("--|players that placed starter card: " + readyPlayers + "/" + neededPlayers);
+        } else {
+            System.out.println("--|players that placed starter card: " + readyPlayers + "/" + neededPlayers);
+        }
+    }
 
     // used to print any input error (at the moment handles token color) and recall the method from the TUI
     @Override

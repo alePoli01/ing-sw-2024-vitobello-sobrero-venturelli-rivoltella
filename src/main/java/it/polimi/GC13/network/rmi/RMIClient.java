@@ -6,6 +6,7 @@ import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.IOException;
@@ -55,6 +56,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
 
     @Override
     public void inputExceptionHandler(InputException e) {
+
+    }
+
+    @Override
+    public void onPlaceStartCardMessage(OnPlaceStartCardMessage onPlaceStartCardMessage) {
 
     }
 }

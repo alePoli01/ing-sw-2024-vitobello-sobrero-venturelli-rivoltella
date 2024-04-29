@@ -27,7 +27,7 @@ public class ClientApp {
 
         // INTERNET PROTOCOL CHOICE
         do {
-            System.out.println("Chose the connection: RMI[1] or SOCKET[2]\nYour choice: ");
+            System.out.print("Chose the connection:\n\t[1] RMI or [2] SOCKET\nYour choice: ");
             try {
                 choice = Integer.parseInt(reader.readLine());
             } catch (NumberFormatException e) {
@@ -57,7 +57,7 @@ public class ClientApp {
         // VIEW CHOICE
         choice = 0;
         do {
-            System.out.println("Chose your view: TUI[1] or GUI[2]\nYour choice: ");
+            System.out.print("Chose your view:\n\t[1] TUI or [2] GUI\nYour choice: ");
             try {
                 choice = Integer.parseInt(reader.readLine());
             } catch (NumberFormatException e) {

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface View {
 
-    void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList,int playersNeeded);
+    void tokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers);
 
     void checkForExistingGame();
 
@@ -18,6 +18,8 @@ public interface View {
 
     void joinExistingGame(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
     void startCardSetupPhase(TokenColor tokenColor) throws IOException;
+
+    void chosePrivateObjectiveCard(int readyPlayers, int neededPlayers, boolean isFlipped);
 
     void exceptionHandler(InputException e);
 }

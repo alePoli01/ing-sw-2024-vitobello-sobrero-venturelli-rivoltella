@@ -9,16 +9,18 @@ import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;
     private LobbyController lobbyController;
-    private final List<ClientInterface> clientsList = new ArrayList<>();
+    private final Map<Player, ClientInterface> clientPlayerMap = new HashMap<>();
     ControllerDispatcher controllerDispatcher;
 
     // add a new created game to the game manager with its respective controller
@@ -33,8 +35,8 @@ public class Controller implements GamePhase {
         return game;
     }
 
-    public List<ClientInterface> getClientsList() {
-        return this.clientsList;
+    public Map<Player, ClientInterface> getClientPlayerMap() {
+        return this.clientPlayerMap;
     }
 
     public void updateController(GamePhase newGameController) {
@@ -43,8 +45,15 @@ public class Controller implements GamePhase {
     }
 
     public void notifyClients(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        this.clientsList.forEach(client -> client.onPlayerAddedToGame(onPlayerAddedToGameMessage));
+        this.clientPlayerMap.forEach((player, client) -> client.onPlayerAddedToGame(onPlayerAddedToGameMessage));
     }
+
+    public void notifySpecificClients(OnPlaceStartCardMessage onPlaceStartCardMessage, List<Player> playerList) {
+        playerList.stream()
+                .map(this.clientPlayerMap::get)
+                .forEach(client -> client.onPlaceStartCardMessage(onPlaceStartCardMessage));
+    }
+
 
     public void chooseToken(Player player, TokenColor token) throws TokenAlreadyChosenException {
         this.gameController.chooseToken(player, token);

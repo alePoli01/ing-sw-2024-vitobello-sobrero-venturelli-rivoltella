@@ -7,6 +7,7 @@ import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,9 +59,6 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     @Override
     public void placeStartCard(ClientInterface client, boolean isFlipped) {
         this.clientControllerMap.get(client).placeStartCard(this.clientPlayerMap.get(client), isFlipped);
-        /*
-        TODO exception handler
-         */
     }
 
     @Override

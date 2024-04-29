@@ -52,7 +52,7 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    // check that all players in the same game chose their own objective card
+    // CHECK that all players in the same game chose their own objective card
     public boolean playersChoseObjectiveCard(Player player) {
         for (Player element : player.getGame().getPlayerList()) {
             if (element.getHand().size() == 2) {

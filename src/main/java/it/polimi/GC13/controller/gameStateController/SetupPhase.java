@@ -7,12 +7,15 @@ import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SetupPhase implements GamePhase {
 
     private final Controller controller;
+    private final List<Player> playerList = new ArrayList<>();
 
     public SetupPhase(Controller controller) {
         this.controller = controller;
@@ -30,15 +33,17 @@ public class SetupPhase implements GamePhase {
 
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
+            System.out.println("I am placing the card");
             PlayableCard cardToPlace = player.getHand().getFirst();
-            player.getBoard().addCardToBoard(null, cardToPlace, isFlipped);
+            player.getBoard().addCardToBoard(new Coordinates(50, 50), cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
             // if all Players positioned start card, it updates the controller
             if (playersPlacedStartCard(player)) {
                 this.controller.updateController(new DealingPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
             } else {
-
+                this.playerList.add(player);
+                this.controller.notifySpecificClients(new OnPlaceStartCardMessage(this.playerList.size(), this.controller.getGame().numPlayer, isFlipped), this.playerList);
             }
         } catch (CardNotPlacedException e) {
             System.out.println(e.getMessage());
@@ -48,7 +53,7 @@ public class SetupPhase implements GamePhase {
     // check that all players in the same game positioned the start card
     private boolean playersPlacedStartCard(Player player) {
         for (Player p : player.getGame().getPlayerList()) {
-            if (!p.getBoard().containskeyofvalue(50, 50)) {
+            if (!p.getBoard().containsKeyOfValue(50, 50)) {
                 return false;
             }
         }

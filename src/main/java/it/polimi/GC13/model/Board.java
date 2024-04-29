@@ -5,9 +5,10 @@ import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.EdgeNotFreeException;
 import it.polimi.GC13.exception.NoResourceAvailableException;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Board {
+public class Board implements Serializable {
     private Map<Coordinates, Cell> boardMap;
     private final Player owner;               //owner of the board
     private int playerScore;
@@ -71,10 +72,9 @@ public class Board {
     public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlacedException {
         // if statement for startCard placed in position 50,50 (board center)
         if (cardToPlace instanceof StartCard) {
-            Coordinates startXY = new Coordinates(50, 50);
             Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-            boardMap.put(startXY, newCell);
-            if (!boardMap.get(startXY).getCardPointer().equals(cardToPlace)) {
+            boardMap.put(xy, newCell);
+            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
                 throw new CardNotPlacedException(cardToPlace);
             }
         } else {
@@ -223,7 +223,7 @@ public class Board {
             }
         }
     }
-    public boolean containskeyofvalue(int x,int y){
+    public boolean containsKeyOfValue(int x, int y){
         for(Coordinates xy : this.getBoardMap().keySet()){
             if(xy.getX()==x && xy.getY()==y){
                 return true;

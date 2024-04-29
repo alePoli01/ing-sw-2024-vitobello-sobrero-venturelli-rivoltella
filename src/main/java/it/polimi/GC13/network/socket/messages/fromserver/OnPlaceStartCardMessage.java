@@ -2,7 +2,7 @@ package it.polimi.GC13.network.socket.messages.fromserver;
 
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
-public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNeeded) implements MessagesFromServer {
+public record OnPlaceStartCardMessage(int readyPlayers, int neededPlayers, boolean isFlipped) implements MessagesFromServer {
 
     @Override
     public void dispatch(ClientDispatcherInterface clientDispatcher) {

@@ -57,8 +57,8 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
             // updates waitingPlayersMap
             this.connectedPlayersMap.put(workingGame, this.connectedPlayersMap.get(workingGame) + 1);
         }
-        // updates controller clientsList
-        this.gameControllerMap.get(workingGame).getClientsList().add(client);
+        // updates controller clientPlayerMap
+        this.gameControllerMap.get(workingGame).getClientPlayerMap().put(player, client);
         // set the game for the player
         player.setGame(workingGame);
         try {
