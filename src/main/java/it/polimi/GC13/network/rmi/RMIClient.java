@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
@@ -43,6 +44,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
 
     @Override
     public void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
+
+    }
+
+    @Override
+    public void onTokenChoiceMessage(TokenColor tokenColor) {
 
     }
 

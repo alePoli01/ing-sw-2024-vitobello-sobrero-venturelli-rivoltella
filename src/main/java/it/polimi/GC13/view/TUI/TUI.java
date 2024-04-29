@@ -126,23 +126,20 @@ public class TUI implements View {
         boolean flag = false;
 
         if (waitingPlayers == 0) {
-            System.out.println("\n--- SETUP PHASE [1/2]---");
-            System.out.println("Choose your token color:");
+            System.out.println("\n--- SETUP PHASE [1/2]---\nChoose your token color:");
             tokenColorList.forEach(System.out::println);
             do {
                 tokenColorChosen = reader.readLine();
-                System.out.println("Letto input dal client");
+                //System.out.println("Letto input dal client");
                 String finalTokenColor = tokenColorChosen;
                 if (Arrays.stream(TokenColor.values()).anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
                     flag = true;
-                    System.out.println("Colore ricevuto correttamente: " + finalTokenColor + "\n++Sending to controller");
                     // calls the controller to update the model
                     try {
                         this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
                     }
-
                 } else {
                     System.out.println("Color not valid, you can chose" + Arrays.toString(TokenColor.values()));
                 }

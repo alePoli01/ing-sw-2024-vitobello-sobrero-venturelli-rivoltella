@@ -1,5 +1,6 @@
 package it.polimi.GC13.network;
 
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
@@ -10,6 +11,7 @@ import java.rmi.Remote;
 import java.util.Map;
 
 public interface ClientInterface extends Remote {
+
     void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException;
 
     void onPlayerAddedToGame(int waitingPlayers);
@@ -17,6 +19,8 @@ public interface ClientInterface extends Remote {
     void poke() throws IOException;
 
     void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap);
+
+    void onTokenChoiceMessage(TokenColor tokenColor);
 
     void inputExceptionHandler(InputException e);
 }

@@ -57,7 +57,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnTokenChoiceMessage onTokenChoiceMessage) {
         try {
-            view.startCardSetupPhase(onTokenChoiceMessage.getTokenColor());
+            view.startCardSetupPhase(onTokenChoiceMessage.tokenColor());
         } catch (IOException e) {
             System.out.println("Error choosing the token color: " + e.getMessage());
         }

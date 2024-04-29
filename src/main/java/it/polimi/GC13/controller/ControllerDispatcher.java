@@ -42,9 +42,10 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void chooseToken(ClientInterface client, TokenColor token) {
+    public void chooseToken(ClientInterface client, TokenColor tokenColor) {
         try {
-            this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), token);
+            this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), tokenColor);
+            client.onTokenChoiceMessage(tokenColor);
         } catch (TokenAlreadyChosenException e) {
             client.inputExceptionHandler(e);
         }

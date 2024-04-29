@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
 import it.polimi.GC13.exception.NicknameAlreadyTakenException;
@@ -71,6 +72,11 @@ public class SocketClient implements ClientInterface, Runnable {
     public synchronized void poke() {
         //empty message sent by the Impulse (read comment in SocketAccepter)
         this.sendMessage(new PokeMessage());
+    }
+
+    @Override
+    public void onTokenChoiceMessage(TokenColor tokenColor) {
+        this.sendMessage(new OnTokenChoiceMessage(tokenColor));
     }
 
     @Override

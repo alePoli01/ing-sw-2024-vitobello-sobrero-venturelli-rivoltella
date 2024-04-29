@@ -31,7 +31,7 @@ public class SocketAccepter implements Runnable {
                     Socket socket = serverSocket.accept(); // waits for a client to connect
 
                     System.out.println("Client connection accepted...");
-                    SocketClient socketClient = new SocketClient(socket, serverDispatcher,connectionStatus);
+                    SocketClient socketClient = new SocketClient(socket, serverDispatcher, connectionStatus);
                     //the socketClient (it's on the server) will wait for incoming messages from the client
                     new Thread(socketClient).start();
                     /*
