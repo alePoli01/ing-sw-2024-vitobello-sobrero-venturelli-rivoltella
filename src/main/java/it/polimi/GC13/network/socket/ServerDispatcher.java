@@ -1,10 +1,10 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.controller.ControllerDispatcher;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.socket.messages.fromclient.PlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 import it.polimi.GC13.network.socket.messages.fromclient.TokenChoiceMessage;
 
@@ -31,5 +31,10 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     @Override
     public void dispatch(TokenChoiceMessage tokenChoiceMessage, ClientInterface client) {
         controllerDispatcher.chooseToken(client, tokenChoiceMessage.getTokenColor());
+    }
+
+    @Override
+    public void dispatch(PlaceStartCardMessage placeStartCardMessage, ClientInterface client) {
+        controllerDispatcher.placeStartCard(client, placeStartCardMessage.getSide());
     }
 }

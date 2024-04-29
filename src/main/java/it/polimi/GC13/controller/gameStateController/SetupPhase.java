@@ -4,11 +4,11 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotPlacedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SetupPhase implements GamePhase {
 
@@ -28,20 +28,27 @@ public class SetupPhase implements GamePhase {
         }
     }
 
-    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
+    public void placeStartCard(Player player, boolean isFlipped) {
         try {
+            PlayableCard cardToPlace = player.getHand().getFirst();
             player.getBoard().addCardToBoard(null, cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
-            nextPhaseChecker(player);
+            // if all Players positioned start card, it updates the controller
+            if (playersPlacedStartCard(player)) {
+                this.controller.updateController(new DealingPhase(this.controller));
+                this.controller.getGame().setGameState(GameState.DEALING_CARDS);
+            } else {
+
+            }
         } catch (CardNotPlacedException e) {
             System.out.println(e.getMessage());
         }
     }
 
     // check that all players in the same game positioned the start card
-    public boolean playersPlacedStartCard(Player player) {
-        for (Player element : player.getGame().getPlayerList()) {
-            if (!element.getBoard().containskeyofvalue(50, 50)) {
+    private boolean playersPlacedStartCard(Player player) {
+        for (Player p : player.getGame().getPlayerList()) {
+            if (!p.getBoard().containskeyofvalue(50, 50)) {
                 return false;
             }
         }
@@ -67,13 +74,6 @@ public class SetupPhase implements GamePhase {
         }
     }
 
-    // check if condition to next phase is met, if so it updates the Controller
-    public void nextPhaseChecker(Player player){
-        if (playersPlacedStartCard(player)) {
-            this.controller.updateController(new DealingPhase(this.controller));
-            this.controller.getGame().setGameState(GameState.DEALING_CARDS);
-        }
-    }
 
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
@@ -87,8 +87,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public int addPlayerToExistingGame(Player player, Game existingGame) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-        return 0;
+    public void addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException {
+        throw new PlayerNotAddedException(player);
     }
 }

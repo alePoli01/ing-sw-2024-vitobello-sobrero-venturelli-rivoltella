@@ -33,7 +33,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void placeStartCard(boolean side) {
+    public void placeStartCard(boolean isFlipped) {
 
     }
 

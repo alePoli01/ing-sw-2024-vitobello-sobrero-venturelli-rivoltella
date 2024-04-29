@@ -19,8 +19,13 @@ public class TUI implements View {
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
-        this.virtualServer.checkForExistingGame();
+        this.checkForExistingGame();
         System.out.println("++Sent: checkForExistingGame");
+    }
+
+    @Override
+    public void checkForExistingGame() {
+        this.virtualServer.checkForExistingGame();
     }
 
     /* shows 2 options to the player
@@ -65,10 +70,10 @@ public class TUI implements View {
         int playersNumber = -1;
 
         //asking for all the contents of the message
-        System.out.print("Choose a nickname:");
+        System.out.print("Choose a nickname: ");
         nickname = reader.readLine();
 
-        System.out.print("Choose a name for the new Game:");
+        System.out.print("Choose a name for the new Game: ");
         gameName = reader.readLine();
         System.out.println("Choose Number of players in the game [min 2, max 4]:");
         do {
@@ -126,7 +131,7 @@ public class TUI implements View {
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
 
-        if (waitingPlayers == 0) {
+        if (waitingPlayers == playersNeeded) {
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
             System.out.println("Choose your token color: " + joiner);
@@ -148,18 +153,34 @@ public class TUI implements View {
                 }
             } while (!flag);
         } else {
-            System.out.println("--|players in waiting room: " + waitingPlayers+"/"+playersNeeded);
+            System.out.println("--|players in waiting room: " + waitingPlayers + "/" + playersNeeded);
         }
     }
 
     @Override
     public void startCardSetupPhase(TokenColor tokenColor) throws IOException {
-        /*
-            TODO tutto
-        */
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        int choice = 0;
         System.out.println("\n--- SETUP PHASE [2/2]---");
-        System.out.println("Choose which side you would like to place your start card.\n[1] front\n[2] back\n[3] show card");
+        System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back\n[3] show card");
+
+        do {
+            try {
+                choice = Integer.parseInt(reader.readLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Please put a number");
+            }
+        } while (choice < 1 || choice > 3);
+
+        if (choice == 1) {
+            this.virtualServer.placeStartCard(false);
+        } else if (choice == 2) {
+            this.virtualServer.placeStartCard(true);
+        } else {
+            /* TODO
+                metodo show card
+             */
+        }
     }
 
 
@@ -171,7 +192,7 @@ public class TUI implements View {
             System.out.println(e.getMessage());
             e.methodToRecall(this);
         } catch (IOException e1) {
-            throw new RuntimeException(e1);
+            System.out.println("Errore nel rilancio");
         }
     }
 }

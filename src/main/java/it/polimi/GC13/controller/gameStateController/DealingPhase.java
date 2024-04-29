@@ -47,6 +47,11 @@ public class DealingPhase implements GamePhase {
         }
     }
 
+    @Override
+    public void placeStartCard(Player player, boolean isFlipped) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
     // check that all players in the same game chose their own objective card
     public boolean playersChoseObjectiveCard(Player player) {
         for (Player element : player.getGame().getPlayerList()) {
@@ -57,10 +62,6 @@ public class DealingPhase implements GamePhase {
         return true;
     }
 
-    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-    }
-
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
@@ -69,8 +70,7 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public int addPlayerToExistingGame(Player player, Game existingGame) {
+    public void addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-        return 0;
     }
 }

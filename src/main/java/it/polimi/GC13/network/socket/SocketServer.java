@@ -3,11 +3,8 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
-import it.polimi.GC13.network.socket.messages.fromclient.TokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromclient.*;
 import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
-import it.polimi.GC13.network.socket.messages.fromclient.PlayerJoiningMessage;
 
 import java.io.*;
 import java.net.Socket;
@@ -58,19 +55,17 @@ public class SocketServer implements ServerInterface, Runnable {
 
     @Override
     public void checkForExistingGame() {
-        CheckForExistingGameMessage checkForExistingGame = new CheckForExistingGameMessage() ;
-        this.sendMessage(checkForExistingGame);
+        this.sendMessage(new CheckForExistingGameMessage());
     }
 
     @Override
     public void chooseToken(TokenColor tokenColor) {
-        TokenChoiceMessage tokenChoiceMessage = new TokenChoiceMessage(tokenColor);
-        this.sendMessage(tokenChoiceMessage);
+        this.sendMessage(new TokenChoiceMessage(tokenColor));
     }
 
     @Override
-    public void placeStartCard(boolean side) {
-
+    public void placeStartCard(boolean isFlipped) {
+        this.sendMessage(new PlaceStartCardMessage(isFlipped));
     }
 
     @Override

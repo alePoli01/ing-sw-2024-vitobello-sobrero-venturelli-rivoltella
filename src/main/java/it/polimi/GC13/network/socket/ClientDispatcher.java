@@ -41,8 +41,8 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-            List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
-            view.tokenSetupPhase(onPlayerAddedToGameMessage.getWaitingPlayers(), tokenColorList, onPlayerAddedToGameMessage.getNumPlayersNeeded());
+        List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
+        view.tokenSetupPhase(onPlayerAddedToGameMessage.getConnectedPlayers(), tokenColorList, onPlayerAddedToGameMessage.getNumPlayersNeeded());
     }
 
     @Override

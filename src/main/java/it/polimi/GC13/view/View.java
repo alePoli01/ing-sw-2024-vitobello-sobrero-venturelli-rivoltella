@@ -12,6 +12,8 @@ public interface View {
 
     void tokenSetupPhase(int waitingPlayers, List<TokenColor> tokenColorList,int playersNeeded);
 
+    void checkForExistingGame();
+
     void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
 
     void joinExistingGame(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;

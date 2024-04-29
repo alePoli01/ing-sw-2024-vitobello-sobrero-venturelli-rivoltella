@@ -1,9 +1,12 @@
 package it.polimi.GC13.controller.gameStateController;
 
+import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
+
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 public class JoiningPhase implements GamePhase {
     private final Controller controller;
@@ -11,7 +14,6 @@ public class JoiningPhase implements GamePhase {
     public JoiningPhase(Controller controller) {
         this.controller = controller;
     }
-
 
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
@@ -21,7 +23,7 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
+    public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
     
@@ -33,16 +35,15 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public int addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
+    public void addPlayerToExistingGame(Player player, Game workingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
         // it adds players to the existing game
-        existingGame.checkNickname(player.getNickname());
-        existingGame.addPlayerToGame(player);
-        //System.out.println("player list:" + existingGame.getPlayerList());
-        if (existingGame.numPlayer == existingGame.getCurrNumPlayer()) {
+        workingGame.checkNickname(player.getNickname(), player);
+        workingGame.addPlayerToGame(player);
+        System.out.println("NumPlayers from model: " + workingGame.getCurrNumPlayer());
+        if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
             this.controller.updateController(new SetupPhase(this.controller));
-            return 0;
-        } else {
-            return existingGame.getCurrNumPlayer();
+            workingGame.setGameState(GameState.SETUP);
         }
+        this.controller.notifyClients(new OnPlayerAddedToGameMessage(workingGame.getCurrNumPlayer(), workingGame.numPlayer));
     }
 }

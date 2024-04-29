@@ -20,6 +20,7 @@ public class NicknameAlreadyTakenException extends Exception implements InputExc
         this.waitingPlayersMap = waitingPlayersMap;
         this.joinableGameMap = joinableGameMap;
     }
+
     @Override
     public String getMessage(){
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
@@ -30,12 +31,13 @@ public class NicknameAlreadyTakenException extends Exception implements InputExc
         }
         return joiner.toString();
     }
+
     public List<Player> getPlayerList() {
         return playerList;
     }
 
     @Override
     public void methodToRecall(View TUI) throws IOException {
-        TUI.joinExistingGame(waitingPlayersMap,joinableGameMap);
+        TUI.joinExistingGame(waitingPlayersMap, joinableGameMap);
     }
 }

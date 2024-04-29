@@ -1,6 +1,6 @@
 package it.polimi.GC13.network.socket.messages.fromclient;
 
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ServerDispatcherInterface;
 

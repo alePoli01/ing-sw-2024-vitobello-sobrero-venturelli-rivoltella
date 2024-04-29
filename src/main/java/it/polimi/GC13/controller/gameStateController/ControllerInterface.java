@@ -1,8 +1,6 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -10,9 +8,9 @@ public interface ControllerInterface {
 
     void chooseToken(ClientInterface client, TokenColor token);
 
-    void choosePrivateObjective(ClientInterface client, Player player, ObjectiveCard card);
+    void choosePrivateObjective(ClientInterface client, ObjectiveCard card);
 
-    void placeStartCard(ClientInterface client, Player player, StartCard cardToPlace, boolean isFlipped);
+    void placeStartCard(ClientInterface client, boolean isFlipped);
 
     void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy);
     

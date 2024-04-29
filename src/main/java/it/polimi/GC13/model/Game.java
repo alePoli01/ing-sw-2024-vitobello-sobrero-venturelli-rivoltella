@@ -5,7 +5,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -19,13 +19,13 @@ public class Game implements Serializable {
     private final List<Player> playerList;
     private int lastRound;
 
-    public Game(Player player, int numPlayer) {
+    public Game(int numPlayer) {
         this.gameState = GameState.JOINING;
         this.table = new Table();
         this.numPlayer = numPlayer;
-        this.playerList = new ArrayList<>(){{add(player);}};
+        this.playerList = new ArrayList<>(){};
         this.deck = new Deck();
-        this.currNumPlayer = 1;
+        this.currNumPlayer = 0;
     }
 
     public void setGameState(GameState newState) {
@@ -114,9 +114,10 @@ public class Game implements Serializable {
             player.setGame(this);
             currNumPlayer++;
             if (!this.playerList.contains(player)) {
+                System.out.println("lancio eccezione");
                 throw new PlayerNotAddedException(player);
             }
-        }else{
+        } else {
             System.out.println("Error; max number of player reached: "+currNumPlayer);
         }
     }
@@ -135,10 +136,10 @@ public class Game implements Serializable {
         }
     }
 
-    public void checkNickname(String nickname) throws NicknameAlreadyTakenException {
-        for (Player player : playerList) {
-            if (player.getNickname().equals(nickname)) {
-                throw new NicknameAlreadyTakenException(playerList,null,null);//LobbyController will fill the holes
+    public void checkNickname(String nickname, Player player) throws NicknameAlreadyTakenException {
+        for (Player playerToCheck : playerList) {
+            if (playerToCheck.getNickname().equals(nickname) && !playerToCheck.equals(player)) {
+                throw new NicknameAlreadyTakenException(playerList, null, null);
             }
         }
     }

@@ -1,7 +1,6 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.model.*;
 
 public class EndPhase implements GamePhase {
@@ -39,7 +38,8 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
+    @Override
+    public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
@@ -51,8 +51,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public int addPlayerToExistingGame(Player player, Game existingGame) {
+    public void addPlayerToExistingGame(Player player, Game existingGame) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
-        return 0;
     }
 }

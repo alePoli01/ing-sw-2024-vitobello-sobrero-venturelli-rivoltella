@@ -12,7 +12,7 @@ public interface ServerInterface {
 
     void chooseToken(TokenColor tokenColor);
 
-    void placeStartCard(boolean side);
+    void placeStartCard(boolean isFlipped);
 
     void writeMessage(); //writes message in gamechat
 

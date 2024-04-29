@@ -1,6 +1,6 @@
 package it.polimi.GC13.app;
 
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIClient;
@@ -11,9 +11,6 @@ import it.polimi.GC13.view.TUI.TUI;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import it.polimi.GC13.view.GUI.game.*;
-import it.polimi.GC13.view.GUI.login.*;
-import javax.swing.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 

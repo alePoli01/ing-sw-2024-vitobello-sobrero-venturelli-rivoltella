@@ -3,7 +3,7 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
@@ -63,8 +63,8 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
-    public void onPlayerAddedToGame(int waitingPlayers, int numPlayers) {
-        this.sendMessage(new OnPlayerAddedToGameMessage(waitingPlayers,numPlayers));
+    public void onPlayerAddedToGame(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
+        this.sendMessage(onPlayerAddedToGameMessage);
     }
 
     @Override

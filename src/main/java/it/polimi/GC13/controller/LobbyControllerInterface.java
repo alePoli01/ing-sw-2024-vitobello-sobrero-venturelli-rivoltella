@@ -1,7 +1,7 @@
 package it.polimi.GC13.controller;
 
 import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 

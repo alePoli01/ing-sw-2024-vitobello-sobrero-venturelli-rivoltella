@@ -110,11 +110,11 @@ public class MidPhase implements GamePhase {
         System.out.println("You cannot change your objective card");
     }
 
-    public void placeStartCard(Player player, StartCard cardToPlace, boolean isFlipped) {
+    @Override
+    public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("You cannot replace the start card");
     }
 
-    public int addPlayerToExistingGame(Player player, Game existingGame) {
-        return 0;
+    public void addPlayerToExistingGame(Player player, Game existingGame) {
     }
 }

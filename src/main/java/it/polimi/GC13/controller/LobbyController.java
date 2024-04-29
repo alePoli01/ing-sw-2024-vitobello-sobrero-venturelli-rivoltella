@@ -2,7 +2,7 @@ package it.polimi.GC13.controller;
 
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class LobbyController implements  LobbyControllerInterface, LostConnectionToClientInterface {
-    private final Map<ClientInterface, Controller> clientGamePhaseMap;//links a client to his gamephase
-    private final Map<Game, Integer> waitingPlayersMap; // 0 if there isn't an existingGame that needs players, 0 if there isn't a game to join
+    private final Map<Game, Integer> connectedPlayersMap; // 0 if there isn't an existingGame that needs players, 0 if there isn't a game to join
     private final Map<String, Game> joinableGameMap;
     private final Map<Game, Controller> gameControllerMap; //contains all ongoing games controller
     private ControllerDispatcher controllerDispatcher;
@@ -23,8 +22,7 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
 
     public LobbyController() {
         this.joinableGameMap = new HashMap<>();
-        this.waitingPlayersMap = new HashMap<>();
-        this.clientGamePhaseMap = new HashMap<>();
+        this.connectedPlayersMap = new HashMap<>();
         this.gameControllerMap = new HashMap<>();
     }
 
@@ -35,60 +33,49 @@ public class LobbyController implements  LobbyControllerInterface, LostConnectio
     public void checkForExistingGame(ClientInterface client) {
         //upon check just provide the answer
         System.out.println("--Received: checkForExistingGame");
-        client.onCheckForExistingGame(this.joinableGameMap, this.waitingPlayersMap);
-
+        client.onCheckForExistingGame(this.joinableGameMap, this.connectedPlayersMap);
     }
 
     // create a new game if there is no one available, else it creates a new one
-    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
+    public synchronized void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
         System.out.println("--Received: PlayerJoiningMessage: [player:" + player.getNickname()+"]");
         // if there is no existing game, a new one is created
         if (playersNumber >= 2 && playersNumber <= 4) {
-            Game newGame = new Game(player, playersNumber);
+            workingGame = new Game(playersNumber);
             // updates useful maps
-            this.gameControllerMap.put(newGame, new Controller(newGame, this));
-            this.waitingPlayersMap.put(newGame, 1);
-            this.joinableGameMap.put(gameName, newGame);
-            this.workingGame = newGame;
+            this.gameControllerMap.put(workingGame, new Controller(workingGame, this, this.controllerDispatcher));
+            this.connectedPlayersMap.put(workingGame, 1);
+            this.joinableGameMap.put(gameName, workingGame);
         } else {
             // adds the player to the model and updates noExistingGame for the next player that wants to play
-            if(joinableGameMap.get(gameName).getNumPlayer()==joinableGameMap.get(gameName).getCurrNumPlayer()){
+            /*if (joinableGameMap.get(gameName).getNumPlayer() == joinableGameMap.get(gameName).getCurrNumPlayer()) {
                 //if the game started while the player was joining the request gets rejected (missing parameters)
                 System.out.println("\tGame is already full, rejecting add request");
-                client.onCheckForExistingGame(this.joinableGameMap, this.waitingPlayersMap);
-            }
+                client.onCheckForExistingGame(this.joinableGameMap, this.connectedPlayersMap);
+            }*/
             workingGame = joinableGameMap.get(gameName);
-            // updates waiting players in waitingPlayersMap and the model
-            try {
-                this.waitingPlayersMap.put(workingGame, this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, joinableGameMap.get(gameName)));
-            }catch (NicknameAlreadyTakenException e) {
-                //create a new version of the exception with all the data needed and send a message
-                client.inputExceptionHandler(new NicknameAlreadyTakenException(e.getPlayerList(),waitingPlayersMap,joinableGameMap));
-            }
-            // removes the game from the selectable when all players needed have joined
-            if (this.waitingPlayersMap.get(workingGame) == 0) {
-                this.joinableGameMap.remove(gameName, workingGame);
-            }
-            //System.out.println("waiting players:" + waitingPlayersMap);
+            // updates waitingPlayersMap
+            this.connectedPlayersMap.put(workingGame, this.connectedPlayersMap.get(workingGame) + 1);
         }
+        // updates controller clientsList
+        this.gameControllerMap.get(workingGame).getClientsList().add(client);
+        // set the game for the player
         player.setGame(workingGame);
+        try {
+            // add the player to the model
+            this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, workingGame);
+        } catch (NicknameAlreadyTakenException e) {
+            client.inputExceptionHandler(new NicknameAlreadyTakenException(e.getPlayerList(), connectedPlayersMap, joinableGameMap));
+        }
+
+        // removes the game from the selectable when all players needed have joined
+        /*if (this.connectedPlayersMap.get(workingGame) == workingGame.numPlayer) {
+            this.joinableGameMap.remove(gameName, workingGame);
+        }*/
         // updates controller dispatcher client <-> player Map
         this.controllerDispatcher.getClientPlayerMap().put(client, player);
-        // update map with the client and the correct controller
-        this.clientGamePhaseMap.put(client, this.gameControllerMap.get(workingGame));
         // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
         this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
-        // notify other players when someone connects and how many players are still needed
-        this.playerAddedToGame(playersNumber);
-    }
-
-    private void playerAddedToGame(int playersNumber) {
-        /*
-        TODO: FILTRARE I GIOCATORI DA NOTIFICARE IN BASE AL GIOCO
-         */
-        for (ClientInterface client : this.clientGamePhaseMap.keySet()) {
-            client.onPlayerAddedToGame(this.waitingPlayersMap.get(workingGame),workingGame.getNumPlayer());
-        }
     }
 
     @Override

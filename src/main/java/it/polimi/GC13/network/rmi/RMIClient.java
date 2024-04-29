@@ -1,11 +1,12 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -33,7 +34,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
 
 
     @Override
-    public void onPlayerAddedToGame(int waitingPlayers,int numPlayers) {
+    public void onPlayerAddedToGame(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
 
     }
 

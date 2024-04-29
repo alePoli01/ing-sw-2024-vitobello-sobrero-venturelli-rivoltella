@@ -3,8 +3,7 @@ package it.polimi.GC13.controller;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.PlayerNotAddedException;
+import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
@@ -33,7 +32,12 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
 
     @Override
     public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
-        lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
+        try {
+            lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
+        } catch (PlayerNotAddedException e) {
+            System.out.println("Sto per lanciare eccezione");
+            client.inputExceptionHandler(e);
+        }
     }
 
     @Override
@@ -52,14 +56,19 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void choosePrivateObjective(ClientInterface client, Player player, ObjectiveCard card) {
-        this.clientControllerMap.get(client).choosePrivateObjective(player, card);
+    public void placeStartCard(ClientInterface client, boolean isFlipped) {
+        this.clientControllerMap.get(client).placeStartCard(this.clientPlayerMap.get(client), isFlipped);
+        /*
+        TODO exception handler
+         */
     }
 
     @Override
-    public void placeStartCard(ClientInterface client, Player player, StartCard cardToPlace, boolean isFlipped) {
-        this.clientControllerMap.get(client).placeStartCard(player, cardToPlace, isFlipped);
+    public void choosePrivateObjective(ClientInterface client, ObjectiveCard card) {
+        // da fixare il cast, l'ho messo per non ricevere errore, quando lo fai sistema -Ale
+        this.clientControllerMap.get(client).choosePrivateObjective((Player) client, card);
     }
+
 
     @Override
     public void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
