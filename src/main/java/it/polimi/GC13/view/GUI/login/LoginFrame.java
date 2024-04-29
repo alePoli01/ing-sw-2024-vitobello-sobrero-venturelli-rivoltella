@@ -24,7 +24,7 @@ public class LoginFrame extends JFrame {
         setResizable(false); // The user can't resize the frame
         setLocationRelativeTo(null); //the frame appears in the center of the screen
 
-        BackgroundPanel backgroundPanel = new BackgroundPanel(new ImageIcon("src/main/utils/CodexLogo.jpg").getImage(), true); //prova
+        BackgroundPanel backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true); //nuova aggiunta
         add(backgroundPanel);
         backgroundPanel.setLayout(null);
 
@@ -50,7 +50,7 @@ public class LoginFrame extends JFrame {
         int width3 = 80;
         int heigth3 = 28;
         loginButton.setBounds(getWidth()/2 - width3/2 - 10, getHeight()/2 + 35, width3, heigth3);
-        loginButton.setFont(new Font("Old English Text MT", Font.BOLD, 15));
+        loginButton.setFont(new Font("Old English Text MT", Font.BOLD, 15)); //PlainGermanica
         loginButton.setBackground(new Color(177,163,28, 128));
         backgroundPanel.add(loginButton);
 
