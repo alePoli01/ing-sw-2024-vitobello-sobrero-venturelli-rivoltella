@@ -11,7 +11,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 2,
       "reign": "FUNGI",
@@ -23,7 +23,8 @@
         "FUNGI"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": "NULL"
     },
     { "serialNumber": 3,
       "reign": "FUNGI",
@@ -36,7 +37,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     { "serialNumber": 4,
       "reign": "FUNGI",
@@ -48,7 +49,8 @@
         "NULL"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0
+      "pointsGiven": 0,
+      "condition": "NULL"
     },
     {"serialNumber": 5,
       "reign": "FUNGI",
@@ -61,7 +63,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 6,
       "reign": "FUNGI",
@@ -74,7 +76,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 7,
       "reign": "FUNGI",
@@ -87,7 +89,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 8,
       "reign": "FUNGI",
@@ -99,7 +101,8 @@
         "EMPTY"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 1
+      "pointsGiven": 1,
+      "condition": "NULL"
     },
     {
       "serialNumber": 9,
@@ -113,7 +116,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 10,
       "reign": "FUNGI",
@@ -126,7 +129,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 11,
       "reign": "PLANT",
@@ -139,7 +142,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 12,
       "reign": "PLANT",
@@ -152,7 +155,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 13,
       "reign": "PLANT",
@@ -165,7 +168,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 14,
       "reign": "PLANT",
@@ -179,7 +182,7 @@
       
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 15,
       "reign": "PLANT",
@@ -192,7 +195,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {"serialNumber": 16,
       "reign": "PLANT",
@@ -205,7 +208,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 17,
@@ -219,7 +222,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 18,
@@ -233,7 +236,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 19,
@@ -247,7 +250,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 20,
@@ -261,7 +264,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 21,
@@ -275,7 +278,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 22,
@@ -289,7 +292,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 23,
@@ -303,7 +306,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 24,
@@ -317,7 +320,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 25,
@@ -331,7 +334,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 26,
@@ -345,7 +348,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 27,
@@ -359,7 +362,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 28,
@@ -373,7 +376,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 29,
@@ -387,7 +390,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 30,
@@ -401,7 +404,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 31,
@@ -415,7 +418,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 32,
@@ -429,7 +432,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 33,
@@ -443,7 +446,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 34,
@@ -457,7 +460,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 35,
@@ -471,7 +474,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 36,
@@ -485,7 +488,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 37,
@@ -499,7 +502,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 0,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 38,
@@ -513,7 +516,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 39,
@@ -527,7 +530,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 40,
@@ -541,7 +544,7 @@
       ],
       "resourceNeeded": {},
       "pointsGiven": 1,
-      "condition": ""
+      "condition": "NULL"
     }
   ],
 
@@ -625,7 +628,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 45,
@@ -644,7 +647,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 46,
@@ -663,7 +666,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 47,
@@ -682,7 +685,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 48,
@@ -701,7 +704,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 49,
@@ -720,7 +723,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 50,
@@ -739,7 +742,7 @@
         "INSECT": 0
       },
       "pointsGiven": 5,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 51,
@@ -815,7 +818,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 55,
@@ -834,7 +837,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 56,
@@ -853,7 +856,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 57,
@@ -872,7 +875,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 58,
@@ -891,7 +894,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 59,
@@ -910,7 +913,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 60,
@@ -929,7 +932,7 @@
         "INSECT": 0
       },
       "pointsGiven": 5,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 61,
@@ -1005,7 +1008,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 65,
@@ -1024,7 +1027,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 66,
@@ -1043,7 +1046,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 67,
@@ -1062,7 +1065,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 68,
@@ -1081,7 +1084,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 69,
@@ -1100,7 +1103,7 @@
         "INSECT": 0
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 70,
@@ -1119,7 +1122,7 @@
         "INSECT": 0
       },
       "pointsGiven": 5,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 71,
@@ -1195,7 +1198,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 75,
@@ -1214,7 +1217,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 76,
@@ -1233,7 +1236,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 77,
@@ -1252,7 +1255,7 @@
         "INSECT": 3
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 78,
@@ -1271,7 +1274,7 @@
         "INSECT": 3
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 79,
@@ -1290,7 +1293,7 @@
         "INSECT": 3
       },
       "pointsGiven": 3,
-      "condition": ""
+      "condition": "NULL"
     },
     {
       "serialNumber": 80,
@@ -1309,7 +1312,7 @@
         "INSECT": 5
       },
       "pointsGiven": 5,
-      "condition": ""
+      "condition": "NULL"
     }
   ]
 }

@@ -96,4 +96,15 @@ public class DeckTest extends TestCase {
         }
 
     }
+
+    public void testCardPrinter(){
+        Deck deck = new Deck();
+
+        deck.parseJSON();
+
+        for(int i=1;i<=80;i++){
+            deck.cardPrinter(i,true);
+        }
+    }
+
 }

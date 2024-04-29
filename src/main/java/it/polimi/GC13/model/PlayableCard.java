@@ -33,6 +33,7 @@ public class PlayableCard implements Serializable {
                 case MANUSCRIPT -> board.getCollectedResources().get(Resource.MANUSCRIPT) * pointsGiven;
                 case INKWELL -> board.getCollectedResources().get(Resource.INKWELL) * pointsGiven;
                 case EDGE -> board.surroundingCardsNumber(xy) * pointsGiven;
+                case NULL -> pointsGiven;
             };
         } else {
             return pointsGiven;

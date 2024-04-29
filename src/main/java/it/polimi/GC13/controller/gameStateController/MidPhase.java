@@ -1,9 +1,6 @@
 package it.polimi.GC13.controller.gameStateController;
 
-import it.polimi.GC13.enums.CardType;
-import it.polimi.GC13.enums.GameState;
-import it.polimi.GC13.enums.Position;
-import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
 
@@ -61,11 +58,8 @@ public class MidPhase implements GamePhase {
             // update player's scoreboard
             if (!isFlipped) {
                 // gold cards gives points differently
-                if (cardToPlace.cardType.equals(CardType.GOLD)) {
-                    board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, xy));
-                } else {
-                    board.setPlayerScore(board.getPlayerScore() + cardToPlace.pointsGiven);
-                }
+                board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, xy));
+
                 // check if players has reached 20 points, if so sets game's last turn
                 if (board.getPlayerScore() >= 20) {
                     player.getGame().setLastRound(player);
