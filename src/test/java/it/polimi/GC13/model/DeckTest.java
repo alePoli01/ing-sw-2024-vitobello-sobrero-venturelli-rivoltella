@@ -102,8 +102,17 @@ public class DeckTest extends TestCase {
 
         deck.parseJSON();
 
-        for(int i=1;i<=80;i++){
-            deck.cardPrinter(i,true);
+        for(PlayableCard card: deck.getResourceDeck()){
+            card.cardPrinter(true);
+            card.cardPrinter(false);
+        }
+        for(PlayableCard card: deck.getGoldDeck()){
+            card.cardPrinter(true);
+            card.cardPrinter(false);
+        }
+        for(PlayableCard card: deck.getStartDeck()){
+            card.cardPrinter(true);
+            card.cardPrinter(false);
         }
     }
 
