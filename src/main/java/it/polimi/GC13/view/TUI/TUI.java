@@ -10,18 +10,40 @@ import it.polimi.GC13.view.View;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class TUI implements View {
     ServerInterface virtualServer;
     boolean firstNotify = false;
+    private final List<Integer> hand = new ArrayList<>();
+    private int serialPrivateObjectiveCard;
+    private final List<Integer> serialPublicObjectiveCard = new ArrayList<>();
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
         this.checkForExistingGame();
         System.out.println("++Sent: checkForExistingGame");
+    }
+
+    /*
+        used to update players hand in TUI
+     */
+    @Override
+    public void handUpdate(int[] availableCard) {
+        this.hand.clear();
+        Arrays.stream(availableCard)
+                .forEach(this.hand::add);
+    }
+
+    @Override
+    public void setPrivateObjectiveCard(int serialPrivateObjectiveCard) {
+        this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
+    }
+
+    @Override
+    public void setSerialPublicObjectiveCard(List<Integer> serialPublicObjectiveCard) {
+        this.serialPublicObjectiveCard.clear();
+        this.serialPublicObjectiveCard.addAll(serialPublicObjectiveCard);
     }
 
     @Override
@@ -166,25 +188,17 @@ public class TUI implements View {
         int choice = 0;
         System.out.println("You chose " + tokenColor + " token");
         System.out.println("\n--- SETUP PHASE [2/2]---");
-        System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back\n[3] show card");
-
+        System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back");
+        this.showCard();
         do {
             try {
                 choice = Integer.parseInt(reader.readLine());
             } catch (NumberFormatException e) {
                 System.out.println("Error: Please put a number");
             }
-        } while (choice < 1 || choice > 3);
+        } while (choice < 1 || choice > 2);
 
-        if (choice == 1) {
-            this.virtualServer.placeStartCard(false);
-        } else if (choice == 2) {
-            this.virtualServer.placeStartCard(true);
-        } else {
-            /* TODO
-                metodo show card
-             */
-        }
+        this.virtualServer.placeStartCard(choice != 1);
     }
 
 
@@ -193,7 +207,7 @@ public class TUI implements View {
         if (readyPlayers == neededPlayers) {
             this.firstNotify = false;
             System.out.println("Chose private objective Card:\n\t[1] to show first choice\n\t[2] to show second choice");
-
+            this.showObjectiveCard(serialPrivateObjectiveCard);
         } else if (!this.firstNotify) {
             this.firstNotify = true;
             System.out.println("--|players that placed starter card: " + readyPlayers + "/" + neededPlayers);
@@ -212,5 +226,13 @@ public class TUI implements View {
         } catch (IOException e1) {
             System.out.println("Errore nel rilancio");
         }
+    }
+
+    private void showObjectiveCard(int serialNumber) {
+        // call to printer
+    }
+
+    private void showCard() {
+        // call to printer
     }
 }

@@ -24,6 +24,8 @@ public interface ClientInterface extends Remote {
 
     void onTokenChoiceMessage(TokenColor tokenColor);
 
+    void onDealingCard(int[] availableCards);
+
     void inputExceptionHandler(InputException e);
 
     void onPlaceStartCardMessage(OnPlaceStartCardMessage onPlaceStartCardMessage);

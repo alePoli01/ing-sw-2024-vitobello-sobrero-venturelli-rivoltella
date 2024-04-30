@@ -7,9 +7,11 @@ import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.socket.messages.fromserver.OnDealingCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SetupPhase implements GamePhase {
@@ -26,6 +28,10 @@ public class SetupPhase implements GamePhase {
         try {
             game.getTable().tableSetup();
             game.giveStartCard();
+            // adds to the TUI handsCard
+            for (Player player : playerList) {
+                this.controller.notifySpecificClients(new OnDealingCardMessage(player.getHandCardSerialNumber()), List.of(player));
+            }
         } catch (CardNotAddedToHandException e){
             System.out.println(e.getMessage());
         }
@@ -39,7 +45,6 @@ public class SetupPhase implements GamePhase {
             player.getBoard().addResource(cardToPlace, isFlipped);
             // if all Players positioned start card, it updates the controller
             if (playersPlacedStartCard(player)) {
-                System.out.println("I am here");
                 this.controller.updateController(new DealingPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
             } else {

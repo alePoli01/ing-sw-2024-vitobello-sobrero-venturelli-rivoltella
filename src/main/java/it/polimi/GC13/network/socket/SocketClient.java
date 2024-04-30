@@ -79,6 +79,11 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
     @Override
+    public void onDealingCard(int[] availableCards) {
+        this.sendMessage(new OnDealingCardMessage(availableCards));
+    }
+
+    @Override
     public void inputExceptionHandler(InputException e) {
         this.sendMessage(new OnInputExceptionMessage(e));
     }

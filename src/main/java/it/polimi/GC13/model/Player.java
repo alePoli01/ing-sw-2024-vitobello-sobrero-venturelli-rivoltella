@@ -80,6 +80,20 @@ public class Player implements Serializable {
         return this.hand;
     }
 
+    public int[] getHandCardSerialNumber() {
+        // Initialize the array to store serial numbers
+        int[] handCardSerialNumber = new int[this.hand.size()];
+
+        // Fill the array with serial numbers of cards in the hand
+        for (int i = 0; i < this.hand.size(); i++) {
+            handCardSerialNumber[i] = this.hand.get(i).serialNumber;
+        }
+
+        // Return the array of serial numbers
+        return handCardSerialNumber;
+    }
+
+
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
     }

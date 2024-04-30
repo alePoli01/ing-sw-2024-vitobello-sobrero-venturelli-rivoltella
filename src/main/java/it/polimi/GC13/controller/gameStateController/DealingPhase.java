@@ -19,7 +19,9 @@ public class DealingPhase implements GamePhase {
             game.giveStartCard();
             game.giveFirstCards();
             game.setCommonObjectiveCards();
+            // message from server to client to update tui
             game.givePrivateObjectiveCards();
+
             game.setPlayersPosition();
         } catch (CardNotAddedToHandException e){
             System.out.println(e.getMessage());

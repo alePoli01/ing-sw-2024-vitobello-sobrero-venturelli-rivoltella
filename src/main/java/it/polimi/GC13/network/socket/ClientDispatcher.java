@@ -5,7 +5,6 @@ import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.view.View;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +57,12 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage) {
-      view.chosePrivateObjectiveCard(onPlaceStartCardMessage.readyPlayers(), onPlaceStartCardMessage.neededPlayers(), onPlaceStartCardMessage.isFlipped());
+        view.chosePrivateObjectiveCard(onPlaceStartCardMessage.readyPlayers(), onPlaceStartCardMessage.neededPlayers(), onPlaceStartCardMessage.isFlipped());
+    }
+
+    @Override
+    public void dispatch(OnDealingCardMessage onDealingCardMessage) {
+        view.handUpdate(onDealingCardMessage.availableCards());
     }
 
     @Override

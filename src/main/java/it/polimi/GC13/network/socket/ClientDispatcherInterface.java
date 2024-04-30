@@ -16,4 +16,6 @@ public interface ClientDispatcherInterface {
     void dispatch(OnTokenChoiceMessage onTokenChoiceMessage);
 
     void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage);
+
+    void dispatch(OnDealingCardMessage onDealingCardMessage);
 }

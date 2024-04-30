@@ -55,6 +55,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
+    public void onDealingCard(int[] availableCards) {
+
+    }
+
+    @Override
     public void inputExceptionHandler(InputException e) {
 
     }

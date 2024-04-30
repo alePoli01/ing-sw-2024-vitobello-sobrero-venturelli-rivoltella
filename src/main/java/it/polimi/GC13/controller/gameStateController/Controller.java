@@ -9,6 +9,7 @@ import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.OnDealingCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
@@ -20,7 +21,8 @@ public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;
     private LobbyController lobbyController;
-    private final Map<Player, ClientInterface> clientPlayerMap = new HashMap<>();
+    private final Map<Player, ClientInterface> playerClientMap = new HashMap<>();
+    private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>();
     ControllerDispatcher controllerDispatcher;
 
     // add a new created game to the game manager with its respective controller
@@ -35,8 +37,12 @@ public class Controller implements GamePhase {
         return game;
     }
 
-    public Map<Player, ClientInterface> getClientPlayerMap() {
+    public Map<ClientInterface, Player> getClientPlayerMap() {
         return this.clientPlayerMap;
+    }
+
+    public Map<Player, ClientInterface> getPlayerClientMap() {
+        return this.playerClientMap;
     }
 
     public void updateController(GamePhase newGameController) {
@@ -45,12 +51,18 @@ public class Controller implements GamePhase {
     }
 
     public void notifyClients(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        this.clientPlayerMap.forEach((player, client) -> client.onPlayerAddedToGame(onPlayerAddedToGameMessage));
+        this.playerClientMap.forEach((player, client) -> client.onPlayerAddedToGame(onPlayerAddedToGameMessage));
+    }
+
+    public void notifySpecificClients(OnDealingCardMessage onDealingCardMessage, List<Player> playerList) {
+        playerList.stream()
+                .map(this.playerClientMap::get)
+                .forEach(client -> client.onDealingCard(onDealingCardMessage.availableCards()));
     }
 
     public void notifySpecificClients(OnPlaceStartCardMessage onPlaceStartCardMessage, List<Player> playerList) {
         playerList.stream()
-                .map(this.clientPlayerMap::get)
+                .map(this.playerClientMap::get)
                 .forEach(client -> client.onPlaceStartCardMessage(onPlaceStartCardMessage));
     }
 
