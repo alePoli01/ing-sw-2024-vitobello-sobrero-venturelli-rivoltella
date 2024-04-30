@@ -3,7 +3,6 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.*;
 
 import java.util.Map;
-import java.util.ArrayList;
 
 public class StartCard extends PlayableCard {
     public final Resource[] frontReigns;
@@ -15,7 +14,7 @@ public class StartCard extends PlayableCard {
         this.frontReigns = frontReigns;
         this.reignBackPointEdge = reignBackPointEdge;
     }
-    public void cardPrinter(boolean isflipped){
+    public void cardPrinter(boolean isFlipped){
 
         //colors of the characters
         String red = "\u001b[31m";   // Red
@@ -29,8 +28,8 @@ public class StartCard extends PlayableCard {
         String backgroundRed = "\u001b[41m";   // red background
         String backgroundGreen = "\u001b[42m"; // Green Background
         String backgroundBlue = "\u001b[46m";  // Blue background
-        String backgroundmagenta = "\u001b[35m";  // Blue
-        String resetbackground = "\u001b[0m";  // Reset color of the background
+        String backgroundMagenta = "\u001b[35m";  // Blue
+        String backgroundReset = "\u001b[0m";  // Reset color of the background
 
         /*
         Linea orizzontale: ═ (U+2500)
@@ -44,7 +43,7 @@ public class StartCard extends PlayableCard {
         Croce: ┼ (U+253C)
         */
 
-        if (!isflipped) {
+        if (!isFlipped) {
             System.out.println("╔═══╦═════════╦═══╗");
             System.out.println("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
             System.out.println("╠═══╝  │"+ this.frontReigns[0].toString() +this.frontReigns[1].toString() +this.frontReigns[2].toString() +"│  ╚═══╣");
@@ -59,7 +58,5 @@ public class StartCard extends PlayableCard {
             System.out.println("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
             System.out.println("╚═══╩═════════╩═══╝");
         }
-
-
     }
 }

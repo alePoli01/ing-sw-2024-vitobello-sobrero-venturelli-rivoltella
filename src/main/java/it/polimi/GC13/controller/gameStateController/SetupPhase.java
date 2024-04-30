@@ -39,6 +39,7 @@ public class SetupPhase implements GamePhase {
             player.getBoard().addResource(cardToPlace, isFlipped);
             // if all Players positioned start card, it updates the controller
             if (playersPlacedStartCard(player)) {
+                System.out.println("I am here");
                 this.controller.updateController(new DealingPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
             } else {

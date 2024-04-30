@@ -202,27 +202,26 @@ public class Board implements Serializable {
         // if statement for start card, else for gold / resources
         if (cardToPlace instanceof StartCard) {
             if (isFlipped) {
-                for (Resource element : ((StartCard) cardToPlace).reignBackPointEdge) {
-                    collectedResources.put(element, collectedResources.get(element) + 1);
-                }
+                Arrays.stream(((StartCard) cardToPlace).reignBackPointEdge)
+                        .filter(Resource::isReign)
+                        .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
             } else {
-                for (Resource element : ((StartCard) cardToPlace).frontReigns) {
-                    collectedResources.put(element, collectedResources.get(element) + 1);
-                }
+                Arrays.stream(((StartCard) cardToPlace).frontReigns)
+                        .filter(Resource::isReign)
+                        .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
             }
         } else {
             if (!isFlipped) {
                 // add card played resource to the board
-                for (Resource resource : cardToPlace.edgeResource) {
-                    if (resource.isObject() || resource.isReign()) {
-                        collectedResources.put(resource, collectedResources.get(resource) + 1);
-                    }
-                }
+                Arrays.stream(cardToPlace.edgeResource)
+                        .filter(resource -> resource.isObject() || resource.isReign())
+                        .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
             } else {
                 collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
             }
         }
     }
+
     public boolean containsKeyOfValue(int x, int y){
         for(Coordinates xy : this.getBoardMap().keySet()){
             if(xy.getX()==x && xy.getY()==y){

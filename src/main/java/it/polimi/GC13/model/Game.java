@@ -74,15 +74,13 @@ public class Game implements Serializable {
     // set players position
     public void setPlayersPosition() {
         Random random = new Random();
-        int index = random.nextInt(playerList.size());
-        this.playerList.get(index).setPosition(Position.FIRST);
-        this.playerList.get(index).setToken(TokenColor.BLACK);
+        int index = random.nextInt(playerList.size() - 1);
         int i = 0;
         for (Position p : Position.values()) {
-            if (!this.playerList.get(i).equals(this.playerList.get(index))) {
-                this.playerList.get(i).setPosition(p);
+            if (p.equals(Position.FIRST) || playerList.get(i).equals(playerList.get(index))) {
+                this.playerList.get(index).setPosition(p);
             } else {
-                this.playerList.get(i+1).setPosition(p);
+                this.playerList.get(i).setPosition(p);
             }
             i++;
         }
