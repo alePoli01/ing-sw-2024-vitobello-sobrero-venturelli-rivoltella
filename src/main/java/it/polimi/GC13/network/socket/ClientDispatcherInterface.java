@@ -18,4 +18,6 @@ public interface ClientDispatcherInterface {
     void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage);
 
     void dispatch(OnDealingCardMessage onDealingCardMessage);
+
+    void dispatch(OnDealingPrivateObjectiveCardsMessage onDealingPrivateObjectiveCardsMessage);
 }

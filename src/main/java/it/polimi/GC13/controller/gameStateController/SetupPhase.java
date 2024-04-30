@@ -11,7 +11,6 @@ import it.polimi.GC13.network.socket.messages.fromserver.OnDealingCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SetupPhase implements GamePhase {
