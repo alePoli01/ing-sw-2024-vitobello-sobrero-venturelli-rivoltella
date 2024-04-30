@@ -78,7 +78,7 @@ public class Game implements Serializable {
         int i = 0;
         for (Position p : Position.values()) {
             if (p.equals(Position.FIRST) || playerList.get(i).equals(playerList.get(index))) {
-                this.playerList.get(index).setPosition(p);
+                this.playerList.get(index).setPosition(Position.FIRST);
             } else {
                 this.playerList.get(i).setPosition(p);
             }
