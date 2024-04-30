@@ -77,12 +77,14 @@ public class Game implements Serializable {
         int index = random.nextInt(playerList.size() - 1);
         int i = 0;
         for (Position p : Position.values()) {
-            if (p.equals(Position.FIRST) || playerList.get(i).equals(playerList.get(index))) {
-                this.playerList.get(index).setPosition(Position.FIRST);
-            } else {
-                this.playerList.get(i).setPosition(p);
+            while (i < playerList.size()) {
+                if (p.equals(Position.FIRST) || playerList.get(i).equals(playerList.get(index))) {
+                    this.playerList.get(index).setPosition(Position.FIRST);
+                } else {
+                    this.playerList.get(i).setPosition(p);
+                }
+                i++;
             }
-            i++;
         }
     }
 
