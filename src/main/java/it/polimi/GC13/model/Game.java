@@ -76,8 +76,8 @@ public class Game implements Serializable {
         Random random = new Random();
         int index = random.nextInt(playerList.size() - 1);
         int i = index;
-        while (i < playerList.size()) {
-            for (Position position : Position.values()) {
+        for (Position position : Position.values()) {
+            if (position.ordinal() < playerList.size()) {
                 if (position.equals(Position.FIRST)) {
                     playerList.get(index).setPosition(Position.FIRST);
                 } else if (i < playerList.size() - 1) {
