@@ -23,7 +23,8 @@ public class Game implements Serializable {
         this.gameState = GameState.JOINING;
         this.table = new Table();
         this.numPlayer = numPlayer;
-        this.playerList = new ArrayList<>(){};
+        this.playerList = new ArrayList<>() {
+        };
         this.deck = new Deck();
         this.currNumPlayer = 0;
     }
@@ -74,20 +75,23 @@ public class Game implements Serializable {
     // set players position
     public void setPlayersPosition() {
         Random random = new Random();
-        int index = random.nextInt(playerList.size() - 1);
-        int i = index;
-        for (Position position : Position.values()) {
-            if (position.ordinal() < playerList.size()) {
-                if (position.equals(Position.FIRST)) {
-                    playerList.get(index).setPosition(Position.FIRST);
-                } else if (i < playerList.size() - 1) {
-                    playerList.get(i).setPosition(position);
-                } else {
-                    i = 0;
-                    playerList.get(i).setPosition(position);
-                }
+        int i = random.nextInt(playerList.size());
+        int cont = 0;
+        while (cont < playerList.size()) {
+            if (i < playerList.size()) {
+                playerList.get(i).setPosition(Position.values()[cont]);
+                System.out.println(playerList.get(i).getNickname() + " " + playerList.get(i).getPosition());
+                cont++;
                 i++;
+            } else {
+                break;
             }
+        }
+        i = 0;
+        while (cont < playerList.size()) {
+            playerList.get(i).setPosition(Position.values()[cont]);
+            System.out.println(playerList.get(i).getNickname() + " " + playerList.get(i).getPosition());
+            cont++;
         }
     }
 
