@@ -116,6 +116,7 @@ public class PlayableCard implements Serializable {
         String magenta = "\u001b[35m";  // Magenta
         String gold = "\u001b[93m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
+
         switch(version){
             case(0): {//fullcard
                 switch (line) {
@@ -210,7 +211,7 @@ public class PlayableCard implements Serializable {
                     }
                     case (4): {//fifth line printed
                         if (isflipped) {
-                            System.out.print(" " + this.edgeResource[0].toString() + " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print(" "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ║ " + this.edgeResource[1].toString() + " ║");
                         } else {
                             System.out.print("         ║   ║");
                         }
