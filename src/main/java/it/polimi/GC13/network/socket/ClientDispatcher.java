@@ -59,7 +59,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage) {
-        view.chosePrivateObjectiveCard(onPlaceStartCardMessage.playerNickname(), onPlaceStartCardMessage.serialNumberCard(), onPlaceStartCardMessage.isFlipped());
+        view.displayPositionedCard(onPlaceStartCardMessage.playerNickname(), onPlaceStartCardMessage.serialNumberCard(), onPlaceStartCardMessage.isFlipped());
     }
 
     @Override
@@ -69,7 +69,12 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnDealPrivateObjectiveCardsMessage onDealPrivateObjectiveCardsMessage) {
+        view.chosePrivateObjectiveCard(onDealPrivateObjectiveCardsMessage.playerNickname(), onDealPrivateObjectiveCardsMessage.privateObjectiveCards());
+    }
 
+    @Override
+    public void dispatch(OnDealCommonObjectiveCardMessage onDealCommonObjectiveCardMessage) {
+        view.setSerialCommonObjectiveCard(onDealCommonObjectiveCardMessage.privateObjectiveCards());
     }
 
     @Override

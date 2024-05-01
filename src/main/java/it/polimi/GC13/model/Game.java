@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
+import it.polimi.GC13.network.socket.messages.fromserver.OnDealCommonObjectiveCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnDealCardMessage;
@@ -78,8 +79,10 @@ public class Game implements Serializable {
 
     // add common objective card to the table
     public void setCommonObjectiveCards() {
-        this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst());
-        this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst());
+        List<Integer> commonObjectiveCards = new ArrayList<>();
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst()));
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst()));
+        this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonObjectiveCards));
     }
 
     // set players position

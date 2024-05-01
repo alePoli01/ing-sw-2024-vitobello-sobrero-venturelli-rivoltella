@@ -15,16 +15,17 @@ public interface View {
 
     void setPrivateObjectiveCard(int serialPrivateObjectiveCard);
 
-    void setSerialPublicObjectiveCard(List<Integer> serialPublicObjectiveCard);
+    void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard);
 
     void checkForExistingGame();
 
-    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException;
+    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap);
 
+    void startCardSetupPhase(String playerNickname, TokenColor tokenColor);
 
-    void startCardSetupPhase(String playerNickname, TokenColor tokenColor) throws IOException;
+    void chosePrivateObjectiveCard(String player, int[] privateObjectiveCard);
 
-    void chosePrivateObjectiveCard(String player, int ser, boolean isFlipped);
+    void displayPositionedCard(String player, int startCardPlaced, boolean isFlipped);
 
     void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage);
 

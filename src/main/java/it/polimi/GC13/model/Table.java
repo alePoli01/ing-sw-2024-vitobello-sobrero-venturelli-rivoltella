@@ -87,8 +87,9 @@ public class Table implements Serializable {
         this.goldFacedDown = this.deck.getGoldDeck().removeFirst();
     }
 
-    public void setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
+    public int setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
         this.commonObjectiveCard[index] = objectiveCard;
+        return objectiveCard.serialNumber;
     }
 
     //method to pick(remove) a card from the table
@@ -123,6 +124,7 @@ public class Table implements Serializable {
             }
         }
     }
+
     // updates the drawn card on the table
     public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
         /**

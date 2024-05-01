@@ -49,7 +49,6 @@ public class SocketClient implements ClientInterface, Runnable {
             oos.flush();
         } catch (IOException e) {
             connectionOpen = false;
-            e.printStackTrace();
             System.out.println("Error sending message: " + e.getMessage());
         }
     }
