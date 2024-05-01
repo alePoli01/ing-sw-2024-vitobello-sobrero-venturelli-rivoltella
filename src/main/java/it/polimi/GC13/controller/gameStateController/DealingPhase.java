@@ -4,7 +4,7 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.model.*;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealingPrivateObjectiveCardsMessage;
+import it.polimi.GC13.network.ClientInterface;
 
 public class DealingPhase implements GamePhase {
     private final Controller controller;
@@ -17,11 +17,11 @@ public class DealingPhase implements GamePhase {
     private void dealCards() {
         try {
             Game game = this.controller.getGame();
-            game.giveStartCard();
+            game.dealStartCard();
             game.giveFirstCards();
             game.setCommonObjectiveCards();
             // message from server to client to update tui
-            game.givePrivateObjectiveCards();
+            game.dealPrivateObjectiveCards();
             //this.controller.notifySpecificClients(new OnDealingPrivateObjectiveCardsMessage());
             game.setPlayersPosition();
         } catch (CardNotAddedToHandException e){
@@ -73,7 +73,7 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 }

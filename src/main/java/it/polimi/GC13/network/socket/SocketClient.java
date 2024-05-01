@@ -1,9 +1,6 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.InputException;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
@@ -37,8 +34,13 @@ public class SocketClient implements ClientInterface, Runnable {
         this.connectionStatus = connectionStatus;
     }
 
-    // Generic method to send messages from server to client
-    private void sendMessage(MessagesFromServer message) {
+
+    /*
+        TODO: è possibile che andrà rivisto il nome e l'implementazione quando faremo RMI
+        Generic method to send messages from server to client
+     */
+    @Override
+    public void sendMessage(MessagesFromServer message) {
         try {
             if (!connectionOpen) {
                 return;
@@ -47,50 +49,20 @@ public class SocketClient implements ClientInterface, Runnable {
             oos.flush();
         } catch (IOException e) {
             connectionOpen = false;
+            e.printStackTrace();
             System.out.println("Error sending message: " + e.getMessage());
         }
     }
 
     @Override
-    public void startRMIConnection() throws IOException, NotBoundException, PlayerNotAddedException {
+    public void startRMIConnection() {
 
-    }
-
-    @Override
-    public void onCheckForExistingGame(Map<String, Game> joinableGameMap, Map<Game, Integer> waitingPlayersMap) {
-        //sent when responding to check for existing game message
-        this.sendMessage(new OnCheckForExistingGameMessage(joinableGameMap, waitingPlayersMap));
-    }
-
-    @Override
-    public void onPlayerAddedToGame(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        this.sendMessage(onPlayerAddedToGameMessage);
     }
 
     @Override
     public synchronized void poke() {
         //empty message sent by the Impulse (read comment in SocketAccepter)
         this.sendMessage(new PokeMessage());
-    }
-
-    @Override
-    public void onTokenChoiceMessage(TokenColor tokenColor) {
-        this.sendMessage(new OnTokenChoiceMessage(tokenColor));
-    }
-
-    @Override
-    public void onDealingCard(int[] availableCards) {
-        this.sendMessage(new OnDealingCardMessage(availableCards));
-    }
-
-    @Override
-    public void inputExceptionHandler(InputException e) {
-        this.sendMessage(new OnInputExceptionMessage(e));
-    }
-
-    @Override
-    public void onPlaceStartCardMessage(OnPlaceStartCardMessage onPlaceStartCardMessage) {
-        this.sendMessage(onPlaceStartCardMessage);
     }
 
     @Override
@@ -111,12 +83,12 @@ public class SocketClient implements ClientInterface, Runnable {
                 executorService.submit(() -> {
                     try {
                         message.dispatch(serverDispatcher, this);
-                    } catch (IOException | PlayerNotAddedException e) {
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {
-                if(connectionOpen){
+                if (connectionOpen) {
                     connectionOpen = false;
                     connectionStatus.connectionLost(this);
                 }

@@ -1,11 +1,14 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.GameState;
-import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
+import it.polimi.GC13.exception.GenericException;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnDealCardMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnDealPrivateObjectiveCardsMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -18,15 +21,26 @@ public class Game implements Serializable {
     private int currNumPlayer;
     private final List<Player> playerList;
     private int lastRound;
+    private final String gameName;
+    private final Observer observer;
 
-    public Game(int numPlayer) {
+    public Game(int numPlayer, String gameName) {
+        this.gameName = gameName;
         this.gameState = GameState.JOINING;
         this.table = new Table();
         this.numPlayer = numPlayer;
-        this.playerList = new ArrayList<>() {
-        };
+        this.playerList = new ArrayList<>();
         this.deck = new Deck();
         this.currNumPlayer = 0;
+        this.observer = new Observer();
+    }
+
+    public String getGameName() {
+        return this.gameName;
+    }
+
+    public Observer getObserver() {
+        return this.observer;
     }
 
     public void setGameState(GameState newState) {
@@ -47,10 +61,6 @@ public class Game implements Serializable {
 
     public int getCurrNumPlayer() {
         return currNumPlayer;
-    }
-
-    public int getNumPlayer() {
-        return numPlayer;
     }
 
     public List<Player> getPlayerList() {
@@ -115,7 +125,7 @@ public class Game implements Serializable {
     }
 
     // add the selected player to the game
-    public void addPlayerToGame(Player player) throws PlayerNotAddedException {
+    public void addPlayerToGame(Player player) throws GenericException {
         if (currNumPlayer < numPlayer) {
             this.playerList.add(player);
             player.setGame(this);
@@ -123,31 +133,37 @@ public class Game implements Serializable {
             this.table.getPlayerBoardMap().put(player, new Board(player));
             if (!this.playerList.contains(player)) {
                 System.out.println("lancio eccezione");
-                throw new PlayerNotAddedException(player);
+                this.observer.notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), this.gameName));
+                throw new GenericException(player.getNickname() + " was not added to the game " + this.gameName);
             }
+            this.observer.notifyClients(new OnPlayerAddedToGameMessage(this.getCurrNumPlayer(), this.numPlayer));
         } else {
             System.out.println("Error; max number of player reached: " + currNumPlayer);
         }
     }
 
-    public void giveStartCard() throws CardNotAddedToHandException {
+    public void dealStartCard() throws CardNotAddedToHandException {
         for (Player player : this.playerList) {
             player.addToHand(deck.getStartDeck().poll());
+            // send message to listener
+            this.observer.notifyClients(new OnDealCardMessage(player.getNickname(), player.getHandCardSerialNumber()));
         }
     }
 
     // gives two objective cards to each player, after that, each player will have to choose one of this
-    public void givePrivateObjectiveCards() {
+    public void dealPrivateObjectiveCards() {
         for (Player player : playerList) {
             player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
             player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
+            this.observer.notifyClients(new OnDealPrivateObjectiveCardsMessage(player.getNickname(), player.getPrivateObjectiveCardSerialNumber()));
         }
     }
 
-    public void checkNickname(String nickname, Player player) throws NicknameAlreadyTakenException {
+    public void checkNickname(String nickname, Player player) throws GenericException {
         for (Player playerToCheck : playerList) {
             if (playerToCheck.getNickname().equals(nickname) && !playerToCheck.equals(player)) {
-                throw new NicknameAlreadyTakenException(playerList, null, null);
+                this.observer.notifyClients(new OnNickNameAlreadyTakenMessage(nickname));
+                throw new GenericException("Nickname: " + nickname + " was already choose");
             }
         }
     }

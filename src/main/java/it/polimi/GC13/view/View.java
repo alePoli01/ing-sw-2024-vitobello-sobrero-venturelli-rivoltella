@@ -1,8 +1,7 @@
 package it.polimi.GC13.view;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.InputException;
-import it.polimi.GC13.model.Game;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,14 +19,13 @@ public interface View {
 
     void checkForExistingGame();
 
-    void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
+    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException;
 
-    void joinExistingGame(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException;
 
-    void startCardSetupPhase(TokenColor tokenColor) throws IOException;
+    void startCardSetupPhase(String playerNickname, TokenColor tokenColor) throws IOException;
 
-    void chosePrivateObjectiveCard(int readyPlayers, int neededPlayers, boolean isFlipped);
+    void chosePrivateObjectiveCard(String player, int ser, boolean isFlipped);
 
-    void exceptionHandler(InputException e);
+    void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage);
 
 }

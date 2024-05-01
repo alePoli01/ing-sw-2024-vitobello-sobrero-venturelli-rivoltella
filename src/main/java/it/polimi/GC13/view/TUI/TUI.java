@@ -1,11 +1,9 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.inputException.InputException;
-import it.polimi.GC13.model.Deck;
-import it.polimi.GC13.model.Game;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.View;
 
 import java.io.BufferedReader;
@@ -15,19 +13,15 @@ import java.util.*;
 
 public class TUI implements View {
     ServerInterface virtualServer;
-    boolean firstNotify = false;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private final List<Integer> serialPublicObjectiveCard = new ArrayList<>();
-    public Deck deck;
-    public BoardView board;
+
+    private Player player;
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
         this.checkForExistingGame();
-        this.deck=new Deck();
-        this.board=new BoardView();
-        System.out.println("++Sent: checkForExistingGame");
     }
 
     /*
@@ -54,6 +48,7 @@ public class TUI implements View {
     @Override
     public void checkForExistingGame() {
         this.virtualServer.checkForExistingGame();
+        System.out.println("++Sent: checkForExistingGame");
     }
 
     /* shows 2 options to the player
@@ -61,16 +56,16 @@ public class TUI implements View {
     [2] join an existing one
      */
     @Override
-    public void joiningPhase(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException {
+    public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int choice = 0;
 
-        if (joinableGameMap.isEmpty()) {
+        if (gameNameWaitingPlayersMap.isEmpty()) {
             System.out.println("There is no existing game");
             createNewGame();
         } else {
             //ask what the player wants to do
-            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game ");
+            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game");
             do {
                 try {
                     choice = Integer.parseInt(reader.readLine());
@@ -84,7 +79,7 @@ public class TUI implements View {
                 createNewGame();
             } else {
                 //player can and wants to join an existing game
-                joinExistingGame(waitingPlayersMap, joinableGameMap);
+                joinExistingGame(gameNameWaitingPlayersMap);
             }
         }
     }
@@ -100,51 +95,47 @@ public class TUI implements View {
         //asking for all the contents of the message
         System.out.print("Choose a nickname: ");
         nickname = reader.readLine();
+        this.player = new Player(nickname);
 
         System.out.print("Choose a name for the new Game: ");
         gameName = reader.readLine();
+
         System.out.print("Choose Number of players in the game [min 2, max 4]: ");
         do {
             try {
                 playersNumber = Integer.parseInt(reader.readLine());
             } catch (NumberFormatException e) {
-                System.out.println("Error: Please put a number");
+                System.out.print("Error: Please put a number: ");
             }
             if (playersNumber < 2 || playersNumber > 4) {
-                System.out.println("Error: Please choose a number between 2 and 4");
+                System.out.print("Error: Please choose a number between 2 and 4: ");
             }
         } while (playersNumber < 2 || playersNumber > 4);
 
         //massage is ready to be sent
-        try {
-            virtualServer.addPlayerToGame(nickname, playersNumber, gameName);
-            System.out.println("++Sent: addPlayerToGame");
-        } catch (NicknameAlreadyTakenException e) {
-            System.out.println(e.getMessage());
-        }
+        virtualServer.addPlayerToGame(this.player, playersNumber, gameName);
+        System.out.println("++Sent: addPlayerToGame");
     }
 
-    public void joinExistingGame(Map<Game, Integer> waitingPlayersMap, Map<String, Game> joinableGameMap) throws IOException {
+    public void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String nickname, gameName;
         int playersNumber = -1;
 
         System.out.print("Choose a nickname: ");
         nickname = reader.readLine();
+        this.player = new Player(nickname);
+
         System.out.println("Joinable Games:");
-        joinableGameMap.forEach((string, game) -> System.out.println("\t>game:[" + string + "] --|players in waiting room: " + waitingPlayersMap.get(game)+"|"));
+        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game:[" + string + "] --|players in waiting room: " + numCurrPlayer +"|"));
         do {
-            System.out.println("Select the game to join unsing its name");
+            System.out.print("Select the game to join using its name: ");
             gameName = reader.readLine();
-        } while (!joinableGameMap.containsKey(gameName));
+        } while (!gameNameWaitingPlayersMap.containsKey(gameName));
 
         //massage is ready to be sent
-        try {
-            virtualServer.addPlayerToGame(nickname, playersNumber, gameName);
-            System.out.println("++Sent: addPlayerToGame");
-        } catch (NicknameAlreadyTakenException e) {
-            System.out.println(e.getMessage());
-        }
+        virtualServer.addPlayerToGame(player, playersNumber, gameName);
+        System.out.println("++Sent: addPlayerToGame");
     }
 
     /*
@@ -188,28 +179,35 @@ public class TUI implements View {
         startCardSetupPhase to chose which side to place your card
      */
     @Override
-    public void startCardSetupPhase(TokenColor tokenColor) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        int choice = 0;
-        System.out.println("You chose " + tokenColor + " token");
-        System.out.println("\n--- SETUP PHASE [2/2]---");
-        System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back");
-        this.showCard();
-        do {
-            try {
-                choice = Integer.parseInt(reader.readLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Error: Please put a number");
-            }
-        } while (choice < 1 || choice > 2);
+    public void startCardSetupPhase(String playerNickname, TokenColor tokenColor) throws IOException {
+        if (playerNickname.equals(this.player.getNickname())) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            int choice = 0;
+            System.out.println("You chose " + tokenColor + " token");
+            System.out.println("\n--- SETUP PHASE [2/2]---");
+            System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back");
+            this.showCard();
+            do {
+                try {
+                    choice = Integer.parseInt(reader.readLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: Please put a number");
+                }
+            } while (choice < 1 || choice > 2);
 
-        this.virtualServer.placeStartCard(choice != 1);
+            this.virtualServer.placeStartCard(choice != 1);
+        } else {
+            System.out.println(playerNickname + " chose " + tokenColor + " token");
+        }
     }
 
 
     @Override
-    public void chosePrivateObjectiveCard(int readyPlayers, int neededPlayers, boolean isFlipped) {
-        if (readyPlayers == neededPlayers) {
+    public void chosePrivateObjectiveCard(String player, int startCardPlaced, boolean isFlipped) {
+        String side = isFlipped ? "back" : "front";
+        System.out.println(player + " positioned " + startCardPlaced + " on " + side);
+
+        /*if (readyPlayers == neededPlayers) {
             this.firstNotify = false;
             System.out.println("Chose private objective Card:\n\t[1] to show first choice\n\t[2] to show second choice");
             this.showObjectiveCard(serialPrivateObjectiveCard);
@@ -218,18 +216,16 @@ public class TUI implements View {
             System.out.println("--|players that placed starter card: " + readyPlayers + "/" + neededPlayers);
         } else {
             System.out.println("--|players that placed starter card: " + readyPlayers + "/" + neededPlayers);
-        }
+        }*/
     }
 
     // used to print any input error (at the moment handles token color) and recall the method from the TUI
     @Override
-    public void exceptionHandler(InputException e) {
-        System.out.println("sono nella tui a rilanciare");
-        try {
-            System.out.println(e.getMessage());
-            e.methodToRecall(this);
-        } catch (IOException e1) {
-            System.out.println("Errore nel rilancio");
+    public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
+        if (playerNickname.equals(this.player.getNickname())) {
+            System.out.println("Sono nella tui a rilanciare");
+            System.out.println(onInputExceptionMessage.getErrorMessage());
+            onInputExceptionMessage.methodToRecall(this);
         }
     }
 

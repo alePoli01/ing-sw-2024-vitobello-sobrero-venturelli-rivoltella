@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.*;
@@ -37,20 +38,22 @@ public class SocketServer implements ServerInterface, Runnable {
 
     private void sendMessage(MessagesFromClient messages) {
         try {
-            if(!connectionOpen) {return;}
+            if (!connectionOpen) {
+                return;
+            }
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            connectionOpen=false;
+            connectionOpen = false;
             System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
             connectionStatus.connectionLost(this);
         }
     }
 
     @Override
-    public synchronized void addPlayerToGame(String nickname, int numOfPlayers, String gameName) {
-        PlayerJoiningMessage playerJoiningMessage = new PlayerJoiningMessage(nickname,numOfPlayers, gameName);
-        this.sendMessage(playerJoiningMessage);
+    public synchronized void addPlayerToGame(Player player, int numOfPlayers, String gameName) {
+        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(player, numOfPlayers, gameName);
+        this.sendMessage(addPlayerToGameMessage);
     }
 
     @Override

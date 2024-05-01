@@ -4,17 +4,10 @@ package it.polimi.GC13.controller.gameStateController;
 import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
-import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealingCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Controller implements GamePhase {
@@ -50,24 +43,7 @@ public class Controller implements GamePhase {
         System.out.println("Controller updated to " + newGameController.getClass());
     }
 
-    public void notifyClients(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage) {
-        this.playerClientMap.forEach((player, client) -> client.onPlayerAddedToGame(onPlayerAddedToGameMessage));
-    }
-
-    public void notifySpecificClients(OnDealingCardMessage onDealingCardMessage, List<Player> playerList) {
-        playerList.stream()
-                .map(this.playerClientMap::get)
-                .forEach(client -> client.onDealingCard(onDealingCardMessage.availableCards()));
-    }
-
-    public void notifySpecificClients(OnPlaceStartCardMessage onPlaceStartCardMessage, List<Player> playerList) {
-        playerList.stream()
-                .map(this.playerClientMap::get)
-                .forEach(client -> client.onPlaceStartCardMessage(onPlaceStartCardMessage));
-    }
-
-
-    public void chooseToken(Player player, TokenColor token) throws TokenAlreadyChosenException {
+    public void chooseToken(Player player, TokenColor token) {
         this.gameController.chooseToken(player, token);
     }
 
@@ -87,7 +63,7 @@ public class Controller implements GamePhase {
         this.gameController.drawCard(player, table, cardToDraw);
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
-        this.gameController.addPlayerToExistingGame(player, existingGame);
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+        this.gameController.addPlayerToExistingGame(player, existingGame, client);
     }
 }

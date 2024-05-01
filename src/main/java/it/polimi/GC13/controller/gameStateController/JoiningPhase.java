@@ -2,11 +2,10 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
-
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
+import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.ClientDispatcher;
 
 public class JoiningPhase implements GamePhase {
     private final Controller controller;
@@ -35,14 +34,19 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game workingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException {
+    public void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) {
         // it adds players to the existing game
-        workingGame.checkNickname(player.getNickname(), player);
-        workingGame.addPlayerToGame(player);
+        try {
+            workingGame.getObserver().addListener(client);
+            workingGame.checkNickname(player.getNickname(), player);
+            workingGame.addPlayerToGame(player);
+        } catch (GenericException e) {
+            System.out.println(e.getMessage());
+        }
+
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
             this.controller.updateController(new SetupPhase(this.controller));
             workingGame.setGameState(GameState.SETUP);
         }
-        this.controller.notifyClients(new OnPlayerAddedToGameMessage(workingGame.getCurrNumPlayer(), workingGame.numPlayer));
     }
 }

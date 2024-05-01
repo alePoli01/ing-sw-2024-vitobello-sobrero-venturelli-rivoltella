@@ -3,8 +3,7 @@ package it.polimi.GC13.controller;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
-import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -31,13 +30,8 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) throws IOException, PlayerNotAddedException {
-        try {
-            lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
-        } catch (PlayerNotAddedException e) {
-            System.out.println("Sto per lanciare eccezione");
-            client.inputExceptionHandler(e);
-        }
+    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) {
+        lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
     }
 
     @Override
@@ -47,12 +41,7 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
 
     @Override
     public void chooseToken(ClientInterface client, TokenColor tokenColor) {
-        try {
-            this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), tokenColor);
-            client.onTokenChoiceMessage(tokenColor);
-        } catch (TokenAlreadyChosenException e) {
-            client.inputExceptionHandler(e);
-        }
+        this.clientControllerMap.get(client).chooseToken(this.clientPlayerMap.get(client), tokenColor);
     }
 
     @Override

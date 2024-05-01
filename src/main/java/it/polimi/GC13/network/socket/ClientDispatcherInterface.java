@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.socket.messages.fromserver.*;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 
 public interface ClientDispatcherInterface {
 
@@ -17,7 +18,7 @@ public interface ClientDispatcherInterface {
 
     void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage);
 
-    void dispatch(OnDealingCardMessage onDealingCardMessage);
+    void dispatch(OnDealCardMessage onDealCardMessage);
 
-    void dispatch(OnDealingPrivateObjectiveCardsMessage onDealingPrivateObjectiveCardsMessage);
+    void dispatch(OnDealPrivateObjectiveCardsMessage onDealPrivateObjectiveCardsMessage);
 }

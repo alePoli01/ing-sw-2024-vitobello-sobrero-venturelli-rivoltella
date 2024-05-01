@@ -4,11 +4,10 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotPlacedException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
-import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealingCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
+import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +25,7 @@ public class SetupPhase implements GamePhase {
     private void prepareTable(Game game) {
         try {
             game.getTable().tableSetup();
-            game.giveStartCard();
-            // adds to the TUI handsCard
-            for (Player player : playerList) {
-                this.controller.notifySpecificClients(new OnDealingCardMessage(player.getHandCardSerialNumber()), List.of(player));
-            }
+            game.dealStartCard();
         } catch (CardNotAddedToHandException e){
             System.out.println(e.getMessage());
         }
@@ -46,9 +41,6 @@ public class SetupPhase implements GamePhase {
             if (playersPlacedStartCard(player)) {
                 this.controller.updateController(new DealingPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
-            } else {
-                this.playerList.add(player);
-                this.controller.notifySpecificClients(new OnPlaceStartCardMessage(this.playerList.size(), this.controller.getGame().numPlayer, isFlipped), this.playerList);
             }
         } catch (CardNotPlacedException e) {
             System.out.println(e.getMessage());
@@ -65,25 +57,14 @@ public class SetupPhase implements GamePhase {
         return true;
     }
 
-    public void chooseToken(Player player, TokenColor tokenColor) throws TokenAlreadyChosenException {
-        if (player.getToken() == null) {
-            if (player.getGame().getTable().getTokenColors().contains(tokenColor)) {
-                //color can be taken, assign it to player and remove it from take-able colors
-                player.setToken(tokenColor);
-                player.getTable().getTokenColors().remove(tokenColor);
-            } else {
-                //case: color already taken
-                ArrayList<TokenColor> tokenColorsList = new ArrayList<>();
-                for (TokenColor tc : TokenColor.values()) {
-                    if (player.getGame().getTable().getTokenColors().contains(tc)) {
-                        tokenColorsList.add(tc);
-                    }
-                }
-                throw new TokenAlreadyChosenException(tokenColor, tokenColorsList);
-            }
+    public void chooseToken(Player player, TokenColor tokenColor) {
+        try {
+            System.out.println("checking tokens");
+            player.setTokenColor(tokenColor);
+        } catch (GenericException e) {
+            System.out.println(e.getMessage());
         }
     }
-
 
     public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
@@ -97,7 +78,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException {
-        throw new PlayerNotAddedException(player);
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+        existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 }

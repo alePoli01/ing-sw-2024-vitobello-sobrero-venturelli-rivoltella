@@ -1,15 +1,11 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
-import junit.framework.Assert;
+import it.polimi.GC13.exception.GenericException;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 import junit.framework.TestCase;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class GameTest extends TestCase {
 
@@ -19,32 +15,32 @@ public class GameTest extends TestCase {
     public void testParseJSON() {
     }
 
-    public void testGiveStartCard() {
+    public void testDealStartCard() {
 
         Player player1 = new Player("giocatore1");
         Board board = new Board(player1);
-        Game game = new Game(1);
+        Game game = new Game(1, "test1");
         try {
-            game.giveStartCard();
+            game.dealStartCard();
             assertNotNull(player1.getHand().getFirst());
         } catch (CardNotAddedToHandException e) {
             fail("card not added to hand");
         }
     }
 
-    public void testPlayerPosition() throws PlayerNotAddedException {
+    public void testPlayerPosition() throws GenericException {
         Player player1 = new Player("giocatore1");
         Player player2 = new Player("giocatore2");
         Player player3 = new Player("giocatore3");
         Player player4 = new Player("giocatore4");
 
-        Game game = new Game(4);
+        Game game = new Game(4, "test");
         try {
             game.addPlayerToGame(player1);
             game.addPlayerToGame(player2);
             game.addPlayerToGame(player3);
             game.addPlayerToGame(player4);
-        } catch (PlayerNotAddedException e) {
+        } catch (GenericException e) {
             fail("player not added to game");
         }
         List<Player> playerList = game.getPlayerList();

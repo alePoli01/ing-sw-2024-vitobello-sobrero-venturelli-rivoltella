@@ -3,6 +3,8 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.LinkedList;
 
 public class Player implements Serializable {
     private final String nickname;  //username of the player
-    private TokenColor token; //token chosen by the Player
+    private TokenColor tokenColor; //token chosen by the Player
     private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max
     private LinkedList<ObjectiveCard> objectiveCard; // need an array to present 2 objective cards to the player
     private boolean myTurn; //true if it's the player turn
@@ -29,15 +31,32 @@ public class Player implements Serializable {
     }
 
     public String getNickname() {
-        return nickname;
+        return this.nickname;
     }
 
-    public TokenColor getToken() {
-        return token;
+    public TokenColor getTokenColor() {
+        return this.tokenColor;
     }
 
-    public void setToken(TokenColor token) {
-        this.token = token;
+    public void setTokenColor(TokenColor tokenColor) throws GenericException {
+        if (this.tokenColor == null) {
+            if (this.getTable().getTokenColors().contains(tokenColor)) {
+                //color can be taken, assign it to this and remove it from take-able colors
+                this.tokenColor = tokenColor;
+                this.getTable().getTokenColors().remove(tokenColor);
+            } else {
+                //case: color already taken
+                ArrayList<TokenColor> tokenColorsList = new ArrayList<>();
+                for (TokenColor tc : TokenColor.values()) {
+                    if (this.getGame().getTable().getTokenColors().contains(tc)) {
+                        tokenColorsList.add(tc);
+                    }
+                }
+                this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList));
+                throw new GenericException(tokenColor + " already chose");
+            }
+            this.game.getObserver().notifyClients(new OnTokenChoiceMessage(this.getNickname(), this.tokenColor));
+        }
     }
 
     public Position getPosition() {
@@ -93,6 +112,13 @@ public class Player implements Serializable {
         return handCardSerialNumber;
     }
 
+    public int[] getPrivateObjectiveCardSerialNumber() {
+        int[] privateObjectiveCardSerialNumber = new int[this.objectiveCard.size()];
+        for (int i = 0; i < this.objectiveCard.size(); i++) {
+            privateObjectiveCardSerialNumber[i] = this.objectiveCard.get(i).serialNumber;
+        }
+        return privateObjectiveCardSerialNumber;
+    }
 
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;

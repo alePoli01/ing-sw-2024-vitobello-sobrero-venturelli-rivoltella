@@ -1,6 +1,5 @@
 package it.polimi.GC13.app;
 
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIClient;
@@ -43,8 +42,6 @@ public class ClientApp {
                 System.out.println("You chose RMI!");
             } catch (NotBoundException e) {
                 System.out.println("Binding with server failed");
-            } catch (PlayerNotAddedException e) {
-                System.out.println(e.getMessage());
             }
         } else {
             Socket socket = new Socket("localhost", 123); // creating socket that represents the server
@@ -73,7 +70,5 @@ public class ClientApp {
         } else {
             System.out.println("You chose GUI!");
         }
-
-
     }
 }

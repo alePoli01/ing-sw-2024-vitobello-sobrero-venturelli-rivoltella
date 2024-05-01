@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.EdgeNotFreeException;
 import it.polimi.GC13.exception.NoResourceAvailableException;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -76,6 +77,8 @@ public class Board implements Serializable {
             boardMap.put(xy, newCell);
             if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
                 throw new CardNotPlacedException(cardToPlace);
+            } else {
+                this.owner.getGame().getObserver().notifyClients(new OnPlaceStartCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
             }
         } else {
             Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);

@@ -1,15 +1,15 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
-import it.polimi.GC13.exception.inputException.PlayerNotAddedException;
-import it.polimi.GC13.exception.inputException.TokenAlreadyChosenException;
 import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.ClientInterface;
+
+import java.io.Serializable;
 
 public interface GamePhase {
 
     // player chooses his token, it can be done if its token is empty
-    void chooseToken(Player player, TokenColor token) throws TokenAlreadyChosenException;
+    void chooseToken(Player player, TokenColor token);
 
     // player chooses his objective card
     void choosePrivateObjective(Player player, ObjectiveCard card);
@@ -24,5 +24,5 @@ public interface GamePhase {
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
     // add player to an existing game
-    void addPlayerToExistingGame(Player player, Game existingGame) throws PlayerNotAddedException, NicknameAlreadyTakenException;
+    void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client);
 }

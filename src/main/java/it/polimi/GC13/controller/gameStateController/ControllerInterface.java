@@ -4,6 +4,8 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
+import java.io.Serializable;
+
 public interface ControllerInterface {
 
     void chooseToken(ClientInterface client, TokenColor token);

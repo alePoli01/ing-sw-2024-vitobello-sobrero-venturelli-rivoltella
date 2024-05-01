@@ -3,6 +3,7 @@ package it.polimi.GC13.controller.gameStateController;
 import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.ClientInterface;
 
 public class MidPhase implements GamePhase {
     private final Controller controller;
@@ -109,6 +110,6 @@ public class MidPhase implements GamePhase {
         System.out.println("You cannot replace the start card");
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
     }
 }

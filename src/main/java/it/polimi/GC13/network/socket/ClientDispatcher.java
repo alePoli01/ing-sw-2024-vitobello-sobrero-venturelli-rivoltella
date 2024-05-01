@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.*;
 import it.polimi.GC13.view.View;
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
         try {
-            view.joiningPhase(onCheckForExistingGameMessage.getWaitingPlayersMap(), onCheckForExistingGameMessage.getJoinableGameMap());
+            view.joiningPhase(onCheckForExistingGameMessage.gameNameWaitingPlayersMap());
         } catch(IOException e) {
             System.out.println("Error dispatching game: " + e.getMessage());
         }
@@ -41,15 +42,16 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
         view.tokenSetupPhase(onPlayerAddedToGameMessage.connectedPlayers(), tokenColorList, onPlayerAddedToGameMessage.numPlayersNeeded());
     }
 
+    // EXCEPTION HANDLER
     @Override
     public void dispatch(OnInputExceptionMessage onInputExceptionMessage) {
-        view.exceptionHandler(onInputExceptionMessage.getException());
+        view.exceptionHandler(onInputExceptionMessage.getPlayerNickname(), onInputExceptionMessage);
     }
 
     @Override
     public void dispatch(OnTokenChoiceMessage onTokenChoiceMessage) {
         try {
-            view.startCardSetupPhase(onTokenChoiceMessage.tokenColor());
+            view.startCardSetupPhase(onTokenChoiceMessage.playerNickname(), onTokenChoiceMessage.tokenColor());
         } catch (IOException e) {
             System.out.println("Error choosing the token color: " + e.getMessage());
         }
@@ -57,17 +59,17 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage) {
-        view.chosePrivateObjectiveCard(onPlaceStartCardMessage.readyPlayers(), onPlaceStartCardMessage.neededPlayers(), onPlaceStartCardMessage.isFlipped());
+        view.chosePrivateObjectiveCard(onPlaceStartCardMessage.playerNickname(), onPlaceStartCardMessage.serialNumberCard(), onPlaceStartCardMessage.isFlipped());
     }
 
     @Override
-    public void dispatch(OnDealingCardMessage onDealingCardMessage) {
-        view.handUpdate(onDealingCardMessage.availableCards());
+    public void dispatch(OnDealCardMessage onDealCardMessage) {
+        view.handUpdate(onDealCardMessage.availableCards());
     }
 
     @Override
-    public void dispatch(OnDealingPrivateObjectiveCardsMessage onDealingPrivateObjectiveCardsMessage) {
-        
+    public void dispatch(OnDealPrivateObjectiveCardsMessage onDealPrivateObjectiveCardsMessage) {
+
     }
 
     @Override

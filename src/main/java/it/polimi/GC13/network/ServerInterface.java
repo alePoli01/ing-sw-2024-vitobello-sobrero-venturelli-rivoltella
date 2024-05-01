@@ -1,12 +1,12 @@
 package it.polimi.GC13.network;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.inputException.NicknameAlreadyTakenException;
+import it.polimi.GC13.model.Player;
 
 public interface ServerInterface {
     // Methods that can be called by the client
 
-    void addPlayerToGame(String nickname, int numOfPlayers, String gameName) throws NicknameAlreadyTakenException;
+    void addPlayerToGame(Player player, int numOfPlayers, String gameName);
 
     void checkForExistingGame();
 

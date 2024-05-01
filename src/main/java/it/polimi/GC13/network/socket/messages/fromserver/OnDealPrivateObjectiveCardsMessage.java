@@ -1,10 +1,10 @@
 package it.polimi.GC13.network.socket.messages.fromserver;
 
-import it.polimi.GC13.enums.TokenColor;
+
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
-public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
+public record OnDealPrivateObjectiveCardsMessage(String playerNickname, int[] privateObjectiveCards) implements MessagesFromServer {
 
     @Override
     public void dispatch(ClientDispatcherInterface clientDispatcher) {
