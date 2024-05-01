@@ -4,15 +4,13 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
-import java.io.Serializable;
-
 public interface GamePhase {
 
     // player chooses his token, it can be done if its token is empty
     void chooseToken(Player player, TokenColor token);
 
     // player chooses his objective card
-    void choosePrivateObjective(Player player, ObjectiveCard card);
+    void choosePrivateObjective(Player player, int indexPrivateObjectiveCard);
 
     // place start card on the board in default position
     void placeStartCard(Player player, boolean isFlipped);

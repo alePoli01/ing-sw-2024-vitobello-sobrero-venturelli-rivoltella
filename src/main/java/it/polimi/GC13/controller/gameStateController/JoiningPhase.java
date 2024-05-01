@@ -5,7 +5,6 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.ClientDispatcher;
 
 public class JoiningPhase implements GamePhase {
     private final Controller controller;
@@ -18,7 +17,7 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
     
-    public void choosePrivateObjective(Player player, ObjectiveCard card) {
+    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

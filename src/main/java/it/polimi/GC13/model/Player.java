@@ -3,6 +3,7 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
+import it.polimi.GC13.network.socket.messages.fromserver.OnChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
@@ -14,7 +15,7 @@ public class Player implements Serializable {
     private final String nickname;  //username of the player
     private TokenColor tokenColor; //token chosen by the Player
     private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max
-    private LinkedList<ObjectiveCard> objectiveCard; // need an array to present 2 objective cards to the player
+    private LinkedList<ObjectiveCard> privateObjectiveCard; // need an array to present 2 objective cards to the player
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
     private Position position;  //position of the player (1-4)
@@ -27,7 +28,7 @@ public class Player implements Serializable {
         this.turnPlayed = 0;
         this.myTurn = false;
         this.hand = new ArrayList<>();
-        this.objectiveCard = new LinkedList<>();
+        this.privateObjectiveCard = new LinkedList<>();
     }
 
     public String getNickname() {
@@ -67,8 +68,8 @@ public class Player implements Serializable {
         this.game = game;
     }
 
-    public LinkedList<ObjectiveCard> getObjectiveCard() {
-        return objectiveCard;
+    public LinkedList<ObjectiveCard> getPrivateObjectiveCard() {
+        return privateObjectiveCard;
     }
 
     public void setPosition(Position position) {
@@ -113,9 +114,9 @@ public class Player implements Serializable {
     }
 
     public int[] getPrivateObjectiveCardSerialNumber() {
-        int[] privateObjectiveCardSerialNumber = new int[this.objectiveCard.size()];
-        for (int i = 0; i < this.objectiveCard.size(); i++) {
-            privateObjectiveCardSerialNumber[i] = this.objectiveCard.get(i).serialNumber;
+        int[] privateObjectiveCardSerialNumber = new int[this.privateObjectiveCard.size()];
+        for (int i = 0; i < this.privateObjectiveCard.size(); i++) {
+            privateObjectiveCardSerialNumber[i] = this.privateObjectiveCard.get(i).serialNumber;
         }
         return privateObjectiveCardSerialNumber;
     }
@@ -148,4 +149,16 @@ public class Player implements Serializable {
     }
 
 
+    public void setPrivateObjectiveCard(int indexPrivateObjectiveCard) throws GenericException {
+        if (this.privateObjectiveCard.size() == 2) {
+            if (indexPrivateObjectiveCard == 0) {
+                this.privateObjectiveCard.removeLast();
+            } else {
+                this.privateObjectiveCard.removeFirst();
+            }
+            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, indexPrivateObjectiveCard));
+        } else {
+            throw new GenericException("Private objective already chose");
+        }
+    }
 }

@@ -6,7 +6,6 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.*;
 import it.polimi.GC13.view.View;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,9 +28,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
-
         view.joiningPhase(onCheckForExistingGameMessage.gameNameWaitingPlayersMap());
-
     }
 
     @Override
@@ -48,19 +45,17 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnTokenChoiceMessage onTokenChoiceMessage) {
-
         view.startCardSetupPhase(onTokenChoiceMessage.playerNickname(), onTokenChoiceMessage.tokenColor());
-
     }
 
     @Override
     public void dispatch(OnPlaceStartCardMessage onPlaceStartCardMessage) {
-        view.displayPositionedCard(onPlaceStartCardMessage.playerNickname(), onPlaceStartCardMessage.serialNumberCard(), onPlaceStartCardMessage.isFlipped());
+        view.onPositionedCard(onPlaceStartCardMessage.playerNickname(), onPlaceStartCardMessage.serialNumberCard(), onPlaceStartCardMessage.isFlipped());
     }
 
     @Override
     public void dispatch(OnDealCardMessage onDealCardMessage) {
-        view.handUpdate(onDealCardMessage.availableCards());
+        view.handUpdate(onDealCardMessage.playerNickname(), onDealCardMessage.availableCards());
     }
 
     @Override
@@ -71,6 +66,11 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void dispatch(OnDealCommonObjectiveCardMessage onDealCommonObjectiveCardMessage) {
         view.setSerialCommonObjectiveCard(onDealCommonObjectiveCardMessage.privateObjectiveCards());
+    }
+
+    @Override
+    public void dispatch(OnChoosePrivateObjectiveCardMessage onChoosePrivateObjectiveCardMessage) {
+        view.definePrivateObjectiveCard(onChoosePrivateObjectiveCardMessage.playerNickname(), onChoosePrivateObjectiveCardMessage.indexPrivateObjectiveCard());
     }
 
     @Override

@@ -47,6 +47,11 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
 
     }
 
+    @Override
+    public void chosePrivateObjectiveCard(int indexPrivateObjectiveCard) {
+
+    }
+
     public void startServer() throws RemoteException {
         try {
             this.registry = LocateRegistry.createRegistry(this.port);

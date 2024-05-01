@@ -134,7 +134,7 @@ public class BoardView {
 
                     //fullcard
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] == null) {
-                        Board[i][j].getCardPointer().lineprinter(0, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                         if(j!=y_max){
                         System.out.print("         ");}
 
@@ -143,32 +143,32 @@ public class BoardView {
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] != null && Board[i - 1][j + 1] == null) {
                         if (Board[i][j].weight > Board[i + 1][j - 1].weight) {
 
-                            Board[i][j].getCardPointer().lineprinter(0, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
 
                         }else{
-                            Board[i][j].getCardPointer().lineprinter(1, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(1, line, Board[i][j].isFlipped);
                         }
 
                     }
                     //bottomright
                     if (Board[i + 1][j + 1] != null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] == null) {
                         if (Board[i][j].weight > Board[i + 1][j + 1].weight) {
-                            Board[i][j].getCardPointer().lineprinter(0, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
 
                             if (line > 2) {
                                 if(Board[i][j + 2]!=null&&(Board[i+1][j+1].weight > Board[i][j + 2].weight)){
-                                    Board[i + 1][j + 1].getCardPointer().lineprinter(4, line, Board[i + 1][j + 1].isFlipped);
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(4, line, Board[i + 1][j + 1].isFlipped);
                                 }else{
-                                    Board[i + 1][j + 1].getCardPointer().lineprinter(8, line, Board[i + 1][j + 1].isFlipped);
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(8, line, Board[i + 1][j + 1].isFlipped);
                                 }
 
                             }else{
                                 System.out.print("         ");
                             }
                         } else {
-                            Board[i][j].getCardPointer().lineprinter(2, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
                             if (line > 2) {
-                                Board[i + 1][j + 1].getCardPointer().lineprinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
                             }else{
                                 System.out.print("         ");
                             }
@@ -178,22 +178,22 @@ public class BoardView {
                     //upright
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] != null) {
                         if (Board[i][j].weight > Board[i - 1][j + 1].weight) {
-                            Board[i][j].getCardPointer().lineprinter(0, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
 
                             if (line <= 2) {
                                 if(Board[i][j + 2]!=null&&(Board[i-1][j+1].weight > Board[i][j + 2].weight)){
-                                    Board[i - 1][j + 1].getCardPointer().lineprinter(1, line+3, Board[i - 1][j + 1].isFlipped);
+                                    Board[i - 1][j + 1].getCardPointer().linePrinter(1, line+3, Board[i - 1][j + 1].isFlipped);
                                 }else{
-                                    Board[i - 1][j + 1].getCardPointer().lineprinter(7, line+3, Board[i - 1][j + 1].isFlipped);
+                                    Board[i - 1][j + 1].getCardPointer().linePrinter(7, line+3, Board[i - 1][j + 1].isFlipped);
                                 }
 
                             }else{
                                 System.out.print("         ");
                             }
                         } else {
-                            Board[i][j].getCardPointer().lineprinter(3, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
                             if (line <= 2) {
-                                Board[i - 1][j + 1].getCardPointer().lineprinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
                             }else{
                                 System.out.print("         ");
                             }
@@ -203,36 +203,36 @@ public class BoardView {
                     //upleft
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] != null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] == null) {
                         if (Board[i][j].weight > Board[i - 1][j - 1].weight) {
-                            Board[i][j].getCardPointer().lineprinter(0, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                         } else {
-                            Board[i][j].getCardPointer().lineprinter(4, line, Board[i][j].isFlipped);
+                            Board[i][j].getCardPointer().linePrinter(4, line, Board[i][j].isFlipped);
                         }
 
 
                     }
                     //leftside
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] != null && Board[i + 1][j - 1] != null && Board[i - 1][j + 1] == null) {
-                        Board[i][j].getCardPointer().lineprinter(5, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(5, line, Board[i][j].isFlipped);
 
                     }
                     //Rightside
                     if (Board[i + 1][j + 1] != null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] != null) {
-                        Board[i][j].getCardPointer().lineprinter(6, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(6, line, Board[i][j].isFlipped);
 
                     }
                     //bottom side
                     if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] != null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] != null) {
-                        Board[i][j].getCardPointer().lineprinter(7, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(7, line, Board[i][j].isFlipped);
 
                     }
                     //upside
                     if (Board[i + 1][j + 1] != null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] != null && Board[i - 1][j + 1] == null) {
-                        Board[i][j].getCardPointer().lineprinter(8, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(8, line, Board[i][j].isFlipped);
 
                     }
                     //no sides
                     if (Board[i + 1][j + 1] != null && Board[i - 1][j - 1] != null && Board[i + 1][j - 1] != null && Board[i - 1][j + 1] != null) {
-                        Board[i][j].getCardPointer().lineprinter(9, line, Board[i][j].isFlipped);
+                        Board[i][j].getCardPointer().linePrinter(9, line, Board[i][j].isFlipped);
 
                     }}
 

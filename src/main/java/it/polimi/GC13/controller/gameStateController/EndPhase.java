@@ -27,7 +27,7 @@ public class EndPhase implements GamePhase {
     private void finalScoreCalculation() {
         for (Player player : this.controller.getGame().getPlayerList()) {
             //set player score = player score + player's objective points(based on his board)
-            player.getBoard().setPlayerScore(player.getBoard().getPlayerScore()+player.getObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) );
+            player.getBoard().setPlayerScore(player.getBoard().getPlayerScore()+player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) );
         }
     }
 
@@ -35,7 +35,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void choosePrivateObjective(Player player, ObjectiveCard card) {
+    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

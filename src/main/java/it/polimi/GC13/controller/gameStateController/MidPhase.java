@@ -101,7 +101,7 @@ public class MidPhase implements GamePhase {
     }
 
     // player chooses his objective card
-    public void choosePrivateObjective(Player player, ObjectiveCard card) {
+    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("You cannot change your objective card");
     }
 

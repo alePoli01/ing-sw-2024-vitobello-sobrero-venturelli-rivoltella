@@ -23,4 +23,6 @@ public interface ClientDispatcherInterface {
     void dispatch(OnDealPrivateObjectiveCardsMessage onDealPrivateObjectiveCardsMessage);
 
     void dispatch(OnDealCommonObjectiveCardMessage onDealCommonObjectiveCardMessage);
+
+    void dispatch(OnChoosePrivateObjectiveCardMessage onChoosePrivateObjectiveCardMessage);
 }

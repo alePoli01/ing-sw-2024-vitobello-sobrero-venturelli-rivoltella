@@ -3,6 +3,7 @@ package it.polimi.GC13.controller.gameStateController;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -17,7 +18,6 @@ public class DealingPhase implements GamePhase {
     private void dealCards() {
         try {
             Game game = this.controller.getGame();
-            game.dealStartCard();
             game.giveFirstCards();
             game.setCommonObjectiveCards();
             game.dealPrivateObjectiveCards();
@@ -32,19 +32,15 @@ public class DealingPhase implements GamePhase {
     }
 
     // player chooses his objective card
-    public void choosePrivateObjective(Player player, ObjectiveCard card) {
-        if (!(player.getObjectiveCard().size() < 2 || player.getObjectiveCard().isEmpty())) {
-            if (player.getObjectiveCard().getFirst().equals(card)) {
-                player.getObjectiveCard().remove(1);
-                if (this.playersChoseObjectiveCard(player)) {
-                    this.controller.updateController(new MidPhase(this.controller));
-                    this.controller.getGame().setGameState(GameState.MID);
-                }
-            } else {
-                player.getObjectiveCard().removeFirst();
+    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
+        try {
+            player.setPrivateObjectiveCard(indexPrivateObjectiveCard);
+            if (this.playersChoseObjectiveCard(player)) {
+                this.controller.updateController(new MidPhase(this.controller));
+                this.controller.getGame().setGameState(GameState.MID);
             }
-        } else {
-            System.out.println("Objective card already chosen or not received yet");
+        } catch (GenericException e) {
+            System.out.println(e.getMessage());
         }
     }
 

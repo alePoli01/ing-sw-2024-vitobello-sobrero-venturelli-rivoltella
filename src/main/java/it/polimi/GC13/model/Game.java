@@ -71,9 +71,12 @@ public class Game implements Serializable {
     // give firsts 3 cards and start card to each player
     public void giveFirstCards() throws CardNotAddedToHandException {
         for (Player player : this.playerList) {
-            player.addToHand(deck.getResourceDeck().removeFirst());
-            player.addToHand(deck.getResourceDeck().removeFirst());
-            player.addToHand(deck.getGoldDeck().removeFirst());
+            int[] availableCards = new int[3];
+            for (int i = 0; i < 3; i++) {
+                player.addToHand(deck.getResourceDeck().removeFirst());
+                availableCards[i] = player.getHand().getLast().serialNumber;
+            }
+            this.observer.notifyClients(new OnDealCardMessage(player.getNickname(), availableCards));
         }
     }
 
@@ -147,7 +150,7 @@ public class Game implements Serializable {
 
     public void dealStartCard() throws CardNotAddedToHandException {
         for (Player player : this.playerList) {
-            player.addToHand(deck.getStartDeck().poll());
+            player.addToHand(deck.getStartDeck().removeFirst());
             // send message to listener
             this.observer.notifyClients(new OnDealCardMessage(player.getNickname(), player.getHandCardSerialNumber()));
         }
@@ -156,8 +159,8 @@ public class Game implements Serializable {
     // gives two objective cards to each player, after that, each player will have to choose one of this
     public void dealPrivateObjectiveCards() {
         for (Player player : playerList) {
-            player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
-            player.getObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
+            player.getPrivateObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
+            player.getPrivateObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
             this.observer.notifyClients(new OnDealPrivateObjectiveCardsMessage(player.getNickname(), player.getPrivateObjectiveCardSerialNumber()));
         }
     }

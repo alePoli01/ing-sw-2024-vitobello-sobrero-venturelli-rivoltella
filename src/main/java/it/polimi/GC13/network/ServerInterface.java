@@ -17,4 +17,6 @@ public interface ServerInterface {
     void writeMessage(); //writes message in gamechat
 
     void drawCard();
+
+    void chosePrivateObjectiveCard(int indexPrivateObjectiveCard);
 }

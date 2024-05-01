@@ -33,7 +33,6 @@ public class SetupPhase implements GamePhase {
 
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
-            System.out.println("I am placing the card");
             PlayableCard cardToPlace = player.getHand().getFirst();
             player.getBoard().addCardToBoard(new Coordinates(50, 50), cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
@@ -74,7 +73,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void choosePrivateObjective(Player player, ObjectiveCard card) {
+    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

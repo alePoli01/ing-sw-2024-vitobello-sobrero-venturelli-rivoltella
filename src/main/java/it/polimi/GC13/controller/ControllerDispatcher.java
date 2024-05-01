@@ -50,9 +50,9 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void choosePrivateObjective(ClientInterface client, ObjectiveCard card) {
+    public void choosePrivateObjective(ClientInterface client, int indexPrivateObjectiveCard) {
         // da fixare il cast, l'ho messo per non ricevere errore, quando lo fai sistema -Ale
-        this.clientControllerMap.get(client).choosePrivateObjective((Player) client, card);
+        this.clientControllerMap.get(client).choosePrivateObjective((Player) client, indexPrivateObjectiveCard);
     }
 
 

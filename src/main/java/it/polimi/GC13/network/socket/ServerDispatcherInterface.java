@@ -1,10 +1,7 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromclient.PlaceStartCardMessage;
-import it.polimi.GC13.network.socket.messages.fromclient.AddPlayerToGameMessage;
-import it.polimi.GC13.network.socket.messages.fromclient.TokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromclient.*;
 
 public interface ServerDispatcherInterface {
 
@@ -15,4 +12,6 @@ public interface ServerDispatcherInterface {
     void dispatch(TokenChoiceMessage tokenChoiceMessage, ClientInterface client);
 
     void dispatch(PlaceStartCardMessage placeStartCardMessage, ClientInterface client);
+
+    void dispatch(ChoosePrivateObjectiveCardMessage choosePrivateObjectiveCardMessage, ClientInterface client);
 }

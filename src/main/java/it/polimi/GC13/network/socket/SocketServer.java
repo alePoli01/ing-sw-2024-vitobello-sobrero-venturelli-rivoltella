@@ -81,6 +81,11 @@ public class SocketServer implements ServerInterface, Runnable {
 
     }
 
+    @Override
+    public void chosePrivateObjectiveCard(int indexPrivateObjectiveCard) {
+        this.sendMessage(new ChoosePrivateObjectiveCardMessage(indexPrivateObjectiveCard));
+    }
+
     // LISTEN CALLS FROM SERVER
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
