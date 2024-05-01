@@ -193,7 +193,7 @@ public class TUI implements View {
             System.out.println("You chose " + tokenColor + " token");
             System.out.println("\n--- SETUP PHASE [2/2]---");
             System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n[1] front\n[2] back");
-            this.showCard();
+            this.showHand();
             do {
                 try {
                     this.choice = Integer.parseInt(this.reader.readLine());
@@ -250,7 +250,7 @@ public class TUI implements View {
         // call to printer
     }
 
-    private void showCard() {
+    private void showHand() {
         // call to printer
     }
 }
