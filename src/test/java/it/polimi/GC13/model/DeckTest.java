@@ -121,5 +121,15 @@ public class DeckTest extends TestCase {
             System.out.println("_______________");
         }
     }
+    public void testprintObjectiveCard() {
+        Deck deck=new Deck();
+        for(ObjectiveCard card: deck.getObjectiveDeck()){
+            if(card.serialNumber==87){
+                card.printObjectiveCard();
+            }
+            
+        }
+
+    }
 
 }

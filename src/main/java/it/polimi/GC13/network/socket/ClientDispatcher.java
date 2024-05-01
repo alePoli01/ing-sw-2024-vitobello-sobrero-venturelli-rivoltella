@@ -29,11 +29,9 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage) {
-        try {
-            view.joiningPhase(onCheckForExistingGameMessage.gameNameWaitingPlayersMap());
-        } catch(IOException e) {
-            System.out.println("Error dispatching game: " + e.getMessage());
-        }
+
+        view.joiningPhase(onCheckForExistingGameMessage.gameNameWaitingPlayersMap());
+
     }
 
     @Override
@@ -50,11 +48,9 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     @Override
     public void dispatch(OnTokenChoiceMessage onTokenChoiceMessage) {
-        try {
-            view.startCardSetupPhase(onTokenChoiceMessage.playerNickname(), onTokenChoiceMessage.tokenColor());
-        } catch (IOException e) {
-            System.out.println("Error choosing the token color: " + e.getMessage());
-        }
+
+        view.startCardSetupPhase(onTokenChoiceMessage.playerNickname(), onTokenChoiceMessage.tokenColor());
+
     }
 
     @Override

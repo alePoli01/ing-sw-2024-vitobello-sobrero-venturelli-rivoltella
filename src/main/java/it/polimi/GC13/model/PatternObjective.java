@@ -312,4 +312,39 @@ public int getObjectivePoints(Board board) {
 
 }
 
+    public void printObjectiveCard() {
+
+    //colors of the background
+        String backgroundRed = "\u001b[41m";   // red background
+        String backgroundGreen = "\u001b[42m"; // Green Background
+        String backgroundBlue = "\u001b[46m";  // Blue background
+        String backgroundmagenta = "\u001b[35m";  // Blue
+        String resetbackground = "\u001b[0m";  // Reset color of the background
+        String gold = "\u001b[93m";  // gold
+        String reset = "\u001b[0m";  // reset color of the characters
+
+        if (this.diagonal) {
+            switch (this.orientation) {
+                case (0): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║   "+gold+"2"+reset+"             ║");
+                    System.out.println("║         "+backgroundRed+"     "+resetbackground+"   ║");
+                    System.out.println("║      "+backgroundRed+"     "+resetbackground+"      ║");
+                    System.out.println("║   "+backgroundRed+"     "+resetbackground+"         ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (2): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║   "+gold+"2"+reset+"             ║");
+                    System.out.println("║         "+backgroundBlue+"     "+resetbackground+"   ║");
+                    System.out.println("║      "+backgroundBlue+"     "+resetbackground+"      ║");
+                    System.out.println("║   "+backgroundBlue+"     "+resetbackground+"         ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+            }
+        }
+    }
+
 }

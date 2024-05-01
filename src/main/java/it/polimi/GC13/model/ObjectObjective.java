@@ -36,4 +36,9 @@ public class ObjectObjective extends ObjectiveCard {
         return combo * getComboPoints();
     }
 
+    @Override
+    public void printObjectiveCard() {
+
+    }
+
 }

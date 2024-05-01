@@ -1,6 +1,9 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.ObjectiveCard;
+import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
@@ -19,7 +22,7 @@ public class TUI implements View {
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private Player player;
     private int choice = 0;
-
+    public static final Deck visualdeck=new Deck();
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
         this.checkForExistingGame();
@@ -247,10 +250,24 @@ public class TUI implements View {
     }
 
     private void showObjectiveCard(int serialNumber) {
-        // call to printer
+        for(ObjectiveCard card:this.visualdeck.getObjectiveDeck()){
+            if(card.serialNumber==serialNumber){
+                card.printObjectiveCard();
+            }
+        }
     }
 
     private void showHand() {
-        // call to printer
+
+        for(PlayableCard card:this.visualdeck.getResourceDeck()){
+            for(int x:this.hand){
+                if(card.serialNumber==x){
+                    card.cardPrinter(true);
+
+                }
+            }
+
+        }
+
     }
 }

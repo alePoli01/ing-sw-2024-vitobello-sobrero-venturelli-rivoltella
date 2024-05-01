@@ -21,4 +21,7 @@ public abstract class ObjectiveCard implements Serializable {
     }
 
     public abstract int getObjectivePoints(Board board);
+
+    public abstract void printObjectiveCard();
+
 }
