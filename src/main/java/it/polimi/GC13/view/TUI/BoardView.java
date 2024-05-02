@@ -55,18 +55,22 @@ public class BoardView {
         String blue = "\u001b[36m";  // Blue
 
         //print of x-axis
-        System.out.print(" ┃  ");
+        System.out.print(" X┃ ");
         for (int j = y_min-1; j <= y_max+1; j++){
-            System.out.print("━━━━"+gold+j+reset+"━━━━  ┃ ");
+            if(j==y_max+1){
+                System.out.print("━━━━"+gold+j+reset+"━━━━  ┃X");
+            }else{
+                System.out.print("━━━━"+gold+j+reset+"━━━━  ┃ ");
+            }
         }
         System.out.println();
 
         //print of y-axis
-        System.out.print(gold+(x_min-3)%10+"   "+reset);
+        System.out.print("Y   "+reset);
         for (int j = y_min-1; j <= y_max+1; j++){
             System.out.print("              ");
         }
-        System.out.print(gold+(x_min-3)%10+reset);
+        System.out.print("Y");
         System.out.println();
 
         System.out.print("╪   ");
@@ -258,9 +262,13 @@ public class BoardView {
             }
         }
 
-        System.out.print(gold+(x_min+1)%10+"   "+reset);
+        System.out.print(gold+(x_min+1)%10+reset);
         for (int j = y_min-1; j <= y_max+1; j++){
-            System.out.print("              ");
+          if(j%2==0){
+              System.out.print("|       "+j+"        ");
+          }else{
+              System.out.print("|   "+j+"   ");
+          }
         }
         System.out.print(gold+(x_min+1)%10+reset);
         System.out.println();
@@ -293,17 +301,22 @@ public class BoardView {
         System.out.print("╪");
         System.out.println();
 
-        System.out.print(gold+(x_min+3)/10+"   "+reset);
+        System.out.print("Y   "+reset);
         for (int j = y_min-1; j <= y_max+1; j++){
             System.out.print("              ");
         }
-        System.out.print(gold+(x_min+3)/10+reset);
+        System.out.print("Y");
         System.out.println();
 
         //print of x-axis
-        System.out.print(" ┃  ");
+        System.out.print(" X┃ ");
         for (int j = y_min-1; j <= y_max+1; j++){
-            System.out.print("━━━━"+gold+j+reset+"━━━━  ┃ ");
+            if(j==y_max+1){
+                System.out.print("━━━━"+gold+j+reset+"━━━━  ┃X");
+            }else{
+                System.out.print("━━━━"+gold+j+reset+"━━━━  ┃ ");
+            }
+
         }
         System.out.println();
     }
