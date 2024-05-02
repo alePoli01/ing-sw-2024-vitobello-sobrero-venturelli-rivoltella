@@ -24,8 +24,9 @@ public class JoiningPhase implements GamePhase {
     public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
-    
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
+
+    @Override
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
     

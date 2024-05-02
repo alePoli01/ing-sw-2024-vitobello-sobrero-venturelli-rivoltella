@@ -3,6 +3,7 @@ package it.polimi.GC13.network.socket.messages.fromserver;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
+import it.polimi.GC13.view.View;
 
 import java.util.Map;
 
@@ -10,11 +11,16 @@ public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaiting
 
     @Override
     public void dispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(this);
+        clientDispatcher.dispatch(null);
     }
 
     @Override
     public void notifyClient(ClientInterface client) {
         client.sendMessage(this);
+    }
+
+    @Override
+    public void methodToCall(View view) {
+        view.joiningPhase(this.gameNameWaitingPlayersMap);
     }
 }

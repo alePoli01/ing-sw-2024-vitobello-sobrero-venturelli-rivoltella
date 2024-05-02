@@ -5,6 +5,7 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.network.socket.messages.fromserver.OnChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTurnUpdateMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ public class Player implements Serializable {
     private final String nickname;  //username of the player
     private TokenColor tokenColor; //token chosen by the Player
     private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max
-    private LinkedList<ObjectiveCard> privateObjectiveCard; // need an array to present 2 objective cards to the player
+    private final LinkedList<ObjectiveCard> privateObjectiveCard; // need an array to present 2 objective cards to the player
     private boolean myTurn; //true if it's the player turn
     private int turnPlayed; //number of the current turn
     private Position position;  //position of the player (1-4)
@@ -61,7 +62,7 @@ public class Player implements Serializable {
     }
 
     public Position getPosition() {
-        return position;
+        return this.position;
     }
 
     public void setGame(Game game) {
@@ -123,6 +124,7 @@ public class Player implements Serializable {
 
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
+        this.game.getObserver().notifyClients(new OnTurnUpdateMessage(this.getNickname(), myTurn));
     }
 
     // check it is player's turn before playing

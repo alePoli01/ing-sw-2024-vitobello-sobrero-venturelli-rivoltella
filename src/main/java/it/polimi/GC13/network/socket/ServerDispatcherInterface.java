@@ -14,4 +14,6 @@ public interface ServerDispatcherInterface {
     void dispatch(PlaceStartCardMessage placeStartCardMessage, ClientInterface client);
 
     void dispatch(ChoosePrivateObjectiveCardMessage choosePrivateObjectiveCardMessage, ClientInterface client);
+
+    void dispatch(PlaceCardMessage placeCardMessage, ClientInterface client);
 }

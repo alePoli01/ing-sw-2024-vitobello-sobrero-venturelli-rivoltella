@@ -49,18 +49,19 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
+    @Override
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
     // CHECK that all players in the same game chose their own objective card
-    public boolean playersChoseObjectiveCard(Player player) {
+    private boolean playersChoseObjectiveCard(Player player) {
         for (Player element : player.getGame().getPlayerList()) {
             if (element.getHand().size() == 2) {
                 return false;
             }
         }
         return true;
-    }
-
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {

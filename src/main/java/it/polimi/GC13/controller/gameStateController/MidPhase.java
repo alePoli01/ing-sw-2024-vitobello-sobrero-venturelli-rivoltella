@@ -11,21 +11,17 @@ public class MidPhase implements GamePhase {
     public MidPhase(Controller controller) {
         this.controller = controller;
         // set first player to play
-        for (Player player : this.controller.getGame().getPlayerList()) {
-            if (player.getPosition().equals(Position.FIRST)) {
-                player.setMyTurn(true);
-            }
-        }
+        this.controller.getGame().getPlayerList().stream()
+                .filter(p -> p.getPosition().equals(Position.FIRST))
+                .forEach(p -> p.setMyTurn(true));
     }
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
         Board board = player.getBoard();
-
-        // TODO controllo che la carta passata sia in mano al player
-
         // increase players turn
         player.increaseTurnPlayed();
+        PlayableCard cardToPlace = player.getHand().get(cardToPlaceHandIndex);
 
         try {
             // check player turn
@@ -60,7 +56,6 @@ public class MidPhase implements GamePhase {
             if (!isFlipped) {
                 // gold cards gives points differently
                 board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, xy));
-
                 // check if players has reached 20 points, if so sets game's last turn
                 if (board.getPlayerScore() >= 20) {
                     player.getGame().setLastRound(player);
@@ -95,7 +90,12 @@ public class MidPhase implements GamePhase {
             System.out.println(e.getMessage());
         }
     }
-    
+
+    @Override
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Token already chosen");
     }
@@ -108,8 +108,5 @@ public class MidPhase implements GamePhase {
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("You cannot replace the start card");
-    }
-
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
     }
 }

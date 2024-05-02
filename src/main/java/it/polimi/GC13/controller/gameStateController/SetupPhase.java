@@ -15,7 +15,6 @@ import java.util.List;
 public class SetupPhase implements GamePhase {
 
     private final Controller controller;
-    private final List<Player> playerList = new ArrayList<>();
 
     public SetupPhase(Controller controller) {
         this.controller = controller;
@@ -58,14 +57,14 @@ public class SetupPhase implements GamePhase {
 
     public void chooseToken(Player player, TokenColor tokenColor) {
         try {
-            System.out.println("checking tokens");
             player.setTokenColor(tokenColor);
         } catch (GenericException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
+    @Override
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

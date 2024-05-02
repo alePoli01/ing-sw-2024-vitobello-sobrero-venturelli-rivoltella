@@ -1,5 +1,6 @@
 package it.polimi.GC13.view;
 
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 
@@ -12,7 +13,7 @@ public interface View {
 
     void handUpdate(String playerNickname, int[] availableCard);
 
-    void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard);
+    void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard);
 
     void checkForExistingGame();
 
@@ -28,4 +29,7 @@ public interface View {
 
     void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage);
 
+    void displayTurns(Map<String, Position> playerPositions);
+
+    void updateTurn(String playerNickname, boolean turn);
 }

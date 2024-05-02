@@ -8,11 +8,11 @@ public interface ControllerInterface {
 
     void chooseToken(ClientInterface client, TokenColor token);
 
-    void choosePrivateObjective(ClientInterface client, int indexPrivateObjectiveCard);
+    void choosePrivateObjective(ClientInterface client, int privateObjectiveCardIndex);
 
     void placeStartCard(ClientInterface client, boolean isFlipped);
 
-    void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy);
+    void placeCard(ClientInterface client, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy);
     
     void drawCard(ClientInterface client, Player player, Table table, PlayableCard cardToDraw);
  }

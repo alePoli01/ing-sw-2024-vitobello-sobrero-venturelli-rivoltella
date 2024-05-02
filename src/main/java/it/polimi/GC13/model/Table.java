@@ -25,7 +25,6 @@ public class Table implements Serializable {
     public Table() {
         this.playerBoardMap = new HashMap<>();
         this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
-        this.tokenColors.forEach(System.out::println);
         this.resourceFacedUp = new PlayableCard[2];
         this.goldFacedUp = new PlayableCard[2];
         this.commonObjectiveCard = new ObjectiveCard[2];

@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ServerInterface;
 
@@ -34,6 +35,11 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public void placeStartCard(boolean isFlipped) {
+
+    }
+
+    @Override
+    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
 
     }
 

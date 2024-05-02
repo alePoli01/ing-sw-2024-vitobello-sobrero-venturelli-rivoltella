@@ -5,12 +5,11 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
 public class EndPhase implements GamePhase {
-
     private final Controller controller;
 
     public EndPhase(Controller controller) {
         this.controller = controller;
-        this.setWinner();
+        System.out.println("Winner is " + this.setWinner());
     }
 
     private Player setWinner() {
@@ -44,7 +43,8 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
+    @Override
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

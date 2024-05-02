@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
@@ -23,7 +24,7 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ObjectOutputStream outputStream;
     private final ClientDispatcherInterface clientDispatcher;
     private final LostConnectionToServerInterface connectionStatus;
-    private boolean connectionOpen=true;
+    private boolean connectionOpen = true;
 
     public SocketServer(Socket socket, ClientDispatcher clientDispatcher, LostConnectionToServerInterface connectionStatus) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -72,6 +73,11 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
+    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+        this.sendMessage(new PlaceCardMessage(cardToPlaceHandIndex, isFlipped, xy));
+    }
+
+    @Override
     public void writeMessage() {
 
     }
@@ -89,17 +95,17 @@ public class SocketServer implements ServerInterface, Runnable {
     // LISTEN CALLS FROM SERVER
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
-        while (true) {
-            if(!connectionOpen)break;
+        while (connectionOpen) {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
-                executorService.submit(() -> message.dispatch(clientDispatcher));
+                executorService.submit(() -> this.clientDispatcher.registerServerMessage(message));
             } catch (IOException | ClassNotFoundException e) {
-                if(connectionOpen){
-                    connectionOpen = false;
-                    connectionStatus.connectionLost(this);
+                if(this.connectionOpen){
+                    this.connectionOpen = false;
+                    this.connectionStatus.connectionLost(this);
                 }
             }
         }
+        executorService.shutdown();
     }
 }

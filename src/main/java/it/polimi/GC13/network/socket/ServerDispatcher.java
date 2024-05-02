@@ -36,4 +36,9 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     public void dispatch(ChoosePrivateObjectiveCardMessage choosePrivateObjectiveCardMessage, ClientInterface client) {
         this.controllerDispatcher.choosePrivateObjective(client, choosePrivateObjectiveCardMessage.indexPrivateObjectiveCard());
     }
+
+    @Override
+    public void dispatch(PlaceCardMessage placeCardMessage, ClientInterface client) {
+        this.controllerDispatcher.placeCard(client, placeCardMessage.cardToPlaceHandIndex(), placeCardMessage.isFlipped(), placeCardMessage.xy());
+    }
 }

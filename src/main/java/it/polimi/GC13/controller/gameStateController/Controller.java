@@ -55,8 +55,8 @@ public class Controller implements GamePhase {
         this.gameController.placeStartCard(player, isFlipped);
     }
 
-    public void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
-        this.gameController.placeCard(player, cardToPlace, isFlipped, xy);
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+        this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, xy);
     }
 
     public void drawCard(Player player, Table table, PlayableCard cardToDraw) {

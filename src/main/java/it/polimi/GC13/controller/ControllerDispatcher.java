@@ -3,11 +3,9 @@ package it.polimi.GC13.controller;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.controller.gameStateController.ControllerInterface;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,21 +48,18 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void choosePrivateObjective(ClientInterface client, int indexPrivateObjectiveCard) {
-        // da fixare il cast, l'ho messo per non ricevere errore, quando lo fai sistema -Ale
-        this.clientControllerMap.get(client).choosePrivateObjective((Player) client, indexPrivateObjectiveCard);
+    public void choosePrivateObjective(ClientInterface client, int privateObjectiveCardIndex) {
+        this.clientControllerMap.get(client).choosePrivateObjective(this.clientPlayerMap.get(client), privateObjectiveCardIndex);
     }
 
 
     @Override
-    public void placeCard(ClientInterface client, Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy) {
-        this.clientControllerMap.get(client).placeCard(player, cardToPlace, isFlipped, xy);
+    public void placeCard(ClientInterface client, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+        this.clientControllerMap.get(client).placeCard(this.clientPlayerMap.get(client), cardToPlaceHandIndex, isFlipped, xy);
     }
 
     @Override
     public void drawCard(ClientInterface client, Player player, Table table, PlayableCard cardToDraw) {
         this.clientControllerMap.get(client).drawCard(player, table, cardToDraw);
     }
-
-
 }

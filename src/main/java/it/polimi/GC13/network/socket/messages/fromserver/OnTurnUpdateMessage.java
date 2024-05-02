@@ -1,11 +1,11 @@
 package it.polimi.GC13.network.socket.messages.fromserver;
 
-
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnChoosePrivateObjectiveCardMessage(String playerNickname, int indexPrivateObjectiveCard) implements MessagesFromServer {
+public record OnTurnUpdateMessage(String playersNickname, boolean turn) implements MessagesFromServer {
+
 
     @Override
     public void dispatch(ClientDispatcherInterface clientDispatcher) {
@@ -19,6 +19,6 @@ public record OnChoosePrivateObjectiveCardMessage(String playerNickname, int ind
 
     @Override
     public void methodToCall(View view) {
-        view.definePrivateObjectiveCard(this.playerNickname, this.indexPrivateObjectiveCard);
+        view.updateTurn(this.playersNickname, this.turn);
     }
 }

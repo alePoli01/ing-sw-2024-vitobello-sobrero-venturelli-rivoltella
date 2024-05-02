@@ -37,11 +37,16 @@ public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
 
     @Override
     public void dispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(this);
+        clientDispatcher.dispatch(null);
     }
 
     @Override
     public void notifyClient(ClientInterface client) {
         client.sendMessage(this);
+    }
+
+    @Override
+    public void methodToCall(View view) {
+        view.exceptionHandler(this.playerNickname, this);
     }
 }

@@ -16,7 +16,7 @@ public interface GamePhase {
     void placeStartCard(Player player, boolean isFlipped);
 
     // place start card on the board in default position
-    void placeCard(Player player, PlayableCard cardToPlace, boolean isFlipped, Coordinates xy);
+    void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy);
 
     // draw resource / gold card
     void drawCard(Player player, Table table, PlayableCard cardToDraw);

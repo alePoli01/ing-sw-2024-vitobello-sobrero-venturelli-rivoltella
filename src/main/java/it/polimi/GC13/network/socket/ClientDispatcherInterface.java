@@ -8,7 +8,9 @@ public interface ClientDispatcherInterface {
     //used by PokeMessage
     void dispatch(String message);
 
-    void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage);
+    void registerServerMessage(MessagesFromServer message);
+
+    /*void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage);
 
     void dispatch(OnPlayerAddedToGameMessage onPlayerAddedToGameMessage);
 
@@ -25,4 +27,8 @@ public interface ClientDispatcherInterface {
     void dispatch(OnDealCommonObjectiveCardMessage onDealCommonObjectiveCardMessage);
 
     void dispatch(OnChoosePrivateObjectiveCardMessage onChoosePrivateObjectiveCardMessage);
+
+    void dispatch(OnTurnSetMessage onTurnSetMessage);
+
+    void dispatch(OnTurnUpdateMessage onTurnUpdateMessage);*/
 }

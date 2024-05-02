@@ -4,15 +4,13 @@ import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealCommonObjectiveCardMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnDealPrivateObjectiveCardsMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerAddedToGameMessage;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private GameState gameState;
@@ -82,43 +80,45 @@ public class Game implements Serializable {
 
     // add common objective card to the table
     public void setCommonObjectiveCards() {
-        List<Integer> commonObjectiveCards = new ArrayList<>();
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst()));
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst()));
+        int[] commonObjectiveCards = new int[2];
+        commonObjectiveCards[0] = this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst());
+        commonObjectiveCards[1] = this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst());
         this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonObjectiveCards));
     }
 
     // set players position
     public void setPlayersPosition() {
         Random random = new Random();
-        int i = random.nextInt(playerList.size());
-        int cont = 0;
-        while (cont < playerList.size()) {
-            if (i < playerList.size()) {
-                playerList.get(i).setPosition(Position.values()[cont]);
-                System.out.println(playerList.get(i).getNickname() + " " + playerList.get(i).getPosition());
-                cont++;
-                i++;
-            } else {
-                break;
-            }
-        }
-        i = 0;
-        while (cont < playerList.size()) {
-            playerList.get(i).setPosition(Position.values()[cont]);
-            System.out.println(playerList.get(i).getNickname() + " " + playerList.get(i).getPosition());
-            cont++;
-        }
+
+        Arrays.stream(Position.values())
+                .limit(playerList.size())
+                .forEach(p ->{
+                    int r = random.nextInt(playerList.size());
+
+                    if (this.playerList.get(r).getPosition() == null) {
+                        this.playerList.get(r).setPosition(p);
+                    } else {
+                        while (this.playerList.get(r).getPosition() != null) {
+                            r = random.nextInt(playerList.size());
+                            if (this.playerList.get(r).getPosition() == null) {
+                                this.playerList.get(r).setPosition(p);
+                            }
+                        }
+                    }
+                });
+
+        Map<String, Position> playerPositions = playerList.stream()
+                .collect(Collectors.toMap(Player::getNickname, Player::getPosition));
+
+        this.observer.notifyClients(new OnTurnSetMessage(playerPositions));
     }
 
     // updates players turn at the end of every round
     public void setPlayerTurn(Player player) {
-        int index = this.playerList.indexOf(player);
-        if (index == 3) {
-            this.playerList.getFirst().setMyTurn(true);
-        } else {
-            this.playerList.get(index + 1).setMyTurn(true);
-        }
+        Position nextPlayerPosition = player.getPosition().next(playerList.size());
+        this.playerList.stream()
+                .filter(p -> p.getPosition().equals(nextPlayerPosition))
+                .forEach(p -> p.setMyTurn(true));
     }
 
     // sets game's last round

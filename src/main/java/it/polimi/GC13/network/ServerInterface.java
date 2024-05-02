@@ -1,6 +1,7 @@
 package it.polimi.GC13.network;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.model.Player;
 
 public interface ServerInterface {
@@ -13,6 +14,8 @@ public interface ServerInterface {
     void chooseToken(TokenColor tokenColor);
 
     void placeStartCard(boolean isFlipped);
+
+    void placeCard(int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy);
 
     void writeMessage(); //writes message in gamechat
 

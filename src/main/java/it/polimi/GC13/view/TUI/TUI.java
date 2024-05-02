@@ -1,5 +1,6 @@
 package it.polimi.GC13.view.TUI;
 
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
@@ -14,12 +15,13 @@ import java.util.*;
 public class TUI implements View {
     ServerInterface virtualServer;
     private final List<Integer> hand = new ArrayList<>();
-    private int serialPrivateObjectiveCard;
-    private final List<Integer> serialCommonObjectiveCard = new ArrayList<>();
+    private int[] serialPrivateObjectiveCard;
+    private int[] serialCommonObjectiveCard;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private Player player;
     private int choice = 0;
-    public static final Deck visualdeck = new Deck();
+    public static final Deck visualDeck = new Deck();
+    private boolean turn = false;
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -182,9 +184,10 @@ public class TUI implements View {
     public void startCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.player.getNickname())) {
             System.out.println("You chose " + tokenColor + " token\n");
-            System.out.println("\n--- SETUP PHASE [2/2]---");
-            System.out.println("Choose which side you would like to place your start card.\n(input the number corresponding the option)\n\t[1] FRONT\n\t[2] BACK");
+            System.out.println("\n--- SETUP PHASE [2/2] ---");
+            System.out.println("\n--- START CARD ---\n");
             this.showHand();
+            System.out.println("Choose which side you would like to place your start card:\n\t[1] FRONT\n\t[2] BACK");
             do {
                 try {
                     this.choice = Integer.parseInt(this.reader.readLine());
@@ -213,10 +216,9 @@ public class TUI implements View {
         NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
     */
     @Override
-    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
-        this.serialCommonObjectiveCard.addAll(serialCommonObjectiveCard);
-        System.out.println("COMMON OBJECTIVE CARDS:");
-        serialCommonObjectiveCard.forEach(serialNumber -> showObjectiveCard(List.of(this.serialPrivateObjectiveCard)));
+    public void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard) {
+        this.serialCommonObjectiveCard = serialCommonObjectiveCard;
+        this.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", serialCommonObjectiveCard);
     }
 
     /*
@@ -225,11 +227,7 @@ public class TUI implements View {
     @Override
     public void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard) {
         if (playerNickname.equals(this.player.getNickname())) {
-            System.out.println("\n--- PRIVATE OBJECTIVE CARD ---");
-            for (int i = 0; i < privateObjectiveCard.length; i++) {
-                this.showObjectiveCard(List.of(privateObjectiveCard[i]));
-                System.out.println("\t\t["+i+"]");
-            }
+            this.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCard);
             System.out.print("Chose your private objective card: ");
         }
 
@@ -243,6 +241,7 @@ public class TUI implements View {
                 System.out.println("Error: Please choose a number between 1 and 2");
             } else {
                 this.virtualServer.chosePrivateObjectiveCard(choice);
+                System.out.println("++Sent private objective card choice message");
             }
         } while (this.choice != 1 && this.choice != 2);
         this.choice = 0;
@@ -254,7 +253,7 @@ public class TUI implements View {
     @Override
     public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard) {
         if (playerNickname.equals(this.player.getNickname())) {
-            this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
+            this.serialPrivateObjectiveCard[0] = indexPrivateObjectiveCard;
             System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
             this.showHomeMenu();
         }
@@ -279,9 +278,28 @@ public class TUI implements View {
         }
         switch (choice) {
             case 1: showHand();
-            case 2: // TO DO;
-            case 3: showObjectiveCard(this.serialCommonObjectiveCard);
-            case 4: showObjectiveCard(List.of(this.serialPrivateObjectiveCard));
+            case 2: {
+                if (this.turn) {
+                    Coordinates xy = new Coordinates(0, 0);
+                    int cardToPlaceHandIndex = 0;
+                    boolean isFlipped = false;
+                    this.showHand();
+                    System.out.println("Enter hand index [1 -> 3], X coordinate, Y coordinate, and [1] FRONT [2] BACK");
+                    System.out.println("example: 1 (for index), 50 (for X), 49 (for Y) , 1 (for side)");
+                    Scanner scanner = new Scanner(System.in);
+                    try {
+                        cardToPlaceHandIndex = scanner.nextInt();
+                        xy.setX(scanner.nextInt());
+                        xy.setY(scanner.nextInt());
+                        isFlipped = scanner.nextInt() == 1;
+                    } catch (InputMismatchException e) {
+                        System.out.print("Error: Please input valid numbers.");
+                    }
+                    this.virtualServer.placeCard(cardToPlaceHandIndex, isFlipped, xy);
+                }
+            }
+            case 3: this.showObjectiveCard("\n--- COMMON OBJECTIVE CARD ---", this.serialCommonObjectiveCard);
+            case 4: this.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", this.serialPrivateObjectiveCard);
             case 5: // TO DO;
             case 6: // TO DO;
             case 7: // TO DO;
@@ -297,18 +315,39 @@ public class TUI implements View {
         }
     }
 
-    private void showObjectiveCard(List<Integer> serialNumber) {
-        for (ObjectiveCard card : visualdeck.getObjectiveDeck()) {
-            if (card.serialNumber == serialNumber.getFirst() || card.serialNumber == serialNumber.getLast()) {
-                System.out.println(this.player.getNickname() + " privateObjectiveCard: ");
-                card.printObjectiveCard();
+    @Override
+    public void displayTurns(Map<String, Position> playerPositions) {
+        playerPositions.forEach((nickname, position) -> System.out.println(nickname + ": " + position));
+    }
+
+    @Override
+    public void updateTurn(String playerNickname, boolean turn) {
+        if (playerNickname.equals(this.player.getNickname())) {
+            this.turn = turn;
+            if (this.turn) {
+                System.out.println("\nIt's your turn");
+                showHomeMenu();
+            } else {
+                System.out.println("\nYou passed the turn");
             }
+        } else if (turn) {
+            System.out.println("\nIt's" + playerNickname + "'s turn");
+        } else {
+            System.out.println("\n" + playerNickname + " passed the turn");
         }
+    }
+
+    private synchronized void showObjectiveCard(String message, int[] serialNumber) {
+        System.out.println(message);
+        visualDeck.getObjectiveDeck()
+                .stream()
+                .filter(card -> Arrays.stream(serialNumber).anyMatch(serial -> card.getSerialNumber() == serial))
+                .forEach(ObjectiveCard::printObjectiveCard);
     }
 
     private void showHand() {
         if (this.hand.getFirst() < 81 || this.hand.getFirst() > 86) {
-            for (PlayableCard card : visualdeck.getResourceDeck()) {
+            for (PlayableCard card : visualDeck.getResourceDeck()) {
                 for (int x : this.hand) {
                     if (card.serialNumber == x) {
                         card.cardPrinter(false);
@@ -316,7 +355,7 @@ public class TUI implements View {
                 }
             }
         } else {
-            for (StartCard card : visualdeck.getStartDeck()) {
+            for (StartCard card : visualDeck.getStartDeck()) {
                 for (int x : this.hand) {
                     if (card.serialNumber == x) {
                         card.cardPrinter(false);
