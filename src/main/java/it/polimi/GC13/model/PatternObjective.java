@@ -318,28 +318,86 @@ public int getObjectivePoints(Board board) {
         String backgroundRed = "\u001b[41m";   // red background
         String backgroundGreen = "\u001b[42m"; // Green Background
         String backgroundBlue = "\u001b[46m";  // Blue background
-        String backgroundmagenta = "\u001b[35m";  // Blue
+        String backgroundmagenta = "\u001b[45m";  // Blue
         String resetbackground = "\u001b[0m";  // Reset color of the background
         String gold = "\u001b[93m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
+        String black = "\033[0;30m";
 
         if (this.diagonal) {
             switch (this.orientation) {
                 case (0): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║   "+gold+"2"+reset+"             ║");
-                    System.out.println("║         "+backgroundRed+"     "+resetbackground+"   ║");
-                    System.out.println("║      "+backgroundRed+"     "+resetbackground+"      ║");
-                    System.out.println("║   "+backgroundRed+"     "+resetbackground+"         ║");
+                    System.out.println("║  │"+gold+"2"+reset+"│            ║");
+                    System.out.println("║          "+black+backgroundRed+"  F  "+resetbackground+reset+"  ║");
+                    System.out.println("║      "+black+backgroundRed+"  F  "+resetbackground+reset+"      ║");
+                    System.out.println("║  "+black+backgroundRed+"  F  "+resetbackground+reset+"          ║");
                     System.out.println("╚═════════════════╝");
                     break;
                 }
                 case (2): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║   "+gold+"2"+reset+"             ║");
-                    System.out.println("║         "+backgroundBlue+"     "+resetbackground+"   ║");
-                    System.out.println("║      "+backgroundBlue+"     "+resetbackground+"      ║");
-                    System.out.println("║   "+backgroundBlue+"     "+resetbackground+"         ║");
+                    System.out.println("║  │"+gold+"2"+reset+"│            ║");
+                    System.out.println("║          "+black+backgroundBlue+"  A  "+resetbackground+reset+"  ║");
+                    System.out.println("║      "+black+backgroundBlue+"  A  "+resetbackground+reset+"      ║");
+                    System.out.println("║  "+black+backgroundBlue+"  A  "+resetbackground+reset+"          ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (1): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║            │"+gold+"2"+reset+"│  ║");
+                    System.out.println("║  "+black+backgroundmagenta+"  I  "+resetbackground+reset+"          ║");
+                    System.out.println("║      "+black+backgroundmagenta+"  I  "+resetbackground+reset+"      ║");
+                    System.out.println("║          "+black+backgroundmagenta+"  I  "+resetbackground+reset+"  ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (3): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║            │"+gold+"2"+reset+"│  ║");
+                    System.out.println("║  "+black+backgroundGreen+"  P  "+resetbackground+reset+"          ║");
+                    System.out.println("║      "+black+backgroundGreen+"  P  "+resetbackground+reset+"      ║");
+                    System.out.println("║          "+black+backgroundGreen+"  P  "+resetbackground+reset+"  ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+            }
+        }else{
+            switch (this.orientation) {
+                case (0): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║  │"+gold+"3"+reset+"│            ║");
+                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
+                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
+                    System.out.println("║    "+black+backgroundmagenta+"  I  "+resetbackground+reset+"        ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (2): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║  │"+gold+"3"+reset+"│            ║");
+                    System.out.println("║         "+black+backgroundRed+"  F  "+resetbackground+reset+"   ║");
+                    System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
+                    System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (1): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║            │"+gold+"3"+reset+"│  ║");
+                    System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
+                    System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
+                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
+                    System.out.println("╚═════════════════╝");
+                    break;
+                }
+                case (3): {
+                    System.out.println("╔═════════════════╗");
+                    System.out.println("║            │"+gold+"3"+reset+"│  ║");
+                    System.out.println("║   "+black+backgroundBlue+"  A  "+resetbackground+reset+"         ║");
+                    System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
+                    System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
                     System.out.println("╚═════════════════╝");
                     break;
                 }

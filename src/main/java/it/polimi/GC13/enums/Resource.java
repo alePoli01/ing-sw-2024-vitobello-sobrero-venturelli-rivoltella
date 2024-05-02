@@ -69,5 +69,38 @@ public enum Resource {
         }
         return null;
     }
+    public String toEmoji(){
+        switch (this){
+            case FUNGI -> {
+                return mushroom;
+            }
+            case ANIMAL -> {
+                return dog;
+            }
+            case INSECT -> {
+                return insect;
+            }
+            case PLANT -> {
+                return plant;
+            }
+            case NULL -> {
+                return "X";
+            }
+            case EMPTY -> {
+                return " ";
+            }
+            case INKWELL -> {
+                return gold+"I"+reset;
+            }
+            case QUILL -> {
+                return gold+"F"+reset;
+            }
+            case MANUSCRIPT -> {
+                return gold+"M"+reset;
+            }
+
+        }
+        return null;
+    }
 }
 

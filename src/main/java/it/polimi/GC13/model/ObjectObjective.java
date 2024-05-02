@@ -39,6 +39,38 @@ public class ObjectObjective extends ObjectiveCard {
     @Override
     public void printObjectiveCard() {
 
+        //colors of the background
+        String backgroundRed = "\u001b[41m";   // red background
+        String backgroundGreen = "\u001b[42m"; // Green Background
+        String backgroundBlue = "\u001b[46m";  // Blue background
+        String backgroundmagenta = "\u001b[45m";  // Blue
+        String resetbackground = "\u001b[0m";  // Reset color of the background
+        String gold = "\u001b[93m";  // gold
+        String reset = "\u001b[0m";  // reset color of the characters
+        switch(this.object.size()){
+            case(3):{
+                System.out.println("╔═══════╦═╦═══════╗");
+                System.out.println("║       ║"+gold+this.object.size()+reset+"║       ║");
+                System.out.println("║                 ║");
+                System.out.println("║    "+this.object.toString()+"    ║");
+                System.out.println("║                 ║");
+                System.out.println("╚═════════════════╝");
+                break;
+
+            }
+            case(1):{
+                System.out.println("╔═══════╦═╦═══════╗");
+                System.out.println("║       ║"+gold+(this.object.size()+1)+reset+"║       ║");
+                System.out.println("║                 ║");
+                System.out.println("║     "+this.object.toString()+" "+this.object.toString()+"     ║");
+                System.out.println("║                 ║");
+                System.out.println("╚═════════════════╝");
+                break;
+            }
+        }
+
+
+
     }
 
 }
