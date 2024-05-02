@@ -26,7 +26,7 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     }
 
     @Override
-    public void registerServerMessage(MessagesFromServer message) {
+    public void registerFromServerMessage(MessagesFromServer message) {
         this.serverMessages.add(message);
         this.callMessages();
     }

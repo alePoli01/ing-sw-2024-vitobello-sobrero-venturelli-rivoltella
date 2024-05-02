@@ -1,14 +1,13 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.socket.messages.fromserver.*;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 
 public interface ClientDispatcherInterface {
 
     //used by PokeMessage
     void dispatch(String message);
 
-    void registerServerMessage(MessagesFromServer message);
+    void registerFromServerMessage(MessagesFromServer message);
 
     /*void dispatch(OnCheckForExistingGameMessage onCheckForExistingGameMessage);
 

@@ -13,7 +13,7 @@ import java.util.Map;
 public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;
-    private LobbyController lobbyController;
+    private final LobbyController lobbyController;
     private final Map<Player, ClientInterface> playerClientMap = new HashMap<>();
     private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>();
     ControllerDispatcher controllerDispatcher;

@@ -98,7 +98,7 @@ public class SocketServer implements ServerInterface, Runnable {
         while (connectionOpen) {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
-                executorService.submit(() -> this.clientDispatcher.registerServerMessage(message));
+                executorService.submit(() -> this.clientDispatcher.registerFromServerMessage(message));
             } catch (IOException | ClassNotFoundException e) {
                 if(this.connectionOpen){
                     this.connectionOpen = false;
