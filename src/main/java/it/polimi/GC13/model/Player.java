@@ -150,7 +150,7 @@ public class Player implements Serializable {
         }
     }
 
-
+    // chose private objective card for the game
     public void setPrivateObjectiveCard(int indexPrivateObjectiveCard) throws GenericException {
         if (this.privateObjectiveCard.size() == 2) {
             if (indexPrivateObjectiveCard == 0) {

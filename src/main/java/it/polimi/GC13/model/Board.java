@@ -4,7 +4,9 @@ import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.EdgeNotFreeException;
 import it.polimi.GC13.exception.NoResourceAvailableException;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnCardNotPlacedMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -65,7 +67,7 @@ public class Board implements Serializable {
     // call from the controller to verify it is possible to place the selected card
     public void isPossibleToPlace (Coordinates coordinates) throws EdgeNotFreeException {
         if (notAvailableCells.contains(coordinates)) {
-            throw new EdgeNotFreeException(coordinates);
+            this.owner.getGame().getObserver().notifyClients(new OnCardNotPlacedMessage(this.owner.getNickname(), coordinates, this.availableCells));
         }
     }
 
@@ -132,6 +134,7 @@ public class Board implements Serializable {
                 }
                 i++;
             }
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
         }
     }
 

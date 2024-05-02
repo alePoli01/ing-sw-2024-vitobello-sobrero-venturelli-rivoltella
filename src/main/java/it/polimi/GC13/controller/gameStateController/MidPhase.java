@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 public class MidPhase implements GamePhase {
     private final Controller controller;
@@ -93,20 +94,20 @@ public class MidPhase implements GamePhase {
 
     @Override
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 
     public void chooseToken(Player player, TokenColor token) {
-        System.out.println("Token already chosen");
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     // player chooses his objective card
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
-        System.out.println("You cannot change your objective card");
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
-        System.out.println("You cannot replace the start card");
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 }

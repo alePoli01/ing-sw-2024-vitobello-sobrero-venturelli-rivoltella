@@ -2,10 +2,12 @@ package it.polimi.GC13.view;
 
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface View {
 
@@ -32,4 +34,6 @@ public interface View {
     void displayTurns(Map<String, Position> playerPositions);
 
     void updateTurn(String playerNickname, boolean turn);
+
+    void displayAvailableCells(Set<Coordinates> availableCells);
 }

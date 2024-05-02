@@ -36,8 +36,8 @@ public class DealingPhase implements GamePhase {
         try {
             player.setPrivateObjectiveCard(indexPrivateObjectiveCard);
             if (this.playersChoseObjectiveCard(player)) {
-                this.controller.updateController(new MidPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.MID);
+                this.controller.updateController(new MidPhase(this.controller));
             }
         } catch (GenericException e) {
             System.out.println(e.getMessage());
@@ -57,7 +57,7 @@ public class DealingPhase implements GamePhase {
     // CHECK that all players in the same game chose their own objective card
     private boolean playersChoseObjectiveCard(Player player) {
         for (Player element : player.getGame().getPlayerList()) {
-            if (element.getHand().size() == 2) {
+            if (element.getPrivateObjectiveCard().size() == 2) {
                 return false;
             }
         }

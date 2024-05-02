@@ -45,8 +45,8 @@ public class JoiningPhase implements GamePhase {
         }
 
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
-            this.controller.updateController(new SetupPhase(this.controller));
             workingGame.setGameState(GameState.SETUP);
+            this.controller.updateController(new SetupPhase(this.controller));
         }
     }
 }

@@ -4,9 +4,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-import java.io.Serializable;
-
-public class OnPlayerNotAddedMessage implements OnInputExceptionMessage, Serializable {
+public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
     private final String errorMessage;
     private final String playerNickname;
 

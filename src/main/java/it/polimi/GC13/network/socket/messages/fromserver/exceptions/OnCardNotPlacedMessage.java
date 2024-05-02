@@ -1,22 +1,22 @@
 package it.polimi.GC13.network.socket.messages.fromserver.exceptions;
 
-import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.Player;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 
-public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
+import java.util.HashSet;
+import java.util.Set;
+
+public class OnCardNotPlacedMessage implements OnInputExceptionMessage {
     private final String errorMessage;
-    private final ArrayList<TokenColor> availableTokenColors;
+    private final Set<Coordinates> availableCells = new HashSet<>();
     private final String playerNickname;
 
-    public OnTokenAlreadyChosenMessage(String playerNickname, TokenColor token, ArrayList<TokenColor> tokenColors) {
-        errorMessage = token.toString() + " is already chosen. Available colors are:";
-        this.availableTokenColors = tokenColors;
+    public OnCardNotPlacedMessage(String playerNickname, Coordinates coordinates, Set<Coordinates> availableCells) {
+        errorMessage = "It's not possible to place cards in: " + coordinates.getX() + ", " + coordinates.getY();
+        this.availableCells.addAll(availableCells);
         this.playerNickname = playerNickname;
     }
 
@@ -36,8 +36,8 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
     }
 
     @Override
-    public void methodToRecall(View TUI) {
-        TUI.tokenSetupPhase(0, availableTokenColors,0);
+    public void methodToRecall(View view) {
+        view.displayAvailableCells(this.availableCells);
     }
 
     @Override

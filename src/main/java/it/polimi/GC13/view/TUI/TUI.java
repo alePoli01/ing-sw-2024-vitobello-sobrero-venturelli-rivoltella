@@ -11,17 +11,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TUI implements View {
     ServerInterface virtualServer;
     private final List<Integer> hand = new ArrayList<>();
-    private int[] serialPrivateObjectiveCard;
+    private int serialPrivateObjectiveCard;
     private int[] serialCommonObjectiveCard;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private Player player;
     private int choice = 0;
     public static final Deck visualDeck = new Deck();
     private boolean turn = false;
+    private final List<String> gamesLog = new ArrayList<>();
+    private final Map<String, Position> playerPositions = new HashMap<>();
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -198,18 +201,23 @@ public class TUI implements View {
 
             this.virtualServer.placeStartCard(this.choice != 1);
         } else {
-            System.out.println(playerNickname + " chose " + tokenColor + " token\n");
+            this.gamesLog.add(playerNickname + " chose " + tokenColor + " token\n");
         }
         this.choice = 0;
     }
 
     /*
-        NOTIFY CLIENTS WHEN A CARD IS PLACED ON ANY BOARD
+        NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
+        OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
     public void onPositionedCard(String playerNickname, int startCardPlaced, boolean isFlipped) {
-        String side = isFlipped ? "back" : "front";
-        System.out.println(playerNickname + " positioned " + startCardPlaced + " on " + side);
+        String message = playerNickname + " positioned " + startCardPlaced + " on " + (isFlipped ? "back" : "front");
+        if (playerNickname.equals(this.player.getNickname())) {
+            System.out.println(message);
+        } else {
+            this.gamesLog.add(message);
+        }
     }
 
     /*
@@ -228,22 +236,18 @@ public class TUI implements View {
     public void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard) {
         if (playerNickname.equals(this.player.getNickname())) {
             this.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCard);
-            System.out.print("Chose your private objective card: ");
         }
 
-        do {
-            try {
+        try {
+            while (choice != 1 && choice != 2) {
+                System.out.print("Chose your private objective card [1] or [2]: ");
                 this.choice = Integer.parseInt(this.reader.readLine());
-            } catch (NumberFormatException | IOException e) {
-                System.out.println("Error: Please put a number");
             }
-            if (this.choice != 1 && this.choice != 2) {
-                System.out.println("Error: Please choose a number between 1 and 2");
-            } else {
-                this.virtualServer.chosePrivateObjectiveCard(choice);
-                System.out.println("++Sent private objective card choice message");
-            }
-        } while (this.choice != 1 && this.choice != 2);
+            this.virtualServer.chosePrivateObjectiveCard(choice);
+            System.out.println("++Sent private objective card choice message");
+        } catch (NumberFormatException | IOException e) {
+            System.out.print("Error: Please put a number.\nChose your private objective card [1] or [2]: ");
+        }
         this.choice = 0;
     }
 
@@ -253,11 +257,12 @@ public class TUI implements View {
     @Override
     public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard) {
         if (playerNickname.equals(this.player.getNickname())) {
-            this.serialPrivateObjectiveCard[0] = indexPrivateObjectiveCard;
+            this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
             System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
             this.showHomeMenu();
         }
     }
+
 
     /*
         METHOD TO SHOW CLIENT ALL POSSIBLE MOVES
@@ -269,40 +274,36 @@ public class TUI implements View {
         System.out.println("\t[3] to view common objective card");
         System.out.println("\t[4] to view your private objective card");
         System.out.println("\t[5] to view your board");
-        System.out.println("\t[6] to view other player board");
+        System.out.println("\t[6] to view other players' board");
         System.out.println("\t[7] to send a message in the chat");
+        System.out.println("\t[8] to show game's history");
+        System.out.println("\t[9] to show players' turns");
+        System.out.print("Your choice: ");
         try {
             choice = Integer.parseInt(reader.readLine());
+            System.out.println("SELECTION: " + choice);
         } catch (IOException e) {
             System.out.print("Error: Please put a number: ");
         }
         switch (choice) {
-            case 1: showHand();
-            case 2: {
-                if (this.turn) {
-                    Coordinates xy = new Coordinates(0, 0);
-                    int cardToPlaceHandIndex = 0;
-                    boolean isFlipped = false;
-                    this.showHand();
-                    System.out.println("Enter hand index [1 -> 3], X coordinate, Y coordinate, and [1] FRONT [2] BACK");
-                    System.out.println("example: 1 (for index), 50 (for X), 49 (for Y) , 1 (for side)");
-                    Scanner scanner = new Scanner(System.in);
-                    try {
-                        cardToPlaceHandIndex = scanner.nextInt();
-                        xy.setX(scanner.nextInt());
-                        xy.setY(scanner.nextInt());
-                        isFlipped = scanner.nextInt() == 1;
-                    } catch (InputMismatchException e) {
-                        System.out.print("Error: Please input valid numbers.");
-                    }
-                    this.virtualServer.placeCard(cardToPlaceHandIndex, isFlipped, xy);
-                }
+            case 1: {
+                this.showHand();
+                this.comeBack();
             }
-            case 3: this.showObjectiveCard("\n--- COMMON OBJECTIVE CARD ---", this.serialCommonObjectiveCard);
-            case 4: this.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", this.serialPrivateObjectiveCard);
+            case 2: this.placeCard();
+            case 3: {
+                this.showObjectiveCard("\n--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
+                this.comeBack();
+            }
+            case 4: {
+                this.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", this.serialPrivateObjectiveCard);
+                this.comeBack();
+            }
             case 5: // TO DO;
             case 6: // TO DO;
             case 7: // TO DO;
+            case 8: this.showHistory();
+            case 9: System.out.println(this.playerPositions);
         }
     }
 
@@ -310,39 +311,73 @@ public class TUI implements View {
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.player.getNickname())) {
+            System.out.println("Sono a rilanciare");
             System.out.println(onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
         }
     }
 
     @Override
-    public void displayTurns(Map<String, Position> playerPositions) {
-        playerPositions.forEach((nickname, position) -> System.out.println(nickname + ": " + position));
+    public void displayAvailableCells(Set<Coordinates> availableCells) {
+        System.out.println("Available cells are: ");
+        System.out.println(availableCells);
     }
 
+    @Override
+    public void displayTurns(Map<String, Position> playerPositions) {
+        this.playerPositions.putAll(playerPositions);
+    }
+
+    /*
+        NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
+        OTHERS -> ADDS TO LOG OPERATION
+     */
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.player.getNickname())) {
             this.turn = turn;
             if (this.turn) {
                 System.out.println("\nIt's your turn");
-                showHomeMenu();
             } else {
                 System.out.println("\nYou passed the turn");
             }
         } else if (turn) {
-            System.out.println("\nIt's" + playerNickname + "'s turn");
+            this.gamesLog.add("\nIt's" + playerNickname + "'s turn");
         } else {
-            System.out.println("\n" + playerNickname + " passed the turn");
+            this.gamesLog.add("\n" + playerNickname + " passed the turn");
         }
     }
 
-    private synchronized void showObjectiveCard(String message, int[] serialNumber) {
+    private void showHistory() {
+        System.out.println("\n--- HISTORY ---");
+        System.out.println(this.gamesLog);
+    }
+
+    private synchronized void showObjectiveCard(String message, int... serialNumber) {
+        AtomicInteger counter = new AtomicInteger(1);
         System.out.println(message);
+
         visualDeck.getObjectiveDeck()
                 .stream()
                 .filter(card -> Arrays.stream(serialNumber).anyMatch(serial -> card.getSerialNumber() == serial))
-                .forEach(ObjectiveCard::printObjectiveCard);
+                .forEach(card -> {
+                    System.out.println("\n\t   [" + counter.getAndIncrement() + "]");
+                    card.printObjectiveCard();
+                });
+    }
+
+    /*
+        METHOD USED TO SHOW HOME MENU
+     */
+    private void comeBack() {
+        try {
+            while (choice != 1) {
+                System.out.print("\n[1] to get back to the HOME MENU: ");
+                choice = Integer.parseInt(reader.readLine());
+            }
+        } catch (IOException e) {
+            System.out.print("Error: Please put a number: ");
+        }
     }
 
     private void showHand() {
@@ -365,6 +400,39 @@ public class TUI implements View {
                     }
                 }
             }
+        }
+    }
+
+    private void placeCard() {
+        if (this.turn) {
+            Coordinates xy = new Coordinates(0, 0);
+            int cardToPlaceHandIndex = 0;
+            boolean isFlipped = false;
+            this.showHand();
+            System.out.println("Enter hand index [1 -> 3], X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
+            System.out.println("example: 1 (for index), 50 (for X), 49 (for Y) , 1 (for side)");
+            Scanner scanner = new Scanner(System.in);
+            try {
+                cardToPlaceHandIndex = scanner.nextInt();
+                while (this.hand.get(cardToPlaceHandIndex) == null) {
+                    System.out.println("You don't have a card in position:" + cardToPlaceHandIndex);
+                    System.out.println("Choose hand index or press [0] to go back to HOME MENU: ");
+                    cardToPlaceHandIndex = scanner.nextInt();
+                    if (cardToPlaceHandIndex == 0) {
+                        this.comeBack();
+                    }
+                }
+                xy.setX(scanner.nextInt());
+                xy.setY(scanner.nextInt());
+                isFlipped = scanner.nextInt() == 1;
+            } catch (InputMismatchException e) {
+                System.out.print("Error: Please input valid numbers.");
+            }
+            this.virtualServer.placeCard(cardToPlaceHandIndex, isFlipped, xy);
+            this.showHomeMenu();
+        } else {
+            System.out.println("It's not your turn");
+            this.showHomeMenu();
         }
     }
 }
