@@ -2,7 +2,6 @@ package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ServerInterface;
 
 import java.rmi.RemoteException;
@@ -19,7 +18,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void addPlayerToGame(Player player, int numOfPlayers, String gameName) {
+    public void addPlayerToGame(String playerNickname, int numOfPlayers, String gameName) {
 
     }
 

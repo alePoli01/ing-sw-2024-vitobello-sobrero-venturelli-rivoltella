@@ -4,6 +4,7 @@ package it.polimi.GC13.controller.gameStateController;
 import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -24,6 +25,10 @@ public class Controller implements GamePhase {
         this.game = game;
         this.lobbyController = lobbyController;
         this.controllerDispatcher = controllerDispatcher;
+    }
+
+    public LobbyController getLobbyController() {
+        return this.lobbyController;
     }
 
     public Game getGame() {
@@ -63,7 +68,7 @@ public class Controller implements GamePhase {
         this.gameController.drawCard(player, table, cardToDraw);
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         this.gameController.addPlayerToExistingGame(player, existingGame, client);
     }
 }

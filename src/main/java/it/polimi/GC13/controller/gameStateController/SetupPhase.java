@@ -9,9 +9,6 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SetupPhase implements GamePhase {
 
     private final Controller controller;
@@ -76,7 +73,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 }

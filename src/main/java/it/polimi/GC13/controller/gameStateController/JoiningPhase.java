@@ -34,20 +34,30 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) {
+    public synchronized void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) throws GenericException {
         // it adds players to the existing game
         try {
-            workingGame.getObserver().addListener(client);
             workingGame.checkNickname(player.getNickname(), player);
+            workingGame.getObserver().addListener(client);
             workingGame.addPlayerToGame(player);
         } catch (GenericException e) {
-            System.out.println(e.getMessage());
+            throw new GenericException("Nickname: " + player.getNickname() + " was already choose");
         }
 
+
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
+            this.controller.getLobbyController().getStartedGameMap()
+                    .computeIfPresent(workingGame.getGameName(), (key, value) -> {
+                        // Add the entry to joinableGameMap
+                        this.controller.getLobbyController().getJoinableGameMap().put(key, value);
+                        // Remove the entry from startedGameMap by returning null
+                        return null;
+                    });
+            player.getGame().getPlayerList()
+                    .forEach(p -> System.out.println(p.getNickname() + " joined the game"));
+            System.out.println(player.getGame().getObserver().listenerList.size());
             workingGame.setGameState(GameState.SETUP);
             this.controller.updateController(new SetupPhase(this.controller));
-
         }
     }
 }

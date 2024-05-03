@@ -5,7 +5,6 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 import java.io.Serializable;
@@ -142,6 +141,8 @@ public class Game implements Serializable {
                 this.observer.notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), this.gameName));
                 throw new GenericException(player.getNickname() + " was not added to the game " + this.gameName);
             }
+            System.out.println(player.getNickname() + " notified");
+            System.out.println(this.observer.listenerList.size() + " listeners");
             this.observer.notifyClients(new OnPlayerAddedToGameMessage(this.getCurrNumPlayer(), this.numPlayer));
         } else {
             System.out.println("Error; max number of player reached: " + currNumPlayer);
@@ -168,7 +169,6 @@ public class Game implements Serializable {
     public void checkNickname(String nickname, Player player) throws GenericException {
         for (Player playerToCheck : playerList) {
             if (playerToCheck.getNickname().equals(nickname) && !playerToCheck.equals(player)) {
-                this.observer.notifyClients(new OnNickNameAlreadyTakenMessage(nickname));
                 throw new GenericException("Nickname: " + nickname + " was already choose");
             }
         }

@@ -68,7 +68,7 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 }

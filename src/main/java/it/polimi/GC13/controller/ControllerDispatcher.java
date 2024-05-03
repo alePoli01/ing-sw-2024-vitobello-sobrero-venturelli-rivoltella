@@ -28,8 +28,8 @@ public class ControllerDispatcher implements LobbyControllerInterface, Controlle
     }
 
     @Override
-    public void addPlayerToGame(ClientInterface client, Player player, int playersNumber, String gameName) {
-        lobbyController.addPlayerToGame(client, player, playersNumber, gameName);
+    public void addPlayerToGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) {
+        lobbyController.addPlayerToGame(client, playerNickname, playersNumber, gameName);
     }
 
     @Override

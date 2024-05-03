@@ -93,7 +93,7 @@ public class MidPhase implements GamePhase {
     }
 
     @Override
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 

@@ -2,7 +2,6 @@ package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.*;
@@ -52,8 +51,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public synchronized void addPlayerToGame(Player player, int numOfPlayers, String gameName) {
-        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(player, numOfPlayers, gameName);
+    public synchronized void addPlayerToGame(String playerNickname, int numOfPlayers, String gameName) {
+        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(playerNickname, numOfPlayers, gameName);
         this.sendMessage(addPlayerToGameMessage);
     }
 

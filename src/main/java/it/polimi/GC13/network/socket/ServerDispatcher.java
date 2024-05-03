@@ -14,7 +14,7 @@ public class ServerDispatcher implements ServerDispatcherInterface {
     @Override
     public void dispatch(AddPlayerToGameMessage addPlayerToGameMessage, ClientInterface client) {
         //unpack the message and propagate to che controllerDispatcher (some messages are for the model, others are for the Lobby)
-        this.controllerDispatcher.addPlayerToGame(client, addPlayerToGameMessage.player(), addPlayerToGameMessage.numOfPlayers(), addPlayerToGameMessage.gameName());
+        this.controllerDispatcher.addPlayerToGame(client, addPlayerToGameMessage.playerNickname(), addPlayerToGameMessage.numOfPlayers(), addPlayerToGameMessage.gameName());
     }
 
     @Override

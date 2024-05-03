@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Observer {
-    private final List<ClientInterface> listenerList;
+    public final List<ClientInterface> listenerList;
 
     public Observer() {
         this.listenerList = new ArrayList<>();

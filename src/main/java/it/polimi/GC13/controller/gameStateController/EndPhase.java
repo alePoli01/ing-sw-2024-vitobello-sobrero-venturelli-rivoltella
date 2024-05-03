@@ -1,6 +1,7 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -52,7 +53,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 }

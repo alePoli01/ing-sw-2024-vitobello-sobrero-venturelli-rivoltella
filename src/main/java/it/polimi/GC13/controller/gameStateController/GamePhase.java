@@ -1,6 +1,7 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
@@ -22,5 +23,5 @@ public interface GamePhase {
     void drawCard(Player player, Table table, PlayableCard cardToDraw);
 
     // add player to an existing game
-    void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client);
+    void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException;
 }

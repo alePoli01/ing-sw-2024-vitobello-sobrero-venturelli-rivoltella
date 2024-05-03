@@ -1,12 +1,10 @@
 package it.polimi.GC13.network.socket.messages.fromserver.exceptions;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
