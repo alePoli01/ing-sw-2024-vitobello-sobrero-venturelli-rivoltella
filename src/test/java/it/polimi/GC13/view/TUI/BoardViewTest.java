@@ -10,9 +10,9 @@ public class BoardViewTest extends TestCase {
         BoardView board=new BoardView();
 
         //board.InsertCard(49,49,42,4,deck,true);
-        board.InsertCard(49,49,42,0,deck,false);
-        board.InsertCard(49,51,43,1,deck,false);
-        board.InsertCard(50,50,43,2,deck,false);
+        board.InsertCard(51,51,42,2,deck,false);
+        board.InsertCard(50,50,43,1,deck,false);
+        board.InsertCard(49,49,43,0,deck,false);
         /*board.InsertCard(52,50,43,3,deck,true);
         board.InsertCard(52,52,43,4,deck,true);*/
         board.printBoard();
