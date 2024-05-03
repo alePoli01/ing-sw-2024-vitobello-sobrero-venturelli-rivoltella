@@ -4,8 +4,6 @@ import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.*;
 
-import java.io.IOException;
-
 public class ServerDispatcher implements ServerDispatcherInterface {
     private final ControllerDispatcher controllerDispatcher;
 

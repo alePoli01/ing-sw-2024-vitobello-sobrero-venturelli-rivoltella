@@ -5,16 +5,7 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public class PokeMessage implements MessagesFromServer {
-    private final String message;
-
-    public PokeMessage() {
-        this.message = null;
-    }
-
-    public PokeMessage(String message) {
-        this.message = message;
-    }
+public record PokeMessage() implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {

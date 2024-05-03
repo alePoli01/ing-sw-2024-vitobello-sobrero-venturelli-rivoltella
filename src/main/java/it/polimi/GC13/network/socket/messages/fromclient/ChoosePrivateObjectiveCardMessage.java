@@ -4,9 +4,6 @@ import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.controller.gameStateController.GamePhase;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.ServerDispatcherInterface;
-
-import java.io.IOException;
 
 public record ChoosePrivateObjectiveCardMessage(int indexPrivateObjectiveCard) implements MessagesFromClient {
 
