@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ClientDispatcher implements ClientDispatcherInterface, LostConnectionToServerInterface {
     private View view;
-    private final List<MessagesFromServer> serverMessages = new LinkedList<>();
+    private final List<MessagesFromServer> messageFromServerList = new LinkedList<>();
 
     public ClientDispatcher() {
     }
@@ -21,13 +21,13 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
 
     private void callMessages() {
         do {
-            this.serverMessages.removeFirst().methodToCall(view);
-        } while (this.serverMessages.isEmpty());
+            this.messageFromServerList.removeFirst().methodToCall(view);
+        } while (this.messageFromServerList.isEmpty());
     }
 
     @Override
-    public void registerFromServerMessage(MessagesFromServer message) {
-        this.serverMessages.add(message);
+    public void registerFromServerMessage(MessagesFromServer messagesFromServer) {
+        this.messageFromServerList.add(messagesFromServer);
         this.callMessages();
     }
 

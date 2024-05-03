@@ -8,7 +8,7 @@ import it.polimi.GC13.view.View;
 public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

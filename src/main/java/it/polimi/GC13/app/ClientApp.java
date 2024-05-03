@@ -15,25 +15,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class ClientApp {
-        // SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
-//SwingUtilities.invokeLater(LoginFrame::new);
+    // SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
+    // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
             System.err.println("Missing Parameters, killing this server.");
             System.err.println("HINT: metti | 'nome-server' 123 456 | come parametri nella run configuration di ClientApp");
             System.exit(-1);
         }
+
         int RMIport = 0;
         int socketPort = 0;
+
         try {
             RMIport = Integer.parseInt(args[0]);
             socketPort = Integer.parseInt(args[1]);
-
         } catch (NumberFormatException e) {
             System.err.println("Illegal Argument Format, killing this client.");
             System.exit(-1);

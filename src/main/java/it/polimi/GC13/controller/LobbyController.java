@@ -12,7 +12,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAl
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LobbyController implements LobbyControllerInterface, LostConnectionToClientInterface {
+public class LobbyController implements LostConnectionToClientInterface {
     private final Map<String, Game> joinableGameMap = new ConcurrentHashMap<>();
     private final Map<String, Game> startedGameMap = new ConcurrentHashMap<>();
     private final Map<Game, Controller> gameControllerMap = new ConcurrentHashMap<>(); //contains all ongoing games controller

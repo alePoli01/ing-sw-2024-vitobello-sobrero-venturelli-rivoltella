@@ -9,7 +9,7 @@ import java.util.List;
 public record OnDealCommonObjectiveCardMessage(int[] privateObjectiveCards) implements MessagesFromServer {
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

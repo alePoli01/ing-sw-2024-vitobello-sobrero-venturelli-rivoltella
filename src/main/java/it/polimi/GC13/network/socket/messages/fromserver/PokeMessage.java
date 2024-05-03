@@ -17,7 +17,7 @@ public class PokeMessage implements MessagesFromServer {
     }
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

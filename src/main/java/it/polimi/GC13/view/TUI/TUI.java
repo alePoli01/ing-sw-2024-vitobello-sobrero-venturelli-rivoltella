@@ -87,8 +87,9 @@ public class TUI implements View {
                     System.out.println("Error while joining game.");
                 }
             }
+            this.choice = 0;
         }
-        this.choice = 0;
+
     }
 
     private void createNewGame() throws IOException {
@@ -197,10 +198,11 @@ public class TUI implements View {
             } while (this.choice < 1 || this.choice > 2);
 
             this.virtualServer.placeStartCard(this.choice != 1);
+            this.choice = 0;
         } else {
             this.gamesLog.add(playerNickname + " chose " + tokenColor + " token\n");
         }
-        this.choice = 0;
+
     }
 
     /*
@@ -233,19 +235,18 @@ public class TUI implements View {
     public void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard) {
         if (playerNickname.equals(this.nickname)) {
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCard);
-        }
-
-        try {
-            while (choice != 1 && choice != 2) {
-                System.out.print("Chose your private objective card [1] or [2]: ");
-                this.choice = Integer.parseInt(this.reader.readLine());
+            try {
+                while (choice != 1 && choice != 2) {
+                    System.out.print("Chose your private objective card [1] or [2]: ");
+                    this.choice = Integer.parseInt(this.reader.readLine());
+                }
+                this.virtualServer.chosePrivateObjectiveCard(choice);
+                this.choice = 0;
+                System.out.println("++Sent private objective card choice message");
+            } catch (NumberFormatException | IOException e) {
+                System.out.print("Error: Please put a number.\nChose your private objective card [1] or [2]: ");
             }
-            this.virtualServer.chosePrivateObjectiveCard(choice);
-            System.out.println("++Sent private objective card choice message");
-        } catch (NumberFormatException | IOException e) {
-            System.out.print("Error: Please put a number.\nChose your private objective card [1] or [2]: ");
         }
-        this.choice = 0;
     }
 
     /*
@@ -277,12 +278,12 @@ public class TUI implements View {
         System.out.println("\t[9] to show players' turns");
         System.out.print("Your choice: ");
         try {
-            choice = Integer.parseInt(reader.readLine());
-            System.out.println("SELECTION: " + choice);
+            this.choice = Integer.parseInt(reader.readLine());
+            System.out.println("SELECTION: " + this.choice);
         } catch (IOException e) {
             System.out.print("Error: Please put a number: ");
         }
-        switch (choice) {
+        switch (this.choice) {
             case 1: {
                 this.printer.showHand(this.hand);
                 this.printer.comeBack();
@@ -302,6 +303,7 @@ public class TUI implements View {
             case 8: this.printer.showHistory(this.gamesLog);
             case 9: System.out.println(this.playerPositions);
         }
+        this.choice = 0;
     }
 
     // used to print any input error (at the moment handles token color) and recall the method from the TUI

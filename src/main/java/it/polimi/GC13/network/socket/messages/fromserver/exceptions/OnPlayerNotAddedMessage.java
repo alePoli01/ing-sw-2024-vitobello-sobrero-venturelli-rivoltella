@@ -29,7 +29,7 @@ public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
     }
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

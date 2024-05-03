@@ -41,8 +41,8 @@ public class Printer {
                 .stream()
                 .filter(card -> Arrays.stream(serialNumber).anyMatch(serial -> card.getSerialNumber() == serial))
                 .forEach(card -> {
-                    System.out.println("\n\t     [" + counter.getAndIncrement() + "]");
                     card.printObjectiveCard();
+                    System.out.println("\t    [" + counter.getAndIncrement() + "]");
                 });
     }
 
@@ -54,6 +54,7 @@ public class Printer {
             while (choice != 1) {
                 System.out.print("\n[1] to get back to the HOME MENU: ");
                 choice = Integer.parseInt(reader.readLine());
+                System.out.println("SELECTION: " + choice);
             }
         } catch (IOException e) {
             System.out.print("Error: Please put a number: ");

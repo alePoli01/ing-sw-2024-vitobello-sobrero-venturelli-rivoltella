@@ -8,7 +8,7 @@ import it.polimi.GC13.view.View;
 public record OnDealPrivateObjectiveCardsMessage(String playerNickname, int[] privateObjectiveCards) implements MessagesFromServer {
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

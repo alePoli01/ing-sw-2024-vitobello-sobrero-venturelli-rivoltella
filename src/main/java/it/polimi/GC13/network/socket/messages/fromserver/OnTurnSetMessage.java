@@ -10,7 +10,7 @@ import java.util.Map;
 public record OnTurnSetMessage(Map<String, Position> playerPositions) implements MessagesFromServer {
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 

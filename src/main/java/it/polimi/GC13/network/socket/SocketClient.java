@@ -81,11 +81,7 @@ public class SocketClient implements ClientInterface, Runnable {
                 if (!connectionOpen) break;
                 MessagesFromClient message = (MessagesFromClient) ois.readObject();
                 executorService.submit(() -> {
-                    try {
-                        message.dispatch(serverDispatcher, this);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    serverDispatcher.sendToControllerDispatcher(message, this);
                 });
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {

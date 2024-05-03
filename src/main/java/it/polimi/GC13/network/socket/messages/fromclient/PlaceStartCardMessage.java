@@ -1,22 +1,16 @@
 package it.polimi.GC13.network.socket.messages.fromclient;
 
+import it.polimi.GC13.controller.LobbyController;
+import it.polimi.GC13.controller.gameStateController.GamePhase;
+import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ServerDispatcherInterface;
 import java.io.IOException;
 
-public class PlaceStartCardMessage implements MessagesFromClient {
-    private final boolean side;
-
-    public PlaceStartCardMessage(boolean isFlipped) {
-        this.side = isFlipped;
-    }
-
-    public boolean getSide() {
-        return this.side;
-    }
+public record PlaceStartCardMessage(boolean isFlipped) implements MessagesFromClient {
 
     @Override
-    public void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface client) throws IOException {
-        serverDispatcher.dispatch(this, client);
+    public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
+        gamePhase.placeStartCard(player, this.isFlipped());
     }
 }

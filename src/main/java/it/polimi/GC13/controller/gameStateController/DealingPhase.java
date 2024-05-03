@@ -56,8 +56,9 @@ public class DealingPhase implements GamePhase {
 
     // CHECK that all players in the same game chose their own objective card
     private boolean playersChoseObjectiveCard(Player player) {
-        for (Player element : player.getGame().getPlayerList()) {
-            if (element.getPrivateObjectiveCard().size() == 2) {
+        for (Player p : player.getGame().getPlayerList()) {
+            if (p.getPrivateObjectiveCard().size() == 2) {
+                System.out.println(p.getNickname() + " hasn't chosen objective card yet.");
                 return false;
             }
         }

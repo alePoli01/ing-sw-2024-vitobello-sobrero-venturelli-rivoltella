@@ -5,11 +5,11 @@ import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
 import java.io.Serializable;
-import java.util.concurrent.Delayed;
 
 public interface MessagesFromServer extends Serializable {
-    //void dispatch(ServerDispatcherInterface serverDispatcher, ClientInterface view);
-    void dispatch(ClientDispatcherInterface clientDispatcher);
+
+    // method to handle poke message
+    void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher);
 
     // send message to the clientInterface (socket / RMI client)
     void notifyClient(ClientInterface client);

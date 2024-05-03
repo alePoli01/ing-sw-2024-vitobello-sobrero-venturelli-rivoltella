@@ -8,7 +8,7 @@ public record OnTurnUpdateMessage(String playersNickname, boolean turn) implemen
 
 
     @Override
-    public void dispatch(ClientDispatcherInterface clientDispatcher) {
+    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
         clientDispatcher.dispatch(null);
     }
 
