@@ -13,10 +13,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class PopupDialog extends JDialog implements CardManager, ActionListener{
-    private PlayableCard card; //rappresenta la carta scoperta di uno dei due mazzi da poter pescare
-    public PopupDialog(JFrame owner /*, PlayableCard drawableCard*/) {
+
+    //private PlayableCard card; rappresenta la carta scoperta di uno dei due mazzi da poter pescare
+
+    public PopupDialog(JFrame owner) {
         super(owner, "Card drawable", true);
-        //this.card = drawableCard;
         setSize(400, 300);
         setResizable(false);
         setLayout(new BorderLayout());

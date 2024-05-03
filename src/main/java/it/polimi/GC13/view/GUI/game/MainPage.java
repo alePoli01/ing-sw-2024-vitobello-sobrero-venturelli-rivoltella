@@ -27,7 +27,8 @@ public class MainPage extends JFrame implements ActionListener {
 
     public MainPage() throws HeadlessException {
         super("Codex Naturalis");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Imposta il frame a schermo intero
         setResizable(false);
 
@@ -202,6 +203,17 @@ public class MainPage extends JFrame implements ActionListener {
         } else if (e.getActionCommand().equals("popup card")){
             PopupDialog popup = new PopupDialog(this);
             popup.setVisible(true);
+
+            //testing
+            /*Object[] options = { "Create Game", "Join Game" };
+            int choice = JOptionPane.showOptionDialog(null,"There are existing games, choose: ","Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, options, options[0]);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(null,"Tua mamma");
+            } else if(choice == JOptionPane.NO_OPTION) {
+                JOptionPane.showMessageDialog(null,"Quella troia");
+            }*/
+
         }
     }
 }
