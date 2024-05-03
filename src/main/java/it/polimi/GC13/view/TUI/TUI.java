@@ -321,6 +321,16 @@ public class TUI implements View {
     }
 
     @Override
+    public void connectionLost() {
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
     public void displayTurns(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
     }
