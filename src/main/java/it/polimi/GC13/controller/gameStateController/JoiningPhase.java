@@ -26,11 +26,11 @@ public class JoiningPhase implements GamePhase {
     }
 
     @Override
-    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
     
-    public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
+    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

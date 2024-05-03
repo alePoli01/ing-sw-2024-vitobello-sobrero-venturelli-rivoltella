@@ -6,7 +6,7 @@ import it.polimi.GC13.view.View;
 
 public interface OnInputExceptionMessage extends MessagesFromServer {
 
-    void methodToRecall(View TUI);
+    void methodToRecall(View view);
 
     String getErrorMessage();
 

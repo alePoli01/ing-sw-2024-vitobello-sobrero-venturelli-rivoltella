@@ -1,7 +1,6 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromclient.*;
@@ -72,8 +71,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
-        this.sendMessage(new PlaceCardMessage(cardToPlaceHandIndex, isFlipped, xy));
+    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
+        this.sendMessage(new PlaceCardMessage(cardToPlaceHandIndex, isFlipped, X, Y));
     }
 
     @Override
@@ -82,8 +81,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void drawCard() {
-
+    public void drawCard(int deckIndex, int cardDeckIndex) {
+        this.sendMessage(new DrawCardFromDeckMessage(deckIndex, cardDeckIndex));
     }
 
     @Override

@@ -17,6 +17,10 @@ public interface View {
 
     void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard);
 
+    void updateGoldCardsAvailable(int ... goldCardSerial);
+
+    void updateResourceCardsAvailable(int ... resourceCardSerial);
+
     void checkForExistingGame();
 
     void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap);
@@ -29,6 +33,10 @@ public interface View {
 
     void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard);
 
+    void drawCard();
+
+    void showHomeMenu();
+
     void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage);
 
     void displayTurns(Map<String, Position> playerPositions);
@@ -38,4 +46,9 @@ public interface View {
     void displayAvailableCells(Set<Coordinates> availableCells);
 
     void connectionLost();
+
+    /*
+            METHOD USED TO PLACE CARD ON THE BOARD
+         */
+    void placeCard();
 }

@@ -6,7 +6,7 @@ import it.polimi.GC13.exception.NoCardsLeftException;
 import junit.framework.TestCase;
 
 public class TableTest extends TestCase {
-    Table table =new Table();
+    Table table =new Table(new Game(4, "test"));
 
     private void backupCards(Table table,PlayableCard[] resourceCards,PlayableCard[] goldCards){
         //get first 3 cards of each deck
@@ -21,7 +21,7 @@ public class TableTest extends TestCase {
 
     public void testTableSetup(){
 
-        Table table =new Table();
+        Table table =new Table(new Game(4, "test"));
         table. getDeck().shuffleDecks();
         PlayableCard[] resourceCards= new PlayableCard[3];
         PlayableCard[] goldCards= new PlayableCard[3];

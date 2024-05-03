@@ -74,24 +74,7 @@ public class ClientApp {
             }
         } while (viewChoice != 1 && viewChoice != 2);
 
-        Function<Integer, String> viewChoiceMessage = (c) -> {
-            if (c == 1) {
-                return "TUI";
-            } else {
-                return "GUI";
-            }
-        };
-        Function<Integer, String> connectionChoiceMessage = (c) -> {
-            if (c == 1) {
-                return "RMI";
-            } else {
-                return "SOCKET";
-            }
-        };
-
-        System.out.println("Starting "+ viewChoiceMessage.apply(viewChoice)+" with connection type "+ connectionChoiceMessage.apply(connectionChoice));
-
-
+        System.out.println("Starting "+ (viewChoice == 1 ? "TUI" : "GUI") + " with connection type "+ (connectionChoice == 1 ? "RMI" : "SOCKET"));
 
         // RMI SETUP
         if (connectionChoice == 1) {

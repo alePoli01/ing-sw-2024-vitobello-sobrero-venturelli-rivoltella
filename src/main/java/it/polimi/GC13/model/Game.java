@@ -25,7 +25,7 @@ public class Game implements Serializable {
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
         this.gameState = GameState.JOINING;
-        this.table = new Table();
+        this.table = new Table(this);
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>();
         this.deck = new Deck();

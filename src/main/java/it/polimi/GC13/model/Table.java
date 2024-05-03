@@ -5,12 +5,15 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotFoundException;
 import it.polimi.GC13.exception.NoCardsLeftException;
+import it.polimi.GC13.network.socket.messages.fromserver.OnNewGoldCardsAvailableMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnNewResourceCardsAvailableMessage;
 
 import java.io.Serializable;
 import java.util.*;
 
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table implements Serializable {
+    private final Game game;
     private Map<Player, Integer> score; //vector that keeps players scores
     private final PlayableCard[] resourceFacedUp; //resource cards faced up that can be picked
     private final PlayableCard[] goldFacedUp; //gold cards faced up that can be picked
@@ -22,7 +25,8 @@ public class Table implements Serializable {
     private final Map<Player, Board> playerBoardMap;
 
     //constructor of table
-    public Table() {
+    public Table(Game game) {
+        this.game = game;
         this.playerBoardMap = new HashMap<>();
         this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
         this.resourceFacedUp = new PlayableCard[2];
@@ -43,6 +47,30 @@ public class Table implements Serializable {
         public void setScore(int index,int score) {
             this.score[index]= score;
         }*/
+
+    public PlayableCard getCard(int serialNumber) {
+        // Check resource cards faced up
+        for (PlayableCard card : resourceFacedUp) {
+            if (card.serialNumber == serialNumber) {
+                return card;
+            }
+        }
+
+        // Check gold cards faced up
+        for (PlayableCard card : goldFacedUp) {
+            if (card.serialNumber == serialNumber) {
+                return card;
+            }
+        }
+
+        // Check resource card faced down
+        if (resourceFacedDown != null && resourceFacedDown.serialNumber == serialNumber) {
+            return resourceFacedDown;
+        } else {
+            System.out.println("Potrebbe essere sbagliata");
+            return goldFacedDown;
+        }
+    }
 
     public ObjectiveCard getCommonObjectiveCard(int index) {
         return commonObjectiveCard[index];
@@ -84,6 +112,9 @@ public class Table implements Serializable {
         }
         this.resourceFacedDown = this.deck.getResourceDeck().removeFirst();
         this.goldFacedDown = this.deck.getGoldDeck().removeFirst();
+
+        this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(this.goldFacedDown.serialNumber, this.goldFacedUp[0].serialNumber, this.goldFacedUp[1].serialNumber));
+        this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(this.resourceFacedDown.serialNumber, this.resourceFacedUp[0].serialNumber, this.resourceFacedUp[1].serialNumber));
     }
 
     public int setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
@@ -93,7 +124,7 @@ public class Table implements Serializable {
 
     //method to pick(remove) a card from the table
     public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHandException {
-        /**
+        /*
          * 1. check which type of card has been chosen
          * 2. check every possible position in which it can be
          * 3. if found: delete it; if not throw exception
@@ -126,7 +157,7 @@ public class Table implements Serializable {
 
     // updates the drawn card on the table
     public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
-        /**
+        /*
          * 1. check if both decks are empty, if true there's nothing to be done (else branch)
          * 2. check which type of card needs to be replaced
          * 3. use the first deck available( for gold check goldDeck first,similar for resource)
@@ -134,7 +165,7 @@ public class Table implements Serializable {
          * the method doesn't check if the card to replace is already on the table, the controller will make sure it isn't
          */
         if (!this.deck.getGoldDeck().isEmpty() || !this.deck.getResourceDeck().isEmpty()) {
-            //one or both decks are NOT empty
+            //one or both decks is NOT empty
             if (cardToReplace.cardType.equals(CardType.GOLD)) {
                 if (!deck.getGoldDeck().isEmpty()) {
                     //the gold card is drawn from the gold deck
@@ -179,7 +210,6 @@ public class Table implements Serializable {
             }
         } else {
             throw new NoCardsLeftException("Every ");
-
         }
     }
 

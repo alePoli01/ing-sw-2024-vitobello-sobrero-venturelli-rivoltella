@@ -1,33 +1,27 @@
 package it.polimi.GC13.network.socket.messages.fromserver.exceptions;
 
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
-    private final String playerNickname;
+public class OnNotEnoughResourceToPlaceMessage implements OnInputExceptionMessage {
     private final String errorMessage;
+    private final String playerNickname;
 
-    public OnNickNameAlreadyTakenMessage(String nickname) {
-        this.playerNickname = nickname;
-        this.errorMessage = "Nickname " + nickname + " is already taken";
+    public OnNotEnoughResourceToPlaceMessage(String playerNickname, Resource reign) {
+        this.errorMessage = "You don't have enough" + reign + "to play this card";
+        this.playerNickname = playerNickname;
     }
 
     @Override
     public void methodToRecall(View view) {
-        view.checkForExistingGame();
+        view.showHomeMenu();
     }
 
     @Override
     public String getErrorMessage() {
         return this.errorMessage;
-        /*StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
-
-        System.out.println("Nickname already chosen.\nPlayers in game:");
-        for(Player player : playerList) {
-            joiner.add(player.getNickname());
-        }
-        return joiner.toString();*/
     }
 
     @Override
@@ -37,7 +31,7 @@ public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
+
     }
 
     @Override

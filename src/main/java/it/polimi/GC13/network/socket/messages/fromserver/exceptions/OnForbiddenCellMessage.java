@@ -9,12 +9,12 @@ import it.polimi.GC13.view.View;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OnCardNotPlacedMessage implements OnInputExceptionMessage {
+public class OnForbiddenCellMessage implements OnInputExceptionMessage {
     private final String errorMessage;
     private final Set<Coordinates> availableCells = new HashSet<>();
     private final String playerNickname;
 
-    public OnCardNotPlacedMessage(String playerNickname, Coordinates coordinates, Set<Coordinates> availableCells) {
+    public OnForbiddenCellMessage(String playerNickname, Coordinates coordinates, Set<Coordinates> availableCells) {
         errorMessage = "It's not possible to place cards in: " + coordinates.getX() + ", " + coordinates.getY();
         this.availableCells.addAll(availableCells);
         this.playerNickname = playerNickname;

@@ -1,7 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ServerInterface;
 
 import java.rmi.RemoteException;
@@ -38,7 +37,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
 
     }
 
@@ -48,7 +47,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void drawCard() {
+    public void drawCard(int deckIndex, int cardDeckIndex) {
 
     }
 

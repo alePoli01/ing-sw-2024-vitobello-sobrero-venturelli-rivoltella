@@ -60,12 +60,12 @@ public class Controller implements GamePhase {
         this.gameController.placeStartCard(player, isFlipped);
     }
 
-    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
-        this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, xy);
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
+        this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, X, );
     }
 
-    public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
-        this.gameController.drawCard(player, table, cardToDraw);
+    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
+        this.gameController.drawCard(player, deckIndex, cardDeckIndex);
     }
 
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {

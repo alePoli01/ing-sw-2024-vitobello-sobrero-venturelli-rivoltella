@@ -73,7 +73,7 @@ public class LobbyController implements LostConnectionToClientInterface {
             this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, workingGame, client);
         } catch (GenericException e) {
             client.sendMessage(new OnNickNameAlreadyTakenMessage(playerNickname));
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         // updates controller dispatcher client <-> player Map
         this.controllerDispatcher.getClientPlayerMap().put(client, player);

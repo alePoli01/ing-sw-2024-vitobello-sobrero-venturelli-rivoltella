@@ -7,6 +7,7 @@ import it.polimi.GC13.model.StartCard;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,11 +24,31 @@ public class Printer {
     public Printer() {}
 
     /*
-    METHOD USED TO SHOW GAME'S HISTORY
- */
+        METHOD USED TO SHOW GAME'S HISTORY
+    */
     public void showHistory(List<String> gamesLog) {
         System.out.println("\n--- HISTORY ---");
         System.out.println(gamesLog);
+    }
+
+    /*
+        METHOD USED TO SHOW DRAWABLE CARDS
+     */
+    public void showDrawableCards(ArrayList<Integer> goldCardsAvailable, ArrayList<Integer> resourceCardsAvailable) {
+        System.out.println("\n--- DRAWABLE CARDS ---");
+        System.out.println("--- Gold Deck ---");
+        for (PlayableCard card : visualDeck.getStartDeck()) {
+            if (goldCardsAvailable.contains(card.serialNumber)) {
+                // IF FIRST CARD -> ISFLIPPED = TRUE
+                card.cardPrinter(goldCardsAvailable.getFirst().equals(card.serialNumber));
+            }
+        }
+        System.out.println("--- Resource Deck ---");
+        for (PlayableCard card : visualDeck.getStartDeck()) {
+            if (resourceCardsAvailable.contains(card.serialNumber)) {
+                card.cardPrinter(resourceCardsAvailable.getFirst().equals(card.serialNumber));
+            }
+        }
     }
 
     /*
@@ -68,16 +89,16 @@ public class Printer {
     public void showHand(List<Integer> hand) {
         if (hand.getFirst() < 81 || hand.getFirst() > 86) {
             for (PlayableCard card : visualDeck.getResourceDeck()) {
-                for (int x : hand) {
-                    if (card.serialNumber == x) {
+                for (int cardInHand : hand) {
+                    if (card.serialNumber == cardInHand) {
                         card.cardPrinter(false);
                     }
                 }
             }
         } else {
             for (StartCard card : visualDeck.getStartDeck()) {
-                for (int x : hand) {
-                    if (card.serialNumber == x) {
+                for (int cardInHand : hand) {
+                    if (card.serialNumber == cardInHand) {
                         card.cardPrinter(false);
                         System.out.println("       FRONT");
                         card.cardPrinter(true);

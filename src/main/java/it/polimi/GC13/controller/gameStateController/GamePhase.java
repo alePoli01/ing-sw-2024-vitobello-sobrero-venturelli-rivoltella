@@ -6,6 +6,8 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
 public interface GamePhase {
+    // add player to an existing game
+    void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException;
 
     // player chooses his token, it can be done if its token is empty
     void chooseToken(Player player, TokenColor token);
@@ -17,11 +19,9 @@ public interface GamePhase {
     void placeStartCard(Player player, boolean isFlipped);
 
     // place start card on the board in default position
-    void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy);
+    void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y);
 
     // draw resource / gold card
-    void drawCard(Player player, Table table, PlayableCard cardToDraw);
+    void drawCard(Player player, int deckIndex, int cardDeckIndex);
 
-    // add player to an existing game
-    void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException;
 }

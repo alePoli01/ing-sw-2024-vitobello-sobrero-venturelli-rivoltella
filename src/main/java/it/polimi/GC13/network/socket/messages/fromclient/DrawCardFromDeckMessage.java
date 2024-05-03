@@ -5,10 +5,10 @@ import it.polimi.GC13.controller.gameStateController.GamePhase;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 
-public record PlaceCardMessage(int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) implements MessagesFromClient {
+public record DrawCardFromDeckMessage(int deckIndex, int cardDeckIndex) implements MessagesFromClient {
 
     @Override
     public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
-        gamePhase.placeCard(player, this.cardToPlaceHandIndex(), this.isFlipped(), this.X(), this.Y());
+        gamePhase.drawCard(player, this.deckIndex(), this.cardDeckIndex());
     }
 }

@@ -18,8 +18,10 @@ public class MidPhase implements GamePhase {
     }
 
     //controller gets object from network, then calls the method accordingly
-    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, Coordinates xy) {
+    @Override
+    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
+        Coordinates xy = new Coordinates(X, Y);
         // increase players turn
         player.increaseTurnPlayed();
         PlayableCard cardToPlace = player.getHand().get(cardToPlaceHandIndex);
@@ -37,8 +39,8 @@ public class MidPhase implements GamePhase {
         if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
             try {
                 board.resourceVerifier(cardToPlace);
-            } catch (NoResourceAvailableException e) {
-                System.out.println(e.getMessage()); // Si può mettere che stampa tutte le risorse che non ha, non solo la prima che dà errore
+            } catch (GenericException e) {
+                System.err.println(e.getMessage());
             }
         }
 
@@ -62,22 +64,25 @@ public class MidPhase implements GamePhase {
                     player.getGame().setLastRound(player);
                 }
             }
-        } catch (CardNotPlacedException | CardStillOnHandException | EdgeNotFreeException e) {
-            System.out.println(e.getMessage());
+        } catch (CardNotPlacedException | CardStillOnHandException e) {
+            System.err.println(e.getMessage());
         }
     }
 
     // draw resource / gold card
-    public void drawCard(Player player, Table table, PlayableCard cardToDraw) {
+    @Override
+    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
         try {
+            // create card
+            PlayableCard cardToDraw = player.getTable().getCard(cardDeckIndex);
             // check player turn
             player.checkMyTurn();
             // draw the selected card from the table
-            table.drawCard(cardToDraw);
+            player.getTable().drawCard(cardToDraw);
             // add the selected card to player's hand
             player.addToHand(cardToDraw);
             // add new card to the table
-            table.getNewCard(cardToDraw);
+            player.getTable().getNewCard(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
             // set next player turn to true
@@ -97,11 +102,13 @@ public class MidPhase implements GamePhase {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 
+    @Override
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
     // player chooses his objective card
+    @Override
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }

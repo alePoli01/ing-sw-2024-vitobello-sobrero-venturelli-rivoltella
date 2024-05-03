@@ -2,11 +2,11 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.CardNotPlacedException;
-import it.polimi.GC13.exception.EdgeNotFreeException;
-import it.polimi.GC13.exception.NoResourceAvailableException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnCardNotPlacedMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnForbiddenCellMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNotEnoughResourceToPlaceMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -56,18 +56,19 @@ public class Board implements Serializable {
     }
 
     // check goldCard has enough resource to be played
-    public void resourceVerifier(PlayableCard cardToPlace) throws NoResourceAvailableException {
+    public void resourceVerifier(PlayableCard cardToPlace) throws GenericException {
         for (Resource reign : Resource.values()) {
             if (reign.isReign() && collectedResources.get(reign) < cardToPlace.resourceNeeded.get(reign)) {
-                throw new NoResourceAvailableException(reign);
+                this.owner.getGame().getObserver().notifyClients(new OnNotEnoughResourceToPlaceMessage(this.owner.getNickname(), reign));
+                throw new GenericException("Not enough resource to place " + reign);
             }
         }
     }
 
     // call from the controller to verify it is possible to place the selected card
-    public void isPossibleToPlace (Coordinates coordinates) throws EdgeNotFreeException {
+    public void isPossibleToPlace (Coordinates coordinates) {
         if (notAvailableCells.contains(coordinates)) {
-            this.owner.getGame().getObserver().notifyClients(new OnCardNotPlacedMessage(this.owner.getNickname(), coordinates, this.availableCells));
+            this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(this.owner.getNickname(), coordinates, this.availableCells));
         }
     }
 
