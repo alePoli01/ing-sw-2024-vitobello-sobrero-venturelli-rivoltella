@@ -36,6 +36,10 @@ public class LobbyController implements LobbyControllerInterface, LostConnection
 
     public void checkForExistingGame(ClientInterface client) {
         // upon check just provide the answer
+        if(disconnectedClients.contains(client)){
+            System.out.println("Disconnected client recognised");
+        }
+        //upon check just provide the answer
         System.out.println("--Received: checkForExistingGame");
         Map<String, Integer> gameNameWaitingPlayersMap = new ConcurrentHashMap<>();
         this.joinableGameMap.forEach((gameName, game) -> gameNameWaitingPlayersMap.put(gameName, game.getCurrNumPlayer()));
@@ -86,8 +90,11 @@ public class LobbyController implements LobbyControllerInterface, LostConnection
          and the client is added to a "{disconnectedButInGame disconnected player list}" until he connects again.
         In addition, if the player was in the "{waitingUsers waiting list}" to play in a match is removed from this one
          */
-        System.out.println("la connessione non funziona, metto il client come disconnected");
+        System.out.println("\tla connessione non funziona, metto il client come disconnected");
         disconnectedClients.add(client);
-        System.out.println("da qua bisogna capire come ricollegare il client");
+        for (ClientInterface disconnectedClient : this.disconnectedClients) {
+            System.out.println(disconnectedClient);
+        }
+        System.out.println("\tda qua bisogna capire come ricollegare il client");
     }
 }

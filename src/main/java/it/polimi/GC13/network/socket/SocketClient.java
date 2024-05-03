@@ -50,6 +50,7 @@ public class SocketClient implements ClientInterface, Runnable {
         } catch (IOException e) {
             connectionOpen = false;
             System.out.println("Error sending message: " + e.getMessage());
+            connectionStatus.connectionLost(this);
         }
     }
 

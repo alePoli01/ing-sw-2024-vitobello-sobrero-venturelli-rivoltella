@@ -10,13 +10,30 @@ import java.io.IOException;
 
 public class ServerApp {
     public static void main(String[] args) throws IOException {
-        System.out.println("Hello from Server");
 
-        int RMIport = 456;
+        if(args.length != 2) {
+            System.out.println("Missing Parameters, killing this server.");
+            System.out.println("HINT: metti | 'nome-server' 123 456 | come parametri nella run configuration di ServerApp");
+            System.exit(-1);
+        }
+        int RMIport = 0;
+        int socketPort = 0;
+        try{
+            RMIport = Integer.parseInt(args[0]);
+            socketPort = Integer.parseInt(args[1]);
+
+        } catch(NumberFormatException e) {
+            System.out.println("Illegal Argument Format, killing this server.");
+            System.exit(-1);
+        }
+        //System.setProperty("java.rmi.server.hostname", args[0]);
+        System.out.println("Hello from Server");
+        System.out.println("RMI port: " + RMIport);
+        System.out.println("Socket port: " + socketPort+"\n");
         ServerInterface rmiServer = new RMIServer(RMIport);
         //((RMIServer) rmiServer).startServer();
 
-        int socketPort = 123;
+
         //link a lobby controller to the controller dispatcher
         System.out.println("Creating and linking LobbyController and ControllerDispatcher");
         LobbyController lobbyController = new LobbyController();

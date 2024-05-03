@@ -15,7 +15,7 @@ public class SocketAccepter implements Runnable {
     private final LostConnectionToClientInterface connectionStatus;
     private final int port;
 
-    public SocketAccepter(ServerDispatcher serverDispatcher, int port,LostConnectionToClientInterface connectionStatus) {
+    public SocketAccepter(ServerDispatcher serverDispatcher, int port, LostConnectionToClientInterface connectionStatus) {
         this.port = port;
         this.serverDispatcher = serverDispatcher;
         this.connectionStatus = connectionStatus;
@@ -23,32 +23,35 @@ public class SocketAccepter implements Runnable {
 
     @Override
     public void run() {
-        try {
-            System.out.println("SocketAccepter running...");
-            ServerSocket serverSocket = new ServerSocket(port);
-            while (true) {
-                try {
-                    Socket socket = serverSocket.accept(); // waits for a client to connect
 
-                    System.out.println("Client connection accepted...");
-                    SocketClient socketClient = new SocketClient(socket, serverDispatcher, connectionStatus);
-                    //the socketClient (it's on the server) will wait for incoming messages from the client
-                    new Thread(socketClient).start();
-                    /*
-                    TODO: L'impulso potrebbe servire per capire quando la connessione viene persa, ma è da discutere
-                    edit: se non c'è l'impulso non va niente
-                     */
-                    System.out.println("\t\tCreating an Impulse generator");
-                    ServerImpulse serverImpulse= new ServerImpulse(socketClient);
-                    System.out.println("\t\tStarting the Impulse generator Thread");
-                    new Thread(serverImpulse).start();
-                    System.out.println("\t\tClient connection is done");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+        System.out.println("SocketAccepter running...");
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(port);
+            System.out.println("serverSocket port:"+serverSocket.getLocalPort());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Could not create ServerSocket on port " + port);
+            System.out.println(e.getMessage());
+            System.exit(-1);
+        }
+        while (true) {
+
+            try {
+                Socket socket = serverSocket.accept(); // waits for a client to connect
+
+                System.out.println("Client connection accepted...");
+                SocketClient socketClient = new SocketClient(socket, serverDispatcher, connectionStatus);
+                //the socketClient (it's on the server) will wait for incoming messages from the client
+                new Thread(socketClient).start();
+                System.out.println("\t\tCreating an Impulse generator");
+                ServerImpulse serverImpulse = new ServerImpulse(socketClient);
+                System.out.println("\t\tStarting the Impulse generator Thread");
+                new Thread(serverImpulse).start();
+                System.out.println("\t\tClient connection is done");
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+
         }
     }
 }

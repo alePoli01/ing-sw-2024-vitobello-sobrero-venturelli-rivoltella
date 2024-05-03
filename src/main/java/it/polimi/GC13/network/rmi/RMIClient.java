@@ -35,7 +35,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface {
     }
 
     @Override
-    public void poke() throws IOException {
+    public void poke() {
 
     }
 }

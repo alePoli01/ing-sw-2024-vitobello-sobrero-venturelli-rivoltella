@@ -36,4 +36,6 @@ public interface View {
     void updateTurn(String playerNickname, boolean turn);
 
     void displayAvailableCells(Set<Coordinates> availableCells);
+
+    void connectionLost();
 }

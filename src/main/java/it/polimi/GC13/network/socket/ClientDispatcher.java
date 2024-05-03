@@ -39,6 +39,6 @@ public class ClientDispatcher implements ClientDispatcherInterface, LostConnecti
     @Override
     public void connectionLost(ServerInterface server) {
         System.out.println("****ERROR CONNECTION TO SERVER LOST****");
-        System.out.println("da qua bisogna capire come ricollegarsi");
+        view.connectionLost();
     }
 }
