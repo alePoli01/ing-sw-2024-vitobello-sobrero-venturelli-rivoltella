@@ -18,6 +18,6 @@ public record OnPlaceStartCardMessage(String playerNickname, int serialNumberCar
 
     @Override
     public void methodToCall(View view) {
-        view.onPositionedCard(this.playerNickname, this.serialNumberCard, this.isFlipped);
+        view.onPlacedCard(this.playerNickname, this.serialNumberCard, this.isFlipped);
     }
 }

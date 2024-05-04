@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface View {
 
-    void tokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers);
+    void chooseTokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers);
 
     void handUpdate(String playerNickname, int[] availableCard);
 
@@ -25,11 +25,11 @@ public interface View {
 
     void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap);
 
-    void startCardSetupPhase(String playerNickname, TokenColor tokenColor);
+    void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor);
 
     void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard);
 
-    void onPositionedCard(String playerNickname, int startCardPlaced, boolean isFlipped);
+    void onPlacedCard(String playerNickname, int startCardPlaced, boolean isFlipped);
 
     void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard);
 

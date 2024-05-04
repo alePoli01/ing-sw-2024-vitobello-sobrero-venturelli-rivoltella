@@ -3,6 +3,7 @@ package it.polimi.GC13.view.TUI;
 import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.StartCard;
+import it.polimi.GC13.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,13 +71,14 @@ public class Printer {
     /*
         METHOD USED TO SHOW HOME MENU
      */
-    public void comeBack() {
+    public void comeBack(View view) {
         try {
             while (choice != 1) {
                 System.out.print("\n[1] to get back to the HOME MENU: ");
                 choice = Integer.parseInt(reader.readLine());
                 System.out.println("SELECTION: " + choice);
             }
+            view.showHomeMenu();
         } catch (IOException e) {
             System.out.print("Error: Please put a number: ");
         }

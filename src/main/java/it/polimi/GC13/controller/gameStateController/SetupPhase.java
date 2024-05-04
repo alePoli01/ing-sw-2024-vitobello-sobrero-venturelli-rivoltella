@@ -23,32 +23,35 @@ public class SetupPhase implements GamePhase {
             game.getTable().tableSetup();
             game.dealStartCard();
         } catch (CardNotAddedToHandException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
             PlayableCard cardToPlace = player.getHand().getFirst();
-            player.getBoard().addCardToBoard(new Coordinates(50, 50), cardToPlace, isFlipped);
+            player.getBoard().addStartCardToBoard(cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
             // if all Players positioned start card, it updates the controller
             if (playersPlacedStartCard(player)) {
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
                 this.controller.updateController(new DealingPhase(this.controller));
             }
-        } catch (CardNotPlacedException e) {
-            System.out.println(e.getMessage());
+        } catch (GenericException e) {
+            System.err.println(e.getMessage());
         }
     }
 
     // check that all players in the same game positioned the start card
     private boolean playersPlacedStartCard(Player player) {
+        System.out.println("checking...");
         for (Player p : player.getGame().getPlayerList()) {
             if (!p.getBoard().containsKeyOfValue(50, 50)) {
+                System.out.println(p.getNickname() + " didn't place start card");
                 return false;
             }
         }
+        System.out.println("All players have placed start card");
         return true;
     }
 
@@ -56,13 +59,13 @@ public class SetupPhase implements GamePhase {
         try {
             player.setTokenColor(tokenColor);
         } catch (GenericException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     @Override
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
     public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
@@ -70,7 +73,8 @@ public class SetupPhase implements GamePhase {
     }
 
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.err.println("I am SETUP PHASE");
+        System.err.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {

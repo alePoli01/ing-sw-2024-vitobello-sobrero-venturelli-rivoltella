@@ -19,6 +19,6 @@ public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor)
 
     @Override
     public void methodToCall(View view) {
-        view.startCardSetupPhase(this.playerNickname, this.tokenColor);
+        view.placeStartCardSetupPhase(this.playerNickname, this.tokenColor);
     }
 }

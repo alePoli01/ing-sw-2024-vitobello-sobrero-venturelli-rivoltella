@@ -72,70 +72,75 @@ public class Board implements Serializable {
         }
     }
 
-    // add card to the board and updates notAvailableCells and availableCells sets
-    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws CardNotPlacedException {
-        // if statement for startCard placed in position 50,50 (board center)
-        if (cardToPlace instanceof StartCard) {
-            Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-            boardMap.put(xy, newCell);
-            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
-                throw new CardNotPlacedException(cardToPlace);
-            } else {
-                this.owner.getGame().getObserver().notifyClients(new OnPlaceStartCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
-            }
+    public void addStartCardToBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
+        Coordinates xy = new Coordinates(50, 50);
+        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
+        boardMap.put(xy, newCell);
+        if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+            throw new GenericException("Sever didn't update the Board");
         } else {
-            Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-            boardMap.put(xy, newCell);
-            if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
-                throw new CardNotPlacedException(cardToPlace);
-            }
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceStartCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
+        }
+    }
 
-            int i = 0;
+    // add card to the board
+    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
+        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
+        boardMap.put(xy, newCell);
+        if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
+            throw new GenericException("Sever didn't update the Board");
+        }
+        this.updateAvailableAndNotCells(cardToPlace, xy);
 
-            // updates notAvailableCells and availableCells sets
-            for (Resource edgeValue : cardToPlace.edgeResource) {
-                Coordinates coordinateToCheck;
-                switch (i) {
-                    case 0: // bottom-left
-                        coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                        if (!edgeValue.equals(Resource.NULL)) {
-                            if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
-                                availableCells.add(coordinateToCheck);
-                            }
-                        } else {
-                            notAvailableCells.add(coordinateToCheck);
+        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
+    }
+
+    // updates notAvailableCells and availableCells sets
+    private void updateAvailableAndNotCells(PlayableCard cardPlaced, Coordinates xy) {
+        int i = 0;
+        // updates notAvailableCells and availableCells sets
+        for (Resource edgeValue : cardPlaced.edgeResource) {
+            Coordinates coordinateToCheck;
+            switch (i) {
+                case 0: // bottom-left
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
+                    if (!edgeValue.equals(Resource.NULL)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
+                            availableCells.add(coordinateToCheck);
                         }
-                    case 1: // bottom-right
-                        coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                        if (!edgeValue.equals(Resource.NULL)) {
-                            if (!notAvailableCells.contains(coordinateToCheck)) {
-                                availableCells.add(coordinateToCheck);
-                            }
-                        } else {
-                            notAvailableCells.add(coordinateToCheck);
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    } break;
+                case 1: // bottom-right
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
+                    if (!edgeValue.equals(Resource.NULL)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
                         }
-                    case 2: // top-right
-                        coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                        if (!edgeValue.equals(Resource.NULL)) {
-                            if (!notAvailableCells.contains(coordinateToCheck)) {
-                                availableCells.add(coordinateToCheck);
-                            }
-                        } else {
-                            notAvailableCells.add(coordinateToCheck);
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    } break;
+                case 2: // top-right
+                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
+                    if (!edgeValue.equals(Resource.NULL)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
                         }
-                    case 3: // top-left
-                        coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                        if (!edgeValue.equals(Resource.NULL)) {
-                            if (!notAvailableCells.contains(coordinateToCheck)) {
-                                availableCells.add(coordinateToCheck);
-                            }
-                        } else {
-                            notAvailableCells.add(coordinateToCheck);
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    } break;
+
+                case 3: // top-left
+                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
+                    if (!edgeValue.equals(Resource.NULL)) {
+                        if (!notAvailableCells.contains(coordinateToCheck)) {
+                            availableCells.add(coordinateToCheck);
                         }
-                }
-                i++;
+                    } else {
+                        notAvailableCells.add(coordinateToCheck);
+                    } break;
             }
-            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
+            i++;
         }
     }
 

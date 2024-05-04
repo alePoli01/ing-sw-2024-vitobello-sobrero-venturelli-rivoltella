@@ -57,11 +57,13 @@ public class Controller implements GamePhase {
     }
 
     public void placeStartCard(Player player, boolean isFlipped) {
-        this.gameController.placeStartCard(player, isFlipped);
+        synchronized (this.gameController) {
+            this.gameController.placeStartCard(player, isFlipped);
+        }
     }
 
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, X, );
+        this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, X, Y);
     }
 
     public void drawCard(Player player, int deckIndex, int cardDeckIndex) {

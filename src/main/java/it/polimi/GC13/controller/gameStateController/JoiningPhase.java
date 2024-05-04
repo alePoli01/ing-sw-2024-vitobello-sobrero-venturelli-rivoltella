@@ -44,15 +44,9 @@ public class JoiningPhase implements GamePhase {
             throw new GenericException("Nickname: " + player.getNickname() + " was already choose");
         }
 
-
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
-            this.controller.getLobbyController().getStartedGameMap()
-                    .computeIfPresent(workingGame.getGameName(), (key, value) -> {
-                        // Add the entry to joinableGameMap
-                        this.controller.getLobbyController().getJoinableGameMap().put(key, value);
-                        // Remove the entry from startedGameMap by returning null
-                        return null;
-                    });
+            this.controller.getLobbyController().getStartedGameMap().put(workingGame.getGameName(), workingGame);
+            this.controller.getLobbyController().getJoinableGameMap().remove(workingGame.getGameName(), workingGame);
             player.getGame().getPlayerList()
                     .forEach(p -> System.out.println(p.getNickname() + " joined the game"));
             System.out.println(player.getGame().getObserver().listenerList.size());

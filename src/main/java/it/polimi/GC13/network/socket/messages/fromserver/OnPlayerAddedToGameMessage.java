@@ -23,6 +23,6 @@ public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNee
     @Override
     public void methodToCall(View view) {
         List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
-        view.tokenSetupPhase(this.connectedPlayers, tokenColorList, this.numPlayersNeeded);
+        view.chooseTokenSetupPhase(this.connectedPlayers, tokenColorList, this.numPlayersNeeded);
     }
 }

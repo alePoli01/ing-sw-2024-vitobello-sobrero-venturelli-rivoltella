@@ -23,12 +23,12 @@ public class DealingPhase implements GamePhase {
             game.dealPrivateObjectiveCards();
             game.setPlayersPosition();
         } catch (CardNotAddedToHandException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     public void chooseToken(Player player, TokenColor token) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.err.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
     // player chooses his objective card
@@ -46,16 +46,16 @@ public class DealingPhase implements GamePhase {
 
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
     @Override
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
     // CHECK that all players in the same game chose their own objective card
-    private boolean playersChoseObjectiveCard(Player player) {
+    private synchronized boolean playersChoseObjectiveCard(Player player) {
         for (Player p : player.getGame().getPlayerList()) {
             if (p.getPrivateObjectiveCard().size() == 2) {
                 System.out.println(p.getNickname() + " hasn't chosen objective card yet.");
@@ -66,10 +66,10 @@ public class DealingPhase implements GamePhase {
     }
 
     public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 }

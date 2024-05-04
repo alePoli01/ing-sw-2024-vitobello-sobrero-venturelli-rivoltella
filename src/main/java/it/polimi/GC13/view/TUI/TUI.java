@@ -164,7 +164,7 @@ public class TUI implements View {
         tokenSetupPhase to chose your token
      */
     @Override
-    public void tokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers) {
+    public void chooseTokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers) {
         String tokenColorChosen;
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
@@ -199,7 +199,7 @@ public class TUI implements View {
         startCardSetupPhase to chose which side to place your card
      */
     @Override
-    public void startCardSetupPhase(String playerNickname, TokenColor tokenColor) {
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.nickname)) {
             System.out.println("You chose " + tokenColor + " token\n");
             System.out.println("\n--- SETUP PHASE [2/2] ---");
@@ -227,8 +227,8 @@ public class TUI implements View {
         OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
-    public void onPositionedCard(String playerNickname, int startCardPlaced, boolean isFlipped) {
-        String message = playerNickname + " positioned " + startCardPlaced + " on " + (isFlipped ? "back" : "front");
+    public void onPlacedCard(String playerNickname, int cardPlaced, boolean isFlipped) {
+        String message = playerNickname + " positioned " + cardPlaced + " on " + (isFlipped ? "back" : "front");
         if (playerNickname.equals(this.nickname)) {
             System.out.println(message);
         } else {
@@ -336,24 +336,35 @@ public class TUI implements View {
         switch (this.choice) {
             case 1: {
                 this.printer.showHand(this.hand);
-                this.printer.comeBack();
             }
-            case 2: this.placeCard();
+            case 2: {
+                this.placeCard();
+            } break;
             case 3: {
                 this.printer.showObjectiveCard("\n--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
-                this.printer.comeBack();
+                break;
             }
             case 4: {
                 this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", this.serialPrivateObjectiveCard);
-                this.printer.comeBack();
+                break;
             }
-            case 5: // TO DO;
-            case 6: // TO DO;
-            case 7: // TO DO;
-            case 8: this.printer.showHistory(this.gamesLog);
-            case 9: System.out.println(this.playerPositions);
-            case 10: this.drawCard();
+            case 5: // TO DO; break;
+            case 6: // TO DO; break;
+            case 7: // TO DO; break;
+            case 8: {
+                this.printer.showHistory(this.gamesLog);
+                break;
+            }
+            case 9: {
+                System.out.println("Player's postion are:");
+                this.playerPositions.forEach((p, position) -> System.out.println(p + position));
+                break;
+            }
+            case 10:
+                this.drawCard();
+                break;
         }
+        this.printer.comeBack(this);
         this.choice = 0;
     }
 
@@ -373,7 +384,7 @@ public class TUI implements View {
     public void displayAvailableCells(Set<Coordinates> availableCells) {
         System.out.println("Available cells are: ");
         System.out.println(availableCells);
-        this.printer.comeBack();
+        this.printer.comeBack(this);
     }
 
     @Override
@@ -435,7 +446,7 @@ public class TUI implements View {
                     System.out.println("Choose hand index or press [0] to go back to HOME MENU: ");
                     cardToPlaceHandIndex = scanner.nextInt();
                     if (cardToPlaceHandIndex == 0) {
-                        this.printer.comeBack();
+                        this.printer.comeBack(this);
                     }
                 }
                 X = (scanner.nextInt());
@@ -445,10 +456,8 @@ public class TUI implements View {
                 System.out.print("Error: Please input valid numbers.");
             }
             this.virtualServer.placeCard(cardToPlaceHandIndex, isFlipped, X, Y);
-            this.showHomeMenu();
         } else {
             System.out.println("It's not your turn");
-            this.showHomeMenu();
         }
     }
 }

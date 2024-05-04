@@ -64,7 +64,7 @@ public class MidPhase implements GamePhase {
                     player.getGame().setLastRound(player);
                 }
             }
-        } catch (CardNotPlacedException | CardStillOnHandException e) {
+        } catch (GenericException | CardStillOnHandException e) {
             System.err.println(e.getMessage());
         }
     }
