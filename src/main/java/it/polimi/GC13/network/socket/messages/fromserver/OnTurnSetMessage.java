@@ -21,6 +21,6 @@ public record OnTurnSetMessage(Map<String, Position> playerPositions) implements
 
     @Override
     public void methodToCall(View view) {
-        view.displayTurns(this.playerPositions);
+        view.setPlayersOrder(this.playerPositions);
     }
 }

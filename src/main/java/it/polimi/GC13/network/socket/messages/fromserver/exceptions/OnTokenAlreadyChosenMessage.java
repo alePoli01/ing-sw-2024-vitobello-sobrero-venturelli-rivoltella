@@ -35,7 +35,7 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
 
     @Override
     public void methodToRecall(View TUI) {
-        TUI.chooseTokenSetupPhase(0, availableTokenColors,0);
+        TUI.chooseTokenSetupPhase(0, 0, availableTokenColors);
     }
 
     @Override

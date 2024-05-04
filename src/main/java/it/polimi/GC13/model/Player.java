@@ -4,7 +4,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.network.socket.messages.fromserver.OnChoosePrivateObjectiveCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTokenColorChooseMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTurnUpdateMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
@@ -57,7 +57,7 @@ public class Player implements Serializable {
                 this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList));
                 throw new GenericException(tokenColor + " already chose");
             }
-            this.game.getObserver().notifyClients(new OnTokenChoiceMessage(this.getNickname(), this.tokenColor));
+            this.game.getObserver().notifyClients(new OnTokenColorChooseMessage(this.getNickname(), this.tokenColor));
         }
     }
 
@@ -151,14 +151,14 @@ public class Player implements Serializable {
     }
 
     // chose private objective card for the game
-    public void setPrivateObjectiveCard(int indexPrivateObjectiveCard) throws GenericException {
+    public void setPrivateObjectiveCard(int indexPrivateObjectiveCard, int readyPlayers) throws GenericException {
         if (this.privateObjectiveCard.size() == 2) {
             if (indexPrivateObjectiveCard == 0) {
                 this.privateObjectiveCard.removeLast();
             } else {
                 this.privateObjectiveCard.removeFirst();
             }
-            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, indexPrivateObjectiveCard));
+            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, indexPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
         } else {
             throw new GenericException("Private objective already chose");
         }

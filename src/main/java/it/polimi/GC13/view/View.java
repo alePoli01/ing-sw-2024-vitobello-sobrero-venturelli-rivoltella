@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface View {
 
-    void chooseTokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers);
+    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList);
 
     void handUpdate(String playerNickname, int[] availableCard);
 
@@ -31,7 +31,7 @@ public interface View {
 
     void onPlacedCard(String playerNickname, int startCardPlaced, boolean isFlipped);
 
-    void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard);
+    void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
     void drawCard();
 
@@ -39,7 +39,7 @@ public interface View {
 
     void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage);
 
-    void displayTurns(Map<String, Position> playerPositions);
+    void setPlayersOrder(Map<String, Position> playerPositions);
 
     void updateTurn(String playerNickname, boolean turn);
 

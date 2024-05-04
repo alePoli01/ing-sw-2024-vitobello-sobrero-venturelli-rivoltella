@@ -163,7 +163,7 @@ public class TUI implements View {
         tokenSetupPhase to chose your token
      */
     @Override
-    public void chooseTokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers) {
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
         String tokenColorChosen;
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
@@ -200,7 +200,7 @@ public class TUI implements View {
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.nickname)) {
-            System.out.println("You chose " + tokenColor + " token\n");
+            System.out.println("You choose " + tokenColor + " token\n");
             System.out.println("\n--- SETUP PHASE [2/2] ---");
             System.out.println("\n--- START CARD ---\n");
             this.printer.showHand(this.hand);
@@ -216,7 +216,7 @@ public class TUI implements View {
             this.virtualServer.placeStartCard(this.choice != 1);
             this.choice = 0;
         } else {
-            this.gamesLog.add(playerNickname + " chose " + tokenColor + " token\n");
+            this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
         }
 
     }
@@ -269,13 +269,14 @@ public class TUI implements View {
         NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
      */
     @Override
-    public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard) {
-        if (playerNickname.equals(this.nickname)) {
-            this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
-            System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
-            /*
-                TODO we can add the waiting List
-             */
+    public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
+        if (readyPlayers == neededPlayers) {
+            if (playerNickname.equals(this.nickname)) {
+                this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
+                System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
+            }
+        } else {
+            System.out.println("--|players that choose objective card: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
@@ -285,28 +286,35 @@ public class TUI implements View {
     @Override
     public void drawCard() {
         this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardAvailable);
-        try {
-            int deck;
-            do {
-                System.out.print("Choose the deck from where to withdraw the card.\n[1] GOLD [2] RESOURCE: ");
-                deck = Integer.parseInt(reader.readLine());
-            } while (deck < 1 || deck > 2);
-            do {
-                if (deck == 1) {
-                    System.out.print("Available serial numbers from GOLD DECK are:");
-                    this.goldCardsAvailable.forEach(serial -> System.out.print(" " + serial));
-                } else {
-                    System.out.print("Available serial numbers from RESOURCE DECK are:");
-                    this.resourceCardAvailable.forEach(serial -> System.out.print(" " + serial));
-                }
-                System.out.print("\nYour choice: ");
-                this.choice = Integer.parseInt(this.reader.readLine());
-                this.virtualServer.drawCard(deck, choice);
-            } while (deck == 1 ? this.goldCardsAvailable.contains(this.choice) : this.resourceCardAvailable.contains(this.choice));
-            this.choice = 0;
-            this.turnPlayed++;
-        } catch (IOException | NumberFormatException e) {
-            System.out.println("Error: Please put a number");
+        if (this.turn && this.hand.size() == 2) {
+            try {
+                int deck;
+                do {
+                    System.out.print("Choose the deck from where to withdraw the card.\n[1] GOLD [2] RESOURCE: ");
+                    deck = Integer.parseInt(reader.readLine());
+                } while (deck < 1 || deck > 2);
+                do {
+                    if (deck == 1) {
+                        System.out.print("Available serial numbers from GOLD DECK are:");
+                        this.goldCardsAvailable.forEach(serial -> System.out.print(" " + serial));
+                    } else {
+                        System.out.print("Available serial numbers from RESOURCE DECK are:");
+                        this.resourceCardAvailable.forEach(serial -> System.out.print(" " + serial));
+                    }
+                    System.out.print("\nYour choice: ");
+                    this.choice = Integer.parseInt(this.reader.readLine());
+                    this.virtualServer.drawCard(deck, choice);
+                } while (deck == 1 ? this.goldCardsAvailable.contains(this.choice) : this.resourceCardAvailable.contains(this.choice));
+                this.choice = 0;
+                this.turnPlayed++;
+                System.out.println("You have passed the turn");
+                this.showHomeMenu();
+            } catch (IOException | NumberFormatException e) {
+                System.out.println("Error: Please put a number");
+            }
+        } else {
+            System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
+            this.printer.comeBack(this);
         }
     }
 
@@ -316,6 +324,11 @@ public class TUI implements View {
     @Override
     public void showHomeMenu() {
         System.out.println("\n--- HOME MENU ---");
+        if (this.turn) {
+            System.out.println("It's your turn");
+        } else {
+            System.out.println("It's not your turn");
+        }
         System.out.println("\t[1] to view your hand");
         System.out.println("\t[2] to place a card (only when in turn)");
         System.out.println("\t[3] to view common objective card");
@@ -336,10 +349,12 @@ public class TUI implements View {
         switch (this.choice) {
             case 1: {
                 this.printer.showHand(this.hand);
+                break;
             }
             case 2: {
                 this.placeCard();
-            } break;
+                break;
+            }
             case 3: {
                 this.printer.showObjectiveCard("\n--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
                 break;
@@ -348,9 +363,18 @@ public class TUI implements View {
                 this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", this.serialPrivateObjectiveCard);
                 break;
             }
-            case 5: // TO DO; break;
-            case 6: // TO DO; break;
-            case 7: // TO DO; break;
+            case 5: {
+                System.out.println("Nothing yet");
+                break;
+            }
+            case 6: {
+                System.out.println("To implement");
+                break;
+            }
+            case 7: {
+                System.out.println("To do");
+                break;
+            }
             case 8: {
                 this.printer.showHistory(this.gamesLog);
                 break;
@@ -397,8 +421,11 @@ public class TUI implements View {
 
     }
 
+    /*
+        METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
+     */
     @Override
-    public void displayTurns(Map<String, Position> playerPositions) {
+    public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
     }
 
@@ -410,11 +437,6 @@ public class TUI implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.turn = turn;
-            if (this.turn) {
-                System.out.println("\nIt's your turn");
-            } else {
-                System.out.println("\nYou passed the turn");
-            }
         } else if (turn) {
             this.gamesLog.add("\nIt's" + playerNickname + "'s turn");
         } else {

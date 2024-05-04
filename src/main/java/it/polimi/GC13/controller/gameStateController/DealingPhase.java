@@ -9,6 +9,7 @@ import it.polimi.GC13.network.ClientInterface;
 
 public class DealingPhase implements GamePhase {
     private final Controller controller;
+    private int readyPlayers = 0;
 
     public DealingPhase(Controller controller) {
         this.controller = controller;
@@ -34,7 +35,8 @@ public class DealingPhase implements GamePhase {
     // player chooses his objective card
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         try {
-            player.setPrivateObjectiveCard(indexPrivateObjectiveCard);
+            this.readyPlayers++;
+            player.setPrivateObjectiveCard(indexPrivateObjectiveCard, readyPlayers);
             if (this.playersChoseObjectiveCard(player)) {
                 this.controller.getGame().setGameState(GameState.MID);
                 this.controller.updateController(new MidPhase(this.controller));

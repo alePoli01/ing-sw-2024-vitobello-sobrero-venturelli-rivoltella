@@ -9,7 +9,6 @@ import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNotEnoughR
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -72,8 +71,8 @@ public class Board implements Serializable {
                 .orElse(null);
 
         if (xy == null) {
-            owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
-            throw new GenericException("Forbidden cell " + X + Y);
+            this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
+            throw new GenericException("Forbidden cell " + X + ", " + Y);
         }
         return xy;
     }
