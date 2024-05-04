@@ -44,8 +44,10 @@ public class Controller implements GamePhase {
     }
 
     public void updateController(GamePhase newGameController) {
-        this.gameController = newGameController;
-        System.out.println("Controller updated to " + newGameController.getClass());
+        synchronized (this) {
+            this.gameController = newGameController;
+            System.out.println("Controller updated to " + newGameController.getClass());
+        }
     }
 
     public void chooseToken(Player player, TokenColor token) {
@@ -57,9 +59,7 @@ public class Controller implements GamePhase {
     }
 
     public void placeStartCard(Player player, boolean isFlipped) {
-        synchronized (this.gameController) {
-            this.gameController.placeStartCard(player, isFlipped);
-        }
+        this.gameController.placeStartCard(player, isFlipped);
     }
 
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {

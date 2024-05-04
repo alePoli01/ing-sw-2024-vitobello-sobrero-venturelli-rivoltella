@@ -4,7 +4,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnNewGoldCardsAvailableMessage(int ... goldCardSerial) implements MessagesFromServer {
+public record OnNewGoldCardsAvailableMessage(int[] goldCardSerial) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {

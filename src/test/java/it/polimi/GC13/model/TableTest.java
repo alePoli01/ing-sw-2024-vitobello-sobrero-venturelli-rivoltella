@@ -2,6 +2,7 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardNotFoundException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.exception.NoCardsLeftException;
 import junit.framework.TestCase;
 
@@ -94,12 +95,12 @@ public class TableTest extends TestCase {
         for (int i = 0; i < 3; i++) {
             try {
                 table.getNewCard(resourceCard);
-            } catch (NoCardsLeftException e) {
+            } catch (GenericException e) {
                 fail(e.getMessage());
             }
             try {
                 table.getNewCard(goldCard);
-            } catch (NoCardsLeftException e) {
+            } catch (GenericException e) {
                 fail(e.getMessage());
             }
         }
@@ -110,14 +111,14 @@ public class TableTest extends TestCase {
         for (int i = 0; i < 80; i++) {
             try {
                 table.getNewCard(resourceCard);
-            } catch (NoCardsLeftException e) {
+            } catch (GenericException e) {
               fail(e.getMessage());
             }
         }
         try {
             table.getNewCard(resourceCard);
             fail("Exception wasn't thrown, there shouldn't be any card left in both decks");
-        } catch (NoCardsLeftException e) {
+        } catch (GenericException e) {
            e.getMessage();
         }
 

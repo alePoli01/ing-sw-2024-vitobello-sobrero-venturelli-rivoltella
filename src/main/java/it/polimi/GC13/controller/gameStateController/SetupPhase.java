@@ -43,7 +43,7 @@ public class SetupPhase implements GamePhase {
     }
 
     // check that all players in the same game positioned the start card
-    private boolean playersPlacedStartCard(Player player) {
+    private synchronized boolean playersPlacedStartCard(Player player) {
         System.out.println("checking place cards...");
         for (Player p : player.getGame().getPlayerList()) {
             if (!p.getBoard().containsKeyOfValue(50, 50)) {

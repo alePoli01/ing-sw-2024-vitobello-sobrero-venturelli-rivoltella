@@ -84,7 +84,7 @@ public class MidPhase implements GamePhase {
                 this.controller.updateController(new EndPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.END);
             }
-        } catch (NotMyTurnException | CardNotFoundException | CardNotAddedToHandException | NoCardsLeftException e) {
+        } catch (NotMyTurnException | GenericException | CardNotAddedToHandException e) {
             System.out.println(e.getMessage());
         }
     }

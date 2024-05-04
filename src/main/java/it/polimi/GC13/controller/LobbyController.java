@@ -79,7 +79,7 @@ public class LobbyController implements LostConnectionToClientInterface {
      */
     public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) {
         Game workingGame;
-        if (this.startedGameMap.containsKey(gameName)) {
+        if (this.startedGameMap.containsKey(gameName) | this.joinableGameMap.containsKey(gameName)) {
             client.sendMessage(new OnGameNameAlreadyTakenMessage(playerNickname, gameName));
         } else {
             workingGame = new Game(playersNumber, gameName);

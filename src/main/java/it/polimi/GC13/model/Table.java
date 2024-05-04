@@ -2,9 +2,7 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.CardType;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.CardNotFoundException;
-import it.polimi.GC13.exception.NoCardsLeftException;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnNewGoldCardsAvailableMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnNewResourceCardsAvailableMessage;
 
@@ -20,6 +18,8 @@ public class Table implements Serializable {
     private PlayableCard resourceFacedDown; //resource card on the top of the deck
     private PlayableCard goldFacedDown;//gold card on the top of the deck
     private final ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
+    private final int[] goldCardSerial =  new int[3];
+    private final int[] resourceCardSerial = new int[3];
     private final Deck deck;
     private final ArrayList<TokenColor> tokenColors;
     private final Map<Player, Board> playerBoardMap;
@@ -48,7 +48,7 @@ public class Table implements Serializable {
             this.score[index]= score;
         }*/
 
-    public PlayableCard getCard(int serialNumber) {
+    public PlayableCard getCard(int serialNumber) throws GenericException {
         // Check resource cards faced up
         for (PlayableCard card : resourceFacedUp) {
             if (card.serialNumber == serialNumber) {
@@ -66,9 +66,10 @@ public class Table implements Serializable {
         // Check resource card faced down
         if (resourceFacedDown != null && resourceFacedDown.serialNumber == serialNumber) {
             return resourceFacedDown;
-        } else {
-            System.out.println("Potrebbe essere sbagliata");
+        } else if (goldFacedDown != null && goldFacedDown.serialNumber == serialNumber) {
             return goldFacedDown;
+        } else {
+            throw new GenericException("Card not found");
         }
     }
 
@@ -109,12 +110,17 @@ public class Table implements Serializable {
         for (int i = 0; i < 2; i++) {
             this.resourceFacedUp[i] = this.deck.getResourceDeck().removeFirst();
             this.goldFacedUp[i] = this.deck.getGoldDeck().removeFirst();
+            this.goldCardSerial[i] = this.goldFacedUp[i].serialNumber;
+            this.resourceCardSerial[i] = this.resourceFacedUp[i].serialNumber;
         }
-        this.resourceFacedDown = this.deck.getResourceDeck().removeFirst();
-        this.goldFacedDown = this.deck.getGoldDeck().removeFirst();
+        this.resourceFacedDown = this.deck.getResourceDeck().getFirst();
+        this.goldFacedDown = this.deck.getGoldDeck().getFirst();
 
-        this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(this.goldFacedDown.serialNumber, this.goldFacedUp[0].serialNumber, this.goldFacedUp[1].serialNumber));
-        this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(this.resourceFacedDown.serialNumber, this.resourceFacedUp[0].serialNumber, this.resourceFacedUp[1].serialNumber));
+        this.goldCardSerial[2] = this.goldFacedDown.serialNumber;
+        this.resourceCardSerial[2] = this.resourceFacedDown.serialNumber;
+
+        this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(this.goldCardSerial));
+        this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(this.resourceCardSerial));
     }
 
     public int setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
@@ -123,7 +129,7 @@ public class Table implements Serializable {
     }
 
     //method to pick(remove) a card from the table
-    public void drawCard(PlayableCard cardToDraw) throws CardNotFoundException, CardNotAddedToHandException {
+    public void drawCard(PlayableCard cardToDraw) throws GenericException {
         /*
          * 1. check which type of card has been chosen
          * 2. check every possible position in which it can be
@@ -137,7 +143,7 @@ public class Table implements Serializable {
             } else if (cardToDraw.equals(goldFacedDown)) {
                 goldFacedDown = null;
             } else {
-                throw new CardNotFoundException(cardToDraw);
+                throw new GenericException("Card drawn wasn't found between the drawable: " + cardToDraw.serialNumber);
             }
         } else {
             // cardToDraw if of type RESOURCE
@@ -149,14 +155,14 @@ public class Table implements Serializable {
                 } else if (cardToDraw.equals(resourceFacedDown)) {
                     resourceFacedDown = null;
                 } else {
-                    throw new CardNotFoundException(cardToDraw);
+                    throw new GenericException("Card drawn wasn't found between the drawable: " + cardToDraw.serialNumber);
                 }
             }
         }
     }
 
     // updates the drawn card on the table
-    public void getNewCard(PlayableCard cardToReplace) throws NoCardsLeftException {
+    public void getNewCard(PlayableCard cardToReplace) throws GenericException {
         /*
          * 1. check if both decks are empty, if true there's nothing to be done (else branch)
          * 2. check which type of card needs to be replaced
@@ -169,47 +175,75 @@ public class Table implements Serializable {
             if (cardToReplace.cardType.equals(CardType.GOLD)) {
                 if (!deck.getGoldDeck().isEmpty()) {
                     //the gold card is drawn from the gold deck
-                    if (goldFacedUp[0] == null) {
-                        goldFacedUp[0] = deck.getGoldDeck().removeFirst();
-                    } else if (goldFacedUp[1] == null) {
-                        goldFacedUp[1] = deck.getGoldDeck().removeFirst();
+                    if (this.goldFacedUp[0] == null) {
+                        this.goldFacedUp[0] = this.goldFacedDown;
+                        this.goldCardSerial[0] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.goldFacedDown = this.deck.getGoldDeck().getFirst();
+                    } else if (this.goldFacedUp[1] == null) {
+                        this.goldFacedUp[1] = this.goldFacedDown;
+                        this.goldCardSerial[1] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.goldFacedDown = this.deck.getGoldDeck().getFirst();
                     } else {
-                        goldFacedDown = deck.getGoldDeck().removeFirst();
+                        this.goldFacedDown = deck.getGoldDeck().getFirst();
+                        this.goldCardSerial[2] = this.goldFacedDown.serialNumber;
                     }
                 } else {
                     //the gold card is drawn from the resource deck
-                    if (goldFacedUp[0] == null) {
-                        goldFacedUp[0] = deck.getResourceDeck().removeFirst();
-                    } else if (goldFacedUp[1] == null) {
-                        goldFacedUp[1] = deck.getResourceDeck().removeFirst();
+                    if (this.goldFacedUp[0] == null) {
+                        this.goldFacedUp[0] = this.goldFacedDown;
+                        this.goldFacedDown = this.deck.getResourceDeck().getFirst();
+                        this.goldCardSerial[0] = this.goldFacedUp[0].serialNumber;
+                    } else if (this.goldFacedUp[1] == null) {
+                        this.goldFacedUp[1] = this.goldFacedDown;
+                        this.goldFacedDown = this.deck.getResourceDeck().getFirst();
+                        this.goldCardSerial[1] = this.goldFacedUp[0].serialNumber;
                     } else {
-                        goldFacedDown = deck.getResourceDeck().removeFirst();
+                        this.goldFacedDown = deck.getResourceDeck().getFirst();
+                        this.goldCardSerial[2] = this.resourceFacedDown.serialNumber;
                     }
                 }
             } else {
                 //cardToReplace is RESOURCE
                 if (!deck.getResourceDeck().isEmpty()) {
                     //the resource card is drawn from the resource deck
-                    if (resourceFacedUp[0] == null) {
-                        resourceFacedUp[0] = deck.getResourceDeck().removeFirst();
+                    if (this.resourceFacedUp[0] == null) {
+                        this.resourceFacedUp[0] = this.resourceFacedDown;
+                        this.resourceCardSerial[0] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.resourceFacedDown = this.deck.getResourceDeck().getFirst();
                     } else if (resourceFacedUp[1] == null) {
-                        resourceFacedUp[1] = deck.getResourceDeck().removeFirst();
+                        this.resourceFacedUp[0] = this.goldFacedDown;
+                        this.resourceCardSerial[0] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.resourceFacedDown = this.deck.getResourceDeck().getFirst();
                     } else {
-                        resourceFacedDown = deck.getResourceDeck().removeFirst();
+                        this.resourceFacedDown = deck.getResourceDeck().getFirst();
+                        this.resourceCardSerial[2] = this.resourceFacedDown.serialNumber;
                     }
                 } else {
                     //the resource card is drawn from the gold deck
-                    if (resourceFacedUp[0] == null) {
-                        resourceFacedUp[0] = deck.getGoldDeck().removeFirst();
+                    if (this.resourceFacedUp[0] == null) {
+                        this.resourceFacedUp[0] = this.goldFacedDown;
+                        this.resourceCardSerial[0] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.resourceFacedDown = this.deck.getGoldDeck().getFirst();
                     } else if (resourceFacedUp[1] == null) {
-                        resourceFacedUp[1] = deck.getGoldDeck().removeFirst();
+                        this.resourceFacedUp[1] = this.goldFacedDown;
+                        this.resourceCardSerial[1] = this.goldFacedUp[0].serialNumber;
+                        // update first card
+                        this.resourceFacedDown = this.deck.getGoldDeck().getFirst();
                     } else {
-                        resourceFacedDown = deck.getGoldDeck().removeFirst();
+                        this.resourceFacedDown = this.deck.getGoldDeck().getFirst();
+                        this.resourceCardSerial[2] = this.goldFacedDown.serialNumber;
                     }
                 }
             }
+            this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(this.goldCardSerial));
+            this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(this.resourceCardSerial));
         } else {
-            throw new NoCardsLeftException("Every ");
+            throw new GenericException("Both decks are empty ");
         }
     }
 

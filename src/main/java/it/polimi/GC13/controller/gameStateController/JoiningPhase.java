@@ -47,9 +47,9 @@ public class JoiningPhase implements GamePhase {
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {
             this.controller.getLobbyController().getStartedGameMap().put(workingGame.getGameName(), workingGame);
             this.controller.getLobbyController().getJoinableGameMap().remove(workingGame.getGameName(), workingGame);
-            player.getGame().getPlayerList()
+            /*player.getGame().getPlayerList()
                     .forEach(p -> System.out.println(p.getNickname() + " joined the game"));
-            System.out.println(player.getGame().getObserver().listenerList.size());
+           System.out.println(player.getGame().getObserver().listenerList.size()); */
             workingGame.setGameState(GameState.SETUP);
             this.controller.updateController(new SetupPhase(this.controller));
         }

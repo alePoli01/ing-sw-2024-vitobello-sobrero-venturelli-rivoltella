@@ -45,17 +45,21 @@ public class TUI implements View {
     }
 
     @Override
-    public void updateGoldCardsAvailable(int... goldCardSerial) {
-        for (int i = 0; i < goldCardsAvailable.size(); i++) {
+    public void updateGoldCardsAvailable(int[] goldCardSerial) {
+        System.out.println("Updating Gold Cards Available");
+        for (int i = 0; i < this.goldCardsAvailable.size(); i++) {
             this.goldCardsAvailable.add(i, goldCardSerial[i]);
         }
+        this.goldCardsAvailable.forEach(serialCard -> System.out.println("Gold Card: " + serialCard));
     }
 
     @Override
-    public void updateResourceCardsAvailable(int... resourceFacedUpSerial) {
-        for (int i = 0; i < resourceCardAvailable.size(); i++) {
+    public void updateResourceCardsAvailable(int[] resourceFacedUpSerial) {
+        System.out.println("Updating Resource Cards Available");
+        for (int i = 0; i < this.resourceCardAvailable.size(); i++) {
             this.resourceCardAvailable.add(i, resourceFacedUpSerial[i]);
         }
+        this.resourceCardAvailable.forEach(serialCard -> System.out.println("Resource Card: " + serialCard));
     }
 
     @Override
@@ -275,8 +279,8 @@ public class TUI implements View {
                 this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
                 System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
             }
-        } else {
-            System.out.println("--|players that choose objective card: " + readyPlayers + "/" + neededPlayers);
+        } else if (this.serialPrivateObjectiveCard != 0) {
+            System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
