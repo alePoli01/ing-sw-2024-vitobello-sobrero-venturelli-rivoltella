@@ -29,7 +29,7 @@ public class Printer {
     */
     public void showHistory(List<String> gamesLog) {
         System.out.println("\n--- HISTORY ---");
-        System.out.println(gamesLog);
+        gamesLog.forEach(log -> System.out.println(log + ";"));
     }
 
     /*

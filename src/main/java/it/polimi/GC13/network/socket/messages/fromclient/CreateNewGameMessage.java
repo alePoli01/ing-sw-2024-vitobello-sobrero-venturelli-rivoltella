@@ -7,10 +7,10 @@ import it.polimi.GC13.network.ClientInterface;
 
 //  implements ServerMessage because the interface has the dispatch method
 
-public record AddPlayerToGameMessage(String playerNickname, String gameName) implements MessagesFromClient {
+public record CreateNewGameMessage(String playerNickname, int numOfPlayers, String gameName) implements MessagesFromClient {
 
     @Override
     public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
-        lobbyController.addPlayerToGame(client, this.playerNickname(), this.gameName());
+        lobbyController.createNewGame(client, this.playerNickname(), this.numOfPlayers(), this.gameName());
     }
 }

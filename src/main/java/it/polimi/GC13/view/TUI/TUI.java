@@ -111,13 +111,13 @@ public class TUI implements View {
 
     private void createNewGame() throws IOException {
         /*
-        create and send message for a new game
+            create and send message for a new game
          */
         String gameName;
         int playersNumber = -1;
 
         //asking for all the contents of the message
-        System.out.print("Choose a nickname: ");
+        System.out.print("Choose your nickname: ");
         this.nickname = this.reader.readLine();
 
         System.out.print("Choose a name for the new Game: ");
@@ -136,26 +136,25 @@ public class TUI implements View {
         } while (playersNumber < 2 || playersNumber > 4);
 
         //massage is ready to be sent
-        virtualServer.addPlayerToGame(this.nickname, playersNumber, gameName);
+        virtualServer.createNewGame(this.nickname, playersNumber, gameName);
         System.out.println("++Sent: addPlayerToGame");
     }
 
     private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException {
         String gameName;
-        int playersNumber = -1;
 
-        System.out.print("Choose a nickname: ");
+        System.out.print("Choose your nickname: ");
         this.nickname = this.reader.readLine();
 
         System.out.println("Joinable Games:");
-        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game:[" + string + "] --|players in waiting room: " + numCurrPlayer +"|"));
+        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game: [" + string + "] --|players in waiting room: " + numCurrPlayer +"|"));
         do {
             System.out.print("Select the game to join using its name: ");
             gameName = this.reader.readLine();
         } while (!gameNameWaitingPlayersMap.containsKey(gameName));
 
         //massage is ready to be sent
-        virtualServer.addPlayerToGame(this.nickname, playersNumber, gameName);
+        this.virtualServer.addPlayerToGame(this.nickname, gameName);
         System.out.println("++Sent: addPlayerToGame");
     }
 
@@ -305,6 +304,7 @@ public class TUI implements View {
                 this.virtualServer.drawCard(deck, choice);
             } while (deck == 1 ? this.goldCardsAvailable.contains(this.choice) : this.resourceCardAvailable.contains(this.choice));
             this.choice = 0;
+            this.turnPlayed++;
         } catch (IOException | NumberFormatException e) {
             System.out.println("Error: Please put a number");
         }
@@ -356,7 +356,7 @@ public class TUI implements View {
                 break;
             }
             case 9: {
-                System.out.println("Player's postion are:");
+                System.out.println("Player's position are:");
                 this.playerPositions.forEach((p, position) -> System.out.println(p + position));
                 break;
             }
@@ -372,7 +372,7 @@ public class TUI implements View {
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
-            System.out.println("Sono a rilanciare");
+            System.out.println("Launching an exception");
             System.out.println(onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
         } else {
@@ -437,7 +437,7 @@ public class TUI implements View {
             boolean isFlipped = false;
             this.printer.showHand(this.hand);
             System.out.println("Enter hand index [1 -> 3], X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
-            System.out.println("example: 1 (for index), 50 (for X), 49 (for Y) , 1 (for side)");
+            System.out.println("example: 1 (for index), 51 (for X), 51 (for Y), 1 (for side)");
             Scanner scanner = new Scanner(System.in);
             try {
                 cardToPlaceHandIndex = scanner.nextInt();

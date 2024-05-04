@@ -50,8 +50,14 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public synchronized void addPlayerToGame(String playerNickname, int numOfPlayers, String gameName) {
-        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(playerNickname, numOfPlayers, gameName);
+    public synchronized void createNewGame(String playerNickname, int numOfPlayers, String gameName) {
+        CreateNewGameMessage createNewGameMessage = new CreateNewGameMessage(playerNickname, numOfPlayers, gameName);
+        this.sendMessage(createNewGameMessage);
+    }
+
+    @Override
+    public synchronized void addPlayerToGame(String playerNickname, String gameName) {
+        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(playerNickname, gameName);
         this.sendMessage(addPlayerToGameMessage);
     }
 

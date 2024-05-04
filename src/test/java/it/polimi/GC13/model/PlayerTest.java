@@ -6,6 +6,7 @@ import it.polimi.GC13.enums.PointsCondition;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.CardStillOnHandException;
+import it.polimi.GC13.exception.GenericException;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class PlayerTest extends TestCase {
             fail(e.getMessage());
         }
     }
-    public void testHandUpdate(){
+    public void testHandUpdate() {
         //test if card is deleted from hand
         try{// first add a card to the hand then remove it
             player.addToHand(card);
@@ -46,7 +47,7 @@ public class PlayerTest extends TestCase {
             player.handUpdate(card);
             assertEquals(true,player.getHand().isEmpty());
         }
-        catch(CardStillOnHandException e){
+        catch(GenericException e){
             fail(e.getMessage());
         }
 

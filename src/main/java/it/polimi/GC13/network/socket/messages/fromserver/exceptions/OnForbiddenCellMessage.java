@@ -14,8 +14,8 @@ public class OnForbiddenCellMessage implements OnInputExceptionMessage {
     private final Set<Coordinates> availableCells = new HashSet<>();
     private final String playerNickname;
 
-    public OnForbiddenCellMessage(String playerNickname, Coordinates coordinates, Set<Coordinates> availableCells) {
-        errorMessage = "It's not possible to place cards in: " + coordinates.getX() + ", " + coordinates.getY();
+    public OnForbiddenCellMessage(String playerNickname, int X, int Y, Set<Coordinates> availableCells) {
+        errorMessage = "It's not possible to place cards in: (%s, %s)" + X + Y;
         this.availableCells.addAll(availableCells);
         this.playerNickname = playerNickname;
     }

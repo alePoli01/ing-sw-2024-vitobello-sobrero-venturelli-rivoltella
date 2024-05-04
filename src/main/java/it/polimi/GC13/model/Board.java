@@ -1,7 +1,6 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.*;
-import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
@@ -10,33 +9,33 @@ import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNotEnoughR
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Board implements Serializable {
-    private Map<Coordinates, Cell> boardMap;
+    private final Map<Coordinates, Cell> boardMap = new HashMap<>();
     private final Player owner;               //owner of the board
-    private int playerScore;
-    private final EnumMap<Resource, Integer> collectedResources;     //counter for each type of object present on the board
-    private final Set<Coordinates> availableCells;
-    private final Set<Coordinates> notAvailableCells;
+    private int playerScore = 0;
+    private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);;     //counter for each type of object present on the board
+    private final Set<Coordinates> availableCells = new HashSet<>();
+    private final Set<Coordinates> notAvailableCells = new HashSet<>();   // -> used to not add available cell
 
     //initialize all the values to zero
     public Board(Player owner) {
         this.owner = owner;
-        this.playerScore = 0;
-        this.boardMap=new HashMap<>();
         // populate map with 0 for each reign and object
-        collectedResources = new EnumMap<>(Resource.class);
         for (Resource resource : Resource.values()) {
             if (resource.isObject() || resource.isReign()) {
                 collectedResources.put(resource, 0);
             }
         }
-        availableCells = new HashSet<>();
-        notAvailableCells = new HashSet<>();
     }
 
     public Map<Coordinates, Cell> getBoardMap() {
         return boardMap;
+    }
+
+    public Set<Coordinates> getAvailableCells() {
+        return this.availableCells;
     }
 
     public int getPlayerScore() {
@@ -66,10 +65,17 @@ public class Board implements Serializable {
     }
 
     // call from the controller to verify it is possible to place the selected card
-    public void isPossibleToPlace (Coordinates coordinates) {
-        if (notAvailableCells.contains(coordinates)) {
-            this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(this.owner.getNickname(), coordinates, this.availableCells));
+    public Coordinates isPossibleToPlace(int X, int Y) throws GenericException {
+        Coordinates xy = availableCells.stream()
+                .filter(coordinates -> coordinates.getX() == X && coordinates.getY() == Y)
+                .findFirst()
+                .orElse(null);
+
+        if (xy == null) {
+            owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
+            throw new GenericException("Forbidden cell " + X + Y);
         }
+        return xy;
     }
 
     public void addStartCardToBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
@@ -79,8 +85,10 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         } else {
+            this.owner.getHand().remove(cardToPlace);
             this.owner.getGame().getObserver().notifyClients(new OnPlaceStartCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
         }
+        this.updateAvailableCells(cardToPlace, xy);
     }
 
     // add card to the board
@@ -90,55 +98,29 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-        this.updateAvailableAndNotCells(cardToPlace, xy);
-
+        this.owner.getHand().remove(cardToPlace);
+        this.updateAvailableCells(cardToPlace, xy);
         this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
     }
 
     // updates notAvailableCells and availableCells sets
-    private void updateAvailableAndNotCells(PlayableCard cardPlaced, Coordinates xy) {
-        int i = 0;
-        // updates notAvailableCells and availableCells sets
-        for (Resource edgeValue : cardPlaced.edgeResource) {
-            Coordinates coordinateToCheck;
-            switch (i) {
-                case 0: // bottom-left
-                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() - 1);
-                    if (!edgeValue.equals(Resource.NULL)) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {  // if the coordinate isn't blocked by other cards, it is added to the availableCell set
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    } break;
-                case 1: // bottom-right
-                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() - 1);
-                    if (!edgeValue.equals(Resource.NULL)) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    } break;
-                case 2: // top-right
-                    coordinateToCheck = new Coordinates(xy.getX() + 1, xy.getY() + 1);
-                    if (!edgeValue.equals(Resource.NULL)) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    } break;
+    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy) {
+        List<Coordinates> offset = new LinkedList<>();
+        offset.add(new Coordinates(-1, -1));
+        offset.add(new Coordinates(1, -1));
+        offset.add(new Coordinates(1, 1));
+        offset.add(new Coordinates(-1, 1));
 
-                case 3: // top-left
-                    coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
-                    if (!edgeValue.equals(Resource.NULL)) {
-                        if (!notAvailableCells.contains(coordinateToCheck)) {
-                            availableCells.add(coordinateToCheck);
-                        }
-                    } else {
-                        notAvailableCells.add(coordinateToCheck);
-                    } break;
+        int i = 0;
+
+        while (i < cardPlaced.edgeResource.length) {
+            Resource resource = cardPlaced.edgeResource[i];
+            Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
+            if (resource != Resource.NULL && !notAvailableCells.contains(coordinatesToCheck)) {
+                this.availableCells.add(coordinatesToCheck);
+                System.out.println("New available coordinates: (" + coordinatesToCheck.getX() + ", " + coordinatesToCheck.getY() + ")");
+            } else {
+                notAvailableCells.add(coordinatesToCheck);
             }
             i++;
         }

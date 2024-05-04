@@ -21,32 +21,24 @@ public class MidPhase implements GamePhase {
     @Override
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
-        Coordinates xy = new Coordinates(X, Y);
         // increase players turn
         player.increaseTurnPlayed();
-        PlayableCard cardToPlace = player.getHand().get(cardToPlaceHandIndex);
+        PlayableCard cardToPlace = player.getHand().get(cardToPlaceHandIndex - 1);
 
         try {
             // check player turn
             player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
-            // check coordinates are allowed
-            xy.evenVerifier();
-        } catch (NotMyTurnException | ForbiddenCoordinatesException e) {
-            System.out.println(e.getMessage()); // WrongCoordinates
-        }
-
-        // Check player has enough resources to play the goldCard
-        if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
-            try {
+            // Check player has enough resources to play the goldCard
+            if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
                 board.resourceVerifier(cardToPlace);
-            } catch (GenericException e) {
-                System.err.println(e.getMessage());
             }
+        } catch (NotMyTurnException | GenericException e) {
+            System.out.println(e.getMessage());
         }
 
         try {
             // check if it is possible to place the selected card
-            board.isPossibleToPlace(xy);
+            Coordinates xy = board.isPossibleToPlace(X, Y);
             // add card to the board
             board.addCardToBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
@@ -64,7 +56,7 @@ public class MidPhase implements GamePhase {
                     player.getGame().setLastRound(player);
                 }
             }
-        } catch (GenericException | CardStillOnHandException e) {
+        } catch (GenericException e) {
             System.err.println(e.getMessage());
         }
     }

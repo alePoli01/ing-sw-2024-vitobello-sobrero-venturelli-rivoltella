@@ -5,7 +5,9 @@ import it.polimi.GC13.enums.TokenColor;
 public interface ServerInterface {
     // Methods that can be called by the client
 
-    void addPlayerToGame(String playerNickname, int numOfPlayers, String gameName);
+    void createNewGame(String playerNickname, int numOfPlayers,  String gameName);
+
+    void addPlayerToGame(String playerNickname, String gameName);
 
     void checkForExistingGame();
 

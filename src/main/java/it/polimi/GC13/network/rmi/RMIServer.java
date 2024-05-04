@@ -17,7 +17,12 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void addPlayerToGame(String playerNickname, int numOfPlayers, String gameName) {
+    public void createNewGame(String playerNickname, int numOfPlayers, String gameName) {
+
+    }
+
+    @Override
+    public void addPlayerToGame(String playerNickname, String gameName) {
 
     }
 

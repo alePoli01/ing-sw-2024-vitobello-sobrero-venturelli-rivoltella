@@ -58,7 +58,7 @@ public class DealingPhase implements GamePhase {
     private synchronized boolean playersChoseObjectiveCard(Player player) {
         for (Player p : player.getGame().getPlayerList()) {
             if (p.getPrivateObjectiveCard().size() == 2) {
-                System.out.println(p.getNickname() + " hasn't chosen objective card yet.");
+                System.err.println(p.getNickname() + " hasn't chosen objective card yet.");
                 return false;
             }
         }

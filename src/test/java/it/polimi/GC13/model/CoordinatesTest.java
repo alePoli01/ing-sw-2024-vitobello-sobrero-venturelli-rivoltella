@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.exception.ForbiddenCoordinatesException;
 import junit.framework.TestCase;
 
 public class CoordinatesTest extends TestCase {

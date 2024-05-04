@@ -7,6 +7,7 @@ import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
 import java.util.*;
@@ -46,39 +47,47 @@ public class LobbyController implements LostConnectionToClientInterface {
         client.sendMessage(new OnCheckForExistingGameMessage(gameNameWaitingPlayersMap));
     }
 
-    // create a new game if there is no one available, else it creates a new one
-    public synchronized void addPlayerToGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) {
-        Game workingGame;
+    /*
+        METHOD TO ADD EACH PLAYER TO THE GAME
+     */
+    public synchronized void addPlayerToGame(ClientInterface client, String playerNickname, String gameName) {
         System.out.println("--Received: PlayerJoiningMessage: [player:" + playerNickname+"]");
-        Player player = new Player(playerNickname);
-        // if there is no existing game, a new one is created.
-        // create Controller List and Players <-> Game Map
-        if (playersNumber >= 2 && playersNumber <= 4) {
-            workingGame = new Game(playersNumber, gameName);
-            // updates useful maps
-            this.gameControllerMap.put(workingGame, new Controller(workingGame, this, this.controllerDispatcher));
-            this.joinableGameMap.put(gameName, workingGame);
-        } else {
-            // adds the player to the model and updates noExistingGame for the next player that wants to play
-            workingGame = joinableGameMap.get(gameName);
-        }
-        // updates controller playerClientMap
-        this.gameControllerMap.get(workingGame).getPlayerClientMap().put(player, client);
-        // updates controller clientPlayerMap
-        this.gameControllerMap.get(workingGame).getClientPlayerMap().put(client, player);
-        // set the game for the player
-        player.setGame(workingGame);
-        // add the player to the model
         try {
+            // creates the player
+            Player player = new Player(playerNickname);
+            Game workingGame = joinableGameMap.get(gameName);
+            // updates controller playerClientMap
+            this.gameControllerMap.get(workingGame).getPlayerClientMap().put(player, client);
+            // updates controller clientPlayerMap
+            this.gameControllerMap.get(workingGame).getClientPlayerMap().put(client, player);
+            // set the game for the player
+            player.setGame(workingGame);
+            // adds the player to the model
             this.gameControllerMap.get(workingGame).addPlayerToExistingGame(player, workingGame, client);
+            // updates controller dispatcher client <-> player Map
+            this.controllerDispatcher.getClientPlayerMap().put(client, player);
+            // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
+            this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
         } catch (GenericException e) {
             client.sendMessage(new OnNickNameAlreadyTakenMessage(playerNickname));
             System.err.println(e.getMessage());
         }
-        // updates controller dispatcher client <-> player Map
-        this.controllerDispatcher.getClientPlayerMap().put(client, player);
-        // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
-        this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
+    }
+
+    /*
+        METHOD TO CREATE A NEW GAME
+     */
+    public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) {
+        Game workingGame;
+        if (this.startedGameMap.containsKey(gameName)) {
+            client.sendMessage(new OnGameNameAlreadyTakenMessage(playerNickname, gameName));
+        } else {
+            workingGame = new Game(playersNumber, gameName);
+            // updates useful maps
+            this.gameControllerMap.put(workingGame, new Controller(workingGame, this, this.controllerDispatcher));
+            this.joinableGameMap.put(gameName, workingGame);
+            this.addPlayerToGame(client, playerNickname, gameName);
+        }
     }
 
     @Override

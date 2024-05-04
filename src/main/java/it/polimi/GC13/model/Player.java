@@ -135,10 +135,10 @@ public class Player implements Serializable {
     }
 
     // remove placedCard after it is placed on the board
-    public void handUpdate(PlayableCard placedCard) throws CardStillOnHandException {
+    public void handUpdate(PlayableCard placedCard) throws GenericException {
         hand.remove(placedCard);
         if (hand.contains(placedCard)) {
-            throw new CardStillOnHandException(placedCard);
+            throw new GenericException("Error model" + placedCard.serialNumber +  "not placed.");
         }
     }
 

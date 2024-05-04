@@ -1,7 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.exception.ForbiddenCoordinatesException;
-
 public class Coordinates {
     private int x,y;
 
@@ -22,11 +20,5 @@ public class Coordinates {
     }
     public void setY(int y) {
         this.y = y;
-    }
-
-    public void evenVerifier() throws ForbiddenCoordinatesException {
-        if (!((this.x + this.y) % 2 == 0)) {
-            throw new ForbiddenCoordinatesException(this.x, this.y); // If coordinates are not even, throw expception
-        }
     }
 }
