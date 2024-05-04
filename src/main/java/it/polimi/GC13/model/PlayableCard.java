@@ -519,6 +519,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("╔═══╦════╦════╦═══╗");
                         }
+                        break;
                     }
                     case (1): {//second line printed
                         if (!isFlipped) {
@@ -526,6 +527,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("║   ║         ║   ║");
                         }
+                        break;
                     }
                     case (2): {//third line printed
                         if (!isFlipped) {
@@ -535,6 +537,7 @@ public class PlayableCard implements Serializable {
                             System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
 
                         }
+                        break;
                     }
                     case (3): {//fourth line printed
                         if (!isFlipped) {
@@ -542,6 +545,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (4): {//fifth line printed
                         if (!isFlipped) {
@@ -549,6 +553,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (5): {//last line printed
                         if (!isFlipped) {
@@ -556,6 +561,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("═════════");
                         }
+                        break;
                     }
                 }
                 break;
@@ -569,13 +575,15 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("════╦════");
                         }
+                        break;
                     }
                     case (1): {//second line printed
                         if (!isFlipped) {
-                            System.out.print("║   " + gold + this.pointsGiven + reset + "║" + gold + this.condition.toString() + reset + "   ");
+                            System.out.print("   " + gold + this.pointsGiven + reset + "║" + gold + this.condition.toString() + reset + "   ");
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (2): {//third line printed
                         if (!isFlipped) {
@@ -585,6 +593,7 @@ public class PlayableCard implements Serializable {
                             System.out.print("   │" + this.reign.toString() + "│   ");
 
                         }
+                        break;
                     }
                     case (3): {//fourth line printed
                         if (!isFlipped) {
@@ -592,6 +601,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("╠═══╗         ╔═══╣");
                         }
+                        break;
                     }
                     case (4): {//fifth line printed
                         if (!isFlipped) {
@@ -599,6 +609,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("║   ║         ║   ║");
                         }
+                        break;
                     }
                     case (5): {//last line printed
                         if (!isFlipped) {
@@ -606,6 +617,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("╚═══╩═════════╩═══╝");
                         }
+                        break;
                     }
                 }
                 break;
@@ -619,6 +631,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("════╦════");
                         }
+                        break;
                     }
                     case (1): {//second line printed
                         if (!isFlipped) {
@@ -626,6 +639,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (2): {//third line printed
                         if (!isFlipped) {
@@ -635,6 +649,7 @@ public class PlayableCard implements Serializable {
                             System.out.print("   │" + this.reign.toString() + "│   ");
 
                         }
+                        break;
                     }
                     case (3): {//fourth line printed
                         if (!isFlipped) {
@@ -642,6 +657,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (4): {//fifth line printed
                         if (!isFlipped) {
@@ -649,6 +665,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("         ");
                         }
+                        break;
                     }
                     case (5): {//last line printed
                         if (!isFlipped) {
@@ -656,6 +673,7 @@ public class PlayableCard implements Serializable {
                         } else {
                             System.out.print("═════════");
                         }
+                        break;
                     }
                 }
                 break;

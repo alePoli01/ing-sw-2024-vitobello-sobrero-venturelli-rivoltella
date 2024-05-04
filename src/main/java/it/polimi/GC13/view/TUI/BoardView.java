@@ -210,9 +210,9 @@ public class BoardView {
 
                             if (line > 2) {
                                 if(Board[i][j + 2]!=null&&(Board[i+1][j+1].weight > Board[i][j + 2].weight)){
-                                    Board[i + 1][j + 1].getCardPointer().linePrinter(4, line, Board[i + 1][j + 1].isFlipped);
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(4, line-3, Board[i + 1][j + 1].isFlipped);
                                 }else{
-                                    Board[i + 1][j + 1].getCardPointer().linePrinter(8, line, Board[i + 1][j + 1].isFlipped);
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(8, line-3, Board[i + 1][j + 1].isFlipped);
                                 }
 
                             }else{
@@ -221,7 +221,12 @@ public class BoardView {
                         } else {
                             Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
                             if (line > 2) {
-                                Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                if(Board[i][j + 2]!=null&&(Board[i+1][j+1].weight > Board[i][j + 2].weight)){
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                }else{
+                                    Board[i + 1][j + 1].getCardPointer().linePrinter(3, line - 3, Board[i + 1][j + 1].isFlipped);
+                                }
+
                             }else{
                                 System.out.print("p       q");
                             }
@@ -246,7 +251,16 @@ public class BoardView {
                         } else {
                             Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
                             if (line <= 2) {
-                                Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                if(Board[i ][j + 2]!=null) {
+                                    if (Board[i - 1][j + 1].weight > Board[i][j + 2].weight) {
+                                            Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                    }else{
+                                        Board[i - 1][j + 1].getCardPointer().linePrinter(2, line + 3, Board[i - 1][j + 1].isFlipped);
+                                    }
+                                } else {
+                                        Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                }
+
                             }else{
                                 System.out.print("t       u");
                             }
