@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.GenericException;
 import junit.framework.TestCase;
 

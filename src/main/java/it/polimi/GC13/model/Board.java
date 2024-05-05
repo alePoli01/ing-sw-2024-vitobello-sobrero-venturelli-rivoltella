@@ -104,6 +104,9 @@ public class Board implements Serializable {
 
     // updates notAvailableCells and availableCells sets
     private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy) {
+        this.availableCells.remove(xy);
+        this.notAvailableCells.add(xy);
+
         List<Coordinates> offset = new LinkedList<>();
         offset.add(new Coordinates(-1, -1));
         offset.add(new Coordinates(1, -1));
@@ -111,7 +114,6 @@ public class Board implements Serializable {
         offset.add(new Coordinates(-1, 1));
 
         int i = 0;
-
         while (i < cardPlaced.edgeResource.length) {
             Resource resource = cardPlaced.edgeResource[i];
             Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());

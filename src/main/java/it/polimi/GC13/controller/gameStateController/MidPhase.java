@@ -19,7 +19,7 @@ public class MidPhase implements GamePhase {
 
     //controller gets object from network, then calls the method accordingly
     @Override
-    public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
+    public synchronized void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
         // increase players turn
         player.increaseTurnPlayed();
@@ -84,7 +84,7 @@ public class MidPhase implements GamePhase {
                 this.controller.updateController(new EndPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.END);
             }
-        } catch (NotMyTurnException | GenericException | CardNotAddedToHandException e) {
+        } catch (NotMyTurnException | GenericException e) {
             System.out.println(e.getMessage());
         }
     }

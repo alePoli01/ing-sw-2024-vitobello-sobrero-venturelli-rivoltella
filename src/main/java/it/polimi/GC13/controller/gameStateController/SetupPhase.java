@@ -2,8 +2,6 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.CardNotPlacedException;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
@@ -22,7 +20,7 @@ public class SetupPhase implements GamePhase {
         try {
             game.getTable().tableSetup();
             game.dealStartCard();
-        } catch (CardNotAddedToHandException e){
+        } catch (GenericException e){
             System.err.println(e.getMessage());
         }
     }

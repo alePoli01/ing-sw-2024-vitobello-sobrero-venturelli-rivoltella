@@ -143,10 +143,10 @@ public class Player implements Serializable {
     }
 
     // add drawnCard to the hand
-    public void addToHand(PlayableCard drawnCard) throws CardNotAddedToHandException {
+    public void addToHand(PlayableCard drawnCard) throws GenericException {
         hand.add(drawnCard);
         if (!hand.contains(drawnCard)) {
-            throw new CardNotAddedToHandException(drawnCard);
+            throw new GenericException(drawnCard.serialNumber + "not added to the hand");
         }
     }
 

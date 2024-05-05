@@ -2,7 +2,6 @@ package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
@@ -23,7 +22,7 @@ public class DealingPhase implements GamePhase {
             game.setCommonObjectiveCards();
             game.dealPrivateObjectiveCards();
             game.setPlayersPosition();
-        } catch (CardNotAddedToHandException e){
+        } catch (GenericException e){
             System.err.println(e.getMessage());
         }
     }

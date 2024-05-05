@@ -2,7 +2,6 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
-import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
@@ -66,7 +65,7 @@ public class Game implements Serializable {
     }
 
     // give firsts 3 cards and start card to each player
-    public void giveFirstCards() throws CardNotAddedToHandException {
+    public void giveFirstCards() throws GenericException {
         for (Player player : this.playerList) {
             int[] availableCards = new int[3];
             for (int i = 0; i < 3; i++) {
@@ -149,7 +148,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void dealStartCard() throws CardNotAddedToHandException {
+    public void dealStartCard() throws GenericException {
         for (Player player : this.playerList) {
             player.addToHand(deck.getStartDeck().removeFirst());
             // send message to listener

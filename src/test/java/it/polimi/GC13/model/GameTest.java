@@ -1,8 +1,6 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.exception.CardNotAddedToHandException;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 import junit.framework.TestCase;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class GameTest extends TestCase {
         try {
             game.dealStartCard();
             assertNotNull(player1.getHand().getFirst());
-        } catch (CardNotAddedToHandException e) {
+        } catch (GenericException e) {
             fail("card not added to hand");
         }
     }

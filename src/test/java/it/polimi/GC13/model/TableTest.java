@@ -1,9 +1,6 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.exception.CardNotAddedToHandException;
-import it.polimi.GC13.exception.CardNotFoundException;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.exception.NoCardsLeftException;
 import junit.framework.TestCase;
 
 public class TableTest extends TestCase {
@@ -64,11 +61,8 @@ public class TableTest extends TestCase {
                 table.drawCard(resourceCards[i]);
                 table.drawCard(goldCards[i]);
             }
-            catch(CardNotFoundException e1){
+            catch(GenericException e1){
                 fail("card #"+resourceCards[i].serialNumber+" should be found on the table");
-            }
-            catch(CardNotAddedToHandException e2){
-                fail("card #"+goldCards[i].serialNumber+" should be found on the table");
             }
         }
         //now there's no cards on the table
@@ -76,14 +70,14 @@ public class TableTest extends TestCase {
             table.drawCard(resourceCards[0]);
             fail("card #"+resourceCards[0].serialNumber+" should NOT be on the table");
         }
-        catch(CardNotFoundException | CardNotAddedToHandException e){
+        catch(GenericException e){
             System.out.println(e.getMessage());
         }
         try{
             table.drawCard(goldCards[0]);
             fail("card #"+goldCards[0].serialNumber+" should NOT be on the table");
         }
-        catch(CardNotFoundException | CardNotAddedToHandException e){
+        catch(GenericException e){
             System.out.println(e.getMessage());
         }
     }

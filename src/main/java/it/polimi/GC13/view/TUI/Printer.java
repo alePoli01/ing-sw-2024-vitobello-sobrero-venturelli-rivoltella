@@ -38,14 +38,14 @@ public class Printer {
     public void showDrawableCards(ArrayList<Integer> goldCardsAvailable, ArrayList<Integer> resourceCardsAvailable) {
         System.out.println("\n--- DRAWABLE CARDS ---");
         System.out.println("--- Gold Deck ---");
-        for (PlayableCard card : visualDeck.getStartDeck()) {
+        for (PlayableCard card : visualDeck.getGoldDeck()) {
             if (goldCardsAvailable.contains(card.serialNumber)) {
                 // IF FIRST CARD -> ISFLIPPED = TRUE
                 card.cardPrinter(goldCardsAvailable.getFirst().equals(card.serialNumber));
             }
         }
         System.out.println("--- Resource Deck ---");
-        for (PlayableCard card : visualDeck.getStartDeck()) {
+        for (PlayableCard card : visualDeck.getResourceDeck()) {
             if (resourceCardsAvailable.contains(card.serialNumber)) {
                 card.cardPrinter(resourceCardsAvailable.getFirst().equals(card.serialNumber));
             }

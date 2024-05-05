@@ -1,7 +1,6 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.CardType;
-import it.polimi.GC13.exception.CardNotFoundException;
 import it.polimi.GC13.exception.WrongCardException;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.view.GUI.CardManager;
@@ -9,7 +8,6 @@ import it.polimi.GC13.view.GUI.CardManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class PopupDialog extends JDialog implements CardManager, ActionListener{

@@ -1,7 +1,5 @@
 package it.polimi.GC13.view.GUI;
 
-import it.polimi.GC13.exception.CardNotFoundException;
-import it.polimi.GC13.exception.WrongCardException;
 import it.polimi.GC13.model.PlayableCard;
 
 import javax.swing.*;

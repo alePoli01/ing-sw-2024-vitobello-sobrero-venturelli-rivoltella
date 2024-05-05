@@ -46,20 +46,14 @@ public class TUI implements View {
 
     @Override
     public void updateGoldCardsAvailable(int[] goldCardSerial) {
-        System.out.println("Updating Gold Cards Available");
-        for (int i = 0; i < this.goldCardsAvailable.size(); i++) {
-            this.goldCardsAvailable.add(i, goldCardSerial[i]);
-        }
-        this.goldCardsAvailable.forEach(serialCard -> System.out.println("Gold Card: " + serialCard));
+        Arrays.stream(goldCardSerial)
+                .forEach(this.goldCardsAvailable::add);
     }
 
     @Override
     public void updateResourceCardsAvailable(int[] resourceFacedUpSerial) {
-        System.out.println("Updating Resource Cards Available");
-        for (int i = 0; i < this.resourceCardAvailable.size(); i++) {
-            this.resourceCardAvailable.add(i, resourceFacedUpSerial[i]);
-        }
-        this.resourceCardAvailable.forEach(serialCard -> System.out.println("Resource Card: " + serialCard));
+        Arrays.stream(resourceFacedUpSerial)
+                .forEach(this.resourceCardAvailable::add);
     }
 
     @Override
@@ -131,11 +125,11 @@ public class TUI implements View {
         do {
             try {
                 playersNumber = Integer.parseInt(this.reader.readLine());
+                if (playersNumber < 2 || playersNumber > 4) {
+                    System.out.print("Error: Please choose a number between 2 and 4: ");
+                }
             } catch (NumberFormatException e) {
                 System.out.print("Error: Please put a number: ");
-            }
-            if (playersNumber < 2 || playersNumber > 4) {
-                System.out.print("Error: Please choose a number between 2 and 4: ");
             }
         } while (playersNumber < 2 || playersNumber > 4);
 
@@ -233,6 +227,7 @@ public class TUI implements View {
     public void onPlacedCard(String playerNickname, int cardPlaced, boolean isFlipped) {
         String message = playerNickname + " positioned " + cardPlaced + " on " + (isFlipped ? "back" : "front");
         if (playerNickname.equals(this.nickname)) {
+            this.hand.remove(cardPlaced);
             System.out.println(message);
         } else {
             this.gamesLog.add(message);
@@ -257,7 +252,7 @@ public class TUI implements View {
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCard);
             try {
                 while (choice != 1 && choice != 2) {
-                    System.out.print("Chose your private objective card [1] or [2]: ");
+                    System.out.print("Choose your private objective card [1] or [2]: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
                 }
                 this.virtualServer.chosePrivateObjectiveCard(choice);
@@ -442,7 +437,7 @@ public class TUI implements View {
         if (playerNickname.equals(this.nickname)) {
             this.turn = turn;
         } else if (turn) {
-            this.gamesLog.add("\nIt's" + playerNickname + "'s turn");
+            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
         } else {
             this.gamesLog.add("\n" + playerNickname + " passed the turn");
         }
