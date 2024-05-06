@@ -26,7 +26,7 @@ public class TUI implements View {
     private final Printer printer = new Printer();
     private final ArrayList<Integer> goldCardsAvailable = new ArrayList<>();
     private final ArrayList<Integer> resourceCardAvailable = new ArrayList<>();
-    private int turnPlayed = 0;
+    private int turnPlayed = - 1;
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -200,7 +200,7 @@ public class TUI implements View {
         if (playerNickname.equals(this.nickname)) {
             System.out.println("You choose " + tokenColor + " token\n");
             System.out.println("\n--- SETUP PHASE [2/2] ---");
-            System.out.println("\n--- START CARD ---\n");
+            System.out.println("--- START CARD ---\n");
             this.printer.showHand(this.hand);
             System.out.println("Choose which side you would like to place your start card:\n\t[1] FRONT\n\t[2] BACK");
             do {
@@ -222,13 +222,18 @@ public class TUI implements View {
     /*
         NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
         OTHERS -> ADDS TO LOG OPERATION
+        todo delete card placed from hand
      */
     @Override
-    public void onPlacedCard(String playerNickname, int cardPlaced, boolean isFlipped) {
-        String message = playerNickname + " positioned " + cardPlaced + " on " + (isFlipped ? "back" : "front");
+    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped) {
+        String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front");
         if (playerNickname.equals(this.nickname)) {
-            this.hand.remove(cardPlaced);
             System.out.println(message);
+            System.out.print("Remaining cards are: ");
+            this.hand.forEach(System.out::print);
+            if (this.turnPlayed >= 0) {
+                this.printer.comeBack(this);
+            }
         } else {
             this.gamesLog.add(message);
         }
@@ -269,12 +274,12 @@ public class TUI implements View {
      */
     @Override
     public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
-        if (readyPlayers == neededPlayers) {
-            if (playerNickname.equals(this.nickname)) {
-                this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
-                System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
-            }
-        } else if (this.serialPrivateObjectiveCard != 0) {
+        if (playerNickname.equals(this.nickname)) {
+            this.turnPlayed++;
+            this.serialPrivateObjectiveCard = indexPrivateObjectiveCard;
+            System.out.println("Your private objective card is " + indexPrivateObjectiveCard);
+        }
+        if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
             System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
         }
     }
@@ -446,27 +451,37 @@ public class TUI implements View {
         }
     }
 
+    @Override
+    public void onSetLastTurn(String playerNickname, Position playerPosition) {
+        System.out.print(nickname + " has reached 20 points. The will be another turn for players in position: ");
+        for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
+            System.out.print(playerPosition + " ");
+            System.out.println(" and another one bonus.");
+        }
+    }
+
     /*
         METHOD USED TO PLACE CARD ON THE BOARD
      */
     @Override
     public void placeCard() {
-        if (this.turn) {
+        if (this.turn && this.hand.size() == 3) {
             int X = 0;
             int Y = 0;
-            int cardToPlaceHandIndex = 0;
+            int serialCardToPlace = 0;
             boolean isFlipped = false;
             this.printer.showHand(this.hand);
-            System.out.println("Enter hand index [1 -> 3], X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
-            System.out.println("example: 1 (for index), 51 (for X), 51 (for Y), 1 (for side)");
+            System.out.println("Enter serial card, X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
+            System.out.println("example: " + this.hand.getFirst() + " (for serial card), 51 (for X), 51 (for Y), 1 (for side)");
             Scanner scanner = new Scanner(System.in);
             try {
-                cardToPlaceHandIndex = scanner.nextInt();
-                while (this.hand.get(cardToPlaceHandIndex) == null) {
-                    System.out.println("You don't have a card in position:" + cardToPlaceHandIndex);
-                    System.out.println("Choose hand index or press [0] to go back to HOME MENU: ");
-                    cardToPlaceHandIndex = scanner.nextInt();
-                    if (cardToPlaceHandIndex == 0) {
+                serialCardToPlace = scanner.nextInt();
+                while (!this.hand.contains(serialCardToPlace)) {
+                    System.out.println("You don't have the selected card. Available are: ");
+                    this.hand.forEach(System.out::print);
+                    System.out.println("Choose serial card or press [0] to go back to HOME MENU: ");
+                    serialCardToPlace = scanner.nextInt();
+                    if (serialCardToPlace == 0) {
                         this.printer.comeBack(this);
                     }
                 }
@@ -476,9 +491,11 @@ public class TUI implements View {
             } catch (InputMismatchException e) {
                 System.out.print("Error: Please input valid numbers.");
             }
-            this.virtualServer.placeCard(cardToPlaceHandIndex, isFlipped, X, Y);
-        } else {
+            this.virtualServer.placeCard(serialCardToPlace, isFlipped, X, Y);
+        } else if (!this.turn) {
             System.out.println("It's not your turn");
+        } else {
+            System.out.println("You have already placed a card. You need to draw a card to pass the turn.");
         }
     }
 }

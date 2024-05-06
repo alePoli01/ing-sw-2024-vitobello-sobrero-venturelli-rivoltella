@@ -14,7 +14,7 @@ public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
     private final Player owner;               //owner of the board
     private int playerScore = 0;
-    private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);;     //counter for each type of object present on the board
+    private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);     //counter for each type of object present on the board
     private final Set<Coordinates> availableCells = new HashSet<>();
     private final Set<Coordinates> notAvailableCells = new HashSet<>();   // -> used to not add available cell
 
@@ -151,7 +151,7 @@ public class Board implements Serializable {
                 case 3: // top-left
                     coordinateToCheck = new Coordinates(xy.getX() - 1, xy.getY() + 1);
                     if (this.getBoardMap().containsKey(coordinateToCheck)) {
-                        counter++;;
+                        counter++;
                     }
             }
         }

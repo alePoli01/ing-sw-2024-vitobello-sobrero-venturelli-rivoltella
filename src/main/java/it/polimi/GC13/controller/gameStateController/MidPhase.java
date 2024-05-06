@@ -6,6 +6,8 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
+import java.util.NoSuchElementException;
+
 public class MidPhase implements GamePhase {
     private final Controller controller;
 
@@ -19,24 +21,23 @@ public class MidPhase implements GamePhase {
 
     //controller gets object from network, then calls the method accordingly
     @Override
-    public synchronized void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
+    public synchronized void placeCard(Player player, int serialCardToPlace, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
         // increase players turn
         player.increaseTurnPlayed();
-        PlayableCard cardToPlace = player.getHand().get(cardToPlaceHandIndex - 1);
 
         try {
+            PlayableCard cardToPlace = player.getHand()
+                    .stream()
+                    .filter(c -> c.serialNumber == serialCardToPlace)
+                    .findFirst()
+                    .orElseThrow();
             // check player turn
-            player.checkMyTurn(); // Throws NotMyTurn if it's not the player's turn
+            player.checkMyTurn();
             // Check player has enough resources to play the goldCard
             if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
                 board.resourceVerifier(cardToPlace);
             }
-        } catch (NotMyTurnException | GenericException e) {
-            System.out.println(e.getMessage());
-        }
-
-        try {
             // check if it is possible to place the selected card
             Coordinates xy = board.isPossibleToPlace(X, Y);
             // add card to the board
@@ -44,7 +45,7 @@ public class MidPhase implements GamePhase {
             // removes covered reigns / objects from board map
             board.removeResources(xy);
             // pop card played from hand
-            board.getOwner().handUpdate(cardToPlace);
+            board.getOwner().removeFromHand(cardToPlace);
             // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
@@ -56,7 +57,7 @@ public class MidPhase implements GamePhase {
                     player.getGame().setLastRound(player);
                 }
             }
-        } catch (GenericException e) {
+        } catch (GenericException | NoSuchElementException e) {
             System.err.println(e.getMessage());
         }
     }
@@ -79,12 +80,14 @@ public class MidPhase implements GamePhase {
             player.setMyTurn(false);
             // set next player turn to true
             if (player.getTurnPlayed() < player.getGame().getLastRound()) {
+                System.out.println(player + " has passed and game continues");
                 player.getGame().setPlayerTurn(player);
             } else {
+                System.out.println(player + " has passed and game is over");
                 this.controller.updateController(new EndPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.END);
             }
-        } catch (NotMyTurnException | GenericException e) {
+        } catch (GenericException e) {
             System.out.println(e.getMessage());
         }
     }

@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.network.socket.messages.fromserver.OnChoosePrivateObjectiveCardMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnHandUpdate;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTokenColorChooseMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTurnUpdateMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
@@ -101,7 +102,7 @@ public class Player implements Serializable {
         return this.hand;
     }
 
-    public int[] getHandCardSerialNumber() {
+    private int[] getHandCardSerialNumber() {
         // Initialize the array to store serial numbers
         int[] handCardSerialNumber = new int[this.hand.size()];
 
@@ -124,22 +125,25 @@ public class Player implements Serializable {
 
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
+        System.out.println(this.nickname + " turn updated to " + this.myTurn);
         this.game.getObserver().notifyClients(new OnTurnUpdateMessage(this.getNickname(), myTurn));
     }
 
     // check it is player's turn before playing
-    public void checkMyTurn() throws NotMyTurnException {
+    public void checkMyTurn() throws GenericException {
         if (!myTurn) {
-            throw new NotMyTurnException(this.getNickname());
+            throw new GenericException("It's not" + this.nickname + "turn.");
         }
     }
 
     // remove placedCard after it is placed on the board
-    public void handUpdate(PlayableCard placedCard) throws GenericException {
+    public void removeFromHand(PlayableCard placedCard) throws GenericException {
         hand.remove(placedCard);
         if (hand.contains(placedCard)) {
             throw new GenericException("Error model" + placedCard.serialNumber +  "not placed.");
         }
+        // send message to listener
+        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandCardSerialNumber()));
     }
 
     // add drawnCard to the hand
@@ -148,6 +152,7 @@ public class Player implements Serializable {
         if (!hand.contains(drawnCard)) {
             throw new GenericException(drawnCard.serialNumber + "not added to the hand");
         }
+        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandCardSerialNumber()));
     }
 
     // chose private objective card for the game

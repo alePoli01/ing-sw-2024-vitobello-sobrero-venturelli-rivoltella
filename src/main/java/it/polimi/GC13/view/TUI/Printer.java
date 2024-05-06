@@ -94,6 +94,7 @@ public class Printer {
                 for (int cardInHand : hand) {
                     if (card.serialNumber == cardInHand) {
                         card.cardPrinter(false);
+                        System.out.println("         [" + cardInHand + "]");
                     }
                 }
             }

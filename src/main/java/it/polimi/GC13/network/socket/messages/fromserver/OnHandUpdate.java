@@ -4,7 +4,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnDealCardMessage(String playerNickname, int[] availableCards) implements MessagesFromServer {
+public record OnHandUpdate(String playerNickname, int[] availableCards) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {

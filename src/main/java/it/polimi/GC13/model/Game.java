@@ -64,15 +64,13 @@ public class Game implements Serializable {
         return playerList;
     }
 
-    // give firsts 3 cards and start card to each player
+    // give firsts 3 cards to each player
     public void giveFirstCards() throws GenericException {
         for (Player player : this.playerList) {
-            int[] availableCards = new int[3];
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 2; i++) {
                 player.addToHand(deck.getResourceDeck().removeFirst());
-                availableCards[i] = player.getHand().getLast().serialNumber;
             }
-            this.observer.notifyClients(new OnDealCardMessage(player.getNickname(), availableCards));
+            player.addToHand(deck.getResourceDeck().removeFirst());
         }
     }
 
@@ -98,10 +96,8 @@ public class Game implements Serializable {
                     } else {
                         while (this.playerList.get(r).getPosition() != null) {
                             r = random.nextInt(playerList.size());
-                            if (this.playerList.get(r).getPosition() == null) {
-                                this.playerList.get(r).setPosition(p);
-                            }
                         }
+                        this.playerList.get(r).setPosition(p);
                     }
                 });
 
@@ -122,6 +118,7 @@ public class Game implements Serializable {
     // sets game's last round
     public void setLastRound(Player player) {
         this.lastRound = player.getTurnPlayed() + 1;
+        this.observer.notifyClients(new OnSetLastTurnMessage(player.getNickname(), player.getPosition()));
     }
 
     public int getLastRound() {
@@ -151,8 +148,6 @@ public class Game implements Serializable {
     public void dealStartCard() throws GenericException {
         for (Player player : this.playerList) {
             player.addToHand(deck.getStartDeck().removeFirst());
-            // send message to listener
-            this.observer.notifyClients(new OnDealCardMessage(player.getNickname(), player.getHandCardSerialNumber()));
         }
     }
 

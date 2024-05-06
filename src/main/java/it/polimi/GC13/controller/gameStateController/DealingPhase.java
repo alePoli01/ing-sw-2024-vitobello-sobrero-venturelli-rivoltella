@@ -22,6 +22,7 @@ public class DealingPhase implements GamePhase {
             game.setCommonObjectiveCards();
             game.dealPrivateObjectiveCards();
             game.setPlayersPosition();
+            System.out.println("Dealing Cards");
         } catch (GenericException e){
             System.err.println(e.getMessage());
         }

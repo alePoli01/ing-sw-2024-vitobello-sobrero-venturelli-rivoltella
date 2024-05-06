@@ -29,7 +29,7 @@ public interface View {
 
     void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard);
 
-    void onPlacedCard(String playerNickname, int startCardPlaced, boolean isFlipped);
+    void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped);
 
     void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
@@ -47,8 +47,10 @@ public interface View {
 
     void connectionLost();
 
+    void onSetLastTurn(String nickname, Position position);
+
     /*
-            METHOD USED TO PLACE CARD ON THE BOARD
-         */
+        METHOD USED TO PLACE CARD ON THE BOARD
+    */
     void placeCard();
 }

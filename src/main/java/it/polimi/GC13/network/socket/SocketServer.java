@@ -77,8 +77,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void placeCard(int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        this.sendMessage(new PlaceCardMessage(cardToPlaceHandIndex, isFlipped, X, Y));
+    public void placeCard(int serialCardToPlace, boolean isFlipped, int X, int Y) {
+        this.sendMessage(new PlaceCardMessage(serialCardToPlace, isFlipped, X, Y));
     }
 
     @Override
