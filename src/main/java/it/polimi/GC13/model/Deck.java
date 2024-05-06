@@ -25,7 +25,7 @@ public class Deck implements Serializable {
         this.resourceDeck = new LinkedList<>();
         this.goldDeck = new LinkedList<>();
         this.parseJSON();
-        //this.shuffleDecks();
+        this.shuffleDecks();
     }
 
     public LinkedList<PlayableCard> getResourceDeck() {
