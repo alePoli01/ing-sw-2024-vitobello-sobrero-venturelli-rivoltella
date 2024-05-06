@@ -5,7 +5,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnTokenColorChooseMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
+public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {

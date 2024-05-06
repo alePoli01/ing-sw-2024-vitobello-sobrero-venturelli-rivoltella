@@ -5,7 +5,7 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.network.socket.messages.fromserver.OnChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnHandUpdate;
-import it.polimi.GC13.network.socket.messages.fromserver.OnTokenColorChooseMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnTokenChoiceMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnTurnUpdateMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
@@ -58,7 +58,7 @@ public class Player implements Serializable {
                 this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList));
                 throw new GenericException(tokenColor + " already chose");
             }
-            this.game.getObserver().notifyClients(new OnTokenColorChooseMessage(this.getNickname(), this.tokenColor));
+            this.game.getObserver().notifyClients(new OnTokenChoiceMessage(this.getNickname(), this.tokenColor));
         }
     }
 
