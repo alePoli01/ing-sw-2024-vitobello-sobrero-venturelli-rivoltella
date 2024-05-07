@@ -10,7 +10,7 @@ public class BoardView {
     public int x_max, x_min, y_max, y_min;
 
     public BoardView() {
-        Board = new Cell[300][300];
+        Board = new Cell[150][150];
         x_max = 50;
         y_max = 50;
         x_min = 50;
@@ -45,7 +45,10 @@ public class BoardView {
         if (x < y_min) {
             y_min = x;
         }
-
+        if(y_min%2!=0&&x_min%2==0){
+            y_min--;
+            y_max=y_max+2;
+        }
     }
 
     public void printBoard() {
@@ -68,42 +71,67 @@ public class BoardView {
         //print of y-axis
         System.out.print("Y   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("            | ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
+
         }
         System.out.print("Y");
         System.out.println();
 
         System.out.print("╪   ");
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("─ ─ ─ ─ ─ ─ | ");
+            if(j!=y_max+1){
+                System.out.print("─ ─ ─ ─ ─ ─ | ");
+            }else{
+                System.out.print("─ ─ ─ ─ ─ ─   ");
+            }
         }
         System.out.print("╪");
         System.out.println();
 
         System.out.print(gold + (x_min - 2) / 10 + "   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("            | ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
         }
         System.out.print(gold + (x_min - 2) / 10 + reset);
         System.out.println();
 
         System.out.print(gold + (x_min - 2) % 10 + "   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("            | ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
         }
         System.out.print(gold + (x_min - 2) % 10 + reset);
         System.out.println();
 
         System.out.print("╪   ");
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("─ ─ ─ ─ ─ ─ | ");
+            if(j!=y_max+1){
+                System.out.print("─ ─ ─ ─ ─ ─ | ");
+            }else{
+                System.out.print("─ ─ ─ ─ ─ ─   ");
+            }
         }
         System.out.print("╪");
         System.out.println();
 
         System.out.print(gold + (x_min - 1) / 10 + "   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("            | ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
         }
         System.out.print(gold + (x_min - 1) / 10 + reset);
         System.out.println();
@@ -142,9 +170,19 @@ public class BoardView {
                                 System.out.print("c                 d");
                             } else {
                                 if (Board[i - 1][j - 1] != null) {
-                                    System.out.print("l   s   m");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
+
                                 } else {
-                                    System.out.print("c            d");
+                                    if(line==1||line==4){
+                                        System.out.print("─ | ─ ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("  |           ");
+                                    }
+
                                 }
                             }
                         } else {
@@ -152,9 +190,18 @@ public class BoardView {
                                 System.out.print("c                 d");
                             } else {
                                 if (Board[i + 1][j - 1] != null) {
-                                    System.out.print("l       m");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
+
                                 } else {
-                                    System.out.print("c            d");
+                                    if(line==1||line==4){
+                                        System.out.print("─ | ─ ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("  |           ");
+                                    }
                                 }
                             }
                         }
@@ -172,7 +219,11 @@ public class BoardView {
                                 }
                             } else {
                                 if (j != y_max) {
-                                    System.out.print("g            h");
+                                    if(line==1||line==4){
+                                        System.out.print("─ | ─ ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("  |           ");
+                                    }
                                 }
 
                             }
@@ -190,7 +241,11 @@ public class BoardView {
                                 }
                             } else {
                                 if (j != y_max) {
-                                    System.out.print("g            h");
+                                    if(line==1||line==4){
+                                        System.out.print("─ | ─ ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("  |           ");
+                                    }
                                 }
 
                             }
@@ -201,7 +256,11 @@ public class BoardView {
                         if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] == null) {
                             Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                             if (j != y_max) {
-                                System.out.print("l       m");
+                                if(line==1||line==4){
+                                    System.out.print(" ─ ─ ─ ─ ");
+                                }else{
+                                    System.out.print("         ");
+                                }
                             }
 
                         }
@@ -211,13 +270,21 @@ public class BoardView {
 
                                 Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("t       u");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
 
                             } else {
                                 Board[i][j].getCardPointer().linePrinter(1, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("t       u");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             }
 
@@ -240,7 +307,11 @@ public class BoardView {
                                     }
 
                                 } else {
-                                    System.out.print("n       o");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             } else {
                                 Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
@@ -255,7 +326,11 @@ public class BoardView {
                                         Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
                                     }
                                 } else {
-                                    System.out.print("p       q");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             }
 
@@ -266,14 +341,22 @@ public class BoardView {
                                 Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
 
                                 if (line <= 2) {
-                                    if (Board[i][j + 2] != null && (Board[i - 1][j + 1].weight > Board[i][j + 2].weight)) {
+                                    if (Board[i][j + 2] != null) {
+                                        if ((Board[i - 1][j + 1].weight > Board[i][j + 2].weight)) {
+                                            Board[i - 1][j + 1].getCardPointer().linePrinter(1, line + 3, Board[i - 1][j + 1].isFlipped);
+                                        } else {
+                                            Board[i - 1][j + 1].getCardPointer().linePrinter(7, line + 3, Board[i - 1][j + 1].isFlipped);
+                                        }
+                                    }else{
                                         Board[i - 1][j + 1].getCardPointer().linePrinter(1, line + 3, Board[i - 1][j + 1].isFlipped);
-                                    } else {
-                                        Board[i - 1][j + 1].getCardPointer().linePrinter(7, line + 3, Board[i - 1][j + 1].isFlipped);
-                                    }
 
-                                } else {
-                                    System.out.print("r       s");
+                                    }
+                                }else {
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             } else {
                                 Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
@@ -289,7 +372,11 @@ public class BoardView {
                                     }
 
                                 } else {
-                                    System.out.print("t       u");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             }
 
@@ -299,12 +386,20 @@ public class BoardView {
                             if (Board[i][j].weight > Board[i - 1][j - 1].weight) {
                                 Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("t       u");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             } else {
                                 Board[i][j].getCardPointer().linePrinter(4, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("t       u");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             }
 
@@ -316,21 +411,38 @@ public class BoardView {
                                 if (Board[i][j].weight > Board[i - 1][j - 1].weight) {
                                     Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(4, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
                             } else {
                                 if (Board[i][j].weight > Board[i + 1][j - 1].weight) {
 
                                     Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
-
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(1, line, Board[i][j].isFlipped);
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             }
 
@@ -352,7 +464,11 @@ public class BoardView {
                                             Board[i - 1][j + 1].getCardPointer().linePrinter(1, line + 3, Board[i - 1][j + 1].isFlipped);
                                         }
                                     } else {
-                                        System.out.print("r       s");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
@@ -369,7 +485,11 @@ public class BoardView {
 
                                     } else {
 
-                                        System.out.print("t   G   u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
                             } else {
@@ -389,7 +509,11 @@ public class BoardView {
                                         }
 
                                     } else {
-                                        System.out.print("n       o");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
@@ -404,7 +528,11 @@ public class BoardView {
                                             Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
                                         }
                                     } else {
-                                        System.out.print("p       q");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
 
@@ -416,7 +544,11 @@ public class BoardView {
                             if (line <= 2) {
                                 Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("l       m");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
                             } else {
                                 if (Board[i][j].weight > Board[i + 1][j - 1].weight && Board[i][j].weight > Board[i + 1][j + 1].weight) {
@@ -522,7 +654,11 @@ public class BoardView {
                             }else{
                                 Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                 if (j != y_max) {
-                                    System.out.print("l       m");
+                                    if(line==1||line==4){
+                                        System.out.print(" ─ ─ ─ ─ ");
+                                    }else{
+                                        System.out.print("         ");
+                                    }
                                 }
 
                             }
@@ -581,13 +717,21 @@ public class BoardView {
 
                                     Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
 
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(1, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
 
@@ -608,7 +752,11 @@ public class BoardView {
                                         }
 
                                     } else {
-                                        System.out.print("r       s");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
@@ -624,7 +772,11 @@ public class BoardView {
                                         }
 
                                     } else {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
 
@@ -745,7 +897,11 @@ public class BoardView {
                                         }
 
                                     } else {
-                                        System.out.print("n       o");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
@@ -760,7 +916,11 @@ public class BoardView {
                                             Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
                                         }
                                     } else {
-                                        System.out.print("p       q");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
                             }
@@ -773,12 +933,20 @@ public class BoardView {
                                 if (Board[i][j].weight > Board[i - 1][j - 1].weight) {
                                     Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 } else {
                                     Board[i][j].getCardPointer().linePrinter(4, line, Board[i][j].isFlipped);
                                     if (j != y_max) {
-                                        System.out.print("t       u");
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
                                     }
                                 }
 
@@ -833,6 +1001,147 @@ public class BoardView {
                                 }
                             }
 
+
+                        }
+                        //two cards on the diagonal going down
+                        if (Board[i + 1][j + 1] != null && Board[i - 1][j - 1] != null && Board[i + 1][j - 1] == null && Board[i - 1][j + 1] == null){
+                            if(line<=2){
+                                if (Board[i][j].weight > Board[i - 1][j - 1].weight) {
+                                    Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
+                                    if (j != y_max) {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                } else {
+                                    Board[i][j].getCardPointer().linePrinter(4, line, Board[i][j].isFlipped);
+                                    if (j != y_max) {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                }
+
+
+                            }else{
+                                if (Board[i][j].weight > Board[i + 1][j + 1].weight) {
+                                    Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
+
+                                    if (line > 2) {
+                                        if (Board[i][j + 2] != null) {
+                                            if ((Board[i + 1][j + 1].weight > Board[i][j + 2].weight)) {
+                                                Board[i + 1][j + 1].getCardPointer().linePrinter(4, line - 3, Board[i + 1][j + 1].isFlipped);
+                                            } else {
+                                                Board[i + 1][j + 1].getCardPointer().linePrinter(8, line - 3, Board[i + 1][j + 1].isFlipped);
+                                            }
+                                        } else {
+                                            Board[i + 1][j + 1].getCardPointer().linePrinter(4, line - 3, Board[i + 1][j + 1].isFlipped);
+                                        }
+
+                                    } else {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                } else {
+                                    Board[i][j].getCardPointer().linePrinter(2, line, Board[i][j].isFlipped);
+                                    if (line > 2) {
+                                        if (Board[i][j + 2] != null) {
+                                            if ((Board[i + 1][j + 1].weight > Board[i][j + 2].weight)) {
+                                                Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                            } else {
+                                                Board[i + 1][j + 1].getCardPointer().linePrinter(3, line - 3, Board[i + 1][j + 1].isFlipped);
+                                            }
+                                        } else {
+                                            Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                        }
+                                    } else {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        //two cards on the diagonal going up
+                        if (Board[i + 1][j + 1] == null && Board[i - 1][j - 1] == null && Board[i + 1][j - 1] != null && Board[i - 1][j + 1] != null){
+                            if(line<=2){
+                                if (Board[i][j].weight > Board[i - 1][j + 1].weight) {
+                                    Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
+
+                                    if (line <= 2) {
+                                        if (Board[i][j + 2] != null) {
+                                            if ((Board[i - 1][j + 1].weight > Board[i][j + 2].weight)) {
+                                                Board[i - 1][j + 1].getCardPointer().linePrinter(1, line + 3, Board[i - 1][j + 1].isFlipped);
+                                            } else {
+                                                Board[i - 1][j + 1].getCardPointer().linePrinter(7, line + 3, Board[i - 1][j + 1].isFlipped);
+                                            }
+                                        }else{
+                                            Board[i - 1][j + 1].getCardPointer().linePrinter(1, line + 3, Board[i - 1][j + 1].isFlipped);
+
+                                        }
+                                    }else {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                } else {
+                                    Board[i][j].getCardPointer().linePrinter(3, line, Board[i][j].isFlipped);
+                                    if (line <= 2) {
+                                        if (Board[i][j + 2] != null) {
+                                            if (Board[i - 1][j + 1].weight > Board[i][j + 2].weight) {
+                                                Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                            } else {
+                                                Board[i - 1][j + 1].getCardPointer().linePrinter(2, line + 3, Board[i - 1][j + 1].isFlipped);
+                                            }
+                                        } else {
+                                            Board[i - 1][j + 1].getCardPointer().linePrinter(0, line + 3, Board[i - 1][j + 1].isFlipped);
+                                        }
+
+                                    } else {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                }
+
+                            }else{
+                                if (Board[i][j].weight > Board[i + 1][j - 1].weight) {
+
+                                    Board[i][j].getCardPointer().linePrinter(0, line, Board[i][j].isFlipped);
+                                    if (j != y_max) {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+
+                                } else {
+                                    Board[i][j].getCardPointer().linePrinter(1, line, Board[i][j].isFlipped);
+                                    if (j != y_max) {
+                                        if(line==1||line==4){
+                                            System.out.print(" ─ ─ ─ ─ ");
+                                        }else{
+                                            System.out.print("         ");
+                                        }
+                                    }
+                                }
+
+                            }
 
                         }
                         //no sides
@@ -942,17 +1251,30 @@ public class BoardView {
                     }
 
                     if (j == y_max && Board[i][j] == null) {
-                        System.out.print("FILLL");
+                        if(line==1||line==4){
+                            System.out.print("─ | ─");
+                        }else{
+                            System.out.print("  |  ");
+                        }
                     }
                     if (line <= 2) {
                         if (j == y_max - 1 && (j + 1) % 2 != (y_min % 2) && Board[i - 1][j + 1] == null) {
-                            System.out.print("FILLL");
+                            if(line==1||line==4){
+                                System.out.print("─ | ─");
+                            }else{
+                                System.out.print("  |  ");
+                            }
                         }
                     } else {
                         if (j == y_max - 1 && (j + 1) % 2 != (y_min % 2) && Board[i + 1][j + 1] == null) {
-                            System.out.print("FILLL");
+                            if(line==1||line==4){
+                                System.out.print("─ | ─");
+                            }else{
+                                System.out.print("  |  ");
+                            }
                         }
                     }
+
                 }
                 if(line==1||line==4){
                     System.out.print(" ─ ─ ─ ─ ─   ");
@@ -980,16 +1302,21 @@ public class BoardView {
             }
         }
 
-        System.out.print(gold + (x_min + 1) % 10 + reset + "    ");
+        System.out.print(gold + (x_min + 1) % 10 + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
-                    System.out.print("                  ");
+                    System.out.print("               |  ");
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 3, Board[x_max][j].isFlipped);
                     } else {
-                        System.out.print("                   ");
+                        if (j == y_max+1) {
+                            System.out.print("   |               ");
+                        }else{
+                            System.out.print("  |             |  ");
+                        }
+
                     }
 
                 }
@@ -1006,12 +1333,12 @@ public class BoardView {
         System.out.print(gold + (x_min + 1) % 10 + reset);
         System.out.println();
 
-        System.out.print("╪    ");
+        System.out.print("╪");
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
 
                 if (j == y_min - 1) {
-                    System.out.print("                  ");
+                    System.out.print("b  ─ ─ ─ ─ ─   | c");
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 4, Board[x_max][j].isFlipped);
@@ -1034,7 +1361,7 @@ public class BoardView {
         System.out.print("╪");
         System.out.println();
 
-        System.out.print(gold + (x_min + 2) / 10 + reset + "    ");
+        System.out.print(gold + (x_min + 2) / 10 + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
@@ -1069,14 +1396,14 @@ public class BoardView {
 
         System.out.print("╪   ");
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("              ");
+            System.out.print("─ ─ ─ ─ ─ ─ | ");
         }
         System.out.print("╪");
         System.out.println();
 
         System.out.print("Y   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("              ");
+            System.out.print("            | ");
         }
         System.out.print("Y");
         System.out.println();

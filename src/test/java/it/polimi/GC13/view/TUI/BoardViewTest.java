@@ -12,7 +12,7 @@ public class BoardViewTest extends TestCase {
         //board.InsertCard(49,49,42,4,deck,true);
         //board.InsertCard(51,51,42,1,deck,false);
         //two card with a space between
-        board.InsertCard(50,50,43,0,deck,false);
+        /*board.InsertCard(50,50,43,0,deck,false);
         board.InsertCard(50,52,60,1,deck,false);
 
         //two card with one car between, all cases
@@ -66,11 +66,24 @@ public class BoardViewTest extends TestCase {
         board.InsertCard(98,50,43,0,deck,false);
         board.InsertCard(97,51,60,2,deck,false);
         board.InsertCard(96,52,80,1,deck,false);
-
+        board.InsertCard(99,51,80,6,deck,false);
        /* board.InsertCard(54,56,43,1,deck,false);
         board.InsertCard(53,57,60,0,deck,false);
         board.InsertCard(52,58,80,2,deck,false);*/
-
+        /*board.InsertCard(50,50,41,0,deck,false);
+        board.InsertCard(51,51,41,1,deck,false);
+        board.InsertCard(52,52,41,2,deck,false);
+        board.InsertCard(50,52,41,3,deck,false);
+        board.InsertCard(53,51,41,4,deck,false);
+        board.InsertCard(54,50,41,5,deck,false);
+        board.InsertCard(53,49,41,6,deck,false);
+        board.InsertCard(52,48,41,7,deck,false);
+        board.InsertCard(51,49,41,8,deck,false);
+        board.InsertCard(52,50,41,9,deck,false);*/
+        for(int i=50;i<78;i++){
+            board.InsertCard(i,i,57,i*2,deck,false);
+        }
+        //board.InsertCard(53,,41,0,deck,false);
         board.printBoard();
 
     }
