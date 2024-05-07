@@ -6,7 +6,7 @@ import it.polimi.GC13.view.View;
 
 import java.util.List;
 
-public record OnDealCommonObjectiveCardMessage(int[] privateObjectiveCards) implements MessagesFromServer {
+public record OnDealCommonObjectiveCardMessage(List<Integer> privateObjectiveCards) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -19,6 +19,6 @@ public record OnDealCommonObjectiveCardMessage(int[] privateObjectiveCards) impl
 
     @Override
     public void methodToCall(View view) {
-        view.setSerialCommonObjectiveCard(this.privateObjectiveCards);
+        view.setSerialCommonObjectiveCard(this.privateObjectiveCards());
     }
 }

@@ -5,10 +5,10 @@ import it.polimi.GC13.controller.gameStateController.GamePhase;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 
-public record ChoosePrivateObjectiveCardMessage(int indexPrivateObjectiveCard) implements MessagesFromClient {
+public record ChoosePrivateObjectiveCardMessage(int serialPrivateObjectiveCard) implements MessagesFromClient {
 
     @Override
     public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
-        gamePhase.choosePrivateObjective(player, this.indexPrivateObjectiveCard());
+        gamePhase.choosePrivateObjective(player, this.serialPrivateObjectiveCard());
     }
 }

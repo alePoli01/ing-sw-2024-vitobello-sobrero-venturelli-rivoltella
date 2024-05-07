@@ -3,7 +3,6 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceStartCardMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnForbiddenCellMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNotEnoughResourceToPlaceMessage;
 
@@ -84,8 +83,7 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         } else {
-            this.owner.getHand().remove(cardToPlace);
-            this.owner.getGame().getObserver().notifyClients(new OnPlaceStartCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, owner.getTurnPlayed()));
         }
         this.updateAvailableCells(cardToPlace, xy);
     }
@@ -97,9 +95,8 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-        this.owner.getHand().remove(cardToPlace);
         this.updateAvailableCells(cardToPlace, xy);
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped));
+        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed()));
     }
 
     // updates notAvailableCells and availableCells sets

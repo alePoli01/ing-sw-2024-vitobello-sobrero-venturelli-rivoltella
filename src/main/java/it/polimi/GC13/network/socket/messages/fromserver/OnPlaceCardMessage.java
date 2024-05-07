@@ -4,7 +4,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnPlaceCardMessage(String playerNickname, int serialNumberCard , boolean isFlipped) implements MessagesFromServer {
+public record OnPlaceCardMessage(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -18,6 +18,6 @@ public record OnPlaceCardMessage(String playerNickname, int serialNumberCard , b
 
     @Override
     public void methodToCall(View view) {
-        view.onPlacedCard(this.playerNickname, this.serialNumberCard, this.isFlipped);
+        view.onPlacedCard(this.playerNickname(), this.serialCardPlaced(), this.isFlipped(), this.x(), this.y() , this.turn());
     }
 }

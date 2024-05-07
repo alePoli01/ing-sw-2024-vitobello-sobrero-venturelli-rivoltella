@@ -13,13 +13,13 @@ public interface View {
 
     void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList);
 
-    void handUpdate(String playerNickname, int[] availableCard);
+    void handUpdate(String playerNickname, List<Integer> availableCard);
 
-    void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard);
+    void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard);
 
-    void updateGoldCardsAvailable(int ... goldCardSerial);
+    void updateGoldCardsAvailableToDraw(int ... goldCardSerial);
 
-    void updateResourceCardsAvailable(int ... resourceCardSerial);
+    void updateResourceCardsAvailableToDraw(int ... resourceCardSerial);
 
     void checkForExistingGame();
 
@@ -27,11 +27,11 @@ public interface View {
 
     void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor);
 
-    void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard);
+    void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards);
 
-    void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped);
+    void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn);
 
-    void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
+    void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
     void drawCard();
 

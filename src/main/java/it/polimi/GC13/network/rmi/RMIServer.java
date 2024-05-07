@@ -57,7 +57,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void chosePrivateObjectiveCard(int indexPrivateObjectiveCard) {
+    public void choosePrivateObjectiveCard(int indexPrivateObjectiveCard) {
 
     }
 

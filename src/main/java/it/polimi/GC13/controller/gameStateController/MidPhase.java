@@ -29,7 +29,7 @@ public class MidPhase implements GamePhase {
         try {
             PlayableCard cardToPlace = player.getHand()
                     .stream()
-                    .filter(c -> c.serialNumber == serialCardToPlace)
+                    .filter(card -> card.serialNumber == serialCardToPlace)
                     .findFirst()
                     .orElseThrow();
             // check player turn
@@ -93,7 +93,7 @@ public class MidPhase implements GamePhase {
     }
 
     @Override
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 

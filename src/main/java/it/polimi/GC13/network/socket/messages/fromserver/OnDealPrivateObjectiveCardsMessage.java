@@ -5,7 +5,9 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnDealPrivateObjectiveCardsMessage(String playerNickname, int[] privateObjectiveCards) implements MessagesFromServer {
+import java.util.List;
+
+public record OnDealPrivateObjectiveCardsMessage(String playerNickname, List<Integer> privateObjectiveCards) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -19,6 +21,6 @@ public record OnDealPrivateObjectiveCardsMessage(String playerNickname, int[] pr
 
     @Override
     public void methodToCall(View view) {
-        view.chosePrivateObjectiveCard(this.playerNickname, this.privateObjectiveCards);
+        view.choosePrivateObjectiveCard(this.playerNickname,this.privateObjectiveCards());
     }
 }

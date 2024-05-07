@@ -30,6 +30,8 @@ public class SetupPhase implements GamePhase {
             PlayableCard cardToPlace = player.getHand().getFirst();
             player.getBoard().addStartCardToBoard(cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
+            // pop card played from hand
+            player.removeFromHand(cardToPlace);
             // if all Players positioned start card, it updates the controller
             if (playersPlacedStartCard(player)) {
                 this.controller.getGame().setGameState(GameState.DEALING_CARDS);
@@ -75,7 +77,7 @@ public class SetupPhase implements GamePhase {
         System.err.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 }

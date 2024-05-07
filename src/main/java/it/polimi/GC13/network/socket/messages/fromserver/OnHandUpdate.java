@@ -4,7 +4,9 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnHandUpdate(String playerNickname, int[] availableCards) implements MessagesFromServer {
+import java.util.LinkedList;
+
+public record OnHandUpdate(String playerNickname, LinkedList<Integer> availableCards) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -18,6 +20,6 @@ public record OnHandUpdate(String playerNickname, int[] availableCards) implemen
 
     @Override
     public void methodToCall(View view) {
-        view.handUpdate(this.playerNickname, this.availableCards);
+        view.handUpdate(this.playerNickname, this.availableCards());
     }
 }

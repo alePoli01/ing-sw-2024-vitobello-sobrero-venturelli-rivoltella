@@ -40,7 +40,7 @@ public class Printer {
         System.out.println("--- Gold Deck ---");
         for (PlayableCard card : visualDeck.getGoldDeck()) {
             if (goldCardsAvailable.contains(card.serialNumber)) {
-                // IF FIRST CARD -> ISFLIPPED = TRUE
+                // IF FIRST CARD -> IS FLIPPED = TRUE
                 card.cardPrinter(goldCardsAvailable.getFirst().equals(card.serialNumber));
             }
         }
@@ -55,16 +55,15 @@ public class Printer {
     /*
         METHOD USED TO PRINT OBJECTIVE CARD
      */
-    public synchronized void showObjectiveCard(String message, int... serialNumber) {
-        AtomicInteger counter = new AtomicInteger(1);
-        System.out.println(message);
+    public synchronized void showObjectiveCard(String message, List<Integer> privateObjectiveCards) {
+        System.out.println("\n" + message);
 
         visualDeck.getObjectiveDeck()
                 .stream()
-                .filter(card -> Arrays.stream(serialNumber).anyMatch(serial -> card.getSerialNumber() == serial))
+                .filter(card -> privateObjectiveCards.contains(card.serialNumber))
                 .forEach(card -> {
                     card.printObjectiveCard();
-                    System.out.println("\t    [" + counter.getAndIncrement() + "]");
+                    System.out.println("\t    [" + card.serialNumber + "]");
                 });
     }
 
@@ -89,16 +88,8 @@ public class Printer {
         METHOD USED TO PRINT PLAYABLE CARDS
      */
     public void showHand(List<Integer> hand) {
-        if (hand.getFirst() < 81 || hand.getFirst() > 86) {
-            for (PlayableCard card : visualDeck.getResourceDeck()) {
-                for (int cardInHand : hand) {
-                    if (card.serialNumber == cardInHand) {
-                        card.cardPrinter(false);
-                        System.out.println("         [" + cardInHand + "]");
-                    }
-                }
-            }
-        } else {
+        // PRINTS START CARD
+        if (hand.size() == 1) {
             for (StartCard card : visualDeck.getStartDeck()) {
                 for (int cardInHand : hand) {
                     if (card.serialNumber == cardInHand) {
@@ -109,6 +100,25 @@ public class Printer {
                     }
                 }
             }
+        } else {
+            hand
+                .forEach(serialCard -> {
+                    if (serialCard >= 1 && serialCard < 41) {
+                        for (PlayableCard card : visualDeck.getResourceDeck()) {
+                            if (card.serialNumber == serialCard) {
+                                card.cardPrinter(false);
+                                System.out.println("        [" + serialCard + "]");
+                            }
+                        }
+                    } else {
+                        for (PlayableCard card : visualDeck.getGoldDeck()) {
+                            if (card.serialNumber == serialCard) {
+                                card.cardPrinter(false);
+                                System.out.println("        [" + serialCard + "]");
+                            }
+                        }
+                    }
+                });
         }
     }
 }

@@ -18,6 +18,6 @@ public record OnNewGoldCardsAvailableMessage(int[] goldCardSerial) implements Me
 
     @Override
     public void methodToCall(View view) {
-        view.updateGoldCardsAvailable(this.goldCardSerial());
+        view.updateGoldCardsAvailableToDraw(this.goldCardSerial());
     }
 }

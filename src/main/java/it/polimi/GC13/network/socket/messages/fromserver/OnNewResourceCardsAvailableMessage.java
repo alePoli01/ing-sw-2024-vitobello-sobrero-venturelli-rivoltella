@@ -18,6 +18,6 @@ public record OnNewResourceCardsAvailableMessage(int[] resourceCardSerial) imple
 
     @Override
     public void methodToCall(View view) {
-        view.updateResourceCardsAvailable(this.resourceCardSerial());
+        view.updateResourceCardsAvailableToDraw(this.resourceCardSerial());
     }
 }
