@@ -9,6 +9,7 @@ public enum Resource {
     String magenta = "\u001b[35m";  // Magenta
     String gold = "\u001b[93m";  // gold
     String black = "\u001b[90m";  // black
+    String white = "\u001b[37m";
     String reset = "\u001b[0m";
     String mushroom = "\uD83C\uDF44";  // 🍄
     String dog = "\uD83D\uDC36";  // 🐶
@@ -51,7 +52,7 @@ public enum Resource {
                 return green+"P"+reset;
             }
             case NULL -> {
-                return "X";
+                return reset+"X";
             }
             case EMPTY -> {
                 return " ";

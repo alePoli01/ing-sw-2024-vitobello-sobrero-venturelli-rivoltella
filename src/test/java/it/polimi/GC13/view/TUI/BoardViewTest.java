@@ -16,11 +16,13 @@ public class BoardViewTest extends TestCase {
         board.InsertCard(50,52,60,1,deck,false);
 
         //two card with one car between, all cases
-        board.InsertCard(54,50,43,3,deck,false);
-        //board.InsertCard(53,51,60,1,deck,false);
+        board.InsertCard(54,50,80,3,deck,false);
+        board.InsertCard(55,53,60,1,deck,false);
         board.InsertCard(55,51,80,2,deck,false);
-        board.InsertCard(54,52,43,3,deck,false);
-        board.InsertCard(55,53,60,4,deck,false);
+        board.InsertCard(54,52,43,12,deck,false);
+        board.InsertCard(53,53,60,13,deck,false);
+        board.InsertCard(54,54,80,0,deck,false);
+        board.InsertCard(53,51,43,9,deck,false);
         //board.InsertCard(53,53,80,4,deck,false);
 
         board.InsertCard(58,50,43,0,deck,false);
