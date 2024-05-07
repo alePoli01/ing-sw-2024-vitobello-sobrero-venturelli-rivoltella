@@ -1302,7 +1302,7 @@ public class BoardView {
             }
         }
 
-        System.out.print(gold + (x_min + 1) % 10 + reset);
+        System.out.print(gold + (x_max + 1) % 10 + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
@@ -1330,7 +1330,7 @@ public class BoardView {
 
             }
         }
-        System.out.print(gold + (x_min + 1) % 10 + reset);
+        System.out.print(gold + (x_max + 1) % 10 + reset);
         System.out.println();
 
         System.out.print("╪");
@@ -1338,21 +1338,26 @@ public class BoardView {
             if (j % 2 != y_min % 2) {
 
                 if (j == y_min - 1) {
-                    System.out.print("b  ─ ─ ─ ─ ─   | c");
+                        System.out.print("   ─ ─ ─ ─ ─ ─ | ─");
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 4, Board[x_max][j].isFlipped);
                     } else {
-                        System.out.print("                   ");
+                        if(j==y_max+1){
+                            System.out.print(" ─ | ─ ─ ─ ─ ─ ─   ");
+                        }else{
+                            System.out.print("─ | ─ ─ ─ ─ ─ ─ | ─");
+                        }
+
                     }
 
                 }
 
             } else {
                 if (j == y_max) {
-                    System.out.print("        ");
+                    System.out.print(" ─ ─ ─ ─");
                 } else {
-                    System.out.print("         ");
+                    System.out.print(" ─ ─ ─ ─ ");
                 }
 
             }
@@ -1361,16 +1366,20 @@ public class BoardView {
         System.out.print("╪");
         System.out.println();
 
-        System.out.print(gold + (x_min + 2) / 10 + reset);
+        System.out.print(gold + (x_max + 2) / 10 + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
-                    System.out.print("                  ");
+                    System.out.print("               |  ");
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 5, Board[x_max][j].isFlipped);
                     } else {
-                        System.out.print("                   ");
+                        if(j==y_max+1){
+                            System.out.print("   |               ");
+                        }else{
+                            System.out.print("  |             |  ");
+                        }
                     }
 
                 }
@@ -1384,26 +1393,38 @@ public class BoardView {
 
             }
         }
-        System.out.print(gold + (x_min + 2) / 10 + reset);
+        System.out.print(gold + (x_max + 2) / 10 + reset);
         System.out.println();
 
-        System.out.print(gold + (x_min + 2) % 10 + "   " + reset);
+        System.out.print(gold + (x_max + 2) % 10 + "   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("              ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
         }
-        System.out.print(gold + (x_min + 2) % 10 + reset);
+        System.out.print(gold + (x_max + 2) % 10 + reset);
         System.out.println();
 
         System.out.print("╪   ");
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("─ ─ ─ ─ ─ ─ | ");
+            if(j==y_max+1){
+                System.out.print("─ ─ ─ ─ ─ ─   ");
+            }else{
+                System.out.print("─ ─ ─ ─ ─ ─ | ");
+            }
         }
         System.out.print("╪");
         System.out.println();
 
         System.out.print("Y   " + reset);
         for (int j = y_min - 1; j <= y_max + 1; j++) {
-            System.out.print("            | ");
+            if(j!=y_max+1){
+                System.out.print("            | ");
+            }else{
+                System.out.print("              ");
+            }
         }
         System.out.print("Y");
         System.out.println();

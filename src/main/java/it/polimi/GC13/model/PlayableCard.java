@@ -104,7 +104,7 @@ public class PlayableCard implements Serializable {
                 System.out.println("║   ║         ║   ║");
                 System.out.println("╚═══╩═════════╩═══╝");
             }
-
+            System.out.print(reset);
 
         }
         if (this.serialNumber > 40 && this.serialNumber <= 80) {
@@ -124,9 +124,54 @@ public class PlayableCard implements Serializable {
                 System.out.println("║   ║         ║   ║");
                 System.out.println("╚═══╩═════════╩═══╝");
             }
+            System.out.print(reset);
         }
 
     }
+
+    /*public void boxprinter(int line,int position){
+        switch(line){
+            case(0):{
+                switch(position){
+                    case(0):{
+                        if(this.edgeResource[0]==Resource.EMPTY){
+                            System.out.print("║    ");
+                        }else{
+                            System.out.print("╠═══╗");
+                        }
+                        break;
+                    }
+                    case(1):{
+                        if(this.edgeResource[0]==Resource.EMPTY){
+                            System.out.print("║    ");
+                        }else{
+                            System.out.print("║   ║");
+                        }
+
+                        break;
+                    }
+                    case(2):{
+                        if(this.edgeResource[0]==Resource.EMPTY){
+                            System.out.print("║    ");
+                        }else{
+                            System.out.print("╠═══╗");
+                        }
+                        break;
+                    }
+                    case(3):{
+                        break;
+                    }
+                }
+                break;
+            }
+            case(1):{
+                break;
+            }
+            case(2):{
+                break;
+            }
+        }
+    }*/
 
     public void linePrinter(int version, int line, boolean isFlipped) {
         String red = "\u001b[31m";   // Red
@@ -135,589 +180,1095 @@ public class PlayableCard implements Serializable {
         String magenta = "\u001b[35m";  // Magenta
         String gold = "\u001b[93m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
-        String color=null;
+        String color = null;
 
-        if(this.reign==Resource.ANIMAL){
-            color=blue;
+        if (this.reign == Resource.ANIMAL) {
+            color = blue;
             System.out.print(blue);
         }
-        if(this.reign==Resource.FUNGI){
-            color=red;
+        if (this.reign == Resource.FUNGI) {
+            color = red;
             System.out.print(red);
         }
-        if(this.reign==Resource.PLANT){
-            color=green;
+        if (this.reign == Resource.PLANT) {
+            color = green;
             System.out.print(green);
         }
-        if(this.reign==Resource.INSECT){
-            color=magenta;
+        if (this.reign == Resource.INSECT) {
+            color = magenta;
             System.out.print(magenta);
         }
-        switch(version){
-            case(0): {//fullcard
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        } else {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+"║"+reset + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ╚═══╣");
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+        if (this.serialNumber >= 41) {
 
+
+            switch (version) {
+                case (0): {//fullcard
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        } else {
-                            System.out.print("╠═══╗         ╔═══╣");
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + reset + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
+
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        } else {
-                            System.out.print("╚═══╩═════════╩═══╝");
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
                         }
-                        break;
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
                     }
+                    break;
                 }
-                break;
-            }
-            case(1):{//bottomleft not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        } else {
-                            System.out.print("╔═══╦════╦════╦═══╗");
+                case (1): {//bottomleft not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ╚═══╣");
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
 
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("         ╔═══╣");
-                        } else {
-                            System.out.print("         ╔═══╣");
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╔═══╣");
+                            } else {
+                                System.out.print("         ╔═══╣");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print(" "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("         ║   ║");
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("═════════╩═══╝");
-                        } else {
-                            System.out.print("═════════╩═══╝");
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╩═══╝");
+                            } else {
+                                System.out.print("═════════╩═══╝");
+                            }
+                            break;
                         }
-                        break;
                     }
+                    break;
+
                 }
-                break;
+                case (2): {//bottomright not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
 
-            }
-            case(2):{//bottomright not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        } else {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ╚═══╣");
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ");
+                            } else {
+                                System.out.print("╠═══╗         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════");
+                            } else {
+                                System.out.print("╚═══╩═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ");
-                        } else {
-                            System.out.print("╠═══╗         ");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ");
-                        } else {
-                            System.out.print("║   ║         ");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════");
-                        } else {
-                            System.out.print("╚═══╩═════════");
-                        }
-                        break;
-                    }
                 }
-                break;
+                case (3): {//upright not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════");
+                            } else {
+                                System.out.print("╔═══╦════╦════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ");
 
-            }
-            case(3):{//upright not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════");
-                        } else {
-                            System.out.print("╔═══╦════╦════");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset + color+ "║" + gold + this.condition.toString() + reset + "   ");
-                        } else {
-                            System.out.print("║   ║         ");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ");
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        } else {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        } else {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        }
-                        break;
-                    }
                 }
-                break;
+                case (4): {//upleft not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("════╦════╦═══╗");
+                            } else {
+                                System.out.print("════╦════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╚═══╣");
 
-            }
-            case(4):{//upleft not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("════╦════╦═══╗");
-                        } else {
-                            System.out.print("════╦════╦═══╗");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("         ║   ║");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("         ╚═══╣");
+                            } else {
+                                System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
 
-                        } else {
-                            System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        } else {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        } else {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        }
-                        break;
-                    }
+
                 }
-                break;
+                case (5): {//left side not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("════╦════╦═══╗");
+                            } else {
+                                System.out.print("════╦════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╚═══╣");
 
+                            } else {
+                                System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
 
-            }
-            case(5):{//left side not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("════╦════╦═══╗");
-                        } else {
-                            System.out.print("════╦════╦═══╗");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("         ║   ║");
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╔═══╣");
+                            } else {
+                                System.out.print("         ╔═══╣");
+                            }
+                            break;
                         }
-                        break;
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╩═══╝");
+                            } else {
+                                System.out.print("═════════╩═══╝");
+                            }
+                            break;
+                        }
                     }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("         ╚═══╣");
+                    break;
 
-                        } else {
-                            System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
-
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("         ╔═══╣");
-                        } else {
-                            System.out.print("         ╔═══╣");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print(" "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("         ║   ║");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("═════════╩═══╝");
-                        } else {
-                            System.out.print("═════════╩═══╝");
-                        }
-                        break;
-                    }
                 }
-                break;
+                case (6): {//right side not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════");
+                            } else {
+                                System.out.print("╔═══╦════╦════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ");
 
-            }
-            case(6):{//right side not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════");
-                        } else {
-                            System.out.print("╔═══╦════╦════");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset + "   ");
-                        } else {
-                            System.out.print("║   ║         ");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ");
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ");
+                            } else {
+                                System.out.print("╠═══╗         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════");
+                            } else {
+                                System.out.print("╚═══╩═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ");
-                        } else {
-                            System.out.print("╠═══╗         ");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ");
-                        } else {
-                            System.out.print("║   ║         ");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════");
-                        } else {
-                            System.out.print("╚═══╩═════════");
-                        }
-                        break;
-                    }
+
                 }
-                break;
+                case (7): {//bottom side not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦════╦════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
 
+                            } else {
+                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
 
-            }
-            case(7):{//bottom side not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("╔═══╦════╦════╦═══╗");
-                        } else {
-                            System.out.print("╔═══╦════╦════╦═══╗");
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
                         }
-                        break;
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════");
+                            } else {
+                                System.out.print("═════════");
+                            }
+                            break;
+                        }
                     }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╝         ╚═══╣");
+                    break;
 
-                        } else {
-                            System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
-
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("         ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print(" "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("═════════");
-                        } else {
-                            System.out.print("═════════");
-                        }
-                        break;
-                    }
                 }
-                break;
+                case (8): {//upside not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("════╦════");
+                            } else {
+                                System.out.print("════╦════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
 
-            }
-            case(8):{//upside not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("════╦════");
-                        } else {
-                            System.out.print("════╦════");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("   " + gold + this.pointsGiven + reset+color+  "║" + gold + this.condition.toString() + reset + "   ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("         ");
+                            } else {
+                                System.out.print("   │" + this.reign.toString() + "│   ");
 
-                        } else {
-                            System.out.print("   │" + this.reign.toString() + "│   ");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        } else {
-                            System.out.print("╠═══╗         ╔═══╣");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║ "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+color+" ║ " + this.edgeResource[1].toString() +color+ " ║");
-                        } else {
-                            System.out.print("║   ║         ║   ║");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        } else {
-                            System.out.print("╚═══╩═════════╩═══╝");
-                        }
-                        break;
-                    }
                 }
-                break;
+                case (9): {//allside not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("════╦════");
+                            } else {
+                                System.out.print("════╦════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
 
-            }
-            case(9):{//allside not shown
-                switch (line) {
-                    case (0): {//first line printed
-                        if (!isFlipped) {
-                            System.out.print("════╦════");
-                        } else {
-                            System.out.print("════╦════");
-                        }
-                        break;
-                    }
-                    case (1): {//second line printed
-                        if (!isFlipped) {
-                            System.out.print("   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset + "   ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (2): {//third line printed
-                        if (!isFlipped) {
-                            System.out.print("         ");
+                            } else {
+                                System.out.print("   │" + this.reign.toString() + "│   ");
 
-                        } else {
-                            System.out.print("   │" + this.reign.toString() + "│   ");
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════");
+                            } else {
+                                System.out.print("═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
 
-                        }
-                        break;
-                    }
-                    case (3): {//fourth line printed
-                        if (!isFlipped) {
-                            System.out.print("         ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (4): {//fifth line printed
-                        if (!isFlipped) {
-                            System.out.print(" "+red+this.resourceNeeded.get(Resource.FUNGI)+reset+"│"+blue+this.resourceNeeded.get(Resource.ANIMAL)+reset+"│"+green+this.resourceNeeded.get(Resource.PLANT)+reset+"│"+magenta+this.resourceNeeded.get(Resource.INSECT)+reset+" ");
-                        } else {
-                            System.out.print("         ");
-                        }
-                        break;
-                    }
-                    case (5): {//last line printed
-                        if (!isFlipped) {
-                            System.out.print("═════════");
-                        } else {
-                            System.out.print("═════════");
-                        }
-                        break;
-                    }
                 }
-                break;
 
             }
+            System.out.print(reset);
+        }else{
+            switch(version){
+                case (0): {//fullcard
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+
+                case (1): {//bottom left not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╔═══╣");
+                            } else {
+                                System.out.print("         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╩═══╝");
+                            } else {
+                                System.out.print("═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (2): {//bottom right not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ");
+                            } else {
+                                System.out.print("╠═══╗         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════");
+                            } else {
+                                System.out.print("╚═══╩═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (3): {//upright not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════");
+                            } else {
+                                System.out.print("╔═══╦═════════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (4): {//upleft
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╦═══╗");
+                            } else {
+                                System.out.print("═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╚═══╣");
+
+                            } else {
+                                System.out.print("   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (5): {//leftside not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╦═══╗");
+                            } else {
+                                System.out.print("═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╚═══╣");
+
+                            } else {
+                                System.out.print("   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ╔═══╣");
+                            } else {
+                                System.out.print("         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════╩═══╝");
+                            } else {
+                                System.out.print("═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (6): {//right side not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════");
+                            } else {
+                                System.out.print("╔═══╦═════════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ");
+                            } else {
+                                System.out.print("╠═══╗         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ");
+                            } else {
+                                System.out.print("║   ║         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════");
+                            } else {
+                                System.out.print("╚═══╩═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (7): {//bottom side not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            } else {
+                                System.out.print("╔═══╦═════════╦═══╗");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╝         ╚═══╣");
+
+                            } else {
+                                System.out.print("╠═══╝   "+reset+"│" + this.reign.toString() + "│"+color+"   ╚═══╣");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════");
+                            } else {
+                                System.out.print("═════════");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case (8): {//upside not shown
+                    switch (line) {
+                        case (0): {//first line printed
+                            if (!isFlipped) {
+                                System.out.print("═════════");
+                            } else {
+                                System.out.print("═════════");
+                            }
+                            break;
+                        }
+                        case (1): {//second line printed
+                            if (!isFlipped) {
+                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ");
+                            } else {
+                                System.out.print("         ");
+                            }
+                            break;
+                        }
+                        case (2): {//third line printed
+                            if (!isFlipped) {
+                                System.out.print("         ");
+
+                            } else {
+                                System.out.print("   "+reset+"│" + this.reign.toString() + "│"+color+"   ");
+
+                            }
+                            break;
+                        }
+                        case (3): {//fourth line printed
+                            if (!isFlipped) {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            } else {
+                                System.out.print("╠═══╗         ╔═══╣");
+                            }
+                            break;
+                        }
+                        case (4): {//fifth line printed
+                            if (!isFlipped) {
+                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                            } else {
+                                System.out.print("║   ║         ║   ║");
+                            }
+                            break;
+                        }
+                        case (5): {//last line printed
+                            if (!isFlipped) {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            } else {
+                                System.out.print("╚═══╩═════════╩═══╝");
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            System.out.print(reset);
 
         }
-        System.out.print(reset);
     }
 }
 

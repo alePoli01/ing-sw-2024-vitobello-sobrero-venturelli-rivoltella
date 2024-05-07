@@ -59,4 +59,519 @@ public class StartCard extends PlayableCard {
             System.out.println("╚═══╩═════════╩═══╝");
         }
     }
+    @Override
+    public void linePrinter(int version, int line, boolean isFlipped) {
+        switch (version) {
+            case (0): {//fullcard
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        } else {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("╠═══╝         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        } else {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        } else {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
+            case (1): {//bottomleft not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        } else {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("╠═══╝         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ╔═══╣");
+                        } else {
+                            System.out.print("         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════╩═══╝");
+                        } else {
+                            System.out.print("═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+            case (2): {//bottomright not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        } else {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("╠═══╝         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ");
+                        } else {
+                            System.out.print("╠═══╗         ");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════");
+                        } else {
+                            System.out.print("╚═══╩═════════");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+            case (3): {//upright not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════");
+                        } else {
+                            System.out.print("╔═══╦═════════");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ");
+
+                        } else {
+                            System.out.print("╠═══╝         ");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        } else {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        } else {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+            case (4): {//upleft not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════╦═══╗");
+                        } else {
+                            System.out.print("═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        } else {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        } else {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+
+            }
+            case (5): {//left side not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════╦═══╗");
+                        } else {
+                            System.out.print("═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ╔═══╣");
+                        } else {
+                            System.out.print("         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════╩═══╝");
+                        } else {
+                            System.out.print("═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+            case (6): {//right side not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════");
+                        } else {
+                            System.out.print("╔═══╦═════════");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ");
+
+                        } else {
+                            System.out.print("╠═══╝         ");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ");
+                        } else {
+                            System.out.print("╠═══╗         ");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════");
+                        } else {
+                            System.out.print("╚═══╩═════════");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+
+            }
+            case (7): {//bottom side not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        } else {
+                            System.out.print("╔═══╦═════════╦═══╗");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╝  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ╚═══╣");
+
+                        } else {
+                            System.out.print("╠═══╝         ╚═══╣");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ");
+                        } else {
+                            System.out.print("         ");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("         ");
+                        } else {
+                            System.out.print("         ");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════");
+                        } else {
+                            System.out.print("═════════");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+            case (8): {//upside not shown
+                switch (line) {
+                    case (0): {//first line printed
+                        if (!isFlipped) {
+                            System.out.print("═════════");
+                        } else {
+                            System.out.print("═════════");
+                        }
+                        break;
+                    }
+                    case (1): {//second line printed
+                        if (!isFlipped) {
+                            System.out.print("         ");
+                        } else {
+                            System.out.print("         ");
+                        }
+                        break;
+                    }
+                    case (2): {//third line printed
+                        if (!isFlipped) {
+                            System.out.print("  │" + this.frontReigns[0].toString() + this.frontReigns[1].toString() + this.frontReigns[2].toString() + "│  ");
+
+                        } else {
+                            System.out.print("         ");
+
+                        }
+                        break;
+                    }
+                    case (3): {//fourth line printed
+                        if (!isFlipped) {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        } else {
+                            System.out.print("╠═══╗         ╔═══╣");
+                        }
+                        break;
+                    }
+                    case (4): {//fifth line printed
+                        if (!isFlipped) {
+                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                        } else {
+                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                        }
+                        break;
+                    }
+                    case (5): {//last line printed
+                        if (!isFlipped) {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        } else {
+                            System.out.print("╚═══╩═════════╩═══╝");
+                        }
+                        break;
+                    }
+                }
+                break;
+
+            }
+
+
+        }
+
+    }
 }
+
+

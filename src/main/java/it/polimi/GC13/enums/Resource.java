@@ -70,36 +70,30 @@ public enum Resource {
         }
         return null;
     }
-    public String toEmoji(){
-        switch (this){
-            case FUNGI -> {
-                return mushroom;
-            }
-            case ANIMAL -> {
-                return dog;
-            }
-            case INSECT -> {
-                return insect;
-            }
-            case PLANT -> {
-                return plant;
-            }
-            case NULL -> {
-                return "X";
-            }
-            case EMPTY -> {
-                return " ";
-            }
-            case INKWELL -> {
-                return gold+"I"+reset;
-            }
-            case QUILL -> {
-                return gold+"F"+reset;
-            }
-            case MANUSCRIPT -> {
-                return gold+"M"+reset;
-            }
+    public String toString(int edge){
 
+        String goUP="\u001B[1A";
+        String goDOWN="\u001B[1B";
+        String goRIGHT="\u001B[1C";
+        String goLEFT="\u001B[1D";
+        String SAVE="\u001B[s";
+        String RESET="\u001B[u";
+        String DELETE="\b";
+        System.out.println("abcd");
+        switch(edge){
+            case(0):{
+                System.out.print(SAVE+goUP+goRIGHT+"ciao"+RESET+"ciao");
+                break;
+            }
+            case(1):{
+                break;
+            }
+            case(2):{
+                break;
+            }
+            case(3):{
+                break;
+            }
         }
         return null;
     }
