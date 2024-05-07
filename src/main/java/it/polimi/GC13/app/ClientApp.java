@@ -6,7 +6,7 @@ import it.polimi.GC13.network.rmi.RMIClient;
 import it.polimi.GC13.network.rmi.RMIServer;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
-import it.polimi.GC13.view.GUI.login.LoginFrame;
+import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.TUI.TUI;
 
 import javax.swing.*;
@@ -15,12 +15,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.rmi.NotBoundException;
-import java.util.function.Function;
+
 
 public class ClientApp {
-    // SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
     // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
+        //SwingUtilities.invokeLater(() -> new WaitingLobby(1, 2)); //per testare la grafica
+
         if (args.length != 2) {
             System.err.println("Missing Parameters, killing this server.");
             System.err.println("HINT: metti | 'nome-server' 123 456 | come parametri nella run configuration di ClientApp");
@@ -39,8 +40,6 @@ public class ClientApp {
         }
        // System.setProperty("java.rmi.server.hostname", args[0]);
 
-        //SwingUtilities.invokeLater(MainPage::new); //per testare la grafica
-        //SwingUtilities.invokeLater(LoginFrame::new);
         /*
         quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
         */
@@ -102,7 +101,9 @@ public class ClientApp {
                 clientDispatcher.setView(new TUI(virtualServer));
             }
         } else {
-            System.out.println("GUI is WIP! (babbo)");
+            if (clientDispatcher != null) {
+                clientDispatcher.setView(new FrameManager(virtualServer));
+            }
         }
     }
 }

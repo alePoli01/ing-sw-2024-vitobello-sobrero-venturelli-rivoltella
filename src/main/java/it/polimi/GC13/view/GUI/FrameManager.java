@@ -1,49 +1,41 @@
 package it.polimi.GC13.view.GUI;
 
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.model.ObjectiveCard;
-import it.polimi.GC13.model.PlayableCard;
-import it.polimi.GC13.model.Player;
-import it.polimi.GC13.model.StartCard;
+import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
+import it.polimi.GC13.view.GUI.game.TokenChoose;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
+import it.polimi.GC13.view.GUI.login.WaitingLobby;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 
+// TODO: da concatenare i frame --> da capire se ogni frame lancia il successivo o se serve questa classe per gestirli
+//TODO: da cambiare la gestione degli errori
 
-//da provare a gestire i vari frame da qui
-/*public class FrameManager extends JFrame implements View {
-    ServerInterface virtualServer;
+public class FrameManager implements View {
+    protected final ServerInterface virtualServer;
     private int choice = -1;
-
+    private WaitingLobby waitingLobby;
 
 
     public FrameManager(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
         this.checkForExistingGame();
+        System.out.println("++Sent: checkForExistingGame");
     }
 
-
-    @Override
-    public void tokenSetupPhase(int readyPlayers, List<TokenColor> tokenColorList, int neededPlayers) {
-
-    }
-
-    @Override
-    public void handUpdate(String playerNickname, int[] availableCard) {
-
-    }
-
-    @Override
-    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
-
+    public ServerInterface getVirtualServer() {
+        return this.virtualServer;
     }
 
     @Override
@@ -58,112 +50,109 @@ import java.util.Map;
        2)Existing game:
             2.a) Create new game: CASO 1
             2.b) Join existing game: login player name + choose existing game
-    *
 
-        if (gameNameWaitingPlayersMap.isEmpty()) {
-            //rimanda a LoginFrame: CASO 1)
-            try {
-                createNewGame();
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
-            }
+
+
+            NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
+    */
+
+       /* if (gameNameWaitingPlayersMap.isEmpty()) {
+            SwingUtilities.invokeLater(() -> new LoginFrame(this));
+        } else {
+            SwingUtilities.invokeLater(() -> new LoginFrame(this, gameNameWaitingPlayersMap));
+        }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         if (gameNameWaitingPlayersMap.isEmpty()) {
+            createNewGame();
+            //da capire come gestire eventuali errori
+            //JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
         } else {
             //ask what the player wants to do
-            while(choice == -1){
-                Object[] options = {"Create Game", "Join Game"};
-                choice = JOptionPane.showOptionDialog(null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-            }
+            //da testare
+
+
+
+           Object[] options = {"Create Game", "Join Game"};
+            choice = JOptionPane.showOptionDialog(null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 
             if (this.choice == JOptionPane.YES_OPTION) {
                 //player wants to create a new game
-                //rimanda a LoginFrame: CASO 2a)
-                try {
-                    createNewGame();
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
-                }
+                createNewGame();
+
+                //da capire come gestire eventuali errori
+                //JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
+
             } else if(this.choice == JOptionPane.NO_OPTION) {
                 //player can and wants to join an existing game
-                //rimanda a LoginFrame: CASO 2b)
-                try {
-                    joinExistingGame(gameNameWaitingPlayersMap);
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(null, "Error while joining game.", "Joining Failed", JOptionPane.WARNING_MESSAGE);
-                }
+                joinExistingGame(gameNameWaitingPlayersMap);
+
+                //da capire come gestire eventuali errori
+                //JOptionPane.showMessageDialog(null, "Error while joining game.", "Joining Failed", JOptionPane.WARNING_MESSAGE);
             }
         }
         this.choice = -1;
     }
 
 
+    //da testare
+    public void createNewGame() {
+        /* create and send message for a new game */
+        SwingUtilities.invokeLater(() -> new LoginFrame(this));
 
-    private void createNewGame() throws IOException {
-        /* create and send message for a new game *
-
-        boolean b = true;
-       // SwingUtilities.invokeLater(() -> new LoginFrame(b));
-
-
-
-
-
-
-
-        System.out.print("Choose a name for the new Game: ");
-
-
-        System.out.print("Choose Number of players in the game [min 2, max 4]: ");
-        do {
-            try {
-                playersNumber = Integer.parseInt(this.reader.readLine());
-            } catch (NumberFormatException e) {
-                System.out.print("Error: Please put a number: ");
-            }
-            if (playersNumber < 2 || playersNumber > 4) {
-                System.out.print("Error: Please choose a number between 2 and 4: ");
-            }
-        } while (playersNumber < 2 || playersNumber > 4);
-
-        //massage is ready to be sent
-        virtualServer.addPlayerToGame(this.player, playersNumber, gameName);
-        System.out.println("++Sent: addPlayerToGame");
     }
 
-
-    public void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException {
-
-        boolean b = false;
-        SwingUtilities.invokeLater(() -> new LoginFrame(b));
-
-
-
-        String nickname, gameName;
-        int playersNumber = -1;
-
-        System.out.print("Choose a nickname: ");
-        nickname = this.reader.readLine();
-        this.player = new Player(nickname);
-
-        System.out.println("Joinable Games:");
-        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game:[" + string + "] --|players in waiting room: " + numCurrPlayer +"|"));
-        do {
-            System.out.print("Select the game to join using its name: ");
-            gameName = this.reader.readLine();
-        } while (!gameNameWaitingPlayersMap.containsKey(gameName));
-
-        //massage is ready to be sent
-        virtualServer.addPlayerToGame(player, playersNumber, gameName);
-        System.out.println("++Sent: addPlayerToGame");
+    //da testare
+    public void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) {
+        SwingUtilities.invokeLater(() -> new LoginFrame(this, gameNameWaitingPlayersMap));
     }
 
+    @Override
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
+        SwingUtilities.invokeLater(() -> {
+            if (readyPlayers < neededPlayers) {
+                if (waitingLobby == null) {
+                    waitingLobby = new WaitingLobby(readyPlayers, neededPlayers);
+                } else {
+                    waitingLobby.getJLabel().setText(readyPlayers + "/" + neededPlayers);
+                }
+                waitingLobby.setVisible(true);
+            } else {
+                if (waitingLobby != null) {
+                    waitingLobby.dispose();
+                }
+                SwingUtilities.invokeLater(() -> new TokenChoose(this));
+            }
+        });
+    }
 
+    @Override
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
+        //SwingUtilities.invokeLater(() -> new MainPage(virtualServer));
+
+
+    }
 
 
 
     @Override
-    public void startCardSetupPhase(String playerNickname, TokenColor tokenColor) {
+    public void handUpdate(String playerNickname, int[] availableCard) {
 
     }
+
 
     @Override
     public void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard) {
@@ -171,12 +160,22 @@ import java.util.Map;
     }
 
     @Override
-    public void onPositionedCard(String playerNickname, int startCardPlaced, boolean isFlipped) {
+    public void onPlacedCard(String playerNickname, int startCardPlaced, boolean isFlipped) {
 
     }
 
     @Override
-    public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard) {
+    public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
+
+    }
+
+    @Override
+    public void drawCard() {
+
+    }
+
+    @Override
+    public void showHomeMenu() {
 
     }
 
@@ -185,35 +184,49 @@ import java.util.Map;
 
     }
 
-    private void showObjectiveCard(List<Integer> serialNumber) {
-        for (ObjectiveCard card : visualdeck.getObjectiveDeck()) {
-            if (card.serialNumber == serialNumber.getFirst() || card.serialNumber == serialNumber.getLast()) {
-                System.out.println(this.player.getNickname() + " privateObjectiveCard: ");
-                card.printObjectiveCard();
-            }
-        }
+    @Override
+    public void setPlayersOrder(Map<String, Position> playerPositions) {
+
     }
 
-    private void showHand() {
-        if (this.hand.getFirst() < 81 || this.hand.getFirst() > 86) {
-            for (PlayableCard card : visualdeck.getResourceDeck()) {
-                for (int x : this.hand) {
-                    if (card.serialNumber == x) {
-                        card.cardPrinter(false);
-                    }
-                }
-            }
-        } else {
-            for (StartCard card : visualdeck.getStartDeck()) {
-                for (int x : this.hand) {
-                    if (card.serialNumber == x) {
-                        card.cardPrinter(false);
-                        System.out.println("       FRONT");
-                        card.cardPrinter(true);
-                        System.out.println("        BACK");
-                    }
-                }
-            }
-        }
+
+    @Override
+    public void displayAvailableCells(Set<Coordinates> availableCells) {
+
     }
-}*/
+
+    @Override
+    public void connectionLost() {
+
+    }
+
+    @Override
+    public void onSetLastTurn(String nickname, Position position) {
+
+    }
+
+    @Override
+    public void placeCard() {
+
+    }
+
+    @Override
+    public void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard) {
+
+    }
+
+    @Override
+    public void updateGoldCardsAvailable(int... goldCardSerial) {
+
+    }
+
+    @Override
+    public void updateResourceCardsAvailable(int... resourceCardSerial) {
+
+    }
+
+    @Override
+    public void updateTurn(String playerNickname, boolean turn) {
+
+    }
+}
