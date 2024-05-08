@@ -64,7 +64,7 @@ public class MidPhase implements GamePhase {
 
     // draw resource / gold card
     @Override
-    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
+    public void drawCard(Player player, int cardDeckIndex) {
         try {
             // create card
             PlayableCard cardToDraw = player.getTable().getCardFromTable(cardDeckIndex);

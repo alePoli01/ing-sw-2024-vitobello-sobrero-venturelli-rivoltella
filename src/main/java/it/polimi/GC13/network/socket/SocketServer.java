@@ -87,8 +87,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void drawCard(int deckIndex, int cardDeckIndex) {
-        this.sendMessage(new DrawCardFromDeckMessage(deckIndex, cardDeckIndex));
+    public void drawCard(int cardDeckSerial) {
+        this.sendMessage(new DrawCardFromDeckMessage(cardDeckSerial));
     }
 
     @Override

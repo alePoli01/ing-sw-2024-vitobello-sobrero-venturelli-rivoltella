@@ -13,7 +13,6 @@ import it.polimi.GC13.view.View;
 import javax.swing.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 // TODO: da concatenare i frame --> da capire se ogni frame lancia il successivo o se serve questa classe per gestirli
@@ -186,7 +185,7 @@ public class FrameManager implements View {
 
 
     @Override
-    public void displayAvailableCells(Set<Coordinates> availableCells) {
+    public void displayAvailableCells(List<Coordinates> availableCells) {
 
     }
 

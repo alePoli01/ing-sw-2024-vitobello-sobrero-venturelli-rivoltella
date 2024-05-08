@@ -28,7 +28,15 @@ public class Table implements Serializable {
         this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
         this.commonObjectiveCard = new ObjectiveCard[2];
         this.deck = new Deck();
-        this.deck.parseJSON();
+        this.deck.shuffleDecks();
+    }
+
+    public Map<PlayableCard, Boolean> getGoldCardMap() {
+        return goldCardMap;
+    }
+
+    public Map<PlayableCard, Boolean> getResourceCardMap() {
+        return resourceCardMap;
     }
 
     public PlayableCard getCardFromTable(int serialNumber) throws GenericException {
@@ -45,7 +53,7 @@ public class Table implements Serializable {
             if (cardOptional.isPresent()) {
                 return cardOptional.get();
             } else {
-                throw new GenericException("Card not found");
+                throw new GenericException("Card not found in any deck.");
             }
         }
     }
@@ -73,7 +81,7 @@ public class Table implements Serializable {
             this.goldCardMap.put(this.deck.getGoldDeck().removeFirst(), false);
         }
         this.resourceCardMap.put(this.deck.getResourceDeck().getFirst(), true);
-        this.goldCardMap.put(this.deck.getResourceDeck().getFirst(), true);
+        this.goldCardMap.put(this.deck.getGoldDeck().getFirst(), true);
 
         this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(getCardSerialMap(this.goldCardMap)));
         this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(getCardSerialMap(this.resourceCardMap)));
@@ -130,10 +138,14 @@ public class Table implements Serializable {
             // removes the card from the correct deck
             this.deck.getGoldDeck().removeFirst();
             if (isFlipped) {
+                // gets the first card from the deck
                 cardMap.put(this.deck.getGoldDeck().getFirst(), true);
             } else {
                 // the old card that was covered is now visible
-                cardMap.values().stream().filter(cardSide -> cardSide).findFirst().ifPresent(cardSide -> cardSide = false);
+                cardMap.entrySet().stream()
+                        .filter(Map.Entry::getValue)
+                        .forEach(entry -> entry.setValue(false));
+
                 // add the new head of the deck on the back side
                 cardMap.put(this.deck.getGoldDeck().getFirst(), true);
             }

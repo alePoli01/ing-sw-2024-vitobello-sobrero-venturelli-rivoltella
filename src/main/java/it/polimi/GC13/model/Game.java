@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 public class Game implements Serializable {
     private GameState gameState;
-    private final Deck deck;
     private final Table table;
     public final int numPlayer;
     private int currNumPlayer;
@@ -27,7 +26,6 @@ public class Game implements Serializable {
         this.table = new Table(this);
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>();
-        this.deck = new Deck();
         this.currNumPlayer = 0;
         this.observer = new Observer();
     }
@@ -48,10 +46,6 @@ public class Game implements Serializable {
         return this.gameState;
     }
 
-    public Deck getDeck() {
-        return deck;
-    }
-
     public Table getTable() {
         return table;
     }
@@ -68,17 +62,17 @@ public class Game implements Serializable {
     public void giveFirstCards() throws GenericException {
         for (Player player : this.playerList) {
             for (int i = 0; i < 2; i++) {
-                player.addToHand(deck.getResourceDeck().removeFirst());
+                player.addToHand(this.table.getDeck().getResourceDeck().removeFirst());
             }
-            player.addToHand(deck.getGoldDeck().removeFirst());
+            player.addToHand(this.table.getDeck().getGoldDeck().removeFirst());
         }
     }
 
     // add common objective card to the table
     public void setCommonObjectiveCards() {
         LinkedList<Integer> commonObjectiveCards = new LinkedList<>();
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst()));
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst()));
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, this.table.getDeck().getObjectiveDeck().removeFirst()));
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, this.table.getDeck().getObjectiveDeck().removeFirst()));
         this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonObjectiveCards));
     }
 
@@ -147,15 +141,15 @@ public class Game implements Serializable {
 
     public void dealStartCard() throws GenericException {
         for (Player player : this.playerList) {
-            player.addToHand(deck.getStartDeck().removeFirst());
+            player.addToHand(this.table.getDeck().getStartDeck().removeFirst());
         }
     }
 
     // gives two objective cards to each player, after that, each player will have to choose one of this
     public void dealPrivateObjectiveCards() {
         for (Player player : playerList) {
-            player.getPrivateObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
-            player.getPrivateObjectiveCard().add(this.getDeck().getObjectiveDeck().removeFirst());
+            player.getPrivateObjectiveCard().add(this.table.getDeck().getObjectiveDeck().removeFirst());
+            player.getPrivateObjectiveCard().add(this.table.getDeck().getObjectiveDeck().removeFirst());
             this.observer.notifyClients(new OnDealPrivateObjectiveCardsMessage(player.getNickname(), player.getPrivateObjectiveCardSerialNumber()));
         }
     }

@@ -21,15 +21,14 @@ public class Deck implements Serializable {
     public Deck() {
         this.parseJSON();
         createCompleteDeck();
-        this.shuffleDecks();
     }
 
     public LinkedList<PlayableCard> getResourceDeck() {
-        return resourceDeck;
+        return this.resourceDeck;
     }
 
     public LinkedList<PlayableCard> getGoldDeck() {
-        return goldDeck;
+        return this.goldDeck;
     }
 
     public LinkedList<ObjectiveCard> getObjectiveDeck() {
@@ -54,9 +53,7 @@ public class Deck implements Serializable {
         Collections.shuffle(this.objectiveDeck);
         Collections.shuffle(this.startDeck);
         Collections.shuffle(this.resourceDeck);
-        this.resourceDeck.forEach(card -> System.out.print(card.serialNumber));
         Collections.shuffle(this.goldDeck);
-        this.resourceDeck.forEach(card -> System.out.print(card.serialNumber));
     }
 
     public void parseJSON() {

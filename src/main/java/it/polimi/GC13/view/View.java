@@ -7,7 +7,6 @@ import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExcep
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface View {
 
@@ -43,7 +42,7 @@ public interface View {
 
     void updateTurn(String playerNickname, boolean turn);
 
-    void displayAvailableCells(Set<Coordinates> availableCells);
+    void displayAvailableCells(List<Coordinates> availableCells);
 
     void connectionLost();
 

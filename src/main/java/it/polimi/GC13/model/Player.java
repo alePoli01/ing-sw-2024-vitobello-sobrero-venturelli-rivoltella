@@ -138,7 +138,7 @@ public class Player implements Serializable {
     // remove placedCard after it is placed on the board
     public void removeFromHand(PlayableCard placedCard) throws GenericException {
         hand.remove(placedCard);
-        System.out.println("Card " + placedCard + " was removed");
+        System.out.println("Card " + placedCard.serialNumber + " was removed");
         if (hand.contains(placedCard)) {
             throw new GenericException("Error model" + placedCard.serialNumber +  "not placed.");
         }

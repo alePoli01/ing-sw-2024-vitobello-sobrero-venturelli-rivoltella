@@ -8,14 +8,13 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 public class SetupPhase implements GamePhase {
-
     private final Controller controller;
 
     public SetupPhase(Controller controller) {
         this.controller = controller;
         this.prepareTable(this.controller.getGame());
     }
-    
+
     private void prepareTable(Game game) {
         try {
             game.getTable().tableSetup();
@@ -68,7 +67,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
-    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
+    public void drawCard(Player player, int cardDeckIndex) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

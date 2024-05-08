@@ -4,7 +4,6 @@ import it.polimi.GC13.model.Cell;
 import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.StartCard;
-import it.polimi.GC13.view.View;
 
 public class BoardView {
     public Cell[][] Board;

@@ -307,23 +307,11 @@ public class TUI implements View {
         this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
             try {
-                int deck;
                 do {
-                    System.out.print("Choose the deck from where to withdraw the card.\n[1] GOLD [2] RESOURCE: ");
-                    deck = Integer.parseInt(reader.readLine());
-                } while (deck < 1 || deck > 2);
-                do {
-                    if (deck == 1) {
-                        System.out.print("Available serial numbers from GOLD DECK are:");
-                        this.goldCardsAvailable.keySet().forEach(serial -> System.out.print(" " + serial));
-                    } else {
-                        System.out.print("Available serial numbers from RESOURCE DECK are:");
-                        this.resourceCardsAvailable.keySet().forEach(serial -> System.out.print(" " + serial));
-                    }
-                    System.out.print("\nYour choice: ");
+                    System.out.print("Choose the card to withdraw: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
-                    this.virtualServer.drawCard(deck, choice);
-                } while (deck == 1 ? this.goldCardsAvailable.containsKey(this.choice) : this.resourceCardsAvailable.containsKey(this.choice));
+                    this.virtualServer.drawCard(choice);
+                } while (this.goldCardsAvailable.containsKey(this.choice) || this.resourceCardsAvailable.containsKey(this.choice));
                 this.choice = 0;
                 this.turnPlayed++;
                 System.out.println("You have passed the turn");
@@ -454,7 +442,7 @@ public class TUI implements View {
     }
 
     @Override
-    public void displayAvailableCells(Set<Coordinates> availableCells) {
+    public void displayAvailableCells(List<Coordinates> availableCells) {
         System.out.println("Available cells are: ");
         System.out.println(availableCells);
         this.printer.comeBack(this);

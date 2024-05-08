@@ -66,7 +66,7 @@ public class DealingPhase implements GamePhase {
         return true;
     }
 
-    public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
+    public void drawCard(Player player, int cardDeckIndex) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 

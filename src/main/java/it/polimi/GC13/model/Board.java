@@ -15,8 +15,8 @@ public class Board implements Serializable {
     private final Player owner;               //owner of the board
     private int playerScore = 0;
     private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);     //counter for each type of object present on the board
-    private final Set<Coordinates> availableCells = new HashSet<>();
-    private final Set<Coordinates> notAvailableCells = new HashSet<>();   // -> used to not add available cell
+    private final List<Coordinates> availableCells = new LinkedList<>();
+    private final List<Coordinates> notAvailableCells = new LinkedList<>();   // -> used to not add available cell
     private final List<Coordinates> offset = new LinkedList<>();
 
     //initialize all the values to zero
@@ -68,7 +68,7 @@ public class Board implements Serializable {
 
     // call from the controller to verify it is possible to place the selected card
     public Coordinates isPossibleToPlace(int X, int Y) throws GenericException {
-        Coordinates xy = availableCells.stream()
+        Coordinates xy = this.availableCells.stream()
                 .filter(coordinates -> coordinates.getX() == X && coordinates.getY() == Y)
                 .findFirst()
                 .orElse(null);
@@ -89,7 +89,7 @@ public class Board implements Serializable {
         } else {
             this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, owner.getTurnPlayed()));
         }
-        this.updateAvailableCells(cardToPlace, xy);
+        this.updateAvailableCells(cardToPlace, xy, isFlipped);
     }
 
     // add card to the board
@@ -99,12 +99,12 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-        this.updateAvailableCells(cardToPlace, xy);
+        this.updateAvailableCells(cardToPlace, xy, isFlipped);
         this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed()));
     }
 
     // updates notAvailableCells and availableCells sets
-    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy) {
+    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped) {
         this.availableCells.remove(xy);
         this.notAvailableCells.add(xy);
 
@@ -112,14 +112,27 @@ public class Board implements Serializable {
         while (i < cardPlaced.edgeResource.length) {
             Resource resource = cardPlaced.edgeResource[i];
             Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
-            if (resource != Resource.NULL && !this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
+
+            // if the coordinates has X on the edge and it is not already forbidden it is added to the forbidden
+            if (isFlipped) {
                 this.availableCells.add(coordinatesToCheck);
-                System.out.println("New available coordinates: (" + coordinatesToCheck.getX() + ", " + coordinatesToCheck.getY() + ")");
-            } else {
+            } else if (resource.equals(Resource.NULL) && !this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
                 notAvailableCells.add(coordinatesToCheck);
+                // else it is added to availableCells
+            } else {
+                this.availableCells.add(coordinatesToCheck);
+                //System.out.println("\nNew available coordinates: (" + coordinatesToCheck.getX() + ", " + coordinatesToCheck.getY() + ")");
             }
             i++;
         }
+
+        /*
+        System.out.println("\nCoordinates available for " + this.owner.getNickname() + " are:");
+        this.availableCells.forEach(coordinates -> System.out.print("(" + coordinates.getX() + ", " + coordinates.getY() + ") "));
+        System.out.println("\nCoordinates not available for " + this.owner.getNickname() + " are:");
+        this.notAvailableCells.forEach(coordinates -> System.out.print("(" + coordinates.getX() + ", " + coordinates.getY() + ") "));
+        System.out.println();
+         */
     }
 
     // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
@@ -145,7 +158,7 @@ public class Board implements Serializable {
                 Coordinates coordinateToCheck = this.getCoordinateFromBoardMap(x + offset.getX(), y + offset.getY());
                 if (this.boardMap.containsKey(coordinateToCheck) && ((!this.boardMap.get(coordinateToCheck).isFlipped) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER))) {
                     // determine if a new covered edge has reign or object and in case remove it from availableResources
-                    if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.getAndIncrement()].isNullOrEmpty())) {
+                    if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].isNullOrEmpty())) {
                         for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
                             if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.getAndIncrement()].equals(resource)) {
                                 if (resource.isReign() || resource.isObject()) {
@@ -153,6 +166,7 @@ public class Board implements Serializable {
                                 }
                             }
                         }
+                        edge.incrementAndGet();
                     }
                 }
             });
@@ -184,7 +198,7 @@ public class Board implements Serializable {
     }
 
     public boolean boardMapContainsKeyOfValue(int x, int y) {
-        for(Coordinates xy : this.boardMap.keySet()){
+        for(Coordinates xy : this.boardMap.keySet()) {
             if (xy.getX() == x && xy.getY() == y){
                 return true;
             }

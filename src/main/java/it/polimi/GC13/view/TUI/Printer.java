@@ -17,7 +17,7 @@ import java.util.Map;
     CLASS USED TO PRINT MESSAGES FROM TUI
  */
 public class Printer {
-    public static final Deck visualDeck = new Deck();
+    private static final Deck visualDeck = new Deck();
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     int choice = 0;
 

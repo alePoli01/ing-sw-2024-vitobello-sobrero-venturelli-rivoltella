@@ -5,16 +5,15 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OnForbiddenCellMessage implements OnInputExceptionMessage {
     private final String errorMessage;
-    private final Set<Coordinates> availableCells = new HashSet<>();
+    private final List<Coordinates> availableCells = new LinkedList<>();
     private final String playerNickname;
 
-    public OnForbiddenCellMessage(String playerNickname, int X, int Y, Set<Coordinates> availableCells) {
+    public OnForbiddenCellMessage(String playerNickname, int X, int Y, List<Coordinates> availableCells) {
         errorMessage = "It's not possible to place cards in: (%s, %s)" + X + Y;
         this.availableCells.addAll(availableCells);
         this.playerNickname = playerNickname;
