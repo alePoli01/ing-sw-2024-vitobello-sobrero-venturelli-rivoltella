@@ -47,14 +47,16 @@ public class Deck implements Serializable {
     }
 
     public PlayableCard getCard(int serialNumber) {
-        return this.completeDeck.get(serialNumber);
+        return this.completeDeck.get(serialNumber - 1);
     }
 
     public void shuffleDecks() {
-        Collections.shuffle(objectiveDeck);
-        Collections.shuffle(startDeck);
-        Collections.shuffle(resourceDeck);
-        Collections.shuffle(goldDeck);
+        Collections.shuffle(this.objectiveDeck);
+        Collections.shuffle(this.startDeck);
+        Collections.shuffle(this.resourceDeck);
+        this.resourceDeck.forEach(card -> System.out.print(card.serialNumber));
+        Collections.shuffle(this.goldDeck);
+        this.resourceDeck.forEach(card -> System.out.print(card.serialNumber));
     }
 
     public void parseJSON() {

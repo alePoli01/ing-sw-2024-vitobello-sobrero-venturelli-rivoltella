@@ -31,18 +31,6 @@ public class Table implements Serializable {
         this.deck.parseJSON();
     }
 
-    /*
-    TODO: tableSetup potrebbe essere sostituito con getNewCard(chiamato più volte)?
-    DA DISCUTERE:
-        return score of the player of position index
-        public int getScore(int index) {
-            return score[index];
-        }
-        //set score of the player of position index
-        public void setScore(int index,int score) {
-            this.score[index]= score;
-        }*/
-
     public PlayableCard getCardFromTable(int serialNumber) throws GenericException {
         Optional<PlayableCard> cardOptional = this.resourceCardMap.keySet().stream()
                 .filter(card -> card.serialNumber == serialNumber)
@@ -105,7 +93,7 @@ public class Table implements Serializable {
         return objectiveCard.serialNumber;
     }
 
-    //method to pick(remove) a card from the table
+    // method to pick(remove) a card from the table
     public void drawCard(PlayableCard cardToDraw) throws GenericException {
         /*
          * 1. check which type of card has been chosen
