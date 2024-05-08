@@ -129,49 +129,6 @@ public class PlayableCard implements Serializable {
 
     }
 
-    /*public void boxprinter(int line,int position){
-        switch(line){
-            case(0):{
-                switch(position){
-                    case(0):{
-                        if(this.edgeResource[0]==Resource.EMPTY){
-                            System.out.print("║    ");
-                        }else{
-                            System.out.print("╠═══╗");
-                        }
-                        break;
-                    }
-                    case(1):{
-                        if(this.edgeResource[0]==Resource.EMPTY){
-                            System.out.print("║    ");
-                        }else{
-                            System.out.print("║   ║");
-                        }
-
-                        break;
-                    }
-                    case(2):{
-                        if(this.edgeResource[0]==Resource.EMPTY){
-                            System.out.print("║    ");
-                        }else{
-                            System.out.print("╠═══╗");
-                        }
-                        break;
-                    }
-                    case(3):{
-                        break;
-                    }
-                }
-                break;
-            }
-            case(1):{
-                break;
-            }
-            case(2):{
-                break;
-            }
-        }
-    }*/
 
     public void linePrinter(int version, int line, boolean isFlipped) {
         String red = "\u001b[31m";   // Red
@@ -226,7 +183,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ╚═══╣");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -281,7 +238,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ╚═══╣");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -337,7 +294,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ╚═══╣");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -393,7 +350,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ");
 
                             }
                             break;
@@ -449,7 +406,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("         ╚═══╣");
 
                             } else {
-                                System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -506,7 +463,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("         ╚═══╣");
 
                             } else {
-                                System.out.print("   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -562,7 +519,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ");
 
                             }
                             break;
@@ -619,7 +576,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("╠═══╝         ╚═══╣");
 
                             } else {
-                                System.out.print("╠═══╝   │" + this.reign.toString() + "│   ╚═══╣");
+                                System.out.print("╠═══╝   "+reset+ "│" + this.reign.toString() +color+ "│   ╚═══╣");
 
                             }
                             break;
@@ -675,7 +632,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("         ");
 
                             } else {
-                                System.out.print("   │" + this.reign.toString() + "│   ");
+                                System.out.print("   "+reset+ "│" + this.reign.toString() +color+ "│   ");
 
                             }
                             break;
@@ -731,7 +688,7 @@ public class PlayableCard implements Serializable {
                                 System.out.print("         ");
 
                             } else {
-                                System.out.print("   │" + this.reign.toString() + "│   ");
+                                System.out.print("   "+reset+ "│" + this.reign.toString() +color+ "│   ");
 
                             }
                             break;
