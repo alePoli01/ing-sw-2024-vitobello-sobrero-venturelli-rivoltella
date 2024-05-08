@@ -10,6 +10,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.OnTurnUpdateMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnTokenAlreadyChosenMessage;
 
 import java.io.Serializable;
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -102,24 +103,22 @@ public class Player implements Serializable {
         return this.hand;
     }
 
-    private int[] getHandCardSerialNumber() {
-        // Initialize the array to store serial numbers
-        int[] handCardSerialNumber = new int[this.hand.size()];
 
-        // Fill the array with serial numbers of cards in the hand
-        for (int i = 0; i < this.hand.size(); i++) {
-            handCardSerialNumber[i] = this.hand.get(i).serialNumber;
-        }
+    private LinkedList<Integer> getHandSerialNumber() {
+        LinkedList<Integer> handSerialNumber = new LinkedList<>();
+        this.hand
+                .forEach((card) -> handSerialNumber.add(card.serialNumber));
 
-        // Return the array of serial numbers
-        return handCardSerialNumber;
+        System.out.println(this.nickname);
+        handSerialNumber.forEach(System.out::println);
+
+        return handSerialNumber;
     }
 
-    public int[] getPrivateObjectiveCardSerialNumber() {
-        int[] privateObjectiveCardSerialNumber = new int[this.privateObjectiveCard.size()];
-        for (int i = 0; i < this.privateObjectiveCard.size(); i++) {
-            privateObjectiveCardSerialNumber[i] = this.privateObjectiveCard.get(i).serialNumber;
-        }
+    public LinkedList<Integer> getPrivateObjectiveCardSerialNumber() {
+        LinkedList<Integer> privateObjectiveCardSerialNumber = new LinkedList<>();
+        this.privateObjectiveCard
+                .forEach(objectiveCard -> privateObjectiveCardSerialNumber.add(objectiveCard.serialNumber));
         return privateObjectiveCardSerialNumber;
     }
 
@@ -139,11 +138,12 @@ public class Player implements Serializable {
     // remove placedCard after it is placed on the board
     public void removeFromHand(PlayableCard placedCard) throws GenericException {
         hand.remove(placedCard);
+        System.out.println("Card " + placedCard + " was removed");
         if (hand.contains(placedCard)) {
             throw new GenericException("Error model" + placedCard.serialNumber +  "not placed.");
         }
         // send message to listener
-        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandCardSerialNumber()));
+        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
     // add drawnCard to the hand
@@ -152,18 +152,15 @@ public class Player implements Serializable {
         if (!hand.contains(drawnCard)) {
             throw new GenericException(drawnCard.serialNumber + "not added to the hand");
         }
-        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandCardSerialNumber()));
+        // send message to listener
+        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
     // chose private objective card for the game
-    public void setPrivateObjectiveCard(int indexPrivateObjectiveCard, int readyPlayers) throws GenericException {
+    public void setPrivateObjectiveCard(int serialPrivateObjectiveCard, int readyPlayers) throws GenericException {
         if (this.privateObjectiveCard.size() == 2) {
-            if (indexPrivateObjectiveCard == 0) {
-                this.privateObjectiveCard.removeLast();
-            } else {
-                this.privateObjectiveCard.removeFirst();
-            }
-            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, indexPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
+            this.privateObjectiveCard.removeIf(objectiveCard -> objectiveCard.serialNumber != serialPrivateObjectiveCard);
+            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, serialPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
         } else {
             throw new GenericException("Private objective already chose");
         }

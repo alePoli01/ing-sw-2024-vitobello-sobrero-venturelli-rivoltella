@@ -29,7 +29,7 @@ public class MidPhase implements GamePhase {
         try {
             PlayableCard cardToPlace = player.getHand()
                     .stream()
-                    .filter(c -> c.serialNumber == serialCardToPlace)
+                    .filter(card -> card.serialNumber == serialCardToPlace)
                     .findFirst()
                     .orElseThrow();
             // check player turn
@@ -43,7 +43,7 @@ public class MidPhase implements GamePhase {
             // add card to the board
             board.addCardToBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
-            board.removeResources(xy);
+            board.removeResources(X, Y);
             // pop card played from hand
             board.getOwner().removeFromHand(cardToPlace);
             // sum reigns / objects
@@ -51,7 +51,7 @@ public class MidPhase implements GamePhase {
             // update player's scoreboard
             if (!isFlipped) {
                 // gold cards gives points differently
-                board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, xy));
+                board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, X, Y));
                 // check if players has reached 20 points, if so sets game's last turn
                 if (board.getPlayerScore() >= 20) {
                     player.getGame().setLastRound(player);
@@ -67,15 +67,13 @@ public class MidPhase implements GamePhase {
     public void drawCard(Player player, int deckIndex, int cardDeckIndex) {
         try {
             // create card
-            PlayableCard cardToDraw = player.getTable().getCard(cardDeckIndex);
+            PlayableCard cardToDraw = player.getTable().getCardFromTable(cardDeckIndex);
             // check player turn
             player.checkMyTurn();
-            // draw the selected card from the table
+            // draw the selected card from the table and replace with a new one
             player.getTable().drawCard(cardToDraw);
             // add the selected card to player's hand
             player.addToHand(cardToDraw);
-            // add new card to the table
-            player.getTable().getNewCard(cardToDraw);
             // end player's turn
             player.setMyTurn(false);
             // set next player turn to true
@@ -93,7 +91,7 @@ public class MidPhase implements GamePhase {
     }
 
     @Override
-    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
+    public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
 

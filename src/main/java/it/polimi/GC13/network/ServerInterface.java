@@ -21,5 +21,5 @@ public interface ServerInterface {
 
     void drawCard(int deckIndex, int cardDeckIndex);
 
-    void chosePrivateObjectiveCard(int indexPrivateObjectiveCard);
+    void choosePrivateObjectiveCard(int serialPrivateObjectiveCard);
 }

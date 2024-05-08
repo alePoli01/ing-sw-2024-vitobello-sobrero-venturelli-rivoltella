@@ -5,18 +5,15 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
-import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.game.TokenChoose;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
 import it.polimi.GC13.view.GUI.login.WaitingLobby;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 
 // TODO: da concatenare i frame --> da capire se ogni frame lancia il successivo o se serve questa classe per gestirli
@@ -140,6 +137,11 @@ public class FrameManager implements View {
     }
 
     @Override
+    public void handUpdate(String playerNickname, List<Integer> availableCard) {
+
+    }
+
+    @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         //SwingUtilities.invokeLater(() -> new MainPage(virtualServer));
 
@@ -147,25 +149,18 @@ public class FrameManager implements View {
     }
 
 
-
     @Override
-    public void handUpdate(String playerNickname, int[] availableCard) {
-
-    }
-
-
-    @Override
-    public void chosePrivateObjectiveCard(String playerNickname, int[] privateObjectiveCard) {
+    public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
 
     }
 
     @Override
-    public void onPlacedCard(String playerNickname, int startCardPlaced, boolean isFlipped) {
+    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
 
     }
 
     @Override
-    public void definePrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
+    public void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
 
     }
 
@@ -211,19 +206,20 @@ public class FrameManager implements View {
     }
 
     @Override
-    public void setSerialCommonObjectiveCard(int[] serialCommonObjectiveCard) {
+    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
 
     }
 
     @Override
-    public void updateGoldCardsAvailable(int... goldCardSerial) {
+    public void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial) {
 
     }
 
     @Override
-    public void updateResourceCardsAvailable(int... resourceCardSerial) {
+    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial) {
 
     }
+
 
     @Override
     public void updateTurn(String playerNickname, boolean turn) {

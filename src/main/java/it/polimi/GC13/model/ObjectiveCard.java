@@ -6,7 +6,6 @@ public abstract class ObjectiveCard implements Serializable {
     public final int serialNumber;
     public final int comboPoints; //points given by the card
 
-    //prova
     public ObjectiveCard(int serialNumber, int comboPoints) {
         this.serialNumber = serialNumber;
         this.comboPoints = comboPoints;

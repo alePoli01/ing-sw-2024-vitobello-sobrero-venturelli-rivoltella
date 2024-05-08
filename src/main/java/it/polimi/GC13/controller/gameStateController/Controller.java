@@ -54,8 +54,8 @@ public class Controller implements GamePhase {
         this.gameController.chooseToken(player, token);
     }
 
-    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
-        this.gameController.choosePrivateObjective(player, indexPrivateObjectiveCard);
+    public void choosePrivateObjective(Player player, int serialPrivateObjectiveCard) {
+        this.gameController.choosePrivateObjective(player, serialPrivateObjectiveCard);
     }
 
     public void placeStartCard(Player player, boolean isFlipped) {

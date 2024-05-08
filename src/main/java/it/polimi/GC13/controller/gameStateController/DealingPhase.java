@@ -22,7 +22,6 @@ public class DealingPhase implements GamePhase {
             game.setCommonObjectiveCards();
             game.dealPrivateObjectiveCards();
             game.setPlayersPosition();
-            System.out.println("Dealing Cards");
         } catch (GenericException e){
             System.err.println(e.getMessage());
         }
@@ -33,10 +32,10 @@ public class DealingPhase implements GamePhase {
     }
 
     // player chooses his objective card
-    public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
+    public void choosePrivateObjective(Player player, int serialPrivateObjectiveCard) {
         try {
             this.readyPlayers++;
-            player.setPrivateObjectiveCard(indexPrivateObjectiveCard, readyPlayers);
+            player.setPrivateObjectiveCard(serialPrivateObjectiveCard, readyPlayers);
             if (this.playersChoseObjectiveCard(player)) {
                 this.controller.getGame().setGameState(GameState.MID);
                 this.controller.updateController(new MidPhase(this.controller));

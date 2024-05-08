@@ -4,7 +4,9 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-public record OnNewResourceCardsAvailableMessage(int[] resourceCardSerial) implements MessagesFromServer {
+import java.util.Map;
+
+public record OnNewResourceCardsAvailableMessage(Map<Integer, Boolean> resourceCardSerial) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -18,6 +20,6 @@ public record OnNewResourceCardsAvailableMessage(int[] resourceCardSerial) imple
 
     @Override
     public void methodToCall(View view) {
-        view.updateResourceCardsAvailable(this.resourceCardSerial());
+        view.updateResourceCardsAvailableToDraw(this.resourceCardSerial());
     }
 }

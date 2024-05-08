@@ -61,9 +61,9 @@ public int getObjectivePoints(Board board) {
 
                 for (int d = 1; d <= (Y_max - Y_min) + 1; d++) {
 
-                    if (board.containsKeyOfValue(mover.getX(), mover.getY())) {
+                    if (board.boardMapContainsKeyOfValue(mover.getX(), mover.getY())) {
 
-                        if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
+                        if (board.getBoardMap().get(board.getCoordinateFromBoardMap(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                             flag++;
                         } else {
                             flag = 0;
@@ -95,8 +95,8 @@ public int getObjectivePoints(Board board) {
 
                 for (int d = 1; d < X_max - X_min; d++) {
 
-                    if (board.containsKeyOfValue(mover.getX(), mover.getY())) {
-                        if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
+                    if (board.boardMapContainsKeyOfValue(mover.getX(), mover.getY())) {
+                        if (board.getBoardMap().get(board.getCoordinateFromBoardMap(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                             flag++;
                         } else {
                             flag = 0;
@@ -138,8 +138,8 @@ public int getObjectivePoints(Board board) {
 
                 for (int d = 1; d <= (Y_max - Y_min)+1; d++) {
 
-                    if (board.containsKeyOfValue(mover.getX(), mover.getY())) {
-                        if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
+                    if (board.boardMapContainsKeyOfValue(mover.getX(), mover.getY())) {
+                        if (board.getBoardMap().get(board.getCoordinateFromBoardMap(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                             flag++;
                         } else {
                             flag = 0;
@@ -171,8 +171,8 @@ public int getObjectivePoints(Board board) {
 
                 for (int d = 1; d <= (X_max - X_min)+1; d++) {
 
-                    if (board.containsKeyOfValue(mover.getX(), mover.getY())) {
-                        if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
+                    if (board.boardMapContainsKeyOfValue(mover.getX(), mover.getY())) {
+                        if (board.getBoardMap().get(board.getCoordinateFromBoardMap(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                             flag++;
                         } else {
                             flag = 0;
@@ -246,8 +246,8 @@ public int getObjectivePoints(Board board) {
             //ystem.out.println(mover.getX()+" "+ mover.getY());
             for (int y_offset = 2; y_offset <= (Y_max - Y_min)+1; y_offset=y_offset+2) {
 
-                if (board.containsKeyOfValue(mover.getX(), mover.getY())) {
-                    if (board.getBoardMap().get(board.get(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
+                if (board.boardMapContainsKeyOfValue(mover.getX(), mover.getY())) {
+                    if (board.getBoardMap().get(board.getCoordinateFromBoardMap(mover.getX(), mover.getY())).getCardPointer().reign.equals(color)) {
                         flag++;
                     } else {
                         flag = 0;
@@ -275,8 +275,8 @@ public int getObjectivePoints(Board board) {
                             break;
                     }
                     //System.out.println(moverdiagonal.getX()+" "+ moverdiagonal.getY());
-                    if (board.containsKeyOfValue(moverdiagonal.getX(), moverdiagonal.getY())) {
-                        if (board.getBoardMap().get(board.get(moverdiagonal.getX(), moverdiagonal.getY())).getCardPointer().reign.equals(colordiagonal)) {
+                    if (board.boardMapContainsKeyOfValue(moverdiagonal.getX(), moverdiagonal.getY())) {
+                        if (board.getBoardMap().get(board.getCoordinateFromBoardMap(moverdiagonal.getX(), moverdiagonal.getY())).getCardPointer().reign.equals(colordiagonal)) {
                             points++;
                         }
                     }

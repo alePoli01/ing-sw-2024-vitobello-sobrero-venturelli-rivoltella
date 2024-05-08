@@ -4,33 +4,39 @@ import it.polimi.GC13.model.Cell;
 import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.StartCard;
+import it.polimi.GC13.view.View;
 
 public class BoardView {
     public Cell[][] Board;
     public int x_max, x_min, y_max, y_min;
+    private final Deck deck = new Deck();
 
     public BoardView() {
-        Board = new Cell[150][150];
+        Board = new Cell[95][95];
         x_max = 50;
         y_max = 50;
         x_min = 50;
         y_min = 50;
     }
 
-    public void InsertCard(int y, int x, int serialnumber, int z, Deck deck, boolean isflipped) {
-        for (PlayableCard card : deck.getResourceDeck()) {
-            if (serialnumber == card.serialNumber) {
-                this.Board[y][x] = new Cell(card, z, isflipped);
+    public void insertCard(int y, int x, int serialNumber, int z, boolean isFlipped) {
+        if (serialNumber >= 1 && serialNumber <= 40) {
+            for (PlayableCard card : this.deck.getResourceDeck()) {
+                if (serialNumber == card.serialNumber) {
+                    this.Board[y][x] = new Cell(card, z, isFlipped);
+                }
             }
-        }
-        for (PlayableCard card : deck.getGoldDeck()) {
-            if (serialnumber == card.serialNumber) {
-                this.Board[y][x] = new Cell(card, z, isflipped);
+        } else if (serialNumber > 40 && serialNumber <= 80) {
+            for (PlayableCard card : this.deck.getGoldDeck()) {
+                if (serialNumber == card.serialNumber) {
+                    this.Board[y][x] = new Cell(card, z, isFlipped);
+                }
             }
-        }
-        for (StartCard card : deck.getStartDeck()) {
-            if (serialnumber == card.serialNumber) {
-                this.Board[y][x] = new Cell(card, z, isflipped);
+        } else if (serialNumber > 80 && serialNumber <= 86) {
+            for (StartCard card : this.deck.getStartDeck()) {
+                if (serialNumber == card.serialNumber) {
+                    this.Board[y][x] = new Cell(card, z, isFlipped);
+                }
             }
         }
         if (y > x_max) {

@@ -92,8 +92,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void chosePrivateObjectiveCard(int indexPrivateObjectiveCard) {
-        this.sendMessage(new ChoosePrivateObjectiveCardMessage(indexPrivateObjectiveCard));
+    public void choosePrivateObjectiveCard(int serialPrivateObjectiveCard) {
+        this.sendMessage(new ChoosePrivateObjectiveCardMessage(serialPrivateObjectiveCard));
     }
 
     // LISTEN CALLS FROM SERVER

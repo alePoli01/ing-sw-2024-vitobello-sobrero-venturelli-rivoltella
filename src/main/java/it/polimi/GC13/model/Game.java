@@ -70,15 +70,15 @@ public class Game implements Serializable {
             for (int i = 0; i < 2; i++) {
                 player.addToHand(deck.getResourceDeck().removeFirst());
             }
-            player.addToHand(deck.getResourceDeck().removeFirst());
+            player.addToHand(deck.getGoldDeck().removeFirst());
         }
     }
 
     // add common objective card to the table
     public void setCommonObjectiveCards() {
-        int[] commonObjectiveCards = new int[2];
-        commonObjectiveCards[0] = this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst());
-        commonObjectiveCards[1] = this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst());
+        LinkedList<Integer> commonObjectiveCards = new LinkedList<>();
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, getDeck().getObjectiveDeck().removeFirst()));
+        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, getDeck().getObjectiveDeck().removeFirst()));
         this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonObjectiveCards));
     }
 
