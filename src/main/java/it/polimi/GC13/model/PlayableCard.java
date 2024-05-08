@@ -13,7 +13,6 @@ public class PlayableCard implements Serializable {
     public final Map<Resource, Integer> resourceNeeded;
     public final int pointsGiven;
     public final PointsCondition condition;
-    private PlayableCard[] linkedCard;
 
     public PlayableCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
         this.serialNumber = serialNumber;
@@ -26,13 +25,13 @@ public class PlayableCard implements Serializable {
     }
 
     // method to calculate points given after a gold card is placed
-    public int getPointsGiven(Board board, Coordinates xy) {
+    public int getPointsGiven(Board board, int X, int Y) {
         if (this.condition != null) {
             return switch (condition) {
                 case QUILL -> board.getCollectedResources().get(Resource.QUILL) * pointsGiven;
                 case MANUSCRIPT -> board.getCollectedResources().get(Resource.MANUSCRIPT) * pointsGiven;
                 case INKWELL -> board.getCollectedResources().get(Resource.INKWELL) * pointsGiven;
-                case EDGE -> board.surroundingCardsNumber(xy) * pointsGiven;
+                case EDGE -> board.surroundingCardsNumber(X, Y) * pointsGiven;
                 case NULL -> pointsGiven;
             };
         } else {

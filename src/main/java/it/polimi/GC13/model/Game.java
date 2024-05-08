@@ -70,7 +70,7 @@ public class Game implements Serializable {
             for (int i = 0; i < 2; i++) {
                 player.addToHand(deck.getResourceDeck().removeFirst());
             }
-            player.addToHand(deck.getResourceDeck().removeFirst());
+            player.addToHand(deck.getGoldDeck().removeFirst());
         }
     }
 

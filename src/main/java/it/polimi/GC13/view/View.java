@@ -17,9 +17,9 @@ public interface View {
 
     void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard);
 
-    void updateGoldCardsAvailableToDraw(int ... goldCardSerial);
+    void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial);
 
-    void updateResourceCardsAvailableToDraw(int ... resourceCardSerial);
+    void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial);
 
     void checkForExistingGame();
 

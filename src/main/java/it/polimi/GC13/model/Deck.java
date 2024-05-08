@@ -10,21 +10,17 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Deck implements Serializable {
-    private final LinkedList<ObjectiveCard> objectiveDeck;
-    private LinkedList<StartCard> startDeck;
-    private LinkedList<PlayableCard> resourceDeck;
-    private LinkedList<PlayableCard> goldDeck;
+    private final LinkedList<ObjectiveCard> objectiveDeck = new LinkedList<>();
+    private LinkedList<StartCard> startDeck = new LinkedList<>();
+    private LinkedList<PlayableCard> resourceDeck = new LinkedList<>();
+    private LinkedList<PlayableCard> goldDeck = new LinkedList<>();
+    private final LinkedList<PlayableCard> completeDeck = new LinkedList<>();
 
     public Deck() {
-        this.objectiveDeck = new LinkedList<>();
-        this.startDeck = new LinkedList<>();
-        this.resourceDeck = new LinkedList<>();
-        this.goldDeck = new LinkedList<>();
         this.parseJSON();
+        createCompleteDeck();
         this.shuffleDecks();
     }
 
@@ -44,6 +40,16 @@ public class Deck implements Serializable {
         return startDeck;
     }
 
+    private void createCompleteDeck() {
+        completeDeck.addAll(this.resourceDeck);
+        completeDeck.addAll(this.goldDeck);
+        completeDeck.addAll(this.startDeck);
+    }
+
+    public PlayableCard getCard(int serialNumber) {
+        return this.completeDeck.get(serialNumber);
+    }
+
     public void shuffleDecks() {
         Collections.shuffle(objectiveDeck);
         Collections.shuffle(startDeck);
@@ -51,7 +57,7 @@ public class Deck implements Serializable {
         Collections.shuffle(goldDeck);
     }
 
-    public void parseJSON(){
+    public void parseJSON() {
         Gson gson = new Gson();
 
         //lettura carte risorsa (

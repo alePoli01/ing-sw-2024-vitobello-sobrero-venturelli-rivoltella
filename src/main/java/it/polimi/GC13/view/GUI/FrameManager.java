@@ -211,12 +211,12 @@ public class FrameManager implements View {
     }
 
     @Override
-    public void updateGoldCardsAvailableToDraw(int... goldCardSerial) {
+    public void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial) {
 
     }
 
     @Override
-    public void updateResourceCardsAvailableToDraw(int... resourceCardSerial) {
+    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial) {
 
     }
 

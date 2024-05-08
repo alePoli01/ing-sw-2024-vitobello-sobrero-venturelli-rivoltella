@@ -108,6 +108,10 @@ public class Player implements Serializable {
         LinkedList<Integer> handSerialNumber = new LinkedList<>();
         this.hand
                 .forEach((card) -> handSerialNumber.add(card.serialNumber));
+
+        System.out.println(this.nickname);
+        handSerialNumber.forEach(System.out::println);
+
         return handSerialNumber;
     }
 
