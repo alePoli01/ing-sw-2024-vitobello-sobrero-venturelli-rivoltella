@@ -200,12 +200,4 @@ public class Board implements Serializable {
         }
         return null;
     }
-
-    // collection to be used for set and lists
-    public boolean contains(Collection<Coordinates> collection, int x, int y) {
-        return collection
-                .stream()
-                .anyMatch(coordinates -> coordinates.getX() == x && coordinates.getY() == y);
-    }
-
 }
