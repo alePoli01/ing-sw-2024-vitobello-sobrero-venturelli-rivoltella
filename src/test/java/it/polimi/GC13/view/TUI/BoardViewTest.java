@@ -83,6 +83,7 @@ public class BoardViewTest extends TestCase {
         board.insertCard(52,48,41,7, false);
         board.insertCard(51,49,71,8, false);
         board.insertCard(52,50,41,9, false);
+        board.insertCard(55,53,41,9, false);
         /*for(int i=50;i<78;i++){
             board.InsertCard(i,i,57,i*2, false);
         }*/

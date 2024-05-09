@@ -1315,6 +1315,9 @@ public class BoardView {
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 3, Board[x_max][j].isFlipped);
+                        if(j==y_max){
+                            System.out.print("    ");
+                        }
                     } else {
                         if (j == y_max+1) {
                             System.out.print("   |               ");
@@ -1332,6 +1335,9 @@ public class BoardView {
                 } else {
                     System.out.print("         ");
                 }
+                if(j==y_max+1&&Board[x_max][y_max] == null){
+                    System.out.print("    ");
+                }
 
             }
         }
@@ -1347,6 +1353,9 @@ public class BoardView {
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 4, Board[x_max][j].isFlipped);
+                        if(j==y_max){
+                            System.out.print(" ─ ─ ");
+                        }
                     } else {
                         if(j==y_max+1){
                             System.out.print(" ─ | ─ ─ ─ ─ ─ ─   ");
@@ -1359,10 +1368,20 @@ public class BoardView {
                 }
 
             } else {
+                if(j==y_max+1){
+                    if(Board[x_max][y_max] == null){
+                        System.out.print(" ─ ─ ─ ─ ─   ");
+                    }else{
+                        System.out.print("─ ─ ─   ");
+                    }
+
+                }
                 if (j == y_max) {
                     System.out.print(" ─ ─ ─ ─");
                 } else {
+                    if(j!=y_max+1){
                     System.out.print(" ─ ─ ─ ─ ");
+                    }
                 }
 
             }
@@ -1379,6 +1398,9 @@ public class BoardView {
                 } else {
                     if (Board[x_max][j] != null) {
                         Board[x_max][j].getCardPointer().linePrinter(0, 5, Board[x_max][j].isFlipped);
+                        if(j==y_max){
+                            System.out.print("    ");
+                        }
                     } else {
                         if(j==y_max+1){
                             System.out.print("   |               ");
@@ -1394,6 +1416,9 @@ public class BoardView {
                     System.out.print("        ");
                 } else {
                     System.out.print("         ");
+                }
+                if(j==y_max+1&&Board[x_max][y_max] == null){
+                    System.out.print("    ");
                 }
 
             }
