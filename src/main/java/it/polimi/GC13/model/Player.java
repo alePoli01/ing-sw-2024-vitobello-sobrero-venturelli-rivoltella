@@ -147,14 +147,12 @@ public class Player implements Serializable {
 
     // add drawnCard to the hand
     public void addToHand(PlayableCard drawnCard) throws GenericException {
-        synchronized (this.hand){
-            hand.add(drawnCard);
-            if (!hand.contains(drawnCard)) {
-                throw new GenericException(drawnCard.serialNumber + "not added to the hand");
-            }
-            // send message to listener
-            this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
+        hand.add(drawnCard);
+        if (!hand.contains(drawnCard)) {
+            throw new GenericException(drawnCard.serialNumber + "not added to the hand");
         }
+        // send message to listener
+        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
     // chose private objective card for the game
