@@ -475,14 +475,16 @@ public class TUI implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
+            if (this.myTurn) {
+                this.showHomeMenu();
+            } else if (this.turnPlayed == 0) {
+                this.showHomeMenu();
+            }
         }
         if (turn) {
             this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
         } else {
             this.gamesLog.add("\n" + playerNickname + " passed the turn");
-        }
-        if (this.turnPlayed == 0) {
-            this.showHomeMenu();
         }
     }
 
