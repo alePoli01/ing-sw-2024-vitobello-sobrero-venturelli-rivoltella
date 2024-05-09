@@ -38,8 +38,8 @@ public class Player implements Serializable {
         return this.nickname;
     }
 
-    public TokenColor getTokenColor() {
-        return this.tokenColor;
+    public boolean isMyTurn() {
+        return this.myTurn;
     }
 
     public void setTokenColor(TokenColor tokenColor) throws GenericException {
@@ -72,7 +72,7 @@ public class Player implements Serializable {
     }
 
     public LinkedList<ObjectiveCard> getPrivateObjectiveCard() {
-        return privateObjectiveCard;
+        return this.privateObjectiveCard;
     }
 
     public void setPosition(Position position) {
@@ -80,7 +80,7 @@ public class Player implements Serializable {
     }
 
     public int getTurnPlayed() {
-        return turnPlayed;
+        return this.turnPlayed;
     }
 
     public void increaseTurnPlayed() {
@@ -88,7 +88,7 @@ public class Player implements Serializable {
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
     }
 
     public Board getBoard() {
@@ -103,12 +103,11 @@ public class Player implements Serializable {
         return this.hand;
     }
 
-
     private LinkedList<Integer> getHandSerialNumber() {
         LinkedList<Integer> handSerialNumber = new LinkedList<>();
-        this.hand
-                .forEach((card) -> handSerialNumber.add(card.serialNumber));
+        this.hand.forEach((card) -> handSerialNumber.add(card.serialNumber));
 
+        // DEBUG
         System.out.println(this.nickname);
         handSerialNumber.forEach(System.out::println);
 
@@ -148,12 +147,14 @@ public class Player implements Serializable {
 
     // add drawnCard to the hand
     public void addToHand(PlayableCard drawnCard) throws GenericException {
-        hand.add(drawnCard);
-        if (!hand.contains(drawnCard)) {
-            throw new GenericException(drawnCard.serialNumber + "not added to the hand");
+        synchronized (this.hand){
+            hand.add(drawnCard);
+            if (!hand.contains(drawnCard)) {
+                throw new GenericException(drawnCard.serialNumber + "not added to the hand");
+            }
+            // send message to listener
+            this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
         }
-        // send message to listener
-        this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
     // chose private objective card for the game

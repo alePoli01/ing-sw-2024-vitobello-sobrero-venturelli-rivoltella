@@ -5,10 +5,10 @@ import it.polimi.GC13.controller.gameStateController.GamePhase;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 
-public record DrawCardFromDeckMessage(int cardDeckSerial) implements MessagesFromClient {
+public record DrawCardFromDeckMessage(int serialCardToDraw) implements MessagesFromClient {
 
     @Override
     public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
-        gamePhase.drawCard(player, this.cardDeckSerial());
+        gamePhase.drawCard(player, this.serialCardToDraw());
     }
 }

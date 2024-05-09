@@ -19,7 +19,7 @@ public interface ServerInterface {
 
     void writeMessage(); //writes message in gamechat
 
-    void drawCard(int cardDeckSerial);
+    void drawCard(int serialCardToDraw);
 
     void choosePrivateObjectiveCard(int serialPrivateObjectiveCard);
 }

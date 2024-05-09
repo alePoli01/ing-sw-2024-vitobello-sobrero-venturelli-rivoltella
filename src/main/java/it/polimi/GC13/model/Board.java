@@ -48,10 +48,6 @@ public class Board implements Serializable {
         this.playerScore = playerScore;
     }
 
-    public Player getOwner() {
-        return owner;
-    }
-
     public EnumMap<Resource, Integer> getCollectedResources() {
         return this.collectedResources;
     }
@@ -113,7 +109,7 @@ public class Board implements Serializable {
             Resource resource = cardPlaced.edgeResource[i];
             Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
-            // if the coordinates has X on the edge and it is not already forbidden it is added to the forbidden
+            // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
             if (isFlipped) {
                 this.availableCells.add(coordinatesToCheck);
             } else if (resource.equals(Resource.NULL) && !this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
@@ -121,18 +117,9 @@ public class Board implements Serializable {
                 // else it is added to availableCells
             } else {
                 this.availableCells.add(coordinatesToCheck);
-                //System.out.println("\nNew available coordinates: (" + coordinatesToCheck.getX() + ", " + coordinatesToCheck.getY() + ")");
             }
             i++;
         }
-
-        /*
-        System.out.println("\nCoordinates available for " + this.owner.getNickname() + " are:");
-        this.availableCells.forEach(coordinates -> System.out.print("(" + coordinates.getX() + ", " + coordinates.getY() + ") "));
-        System.out.println("\nCoordinates not available for " + this.owner.getNickname() + " are:");
-        this.notAvailableCells.forEach(coordinates -> System.out.print("(" + coordinates.getX() + ", " + coordinates.getY() + ") "));
-        System.out.println();
-         */
     }
 
     // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
@@ -175,7 +162,7 @@ public class Board implements Serializable {
     // simplified for cycles to update reigns and objects
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
         // if statement for start card, else for gold / resources
-        if (cardToPlace instanceof StartCard) {
+        if (cardToPlace.serialNumber >= 81 && cardToPlace.serialNumber <= 86) {
             if (isFlipped) {
                 Arrays.stream(((StartCard) cardToPlace).reignBackPointEdge)
                         .filter(Resource::isReign)

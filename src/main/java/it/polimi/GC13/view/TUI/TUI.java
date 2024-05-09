@@ -42,12 +42,12 @@ public class TUI implements View {
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
         if (playerNickname.equals(this.nickname)) {
-            synchronized (this.hand){
+            synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
-            }
-            if (turnPlayed >= 1) {
-                this.printer.comeBack(this);
+                if (turnPlayed >= 1) {
+                    this.printer.comeBack(this);
+                }
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
@@ -204,7 +204,7 @@ public class TUI implements View {
 
     /*
         SETUP PHASE methods to the player
-        startCardSetupPhase to chose which side to place your card
+        startCardSetupPhase to chose which side to place your start card
      */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
@@ -237,7 +237,7 @@ public class TUI implements View {
         String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
         if (playerNickname.equals(this.nickname)) {
             if (this.turnPlayed >= 0) {
-                System.out.println("Remaining cards in hand are: " + this.hand.stream().map(Object::toString).collect(Collectors.joining(" ")));
+                System.out.println(message);
                 this.printer.comeBack(this);
             } else {
                 System.out.println(message + ".\nWaiting for other players...");
@@ -310,8 +310,9 @@ public class TUI implements View {
                 do {
                     System.out.print("Choose the card to withdraw: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
-                    this.virtualServer.drawCard(choice);
-                } while (this.goldCardsAvailable.containsKey(this.choice) || this.resourceCardsAvailable.containsKey(this.choice));
+                } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
+                this.virtualServer.drawCard(choice);
+                System.out.println("+++ Sent draw card");
                 this.choice = 0;
                 this.turnPlayed++;
                 System.out.println("You have passed the turn");
@@ -391,7 +392,7 @@ public class TUI implements View {
                     String playerChosen;
                     do {
                         System.out.println("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]");
-                        System.out.print("Your choice: ");
+                        System.out.print("Player: ");
                         playerChosen = reader.readLine();
                         while (!this.playersBoard.containsKey(playerChosen)) {
                             System.out.print("Player " + playerChosen + " not found.\nEnter an existing player: ");
@@ -517,7 +518,7 @@ public class TUI implements View {
                 }
                 X = (scanner.nextInt());
                 Y = (scanner.nextInt());
-                isFlipped = scanner.nextInt() == 1;
+                isFlipped = scanner.nextInt() == 2;
             } catch (InputMismatchException e) {
                 System.out.print("Error: Please input valid numbers.");
             }

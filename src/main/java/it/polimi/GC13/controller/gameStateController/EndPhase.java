@@ -49,7 +49,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
-    public void drawCard(Player player, int cardDeckIndex) {
+    public void drawCard(Player player, int serialCardToDraw) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

@@ -66,8 +66,8 @@ public class Controller implements GamePhase {
         this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, X, Y);
     }
 
-    public void drawCard(Player player, int cardDeckIndex) {
-        this.gameController.drawCard(player, cardDeckIndex);
+    public void drawCard(Player player, int serialCardToDraw) {
+        this.gameController.drawCard(player, serialCardToDraw);
     }
 
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {

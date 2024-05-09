@@ -61,6 +61,7 @@ public class Game implements Serializable {
     // give firsts 3 cards to each player
     public void giveFirstCards() throws GenericException {
         for (Player player : this.playerList) {
+
             for (int i = 0; i < 2; i++) {
                 player.addToHand(this.table.getDeck().getResourceDeck().removeFirst());
             }

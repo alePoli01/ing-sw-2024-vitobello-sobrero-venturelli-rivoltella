@@ -22,6 +22,6 @@ public interface GamePhase {
     void placeCard(Player player, int serialCardToPlace, boolean isFlipped, int X, int Y);
 
     // draw resource / gold card
-    void drawCard(Player player, int cardDeckIndex);
+    void drawCard(Player player, int serialCardToDraw);
 
 }

@@ -52,7 +52,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void drawCard(int cardDeckSerial) {
+    public void drawCard(int serialCardToDraw) {
 
     }
 

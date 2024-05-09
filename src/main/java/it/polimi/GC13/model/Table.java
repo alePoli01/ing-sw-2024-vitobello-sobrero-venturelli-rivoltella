@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import it.polimi.GC13.enums.CardType;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnNewGoldCardsAvailableMessage;
@@ -40,26 +39,22 @@ public class Table implements Serializable {
     }
 
     public PlayableCard getCardFromTable(int serialNumber) throws GenericException {
-        Optional<PlayableCard> cardOptional = this.resourceCardMap.keySet().stream()
-                .filter(card -> card.serialNumber == serialNumber)
-                .findFirst();
-
-        if (cardOptional.isPresent()) {
-            return cardOptional.get();
-        } else {
-            cardOptional = this.goldCardMap.keySet().stream()
-                    .filter(card -> card.serialNumber == serialNumber)
-                    .findFirst();
-            if (cardOptional.isPresent()) {
-                return cardOptional.get();
-            } else {
+        try{
+            return this.goldCardMap.keySet().stream()
+                        .filter(card -> card.serialNumber == serialNumber)
+                        .findFirst()
+                        .orElseThrow();
+        } catch (NoSuchElementException e){
+            try {
+                return this.resourceCardMap.keySet()
+                        .stream()
+                        .filter(card -> card.serialNumber == serialNumber)
+                        .findFirst()
+                        .orElseThrow();
+            } catch (NoSuchElementException ex) {
                 throw new GenericException("Card not found in any deck.");
             }
         }
-    }
-
-    public ObjectiveCard getCommonObjectiveCard(int index) {
-        return commonObjectiveCard[index];
     }
 
     public ArrayList<TokenColor> getTokenColors() {
@@ -101,64 +96,50 @@ public class Table implements Serializable {
         return objectiveCard.serialNumber;
     }
 
-    // method to pick(remove) a card from the table
+    /*
+        METHOD THAT IDENTIFIES THE TYPE OF THE CARD
+        THEN CALLS THE METHOD TO UPDATE CARD/RESOURCE CARD MAP AND THE DECK
+     */
     public void drawCard(PlayableCard cardToDraw) throws GenericException {
-        /*
-         * 1. check which type of card has been chosen
-         * 2. check every possible position in which it can be
-         * 3. if found: delete it; if not throw exception
-         */
-        if (cardToDraw.cardType.equals(CardType.GOLD)) {
-            if (this.goldCardMap.containsKey(cardToDraw)) {
-                if (this.goldCardMap.get(cardToDraw)) {
-                    this.deck.getGoldDeck().removeFirst();
-                }
-                this.replaceCardInMap(this.goldCardMap, this.goldCardMap.get(cardToDraw), cardToDraw);
-            } else {
-                throw new GenericException("Card drawn wasn't found between the drawable gold: " + cardToDraw.serialNumber);
-            }
+        // if cardToDraw is the goldMap
+        if (this.goldCardMap.containsKey(cardToDraw)) {
+            this.updateDrawableCards(this.goldCardMap, cardToDraw, this.deck.getGoldDeck(), this.deck.getResourceDeck());
+            // update clients
+            this.game.getObserver().notifyClients(new OnNewGoldCardsAvailableMessage(getCardSerialMap(this.goldCardMap)));
+        } else if (this.resourceCardMap.containsKey(cardToDraw)) {
+            this.updateDrawableCards(this.resourceCardMap, cardToDraw, this.deck.getResourceDeck(), this.deck.getGoldDeck());
+            // update clients
+            this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(getCardSerialMap(this.resourceCardMap)));
         } else {
-            // cardToDraw if of type RESOURCE
-            if (this.resourceCardMap.containsKey(cardToDraw)) {
-                if (this.resourceCardMap.get(cardToDraw)) {
-                    this.deck.getResourceDeck().removeFirst();
-                }
-                this.replaceCardInMap(this.resourceCardMap, this.resourceCardMap.get(cardToDraw), cardToDraw);
-            } else {
-                throw new GenericException("Card drawn wasn't found between the drawable resource: " + cardToDraw.serialNumber);
-            }
+            throw new GenericException("Card: " + cardToDraw.serialNumber + " not found in any deck.");
         }
     }
 
-    private void replaceCardInMap(Map<PlayableCard, Boolean> cardMap, boolean isFlipped, PlayableCard cardToDraw) {
-        // removes the card from the table
-        cardMap.remove(cardToDraw);
-
-        if (cardToDraw.cardType.equals(CardType.GOLD)) {
-            // removes the card from the correct deck
-            this.deck.getGoldDeck().removeFirst();
-            if (isFlipped) {
-                // gets the first card from the deck
-                cardMap.put(this.deck.getGoldDeck().getFirst(), true);
-            } else {
-                // the old card that was covered is now visible
-                cardMap.entrySet().stream()
-                        .filter(Map.Entry::getValue)
-                        .forEach(entry -> entry.setValue(false));
-
-                // add the new head of the deck on the back side
-                cardMap.put(this.deck.getGoldDeck().getFirst(), true);
-            }
+    /*
+        METHOD CALLED FROM DRAW CARD
+     */
+    private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard cardToDraw, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
+        // if the card is covered
+        if (deckCardMap.get(cardToDraw)) {
+            // it removes the card from the deck
+            deckToManage.removeFirst();
         } else {
-            this.deck.getResourceDeck().removeFirst();
-            if (isFlipped) {
-                cardMap.put(this.deck.getResourceDeck().getFirst(), true);
-            } else {
-                // the old card that was covered is now visible
-                cardMap.values().stream().filter(cardSide -> cardSide).findFirst().ifPresent(cardSide -> cardSide = false);
-                // add the new head of the deck on the back side
-                cardMap.put(this.deck.getResourceDeck().getFirst(), true);
-            }
+            // the old card that was covered is now visible
+            deckCardMap.entrySet()
+                    .stream()
+                    .filter(Map.Entry::getValue)
+                    .forEach(entry -> entry.setValue(false));
+        }
+        // it removes the card from the drawable
+        deckCardMap.remove(cardToDraw);
+        // it adds the card from the correct deck
+        if (!deckCardMap.isEmpty()) {
+            deckCardMap.put(deckToManage.getFirst(), true);
+        } else if (backupDeck.get(1) != null) {
+            System.out.println("Card drawn from the backup deck");
+            deckCardMap.put(backupDeck.get(1), true);
+        } else {
+            throw new GenericException("Both decks are empty");
         }
     }
 }

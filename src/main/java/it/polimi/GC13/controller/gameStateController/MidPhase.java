@@ -23,10 +23,11 @@ public class MidPhase implements GamePhase {
     @Override
     public synchronized void placeCard(Player player, int serialCardToPlace, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
-        // increase players turn
-        player.increaseTurnPlayed();
 
         try {
+            // increase players turn
+            player.increaseTurnPlayed();
+            // gets the playable card from the player's hand
             PlayableCard cardToPlace = player.getHand()
                     .stream()
                     .filter(card -> card.serialNumber == serialCardToPlace)
@@ -45,7 +46,7 @@ public class MidPhase implements GamePhase {
             // removes covered reigns / objects from board map
             board.removeResources(X, Y);
             // pop card played from hand
-            board.getOwner().removeFromHand(cardToPlace);
+            player.removeFromHand(cardToPlace);
             // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
             // update player's scoreboard
@@ -64,10 +65,10 @@ public class MidPhase implements GamePhase {
 
     // draw resource / gold card
     @Override
-    public void drawCard(Player player, int cardDeckIndex) {
+    public void drawCard(Player player, int serialCardToDraw) {
         try {
             // create card
-            PlayableCard cardToDraw = player.getTable().getCardFromTable(cardDeckIndex);
+            PlayableCard cardToDraw = player.getTable().getCardFromTable(serialCardToDraw);
             // check player turn
             player.checkMyTurn();
             // draw the selected card from the table and replace with a new one
@@ -77,8 +78,8 @@ public class MidPhase implements GamePhase {
             // end player's turn
             player.setMyTurn(false);
             // set next player turn to true
-            if (player.getTurnPlayed() < player.getGame().getLastRound()) {
-                System.out.println(player + " has passed and game continues");
+            if (player.getGame().getLastRound() == 0 || player.getTurnPlayed() < player.getGame().getLastRound()) {
+                System.out.println(player.getNickname() + " has passed and game continues");
                 player.getGame().setPlayerTurn(player);
             } else {
                 System.out.println(player + " has passed and game is over");
