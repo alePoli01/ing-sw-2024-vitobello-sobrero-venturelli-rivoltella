@@ -1307,7 +1307,11 @@ public class BoardView {
             }
         }
 
-        System.out.print(gold + (x_max + 1) % 10 + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 1) % 10  + reset);
+        }else{
+            System.out.print(gold + (x_max ) % 10 +  reset);
+        }
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
@@ -1341,7 +1345,11 @@ public class BoardView {
 
             }
         }
-        System.out.print(gold + (x_max + 1) % 10 + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 1) % 10  + reset);
+        }else{
+            System.out.print(gold + (x_max ) % 10 +  reset);
+        }
         System.out.println();
 
         System.out.print("╪");
@@ -1390,7 +1398,11 @@ public class BoardView {
         System.out.print("╪");
         System.out.println();
 
-        System.out.print(gold + (x_max + 2) / 10 + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 2) / 10 + reset);
+        }else{
+            System.out.print(gold + (x_max + 1) / 10 + reset);
+        }
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if (j % 2 != y_min % 2) {
                 if (j == y_min - 1) {
@@ -1423,10 +1435,19 @@ public class BoardView {
 
             }
         }
-        System.out.print(gold + (x_max + 2) / 10 + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 2) / 10 + reset);
+        }else{
+            System.out.print(gold + (x_max + 1) / 10 + reset);
+        }
         System.out.println();
 
-        System.out.print(gold + (x_max + 2) % 10 + "   " + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 2) % 10 + "   " + reset);
+        }else{
+            System.out.print(gold + (x_max + 1) % 10 + "   " + reset);
+        }
+
         for (int j = y_min - 1; j <= y_max + 1; j++) {
             if(j!=y_max+1){
                 System.out.print("            | ");
@@ -1434,7 +1455,11 @@ public class BoardView {
                 System.out.print("              ");
             }
         }
-        System.out.print(gold + (x_max + 2) % 10 + reset);
+        if(x_max%2==0){
+            System.out.print(gold + (x_max + 2) % 10  + reset);
+        }else{
+            System.out.print(gold + (x_max + 1) % 10 +  reset);
+        }
         System.out.println();
 
         System.out.print("╪   ");
