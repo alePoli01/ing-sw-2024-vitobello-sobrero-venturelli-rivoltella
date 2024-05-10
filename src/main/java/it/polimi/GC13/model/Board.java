@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
     private final Player owner;               //owner of the board
-    private int playerScore = 0;
     private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);     //counter for each type of object present on the board
     private final List<Coordinates> availableCells = new LinkedList<>();
     private final List<Coordinates> notAvailableCells = new LinkedList<>();   // -> used to not add available cell
@@ -23,29 +22,20 @@ public class Board implements Serializable {
     public Board(Player owner) {
         this.owner = owner;
         // populate map with 0 for each reign and object
-        for (Resource resource : Resource.values()) {
-            if (resource.isObject() || resource.isReign()) {
-                collectedResources.put(resource, 0);
-            }
-        }
+        Arrays.stream(Resource.values()).sequential()
+                .filter(resource -> resource.isObject() || resource.isReign())
+                .forEach(resource -> collectedResources.put(resource, 0));
         // offset to use in methods
         this.offset.add(new Coordinates(-1, +1));
         this.offset.add(new Coordinates(+1, +1));
         this.offset.add(new Coordinates(+1, -1));
         this.offset.add(new Coordinates(-1, -1));
+        // set initial player's score to zero
+        this.owner.getTable().getPlayersScore().put(this.owner.getNickname(), 0);
     }
 
     public Map<Coordinates, Cell> getBoardMap() {
         return boardMap;
-    }
-
-
-    public int getPlayerScore() {
-        return this.playerScore;
-    }
-
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
     }
 
     public EnumMap<Resource, Integer> getCollectedResources() {
@@ -62,21 +52,32 @@ public class Board implements Serializable {
         }
     }
 
-    // call from the controller to verify it is possible to place the selected card
+    /**
+     *
+     * @param X
+     * @param Y
+     * @return returns the coordinate from the board if it is possible to place or throw a GenericException
+     * @throws GenericException
+     */
     public Coordinates isPossibleToPlace(int X, int Y) throws GenericException {
-        Coordinates xy = this.availableCells.stream()
+        return this.availableCells
+                .stream()
                 .filter(coordinates -> coordinates.getX() == X && coordinates.getY() == Y)
                 .findFirst()
-                .orElse(null);
-
-        if (xy == null) {
-            this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
-            throw new GenericException("Forbidden cell " + X + ", " + Y);
-        }
-        return xy;
+                .orElseThrow(() -> {
+                    this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
+                    availableCells.forEach(cell -> System.out.println("(" + cell.getX() + ", " + cell.getY() + ") "));
+                    return new GenericException("Forbidden cell " + X + ", " + Y);
+                });
     }
 
-    public void addStartCardToBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
+    /** place start card to the board
+     *
+     * @param cardToPlace
+     * @param isFlipped
+     * @throws GenericException
+     */
+    public void placeStartCardOnTheBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
         Coordinates xy = new Coordinates(50, 50);
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
@@ -88,8 +89,14 @@ public class Board implements Serializable {
         this.updateAvailableCells(cardToPlace, xy, isFlipped);
     }
 
-    // add card to the board
-    public void addCardToBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
+    /** place the card to the board
+     *
+     * @param xy
+     * @param cardToPlace
+     * @param isFlipped
+     * @throws GenericException
+     */
+    public void placeCardToTheBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {

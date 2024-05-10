@@ -4,21 +4,21 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
-import java.util.List;
-
-public record OnDealCommonObjectiveCardMessage(List<Integer> commonSerialObjectiveCards) implements MessagesFromServer {
+public record OnNewMessage(String sender, String receiver, String message) implements MessagesFromServer {
 
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
+
     }
 
     @Override
     public void notifyClient(ClientInterface client) {
-        client.sendMessage(this);    }
+        client.sendMessage(this);
+    }
 
     @Override
     public void methodToCall(View view) {
-        view.setSerialCommonObjectiveCard(this.commonSerialObjectiveCards());
+        view.onNewMessage(this.sender(), this.receiver(), this.message());
     }
 }
+

@@ -11,7 +11,7 @@ public class BoardTest extends TestCase {
     public void testIsPossibleToPlace() {
     }
 
-    public void testAddCardToBoard() {
+    public void testPlaceCardToTheBoard() {
     }
 
     public void testRemoveResources() {

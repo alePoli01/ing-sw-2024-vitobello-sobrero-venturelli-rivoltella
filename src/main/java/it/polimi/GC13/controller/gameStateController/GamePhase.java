@@ -24,4 +24,5 @@ public interface GamePhase {
     // draw resource / gold card
     void drawCard(Player player, int serialCardToDraw);
 
+    void registerMessage(String sender, String receiver, String message);
 }

@@ -19,6 +19,7 @@ public class Game implements Serializable {
     private int lastRound;
     private final String gameName;
     private final Observer observer;
+    private final Map<String, String> chat = new HashMap<>();
 
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
@@ -71,10 +72,11 @@ public class Game implements Serializable {
 
     // add common objective card to the table
     public void setCommonObjectiveCards() {
-        LinkedList<Integer> commonObjectiveCards = new LinkedList<>();
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(0, this.table.getDeck().getObjectiveDeck().removeFirst()));
-        commonObjectiveCards.add(this.getTable().setCommonObjectiveCard(1, this.table.getDeck().getObjectiveDeck().removeFirst()));
-        this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonObjectiveCards));
+        LinkedList<Integer> commonSerialObjectiveCards = new LinkedList<>();
+        this.getTable().getCommonObjectiveCard().add(this.table.getDeck().getObjectiveDeck().removeFirst());
+        this.getTable().getCommonObjectiveCard().add(this.table.getDeck().getObjectiveDeck().removeFirst());
+        this.getTable().getCommonObjectiveCard().forEach(card -> commonSerialObjectiveCards.add(card.serialNumber));
+        this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonSerialObjectiveCards));
     }
 
     // set players position
@@ -161,5 +163,18 @@ public class Game implements Serializable {
                 throw new GenericException("Nickname: " + nickname + " was already choose");
             }
         }
+    }
+
+    public synchronized void registerMessage(String sender, String receiver, String message) {
+        String key1 = sender.concat(receiver);
+        String key2 = receiver.concat(sender);
+        if (!this.chat.containsKey(key1) && !this.chat.containsKey(key2)) {
+            this.chat.put(key1, message);
+        } else if (this.chat.containsKey(key2)) {
+            this.chat.put(key2, Collectors.joining("\n" + this.chat.get(key1) + ": " + message + ";").toString());
+        } else {
+            this.chat.put(key1, Collectors.joining("\n" + this.chat.get(key2) + ": " + message + ";").toString());
+        }
+        this.observer.notifyClients(new OnNewMessage(sender, receiver, message));
     }
 }

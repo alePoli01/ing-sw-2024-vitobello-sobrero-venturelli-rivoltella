@@ -17,7 +17,7 @@ public interface ServerInterface {
 
     void placeCard(int serialCardToPlace, boolean isFlipped, int X, int Y);
 
-    void writeMessage(); //writes message in gamechat
+    void writeMessage(String sender, String receiver, String message); //writes message in gamechat
 
     void drawCard(int serialCardToDraw);
 

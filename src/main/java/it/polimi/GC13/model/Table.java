@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.socket.messages.fromserver.OnNewGoldCardsAvailableMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.OnNewResourceCardsAvailableMessage;
+import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerScoreUpdateMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table implements Serializable {
     private final Game game;
-    private Map<Player, Integer> score; //vector that keeps players scores
-    private final ObjectiveCard[] commonObjectiveCard;//Objective cards in common between players
+    private final Map<String, Integer> playersScore = new HashMap<>(); //vector that keeps players scores
+    private final List<ObjectiveCard> commonObjectiveCard = new LinkedList<>();//Objective cards in common between players
     private final Map<PlayableCard, Boolean> goldCardMap =  new LinkedHashMap<>();
     private final Map<PlayableCard, Boolean> resourceCardMap = new LinkedHashMap<>();
     private final Deck deck;
@@ -25,7 +26,6 @@ public class Table implements Serializable {
         this.game = game;
         this.playerBoardMap = new HashMap<>();
         this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
-        this.commonObjectiveCard = new ObjectiveCard[2];
         this.deck = new Deck();
         this.deck.shuffleDecks();
     }
@@ -61,8 +61,16 @@ public class Table implements Serializable {
         return tokenColors;
     }
 
+    public List<ObjectiveCard> getCommonObjectiveCard() {
+        return this.commonObjectiveCard;
+    }
+
     public Map<Player, Board> getPlayerBoardMap() {
         return playerBoardMap;
+    }
+
+    public Map<String, Integer> getPlayersScore() {
+        return this.playersScore;
     }
 
     public Deck getDeck() {
@@ -89,11 +97,6 @@ public class Table implements Serializable {
         return cardMap.entrySet()
                 .stream()
                 .collect(Collectors.toMap(e -> e.getKey().serialNumber, Map.Entry::getValue));
-    }
-
-    public int setCommonObjectiveCard(int index, ObjectiveCard objectiveCard) {
-        this.commonObjectiveCard[index] = objectiveCard;
-        return objectiveCard.serialNumber;
     }
 
     /*
@@ -141,5 +144,15 @@ public class Table implements Serializable {
         } else {
             throw new GenericException("Both decks are empty");
         }
+    }
+
+    public void setPlayerScore(Player player, int newPlayerScore) {
+        this.getPlayersScore().entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().equals(player.getNickname()))
+                .forEach(entry -> entry.setValue(newPlayerScore));
+
+        this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), newPlayerScore));
+        System.out.println(player.getNickname() + " score updated to " + newPlayerScore);
     }
 }

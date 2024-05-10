@@ -205,6 +205,16 @@ public class FrameManager implements View {
     }
 
     @Override
+    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
+
+    }
+
+    @Override
+    public void onNewMessage(String sender, String receiver, String message) {
+
+    }
+
+    @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
 
     }

@@ -70,6 +70,11 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }
 
+    @Override
+    public void registerMessage(String sender, String receiver, String message) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState());
     }

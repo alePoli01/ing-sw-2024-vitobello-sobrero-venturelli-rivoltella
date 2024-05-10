@@ -75,19 +75,19 @@ public class PatternObjectiveTest extends TestCase {
         Coordinates coordinates = new Coordinates(x,y);
         for(PlayableCard card : deck.getResourceDeck()){
             if(card.serialNumber==serialnumber){
-                board.addCardToBoard(coordinates,card,isflipped);
+                board.placeCardToTheBoard(coordinates,card,isflipped);
                 return;
             }
         }
         for(PlayableCard card : deck.getGoldDeck()){
             if(card.serialNumber==serialnumber){
-                board.addCardToBoard(coordinates,card,isflipped);
+                board.placeCardToTheBoard(coordinates,card,isflipped);
                 return;
             }
         }
         for(StartCard card : deck.getStartDeck()){
             if(card.serialNumber==serialnumber){
-                board.addCardToBoard(coordinates,card,isflipped);
+                board.placeCardToTheBoard(coordinates,card,isflipped);
                 return;
             }
         }

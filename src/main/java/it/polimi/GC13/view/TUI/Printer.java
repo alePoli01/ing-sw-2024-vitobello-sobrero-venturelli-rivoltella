@@ -1,14 +1,10 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.model.Deck;
-import it.polimi.GC13.model.PlayableCard;
-import it.polimi.GC13.model.StartCard;
-import it.polimi.GC13.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,23 +61,6 @@ public class Printer {
     }
 
     /*
-        METHOD USED TO SHOW HOME MENU
-     */
-    public void comeBack(View view) {
-        try {
-            while (choice != 1) {
-                System.out.print("\n[1] to get back to the HOME MENU: ");
-                choice = Integer.parseInt(reader.readLine());
-                System.out.println("SELECTION: " + choice);
-            }
-            view.showHomeMenu();
-        } catch (IOException e) {
-            System.out.print("Error: Please put a number: ");
-        }
-        this.choice = 0;
-    }
-
-    /*
         METHOD USED TO PRINT PLAYABLE CARDS
      */
     public void showHand(List<Integer> hand) {
@@ -100,4 +79,39 @@ public class Printer {
                 });
         }
     }
+
+    /**
+     *
+     * @param playersScore player score list; prints all players score present in the map
+     *
+     */
+    public void showPlayersScore(Map<String, Integer> playersScore) {
+        System.out.println("\n--- PLAYER_SCORE ---");
+        playersScore.forEach((key, value) -> System.out.println(key + "'s current score is " + value));
+    }
+
+    public void seeChat(Map<String, String> chat) {
+        if (!chat.isEmpty()) {
+            try {
+                String playerChosen;
+                do {
+                    System.out.println("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]") + " or [ALL]");
+                    System.out.print("Player: ");
+                    playerChosen = reader.readLine();
+                    while (!chat.containsKey(playerChosen)) {
+                        System.out.print("Chat with " + playerChosen + " doesn't exist.\nEnter an existing player chat: ");
+                        playerChosen = reader.readLine();
+                    }
+                } while (!chat.containsKey(playerChosen));
+                synchronized (chat.get(playerChosen)) {
+                    System.out.println("CHAT WITH" + playerChosen.toUpperCase() + "\n" + chat.get(playerChosen));
+                }
+            } catch (IOException e) {
+                System.err.println("Error parsing the name");
+            }
+        } else {
+            System.out.println("No message exists.");
+        }
+    }
+
 }

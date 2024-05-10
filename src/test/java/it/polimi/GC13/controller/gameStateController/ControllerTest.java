@@ -100,10 +100,13 @@ public class ControllerTest extends TestCase {
         assert (this.player2.getBoard().boardMapContainsKeyOfValue(X, Y));
         assert (this.player2.getHand().size() == 2);
 
+        X += 5;
+        Y -= 1;
         // player 1 second resource card
-        this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X+1, Y-1);
-        this.boardView.insertCard(Y-1, X+1, this.player1.getHand().getFirst().serialNumber, 2, true);
-        assert (this.player1.getBoard().boardMapContainsKeyOfValue(X+1, Y-1));
+        this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X, Y);
+        //this.boardView.insertCard(Y, X, this.player1.getHand().getFirst().serialNumber, 2, true);
+        assert (!this.player1.getBoard().boardMapContainsKeyOfValue(X, Y));
+        assert (this.player1.getBoard().getBoardMap().size() == 2);
 
         this.boardView.printBoard();
     }
@@ -145,8 +148,10 @@ public class ControllerTest extends TestCase {
         assert (this.game.getTable().getGoldCardMap().size() == 3);
 
         boolean flag = true;
+        PlayableCard cardToDraw;
+
         if (flag) {
-            PlayableCard cardToDraw = this.player1.getTable().getResourceCardMap().keySet().stream().findAny().orElseThrow();
+            cardToDraw = this.player1.getTable().getResourceCardMap().keySet().stream().findAny().orElseThrow();
 
             System.out.println("Test serial card to draw: " + cardToDraw.serialNumber);
             assert (this.game.getTable().getResourceCardMap().containsKey(cardToDraw));
@@ -162,9 +167,8 @@ public class ControllerTest extends TestCase {
             assert (!this.player1.getTable().getResourceCardMap().containsKey(cardToDraw));
             assert (this.game.getTable().getGoldCardMap().size() == 3);
             assert (this.game.getTable().getResourceCardMap().size() == 3);
-            assert (!this.player1.isMyTurn());
         } else {
-            PlayableCard cardToDraw = this.player1.getTable().getGoldCardMap().keySet().stream().findAny().orElseThrow();
+            cardToDraw = this.player1.getTable().getGoldCardMap().keySet().stream().findAny().orElseThrow();
 
             System.out.println("Test card to draw: " + cardToDraw.serialNumber);
             assert (this.game.getTable().getGoldCardMap().containsKey(cardToDraw));
@@ -180,8 +184,8 @@ public class ControllerTest extends TestCase {
             assert (!this.player1.getTable().getGoldCardMap().containsKey(cardToDraw));
             assert (this.game.getTable().getResourceCardMap().size() == 3);
             assert (this.game.getTable().getGoldCardMap().size() == 3);
-            assert (!this.player1.isMyTurn());
         }
+        assert (!this.player1.isMyTurn());
     }
 
     public void testChoosePrivateObjective() {

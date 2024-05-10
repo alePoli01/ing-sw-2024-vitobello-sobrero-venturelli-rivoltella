@@ -47,9 +47,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void writeMessage() {
+    public void writeMessage(String sender, String receiver, String message) {
 
     }
+
 
     @Override
     public void drawCard(int serialCardToDraw) {

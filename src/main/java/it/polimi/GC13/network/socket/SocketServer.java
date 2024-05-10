@@ -82,8 +82,8 @@ public class SocketServer implements ServerInterface, Runnable {
     }
 
     @Override
-    public void writeMessage() {
-
+    public void writeMessage(String sender, String receiver, String message) {
+        this.sendMessage(new NewMessage(sender, receiver,message));
     }
 
     @Override

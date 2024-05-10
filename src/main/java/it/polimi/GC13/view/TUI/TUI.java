@@ -16,27 +16,31 @@ import java.util.stream.Collectors;
 
 public class TUI implements View {
     private final ServerInterface virtualServer;
+    private String nickname;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
-    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private int choice = 0;
     private boolean myTurn = false;
-    private final List<String> gamesLog = new ArrayList<>();
+    private int turnPlayed = - 1;
+    private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
-    private String nickname;
-    private final Printer printer = new Printer();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
-    private int turnPlayed = - 1;
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    private final List<String> gamesLog = new ArrayList<>();
+    private boolean cooking = false;
+    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private int choice = 0;
+    private final Printer printer = new Printer();
+    private final Map<String, String> chat = new HashMap<>();
+    private boolean newMessage = false;
 
     public TUI(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
         this.checkForExistingGame();
     }
 
-    /*
+    /**
         used to update players hand in TUI
      */
     @Override
@@ -45,8 +49,8 @@ public class TUI implements View {
             synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
-                if (turnPlayed >= 1) {
-                    this.printer.comeBack(this);
+                if (turnPlayed >= 1 && availableCard.size() == 3) {
+                    this.showHomeMenu(); // it is called from the first turn played when a new card is drawn
                 }
             }
         } else {
@@ -72,7 +76,7 @@ public class TUI implements View {
         //System.out.println("++Sent: checkForExistingGame");
     }
 
-    /*
+    /**
         JOINING PHASE
         [1] create new game
         [2] join an existing one
@@ -166,7 +170,7 @@ public class TUI implements View {
         System.out.println("++Sent: addPlayerToGame");
     }
 
-    /*
+    /**
         SETUP PHASE
         token choice when all players joined the game
         waiting when readPlayers < neededPlayers
@@ -202,7 +206,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         SETUP PHASE methods to the player
         startCardSetupPhase to chose which side to place your start card
      */
@@ -238,7 +242,7 @@ public class TUI implements View {
         if (playerNickname.equals(this.nickname)) {
             if (this.turnPlayed >= 0) {
                 System.out.println(message);
-                this.printer.comeBack(this);
+                this.showHomeMenu(); // show menu after placing a card
             } else {
                 System.out.println(message + ".\nWaiting for other players...");
             }
@@ -316,13 +320,12 @@ public class TUI implements View {
                 this.choice = 0;
                 this.turnPlayed++;
                 System.out.println("You have passed the turn");
-                this.printer.comeBack(this);
             } catch (IOException | NumberFormatException e) {
                 System.out.println("Error: Please put a number");
             }
         } else {
             System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
-            this.printer.comeBack(this);
+            this.showHomeMenu();
         }
     }
 
@@ -331,64 +334,48 @@ public class TUI implements View {
      */
     @Override
     public void showHomeMenu() {
-        System.out.println("\n--- HOME MENU ---");
-        if (this.myTurn) {
-            System.out.println("It's your turn");
-        } else {
-            System.out.println("It's not your turn");
-        }
-        System.out.println("\t[1] to view your hand");
-        System.out.println("\t[2] to place a card (only when in turn)");
-        System.out.println("\t[3] to view common objective card");
-        System.out.println("\t[4] to view your private objective card");
-        System.out.println("\t[5] to view your board");
-        System.out.println("\t[6] to view other players' board");
-        System.out.println("\t[7] to send a message in the chat");
-        System.out.println("\t[8] to show game's history");
-        System.out.println("\t[9] to show players' turns");
-        System.out.println("\t[10] to draw card (only when in turn)");
-
+        this.menuOption();
         try {
             do {
-                System.out.print("Your choice: ");
                 this.choice = Integer.parseInt(reader.readLine());
                 System.out.println("SELECTION: " + this.choice);
-                if (this.choice < 1 || this.choice > 10) {
-                    System.out.println("Invalid choice.");
+                if (this.choice < 1 || this.choice > 13) {
+                    System.out.print("Invalid choice. Enter a valid option: ");
                 }
-            } while (this.choice < 1 || this.choice > 10);
-
+            } while (this.choice < 1 || this.choice > 13);
         } catch (IOException e) {
+            // Exception handling for IOException
             System.out.print("Error: Please put a number: ");
         }
+
         switch (this.choice) {
             case 1: {
                 this.printer.showHand(this.hand);
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
             case 2: {
                 this.placeCard();
-                // this.printer.comeBack(this); in method OnPlaceCard()
                 break;
             }
             case 3: {
                 this.printer.showObjectiveCard("\n--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
             case 4: {
                 this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", List.of(this.serialPrivateObjectiveCard));
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
             case 5: {
                 this.playersBoard.get(this.nickname).printBoard();
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
             case 6: {
                 try {
+                    this.cooking = true;
                     String playerChosen;
                     do {
                         System.out.println("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]");
@@ -402,31 +389,50 @@ public class TUI implements View {
                     System.out.println("Player chosen: " + playerChosen);
                     this.playersBoard.get(playerChosen).printBoard();
                 } catch (IOException e) {
-                    System.out.println("Error: Please put a number");
+                    System.err.println("Error parsing the name");
                 }
-                this.printer.comeBack(this);
+                this.cooking = false;
+                this.showHomeMenu();
                 break;
             }
             case 7: {
-                System.out.println("To do");
-                this.printer.comeBack(this);
+                this.cooking = true;
+                this.sendMessage();
+                this.cooking = false;
+                this.showHomeMenu();
                 break;
             }
             case 8: {
                 this.printer.showHistory(this.gamesLog);
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
             case 9: {
                 System.out.println("Player's position are: ");
                 this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
                 // test -> this.playerPositions.forEach((key, value) -> System.out.print(String.join("\n", key + ": " + value)));
-                this.printer.comeBack(this);
+                this.showHomeMenu();
                 break;
             }
-            case 10:
+            case 10: {
                 this.drawCard();
                 break;
+            }
+            case 11: {
+                this.printer.showPlayersScore(this.playersScore);
+                this.showHomeMenu();
+                break;
+            }
+            case 12: {
+                this.cooking = true;
+                synchronized (this.chat) {
+                    this.printer.seeChat(this.chat);
+                    this.newMessage = false;
+                }
+                this.cooking = false;
+                this.showHomeMenu();
+                break;
+            }
         }
         this.choice = 0;
     }
@@ -444,9 +450,8 @@ public class TUI implements View {
 
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
-        System.out.println("Available cells are: ");
-        System.out.println(availableCells);
-        this.printer.comeBack(this);
+        System.out.println("Available cells: " + availableCells.stream().map(cell -> cell.getX() + ", " + cell.getY()).collect(Collectors.joining(" - ")) + ".");
+        this.showHomeMenu();
     }
 
     @Override
@@ -465,27 +470,6 @@ public class TUI implements View {
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
-    }
-
-    /*
-        NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
-        OTHERS -> ADDS TO LOG OPERATION
-     */
-    @Override
-    public void updateTurn(String playerNickname, boolean turn) {
-        if (playerNickname.equals(this.nickname)) {
-            this.myTurn = turn;
-            if (this.myTurn) {
-                this.showHomeMenu();
-            } else if (this.turnPlayed == 0) {
-                this.showHomeMenu();
-            }
-        }
-        if (turn) {
-            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
-        } else {
-            this.gamesLog.add("\n" + playerNickname + " passed the turn");
-        }
     }
 
     @Override
@@ -527,10 +511,117 @@ public class TUI implements View {
             this.virtualServer.placeCard(serialCardToPlace, isFlipped, X, Y);
         } else if (!this.myTurn) {
             System.out.println("It's not your turn");
-            this.printer.comeBack(this);
+            this.showHomeMenu();
         } else {
             System.out.println("You have already placed a card. You need to draw a card to pass the turn.");
-            this.printer.comeBack(this);
+            this.showHomeMenu();
         }
+    }
+
+    @Override
+    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
+        this.playersScore.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().equals(playerNickname))
+                .forEach(entry -> entry.setValue(newPlayerScore));
+    }
+
+    /**
+     * method to see messages in the chat
+     * @param sender message sender
+     * @param receiver message receiver
+     * @param message string that contains the message itself
+     */
+    @Override
+    public void onNewMessage(String sender, String receiver, String message) {
+        if (receiver.equals(this.nickname) || receiver.equals("ALL")) {
+            synchronized (this.chat.get(sender)) {
+                if (!this.chat.containsKey(sender)) {
+                    this.chat.put(sender, message);
+                } else {
+                    this.chat.put(sender, Collectors.joining("\n" + this.chat.get(sender) + ": " + message + ";").toString());
+                }
+                this.newMessage = true;
+            }
+        } else if (sender.equals(this.nickname)) {
+            synchronized (this.chat) {
+                if (!this.chat.containsKey(receiver)) {
+                    this.chat.put(receiver, message);
+                } else {
+                    this.chat.put(receiver, Collectors.joining("\n" + this.chat.get(receiver) + ": " + message + ";").toString());
+                }
+                this.newMessage = true;
+            }
+        }
+    }
+
+    private void sendMessage() {
+        try {
+            this.cooking = true;
+            String playerChosen;
+            String message;
+            do {
+                System.out.println("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [ALL]");
+                System.out.print("Player: ");
+                playerChosen = reader.readLine();
+                while (!this.playersBoard.containsKey(playerChosen)) {
+                    System.out.print("Player " + playerChosen + " doesn't exist.\nEnter an existing player: ");
+                    playerChosen = reader.readLine();
+                }
+                System.out.print("Write down your message: ");
+                message = reader.readLine();
+            } while (!this.playersBoard.containsKey(playerChosen));
+            this.virtualServer.writeMessage(this.nickname, playerChosen, message);
+        } catch (IOException e) {
+            System.err.println("Error parsing the name");
+        }
+    }
+
+    /*
+        NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
+        OTHERS -> ADDS TO LOG OPERATION
+     */
+    @Override
+    public void updateTurn(String playerNickname, boolean turn) {
+        if (playerNickname.equals(this.nickname)) {
+            this.myTurn = turn;
+            // this.turnPlayed == 0 after private card is chosen
+            if (this.myTurn && this.turnPlayed >= 0 && !cooking) {
+                if (this.playerPositions.get(this.nickname).equals(Position.FIRST) && this.turnPlayed == 0) {
+                    this.showHomeMenu();
+                } else {
+                    this.menuOption();
+                }
+            } else if (this.turnPlayed == 0) {
+                this.showHomeMenu();
+            }
+        }
+        if (turn) {
+            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
+        } else {
+            this.gamesLog.add("\n" + playerNickname + " passed the turn");
+        }
+    }
+
+    private void menuOption() {
+        System.out.println("\n--- HOME MENU ---");
+        if (this.myTurn) {
+            System.out.println("It's your turn");
+        } else {
+            System.out.println("It's not your turn");
+        }
+        System.out.println("\t[1] to view your hand");
+        System.out.println("\t[2] to place a card (only when in turn)");
+        System.out.println("\t[3] to view common objective card");
+        System.out.println("\t[4] to view your private objective card");
+        System.out.println("\t[5] to view your board");
+        System.out.println("\t[6] to view other players' board");
+        System.out.println("\t[7] to send a message in the chat");
+        System.out.println("\t[8] to show game's history");
+        System.out.println("\t[9] to show players' turns");
+        System.out.println("\t[10] to draw card (only when in turn)");
+        System.out.println("\t[11] to view players' score");
+        System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");
+        System.out.print("Your choice: ");
     }
 }

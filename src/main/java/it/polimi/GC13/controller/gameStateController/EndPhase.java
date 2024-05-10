@@ -17,7 +17,7 @@ public class EndPhase implements GamePhase {
         finalScoreCalculation();
         Player winner = this.controller.getGame().getPlayerList().getFirst();
         for (Player player : this.controller.getGame().getPlayerList()) {
-            if (player.getBoard().getPlayerScore() > winner.getBoard().getPlayerScore()) {
+            if (player.getScore() > winner.getScore()) {
                 winner = player;
             }
         }
@@ -27,7 +27,10 @@ public class EndPhase implements GamePhase {
     private void finalScoreCalculation() {
         for (Player player : this.controller.getGame().getPlayerList()) {
             //set player score = player score + player's objective points(based on his board)
-            player.getBoard().setPlayerScore(player.getBoard().getPlayerScore()+player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) );
+            player.getTable().setPlayerScore(player,
+                    player.getTable().getPlayersScore().get(player.getNickname())
+                            + player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
+            );
         }
     }
 
@@ -50,6 +53,11 @@ public class EndPhase implements GamePhase {
     }
 
     public void drawCard(Player player, int serialCardToDraw) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
+    @Override
+    public void registerMessage(String sender, String receiver, String message) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

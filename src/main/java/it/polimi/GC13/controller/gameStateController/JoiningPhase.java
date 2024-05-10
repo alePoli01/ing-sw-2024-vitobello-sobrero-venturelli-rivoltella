@@ -34,6 +34,11 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 
+    @Override
+    public void registerMessage(String sender, String receiver, String message) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
     public synchronized void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) throws GenericException {
         // it adds players to the existing game
         try {

@@ -73,4 +73,8 @@ public class Controller implements GamePhase {
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) throws GenericException {
         this.gameController.addPlayerToExistingGame(player, existingGame, client);
     }
+
+    public void registerMessage(String sender, String receiver, String message) {
+        this.gameController.registerMessage(sender, receiver, message);
+    }
 }

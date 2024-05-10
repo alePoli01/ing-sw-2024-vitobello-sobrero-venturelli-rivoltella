@@ -164,4 +164,11 @@ public class Player implements Serializable {
             throw new GenericException("Private objective already chose");
         }
     }
+
+    /**
+     * @return returns player's score from the players score map in Table
+     */
+    public Integer getScore() {
+        return this.getTable().getPlayersScore().get(this.getNickname());
+    }
 }

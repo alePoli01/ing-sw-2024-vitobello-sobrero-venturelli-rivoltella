@@ -27,7 +27,7 @@ public class SetupPhase implements GamePhase {
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
             PlayableCard cardToPlace = player.getHand().getFirst();
-            player.getBoard().addStartCardToBoard(cardToPlace, isFlipped);
+            player.getBoard().placeStartCardOnTheBoard(cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
             // pop card played from hand
             player.removeFromHand(cardToPlace);
@@ -68,6 +68,11 @@ public class SetupPhase implements GamePhase {
     }
 
     public void drawCard(Player player, int serialCardToDraw) {
+        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
+    @Override
+    public void registerMessage(String sender, String receiver, String message) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

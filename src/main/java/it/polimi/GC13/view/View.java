@@ -46,10 +46,14 @@ public interface View {
 
     void connectionLost();
 
-    void onSetLastTurn(String nickname, Position position);
+    void onSetLastTurn(String playerNickname, Position position);
 
     /*
         METHOD USED TO PLACE CARD ON THE BOARD
     */
     void placeCard();
+
+    void updatePlayerScore(String playerNickname, int newPlayerScore);
+
+    void onNewMessage(String sender, String receiver, String message);
 }

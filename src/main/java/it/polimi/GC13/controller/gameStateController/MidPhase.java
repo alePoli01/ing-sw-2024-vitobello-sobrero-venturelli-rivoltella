@@ -24,7 +24,7 @@ public class MidPhase implements GamePhase {
 
     //controller gets object from network, then calls the method accordingly
     @Override
-    public synchronized void placeCard(Player player, int serialCardToPlace, boolean isFlipped, int X, int Y) {
+    public void placeCard(Player player, int serialCardToPlace, boolean isFlipped, int X, int Y) {
         Board board = player.getBoard();
 
         try {
@@ -45,19 +45,19 @@ public class MidPhase implements GamePhase {
             // check if it is possible to place the selected card
             Coordinates xy = board.isPossibleToPlace(X, Y);
             // add card to the board
-            board.addCardToBoard(xy, cardToPlace, isFlipped);
+            board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
             board.removeResources(X, Y);
             // pop card played from hand
             player.removeFromHand(cardToPlace);
             // sum reigns / objects
             board.addResource(cardToPlace, isFlipped);
-            // update player's scoreboard
+            // card gives point only if it is not flipped
             if (!isFlipped) {
-                // gold cards gives points differently
-                board.setPlayerScore(board.getPlayerScore() + cardToPlace.getPointsGiven(board, X, Y));
+                // update player's scoreboard
+                player.getTable().setPlayerScore(player, player.getScore() + cardToPlace.getPointsGiven(board, X, Y));
                 // check if players has reached 20 points, if so sets game's last turn
-                if (board.getPlayerScore() >= 20) {
+                if (player.getScore() >= 20) {
                     player.getGame().setLastRound(player);
                 }
             }
@@ -82,16 +82,23 @@ public class MidPhase implements GamePhase {
             player.setMyTurn(false);
             // set next player turn to true
             if (player.getGame().getLastRound() == 0 || player.getTurnPlayed() < player.getGame().getLastRound()) {
-                System.out.println(player.getNickname() + " has passed and game continues");
+                System.out.println(player.getNickname() + " has passed and game continues.");
                 player.getGame().setPlayerTurn(player);
+            } else if (this.checkGameOver(player)) {
+                System.out.println(player.getNickname() + " has played his last turn. Game continues.");
             } else {
-                System.out.println(player + " has passed and game is over");
+                System.out.println(player + " has passed and game is over.");
                 this.controller.updateController(new EndPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.END);
             }
         } catch (GenericException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @Override
+    public void registerMessage(String sender, String receiver, String message) {
+        this.controller.getGame().registerMessage(sender, receiver, message);
     }
 
     @Override
@@ -113,5 +120,16 @@ public class MidPhase implements GamePhase {
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+    }
+
+    /**
+     *
+     * @param player current player playing
+     * @return returns true if there is at least a player that hasn't played his last turn
+     */
+    private boolean checkGameOver(Player player) {
+        return player.getGame().getPlayerList()
+                .stream()
+                .anyMatch(p -> p.getTurnPlayed() != player.getGame().getLastRound());
     }
 }
