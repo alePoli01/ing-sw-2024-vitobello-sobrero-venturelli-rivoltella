@@ -99,7 +99,7 @@ public class MidPhase implements GamePhase {
 
     @Override
     public void newChatMessage(String sender, String receiver, String message) {
-        this.controller.getGame().registerMessage(sender, receiver, message);
+        this.controller.getGame().registerChatMessage(sender, receiver, message);
     }
 
     @Override

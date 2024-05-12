@@ -151,7 +151,6 @@ public class Table implements Serializable {
     }
 
     public void setPlayerScore(Player player, int newPlayerScore) {
-        System.out.println("Dovrei aggiornare " + player.getNickname() + " score to: " + newPlayerScore);
         this.playersScore.put(player, newPlayerScore);
 
         this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), newPlayerScore));

@@ -22,7 +22,7 @@ public class ClientDispatcher implements Serializable,ClientDispatcherInterface,
     private void callMessages() {
         do {
             this.messageFromServerList.removeFirst().methodToCall(view);
-        } while (this.messageFromServerList.isEmpty());
+        } while (!this.messageFromServerList.isEmpty());
     }
 
     @Override
