@@ -40,7 +40,7 @@ public class MidPhase implements GamePhase {
             // check player turn
             player.checkMyTurn();
             // Check player has enough resources to play the goldCard
-            if (cardToPlace.cardType.equals(CardType.GOLD) && isFlipped) {
+            if (cardToPlace.cardType.equals(CardType.GOLD) && !isFlipped) {
                 board.resourceVerifier(cardToPlace);
             }
             // check if it is possible to place the selected card

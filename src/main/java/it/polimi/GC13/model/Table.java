@@ -147,6 +147,7 @@ public class Table implements Serializable {
     }
 
     public void setPlayerScore(Player player, int newPlayerScore) {
+        System.out.println("Dovrei aggiornare " + player.getNickname() + " score to: " + newPlayerScore);
         this.getPlayersScore().entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().equals(player))

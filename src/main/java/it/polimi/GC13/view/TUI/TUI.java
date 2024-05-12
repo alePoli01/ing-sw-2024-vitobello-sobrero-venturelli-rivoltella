@@ -620,7 +620,7 @@ public class TUI implements View {
     }
 
     private void menuOption() {
-        System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + "---");
+        System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + " ---");
         if (this.myTurn) {
             System.out.println("It's your turn");
         } else {
