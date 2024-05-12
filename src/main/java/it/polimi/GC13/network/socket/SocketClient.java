@@ -56,7 +56,6 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
 
-
     @Override
     public void run() {
         /*

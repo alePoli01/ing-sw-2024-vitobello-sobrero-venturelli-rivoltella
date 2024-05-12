@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RMIClientAdapter extends UnicastRemoteObject implements ServerInterface {
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
     public RMIServerInterface serverStub;
     private final ClientInterface rmiClientImpl;
 
@@ -24,7 +24,7 @@ public class RMIClientAdapter extends UnicastRemoteObject implements ServerInter
     }
 
     /*
-    clientAapter: implements ServerInterface, view uses the adapter to ignore the remote exception (view's code shouldn't change regardless of connection type)
+    clientAdapter: implements ServerInterface, view uses the adapter to ignore the remote exception (view's code shouldn't change regardless of connection type)
 
     RMIServer: implements RMIServerInterface, identical to ServerInterface but requires the client
     */

@@ -1,12 +1,7 @@
 package it.polimi.GC13.network;
 
-import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
 
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
-import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

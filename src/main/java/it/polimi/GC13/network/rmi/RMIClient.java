@@ -11,6 +11,7 @@ public class RMIClient implements Serializable {
     public  RMIClient (View view){
         this.view = view;
     }
+
     public void sendMessage (MessagesFromServer message){
         message.methodToCall(view);
     }
