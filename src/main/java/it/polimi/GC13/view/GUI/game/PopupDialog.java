@@ -1,29 +1,37 @@
 package it.polimi.GC13.view.GUI.game;
 
-import it.polimi.GC13.enums.CardType;
-import it.polimi.GC13.exception.WrongCardException;
-import it.polimi.GC13.model.PlayableCard;
-import it.polimi.GC13.view.GUI.CardManager;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 
-public class PopupDialog extends JDialog implements CardManager, ActionListener{
+public class PopupDialog extends JDialog implements ActionListener {
 
     //private PlayableCard card; rappresenta la carta scoperta di uno dei due mazzi da poter pescare
 
     public PopupDialog(JFrame owner) {
-        super(owner, "Card drawable", true);
+        super(owner, "", true);
         setSize(400, 300);
         setResizable(false);
         setLayout(new BorderLayout());
+    }
 
-        JLabel label = new JLabel("Vuoi pescare questa carta?",  SwingConstants.CENTER);
-        JButton confirmButton = new JButton("Pesca");
+    public void popupConfirmationButton(JDialog j, int choice){
+
+
+
+    }
+
+
+
+
+    public void popupCardDialog(JFrame owner) {
+        JDialog dialog = this;
+        dialog.setTitle("Draw Card");
+
+        JLabel label = new JLabel("Drawing this card?", SwingConstants.CENTER);
+        JButton confirmButton = new JButton("Draw");
         confirmButton.setPreferredSize(new Dimension(150, 25));
-        JButton closeButton = new JButton("Chiudi");
+        JButton closeButton = new JButton("Close");
         closeButton.setPreferredSize(new Dimension(150, 25));
 
         //bozza della chiamata del metodo
@@ -32,7 +40,7 @@ public class PopupDialog extends JDialog implements CardManager, ActionListener{
 
         //prova ridimensionamento immagine
         Image image = new ImageIcon("src/main/utils/dead-fish.png").getImage();
-        Image newImg = image.getScaledInstance(image.getWidth(null)/3, image.getHeight(null)/3, Image.SCALE_SMOOTH);
+        Image newImg = image.getScaledInstance(image.getWidth(null) / 3, image.getHeight(null) / 3, Image.SCALE_SMOOTH);
         JLabel labelIcon = new JLabel(new ImageIcon(newImg), SwingConstants.CENTER); //immagine di prova
         add(labelIcon, BorderLayout.CENTER);
 
@@ -53,9 +61,28 @@ public class PopupDialog extends JDialog implements CardManager, ActionListener{
         setLocationRelativeTo(owner);
     }
 
+
+
+
+    public JDialog popupChooseGame (JFrame owner){
+        JDialog dialog = new JDialog();
+
+        //qualcosa
+
+
+        return dialog;
+    }
+
+
+
+
+
+
+
+
     //permette di visualizzare la carta scoperta davanti al mazzo
-    @Override
-    public ImageIcon showCard(PlayableCard card) {
+
+    /*public ImageIcon showCard(PlayableCard card) {
         ImageIcon img = new ImageIcon();
         File directory;
         int error;
@@ -101,7 +128,7 @@ public class PopupDialog extends JDialog implements CardManager, ActionListener{
         }
         return img;
     }
-
+*/
 
     //TODO: da implementare l'azione del bottone "Pesca"
     @Override
