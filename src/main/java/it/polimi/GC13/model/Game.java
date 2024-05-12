@@ -167,7 +167,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void registerMessage(String sender, String recipient, String message) {
+    public void registerChatMessage(String sender, String recipient, String message) {
         if (!recipient.equalsIgnoreCase("global")) {
             // grants always the same key for chat between two players
             String key = sender.compareTo(recipient) < 0 ? sender.concat(recipient) : recipient.concat(sender);
@@ -178,7 +178,7 @@ public class Game implements Serializable {
                 }
             } else {
                 synchronized (this.chat) {
-                    this.chat.put(key, List.of(message));
+                    this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
                 }
             }
         } else {
@@ -188,7 +188,7 @@ public class Game implements Serializable {
                 }
             } else {
                 synchronized (this.chat) {
-                    this.chat.put("global", List.of(message));
+                    this.chat.put("global", new LinkedList<>(Collections.singletonList(message)));
                 }
             }
         }

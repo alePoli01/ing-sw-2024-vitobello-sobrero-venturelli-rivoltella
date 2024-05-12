@@ -60,7 +60,7 @@ public class TUI implements View {
                 this.hand.addAll(availableCard);
             }
         } else {
-            this.gamesLog.add(playerNickname + " has drawn a card");
+            this.gamesLog.add(playerNickname + " has modified his hand");
         }
     }
 
@@ -245,6 +245,13 @@ public class TUI implements View {
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
         String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
+
+        if (!this.playersBoard.containsKey(playerNickname)) {
+            this.playersBoard.put(playerNickname, new BoardView());
+        }
+        this.gamesLog.add(message);
+        this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
+
         if (playerNickname.equals(this.nickname)) {
             if (this.turnPlayed >= 0) {
                 System.out.println(message);
@@ -253,11 +260,7 @@ public class TUI implements View {
                 System.out.println(message + ".\nWaiting for other players...");
             }
         }
-        if (!this.playerPositions.containsKey(playerNickname)) {
-            this.playersBoard.put(playerNickname, new BoardView());
-        }
-        this.gamesLog.add(message);
-        this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
+
     }
 
     /*
@@ -562,7 +565,7 @@ public class TUI implements View {
             }
         } else {
             synchronized (this.chat) {
-                this.chat.put(key, List.of(message));
+                this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
             }
         }
         this.newMessage = true;
