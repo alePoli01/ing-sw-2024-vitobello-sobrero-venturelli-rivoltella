@@ -9,11 +9,6 @@ import java.rmi.RemoteException;
 public record OnChoosePrivateObjectiveCardMessage(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }

@@ -28,7 +28,7 @@ public class SocketAccepter implements Runnable {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("serverSocket port:"+serverSocket.getLocalPort());
+            System.out.println("serverSocket port: " + serverSocket.getLocalPort());
         } catch (IOException e) {
             System.err.println("Could not create ServerSocket on port " + port);
             System.out.println(e.getMessage());

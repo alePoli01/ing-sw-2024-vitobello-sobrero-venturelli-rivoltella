@@ -31,10 +31,6 @@ public class OnNotEnoughResourceToPlaceMessage implements OnInputExceptionMessag
         return this.playerNickname;
     }
 
-    @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-
-    }
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {

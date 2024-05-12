@@ -11,11 +11,6 @@ import java.util.Map;
 public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaitingPlayersMap) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }

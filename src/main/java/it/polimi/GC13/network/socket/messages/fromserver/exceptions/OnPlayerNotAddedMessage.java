@@ -31,11 +31,6 @@ public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
     }
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }

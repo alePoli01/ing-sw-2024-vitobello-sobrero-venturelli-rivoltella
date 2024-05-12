@@ -9,11 +9,6 @@ import java.rmi.RemoteException;
 public record OnNewResourceCardsAvailableMessage(Map<Integer, Boolean> resourceCardSerial) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }

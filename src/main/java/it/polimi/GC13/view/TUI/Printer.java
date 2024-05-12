@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /*
@@ -15,7 +16,6 @@ import java.util.Map;
 public class Printer {
     private static final Deck visualDeck = new Deck();
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    int choice = 0;
 
     public Printer() {}
 
@@ -82,29 +82,32 @@ public class Printer {
 
     /**
      *
-     * @param playersScore player score list; prints all players score present in the map
+     * @param playersScore players' score list; prints all players score present in the map
      *
      */
     public void showPlayersScore(Map<String, Integer> playersScore) {
-        System.out.println("\n--- PLAYER_SCORE ---");
+        System.out.println("\n--- PLAYERS SCORE ---");
         playersScore.forEach((key, value) -> System.out.println(key + "'s current score is " + value));
     }
 
-    public void seeChat(Map<String, String> chat) {
+    public void seeChat(Map<String, List<String>> chat) {
         if (!chat.isEmpty()) {
             try {
                 String playerChosen;
                 do {
-                    System.out.println("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]") + " or [ALL]");
+                    System.out.println("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]"));
                     System.out.print("Player: ");
                     playerChosen = reader.readLine();
                     while (!chat.containsKey(playerChosen)) {
                         System.out.print("Chat with " + playerChosen + " doesn't exist.\nEnter an existing player chat: ");
                         playerChosen = reader.readLine();
                     }
-                } while (!chat.containsKey(playerChosen));
+                } while (!(chat.containsKey(playerChosen) || playerChosen.equals("global")));
                 synchronized (chat.get(playerChosen)) {
-                    System.out.println("CHAT WITH" + playerChosen.toUpperCase() + "\n" + chat.get(playerChosen));
+                    System.out.println("CHAT WITH " + playerChosen.toUpperCase() + "\n" + chat.get(playerChosen)
+                            .stream()
+                            .map(message -> message + ";\n")
+                            .collect(Collectors.joining()));
                 }
             } catch (IOException e) {
                 System.err.println("Error parsing the name");

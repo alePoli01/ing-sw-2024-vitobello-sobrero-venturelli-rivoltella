@@ -6,6 +6,8 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
+import java.util.List;
+
 public class DealingPhase implements GamePhase {
     private final Controller controller;
     private int readyPlayers = 0;
@@ -71,7 +73,7 @@ public class DealingPhase implements GamePhase {
     }
 
     @Override
-    public void registerMessage(String sender, String receiver, String message) {
+    public void newChatMessage(String sender, String receiver, String message) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

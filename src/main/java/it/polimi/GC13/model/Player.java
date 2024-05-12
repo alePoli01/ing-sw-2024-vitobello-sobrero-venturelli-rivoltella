@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Player implements Serializable {
     private final String nickname;  //username of the player
@@ -136,7 +137,7 @@ public class Player implements Serializable {
 
     // remove placedCard after it is placed on the board
     public void removeFromHand(PlayableCard placedCard) throws GenericException {
-        hand.remove(placedCard);
+        this.hand.remove(placedCard);
         System.out.println("Card " + placedCard.serialNumber + " was removed");
         if (hand.contains(placedCard)) {
             throw new GenericException("Error model" + placedCard.serialNumber +  "not placed.");
@@ -146,10 +147,10 @@ public class Player implements Serializable {
     }
 
     // add drawnCard to the hand
-    public void addToHand(PlayableCard drawnCard) throws GenericException {
-        hand.add(drawnCard);
-        if (!hand.contains(drawnCard)) {
-            throw new GenericException(drawnCard.serialNumber + "not added to the hand");
+    public void addToHand(List<PlayableCard> drawnCard) throws GenericException {
+        this.hand.addAll(drawnCard);
+        if (!this.hand.containsAll(drawnCard)) {
+            throw new GenericException("Error updating " + this.nickname + "'s hand");
         }
         // send message to listener
         this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
@@ -169,6 +170,6 @@ public class Player implements Serializable {
      * @return returns player's score from the players score map in Table
      */
     public Integer getScore() {
-        return this.getTable().getPlayersScore().get(this.getNickname());
+        return this.getTable().getPlayersScore().get(this);
     }
 }

@@ -7,6 +7,8 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
+import java.util.List;
+
 public class SetupPhase implements GamePhase {
     private final Controller controller;
 
@@ -19,6 +21,9 @@ public class SetupPhase implements GamePhase {
         try {
             game.getTable().tableSetup();
             game.dealStartCard();
+            // sets initial player's score to zero
+            game.getPlayerList()
+                    .forEach(player -> game.getTable().setPlayerScore(player, 0));
         } catch (GenericException e){
             System.err.println(e.getMessage());
         }
@@ -72,7 +77,7 @@ public class SetupPhase implements GamePhase {
     }
 
     @Override
-    public void registerMessage(String sender, String receiver, String message) {
+    public void newChatMessage(String sender, String receiver, String message) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

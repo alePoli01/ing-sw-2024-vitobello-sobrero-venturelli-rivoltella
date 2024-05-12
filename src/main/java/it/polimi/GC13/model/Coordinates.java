@@ -1,6 +1,8 @@
 package it.polimi.GC13.model;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
     private int x,y;
 
     public Coordinates(int x, int y) {

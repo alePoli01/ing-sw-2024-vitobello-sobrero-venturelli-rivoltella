@@ -6,12 +6,7 @@ import it.polimi.GC13.view.View;
 
 import java.rmi.RemoteException;
 
-public record OnNewMessage(String sender, String receiver, String message) implements MessagesFromServer {
-
-    @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-
-    }
+public record OnNewMessage(String sender, String recipient, String message) implements MessagesFromServer {
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
@@ -20,7 +15,7 @@ public record OnNewMessage(String sender, String receiver, String message) imple
 
     @Override
     public void methodToCall(View view) {
-        view.onNewMessage(this.sender(), this.receiver(), this.message());
+        view.onNewMessage(this.sender(), this.recipient(), this.message());
     }
 }
 

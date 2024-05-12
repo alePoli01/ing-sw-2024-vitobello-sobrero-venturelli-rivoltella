@@ -14,6 +14,4 @@ public interface ClientInterface extends Remote {
 
     // Generic method to send messages from server to client after the game is started
     void sendMessage(MessagesFromServer message) throws RemoteException;
-
-    void poke() throws IOException;
 }

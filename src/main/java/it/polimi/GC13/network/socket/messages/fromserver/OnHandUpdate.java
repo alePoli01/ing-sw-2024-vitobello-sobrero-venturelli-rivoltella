@@ -10,11 +10,6 @@ import java.util.LinkedList;
 public record OnHandUpdate(String playerNickname, LinkedList<Integer> availableCards) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
             client.sendMessage(this);
     }

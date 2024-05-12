@@ -10,8 +10,6 @@ import it.polimi.GC13.view.View;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +32,7 @@ public class TUI implements View {
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private int choice = 0;
     private final Printer printer = new Printer();
-    private final Map<String, String> chat = new HashMap<>();
+    private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
 
     public TUI() {
@@ -60,9 +58,6 @@ public class TUI implements View {
             synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
-                if (turnPlayed >= 1 && availableCard.size() == 3) {
-                    this.showHomeMenu(); // it is called from the first turn played when a new card is drawn
-                }
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
@@ -271,7 +266,6 @@ public class TUI implements View {
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
-        this.printer.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", serialCommonObjectiveCard);
     }
 
     /*
@@ -280,6 +274,7 @@ public class TUI implements View {
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
+            this.printer.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCards);
             try {
                 while (!privateObjectiveCards.contains(choice)) {
@@ -461,9 +456,13 @@ public class TUI implements View {
 
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
-        System.out.println("Available cells: " + availableCells.stream().map(cell -> cell.getX() + ", " + cell.getY()).collect(Collectors.joining(" - ")) + ".");
+        String cellCoordinates = availableCells.stream()
+                .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
+                .collect(Collectors.joining("\n"));
+        System.out.println("Available cells: " + cellCoordinates + ".");
         this.showHomeMenu();
     }
+
 
     @Override
     public void connectionLost() {
@@ -529,59 +528,65 @@ public class TUI implements View {
         }
     }
 
-    @Override
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
-        this.playersScore.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().equals(playerNickname))
-                .forEach(entry -> entry.setValue(newPlayerScore));
+        this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
+        this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
     }
 
     /**
-     * method to see messages in the chat
+     * method to save new a message in the chat
      * @param sender message sender
-     * @param receiver message receiver
+     * @param recipient message recipient
      * @param message string that contains the message itself
      */
     @Override
-    public void onNewMessage(String sender, String receiver, String message) {
-        if (receiver.equals(this.nickname) || receiver.equals("ALL")) {
-            synchronized (this.chat.get(sender)) {
-                if (!this.chat.containsKey(sender)) {
-                    this.chat.put(sender, message);
-                } else {
-                    this.chat.put(sender, Collectors.joining("\n" + this.chat.get(sender) + ": " + message + ";").toString());
-                }
-                this.newMessage = true;
-            }
-        } else if (sender.equals(this.nickname)) {
-            synchronized (this.chat) {
-                if (!this.chat.containsKey(receiver)) {
-                    this.chat.put(receiver, message);
-                } else {
-                    this.chat.put(receiver, Collectors.joining("\n" + this.chat.get(receiver) + ": " + message + ";").toString());
-                }
-                this.newMessage = true;
-            }
+    public void onNewMessage(String sender, String recipient, String message) {
+        // CASE A -> I AM THE RECIPIENT
+        if (recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        // CASE B -> BROADCAST MESSAGE
+        else if (recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        // CASE C -> I AM THE SENDER
+        else if (sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
         }
     }
 
+    private void registerChatMessage(String key, String message) {
+        if (this.chat.containsKey(key)) {
+            synchronized (this.chat.get(key)) {
+                this.chat.get(key).add(message);
+            }
+        } else {
+            synchronized (this.chat) {
+                this.chat.put(key, List.of(message));
+            }
+        }
+        this.newMessage = true;
+    }
+
+    /**
+     * method to send a message to any player or to everyone
+     */
     private void sendMessage() {
         try {
             this.cooking = true;
             String playerChosen;
             String message;
             do {
-                System.out.println("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [ALL]");
+                System.out.println("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [global]");
                 System.out.print("Player: ");
                 playerChosen = reader.readLine();
-                while (!this.playersBoard.containsKey(playerChosen)) {
+                while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global"))) {
                     System.out.print("Player " + playerChosen + " doesn't exist.\nEnter an existing player: ");
                     playerChosen = reader.readLine();
                 }
                 System.out.print("Write down your message: ");
                 message = reader.readLine();
-            } while (!this.playersBoard.containsKey(playerChosen));
+            } while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global")));
             this.virtualServer.writeMessage(this.nickname, playerChosen, message);
         } catch (IOException e) {
             System.err.println("Error parsing the name");
@@ -603,7 +608,7 @@ public class TUI implements View {
                 } else {
                     this.menuOption();
                 }
-            } else if (this.turnPlayed == 0) {
+            } else if (!this.myTurn) { // at the end of the turn, the player will see the MAIN MENU
                 this.showHomeMenu();
             }
         }
@@ -615,7 +620,7 @@ public class TUI implements View {
     }
 
     private void menuOption() {
-        System.out.println("\n--- HOME MENU ---");
+        System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + "---");
         if (this.myTurn) {
             System.out.println("It's your turn");
         } else {

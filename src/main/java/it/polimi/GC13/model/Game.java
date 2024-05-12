@@ -19,7 +19,7 @@ public class Game implements Serializable {
     private int lastRound;
     private final String gameName;
     private final Observer observer;
-    private final Map<String, String> chat = new HashMap<>();
+    private final Map<String, List<String>> chat = new HashMap<>();
 
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
@@ -56,17 +56,19 @@ public class Game implements Serializable {
     }
 
     public List<Player> getPlayerList() {
-        return playerList;
+        return this.playerList;
     }
 
     // give firsts 3 cards to each player
     public void giveFirstCards() throws GenericException {
+        List<PlayableCard> firstHand = new ArrayList<>();
         for (Player player : this.playerList) {
-
             for (int i = 0; i < 2; i++) {
-                player.addToHand(this.table.getDeck().getResourceDeck().removeFirst());
+                firstHand.add(this.table.getDeck().getResourceDeck().removeFirst());
             }
-            player.addToHand(this.table.getDeck().getGoldDeck().removeFirst());
+            firstHand.add(this.table.getDeck().getGoldDeck().removeFirst());
+            player.addToHand(firstHand);
+            firstHand.clear();
         }
     }
 
@@ -144,7 +146,7 @@ public class Game implements Serializable {
 
     public void dealStartCard() throws GenericException {
         for (Player player : this.playerList) {
-            player.addToHand(this.table.getDeck().getStartDeck().removeFirst());
+            player.addToHand(List.of(this.table.getDeck().getStartDeck().removeFirst()));
         }
     }
 
@@ -165,16 +167,32 @@ public class Game implements Serializable {
         }
     }
 
-    public synchronized void registerMessage(String sender, String receiver, String message) {
-        String key1 = sender.concat(receiver);
-        String key2 = receiver.concat(sender);
-        if (!this.chat.containsKey(key1) && !this.chat.containsKey(key2)) {
-            this.chat.put(key1, message);
-        } else if (this.chat.containsKey(key2)) {
-            this.chat.put(key2, Collectors.joining("\n" + this.chat.get(key1) + ": " + message + ";").toString());
+    public void registerMessage(String sender, String recipient, String message) {
+        if (!recipient.equalsIgnoreCase("global")) {
+            // grants always the same key for chat between two players
+            String key = sender.compareTo(recipient) < 0 ? sender.concat(recipient) : recipient.concat(sender);
+
+            if (this.chat.containsKey(key)) {
+                synchronized (this.chat.get(key)) {
+                    this.chat.get(key).add(message);
+                }
+            } else {
+                synchronized (this.chat) {
+                    this.chat.put(key, List.of(message));
+                }
+            }
         } else {
-            this.chat.put(key1, Collectors.joining("\n" + this.chat.get(key2) + ": " + message + ";").toString());
+            if (this.chat.containsKey("global")) {
+                synchronized (this.chat.get("global")) {
+                    this.chat.get("global").add(message);
+                }
+            } else {
+                synchronized (this.chat) {
+                    this.chat.put("global", List.of(message));
+                }
+            }
         }
-        this.observer.notifyClients(new OnNewMessage(sender, receiver, message));
+
+        this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
     }
 }

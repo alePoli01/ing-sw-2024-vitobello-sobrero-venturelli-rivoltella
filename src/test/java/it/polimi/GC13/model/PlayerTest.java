@@ -7,6 +7,7 @@ import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.exception.GenericException;
 import junit.framework.TestCase;
 
+import java.util.List;
 import java.util.Map;
 
 public class PlayerTest extends TestCase {
@@ -22,7 +23,7 @@ public class PlayerTest extends TestCase {
     public void testAddToHand(){
         //test if card is added to hand
         try{
-            player.addToHand(card);
+            player.addToHand(List.of(card));
             assertEquals(card,player.getHand().getFirst());
         }
         catch(GenericException e){
@@ -32,7 +33,7 @@ public class PlayerTest extends TestCase {
     public void testRemoveFromHand() {
         //test if card is deleted from hand
         try{// first add a card to the hand then remove it
-            player.addToHand(card);
+            player.addToHand(List.of(card));
         }
         catch(GenericException e){
             fail("addToHand exception: "+e.getMessage());
@@ -40,7 +41,7 @@ public class PlayerTest extends TestCase {
         try{
             //after delete there should be nothing in the hand
             player.removeFromHand(card);
-            assertEquals(true,player.getHand().isEmpty());
+            assert (player.getHand().isEmpty());
         }
         catch(GenericException e){
             fail(e.getMessage());

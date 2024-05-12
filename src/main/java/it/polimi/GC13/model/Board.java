@@ -30,8 +30,6 @@ public class Board implements Serializable {
         this.offset.add(new Coordinates(+1, +1));
         this.offset.add(new Coordinates(+1, -1));
         this.offset.add(new Coordinates(-1, -1));
-        // set initial player's score to zero
-        this.owner.getTable().getPlayersScore().put(this.owner.getNickname(), 0);
     }
 
     public Map<Coordinates, Cell> getBoardMap() {
@@ -54,10 +52,10 @@ public class Board implements Serializable {
 
     /**
      *
-     * @param X
-     * @param Y
+     * @param X coordinate x
+     * @param Y coordinate y
      * @return returns the coordinate from the board if it is possible to place or throw a GenericException
-     * @throws GenericException
+     * @throws GenericException if the cell is not available and notifying the client as well
      */
     public Coordinates isPossibleToPlace(int X, int Y) throws GenericException {
         return this.availableCells
@@ -65,17 +63,17 @@ public class Board implements Serializable {
                 .filter(coordinates -> coordinates.getX() == X && coordinates.getY() == Y)
                 .findFirst()
                 .orElseThrow(() -> {
-                    this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, availableCells));
-                    availableCells.forEach(cell -> System.out.println("(" + cell.getX() + ", " + cell.getY() + ") "));
+                    this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, this.availableCells));
+                    this.availableCells.forEach(cell -> System.out.println("(" + cell.getX() + ", " + cell.getY() + ") "));
                     return new GenericException("Forbidden cell " + X + ", " + Y);
                 });
     }
 
     /** place start card to the board
      *
-     * @param cardToPlace
-     * @param isFlipped
-     * @throws GenericException
+     * @param cardToPlace card to place on the board
+     * @param isFlipped side of the card to place: true for back side and false for front side
+     * @throws GenericException if the card isn't added correctly it throws an exception
      */
     public void placeStartCardOnTheBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
         Coordinates xy = new Coordinates(50, 50);

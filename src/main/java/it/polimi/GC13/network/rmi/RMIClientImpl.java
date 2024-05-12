@@ -21,9 +21,4 @@ public class RMIClientImpl implements Remote, Serializable, ClientInterface {
     public void sendMessage(MessagesFromServer message) throws RemoteException {
         //message.methodToCall(this.view);
     }
-
-    @Override
-    public void poke() throws IOException {
-
-    }
 }

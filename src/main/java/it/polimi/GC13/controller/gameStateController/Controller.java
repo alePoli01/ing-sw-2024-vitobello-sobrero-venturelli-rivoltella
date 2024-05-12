@@ -74,7 +74,7 @@ public class Controller implements GamePhase {
         this.gameController.addPlayerToExistingGame(player, existingGame, client);
     }
 
-    public void registerMessage(String sender, String receiver, String message) {
-        this.gameController.registerMessage(sender, receiver, message);
+    public void newChatMessage(String sender, String receiver, String message) {
+        this.gameController.newChatMessage(sender, receiver, message);
     }
 }

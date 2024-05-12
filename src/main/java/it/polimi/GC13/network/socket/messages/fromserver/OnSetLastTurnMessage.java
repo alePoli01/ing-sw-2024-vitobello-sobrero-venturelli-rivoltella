@@ -10,11 +10,6 @@ import java.rmi.RemoteException;
 public record OnSetLastTurnMessage(String playerNickname, Position position) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-
-    }
-
-    @Override
     public void notifyClient(ClientInterface client)throws RemoteException {
         client.sendMessage(this);
     }

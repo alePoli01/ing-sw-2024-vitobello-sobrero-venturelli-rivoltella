@@ -5,6 +5,8 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
+import java.util.List;
+
 public class EndPhase implements GamePhase {
     private final Controller controller;
 
@@ -24,11 +26,14 @@ public class EndPhase implements GamePhase {
         return winner;
     }
 
+    /**
+     * method used to calculate final score with private and common objective cards
+     */
     private void finalScoreCalculation() {
         for (Player player : this.controller.getGame().getPlayerList()) {
             //set player score = player score + player's objective points(based on his board)
             player.getTable().setPlayerScore(player,
-                    player.getTable().getPlayersScore().get(player.getNickname())
+                    player.getTable().getPlayersScore().get(player)
                             + player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
             );
         }
@@ -57,7 +62,7 @@ public class EndPhase implements GamePhase {
     }
 
     @Override
-    public void registerMessage(String sender, String receiver, String message) {
+    public void newChatMessage(String sender, String receiver, String message) {
         System.out.println("Error, game is in" + this.controller.getGame().getGameState());
     }
 

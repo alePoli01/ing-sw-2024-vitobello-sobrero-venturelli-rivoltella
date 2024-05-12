@@ -41,7 +41,7 @@ public class SocketClient implements ClientInterface, Runnable {
         Generic method to send messages from server to client
      */
     @Override
-    public void sendMessage(MessagesFromServer message) {
+    public synchronized void sendMessage(MessagesFromServer message) {
         try {
             if (!connectionOpen) {
                 return;
@@ -56,11 +56,6 @@ public class SocketClient implements ClientInterface, Runnable {
     }
 
 
-    @Override
-    public synchronized void poke() {
-        //empty message sent by the Impulse (read comment in SocketAccepter)
-        this.sendMessage(new PokeMessage());
-    }
 
     @Override
     public void run() {

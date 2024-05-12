@@ -10,11 +10,6 @@ import java.rmi.RemoteException;
 public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client)throws RemoteException {
         client.sendMessage(this);
     }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 //class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
 public class Table implements Serializable {
     private final Game game;
-    private final Map<String, Integer> playersScore = new HashMap<>(); //vector that keeps players scores
+    private final Map<Player, Integer> playersScore = new HashMap<>(); //vector that keeps players scores
     private final List<ObjectiveCard> commonObjectiveCard = new LinkedList<>();//Objective cards in common between players
     private final Map<PlayableCard, Boolean> goldCardMap =  new LinkedHashMap<>();
     private final Map<PlayableCard, Boolean> resourceCardMap = new LinkedHashMap<>();
@@ -69,7 +69,7 @@ public class Table implements Serializable {
         return playerBoardMap;
     }
 
-    public Map<String, Integer> getPlayersScore() {
+    public Map<Player, Integer> getPlayersScore() {
         return this.playersScore;
     }
 
@@ -149,7 +149,7 @@ public class Table implements Serializable {
     public void setPlayerScore(Player player, int newPlayerScore) {
         this.getPlayersScore().entrySet()
                 .stream()
-                .filter(entry -> entry.getKey().equals(player.getNickname()))
+                .filter(entry -> entry.getKey().equals(player))
                 .forEach(entry -> entry.setValue(newPlayerScore));
 
         this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), newPlayerScore));

@@ -6,6 +6,7 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class MidPhase implements GamePhase {
@@ -77,7 +78,7 @@ public class MidPhase implements GamePhase {
             // draw the selected card from the table and replace with a new one
             player.getTable().drawCard(cardToDraw);
             // add the selected card to player's hand
-            player.addToHand(cardToDraw);
+            player.addToHand(List.of(cardToDraw));
             // end player's turn
             player.setMyTurn(false);
             // set next player turn to true
@@ -97,7 +98,7 @@ public class MidPhase implements GamePhase {
     }
 
     @Override
-    public void registerMessage(String sender, String receiver, String message) {
+    public void newChatMessage(String sender, String receiver, String message) {
         this.controller.getGame().registerMessage(sender, receiver, message);
     }
 

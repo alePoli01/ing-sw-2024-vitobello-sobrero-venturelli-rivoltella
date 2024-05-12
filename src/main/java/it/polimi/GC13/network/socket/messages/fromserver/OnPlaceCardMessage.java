@@ -6,10 +6,6 @@ import it.polimi.GC13.view.View;
 import java.rmi.RemoteException;
 public record OnPlaceCardMessage(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) implements MessagesFromServer {
 
-    @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {

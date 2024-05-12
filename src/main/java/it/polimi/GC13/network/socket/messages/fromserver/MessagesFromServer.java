@@ -10,9 +10,6 @@ import java.rmi.RemoteException;
 
 public interface MessagesFromServer extends Serializable {
 
-    // method to handle poke message
-    void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) ;
-
     // send message to the clientInterface (socket / RMI client)
     void notifyClient(ClientInterface client) throws RemoteException;
 

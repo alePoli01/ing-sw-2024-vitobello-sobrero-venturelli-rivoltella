@@ -7,11 +7,10 @@ import it.polimi.GC13.view.View;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ClientDispatcher implements Serializable,ClientDispatcherInterface, LostConnectionToServerInterface {
     private View view;
-    private final List<MessagesFromServer> messageFromServerList = new LinkedList<>();
+    private final LinkedList<MessagesFromServer> messageFromServerList = new LinkedList<>();
 
     public ClientDispatcher() {
     }
@@ -27,14 +26,9 @@ public class ClientDispatcher implements Serializable,ClientDispatcherInterface,
     }
 
     @Override
-    public void registerFromServerMessage(MessagesFromServer messagesFromServer) {
-        this.messageFromServerList.add(messagesFromServer);
+    public void registerMessageFromServer(MessagesFromServer messagesFromServer) {
+        this.messageFromServerList.addLast(messagesFromServer);
         this.callMessages();
-    }
-
-    @Override
-    public void dispatch(String message) {
-
     }
 
     @Override

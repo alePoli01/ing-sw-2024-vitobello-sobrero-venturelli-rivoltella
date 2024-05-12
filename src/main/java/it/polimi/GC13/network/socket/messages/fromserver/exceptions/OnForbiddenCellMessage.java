@@ -14,14 +14,9 @@ public class OnForbiddenCellMessage implements OnInputExceptionMessage {
     private final String playerNickname;
 
     public OnForbiddenCellMessage(String playerNickname, int X, int Y, List<Coordinates> availableCells) {
-        errorMessage = "It's not possible to place cards in: (%s, %s)" + X + Y;
+        errorMessage = "It's not possible to place cards in: (" + X + ", " + Y + ")";
         this.availableCells.addAll(availableCells);
         this.playerNickname = playerNickname;
-    }
-
-    @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
     }
 
     @Override

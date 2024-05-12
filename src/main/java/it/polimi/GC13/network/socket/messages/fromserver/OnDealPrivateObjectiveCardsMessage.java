@@ -10,11 +10,6 @@ import java.util.List;
 public record OnDealPrivateObjectiveCardsMessage(String playerNickname, List<Integer> privateObjectiveCards) implements MessagesFromServer {
 
     @Override
-    public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
-        clientDispatcher.dispatch(null);
-    }
-
-    @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
