@@ -11,6 +11,7 @@ import it.polimi.GC13.view.GUI.login.WaitingLobby;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,15 +20,19 @@ import java.util.Map;
 //TODO: da cambiare la gestione degli errori
 
 public class FrameManager implements View {
-    protected final ServerInterface virtualServer;
+    protected ServerInterface virtualServer;
     private int choice = -1;
     private WaitingLobby waitingLobby;
 
-
-    public FrameManager(ServerInterface virtualServer) {
-        this.virtualServer = virtualServer;
+    @Override
+    public void startView() {
         this.checkForExistingGame();
         System.out.println("++Sent: checkForExistingGame");
+    }
+
+    @Override
+    public void setVirtualServer(ServerInterface virtualServer) {
+        this.virtualServer = virtualServer;
     }
 
     public ServerInterface getVirtualServer() {
@@ -59,20 +64,7 @@ public class FrameManager implements View {
         }*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-         if (gameNameWaitingPlayersMap.isEmpty()) {
+        if (gameNameWaitingPlayersMap.isEmpty()) {
             createNewGame();
             //da capire come gestire eventuali errori
             //JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
@@ -81,8 +73,7 @@ public class FrameManager implements View {
             //da testare
 
 
-
-           Object[] options = {"Create Game", "Join Game"};
+            Object[] options = {"Create Game", "Join Game"};
             choice = JOptionPane.showOptionDialog(null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
 
             if (this.choice == JOptionPane.YES_OPTION) {
@@ -92,7 +83,7 @@ public class FrameManager implements View {
                 //da capire come gestire eventuali errori
                 //JOptionPane.showMessageDialog(null, "Error while creating the game.", "Creation Failed", JOptionPane.WARNING_MESSAGE);
 
-            } else if(this.choice == JOptionPane.NO_OPTION) {
+            } else if (this.choice == JOptionPane.NO_OPTION) {
                 //player can and wants to join an existing game
                 joinExistingGame(gameNameWaitingPlayersMap);
 
@@ -134,6 +125,7 @@ public class FrameManager implements View {
             }
         });
     }
+
 
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {

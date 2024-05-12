@@ -1,8 +1,6 @@
 package it.polimi.GC13.app;
 
 import it.polimi.GC13.controller.LobbyController;
-import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.rmi.RMIServer;
 import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.network.socket.ServerDispatcher;
 
@@ -13,7 +11,7 @@ public class ServerApp {
 
         if(args.length != 2) {
             System.out.println("Missing Parameters, killing this server.");
-            System.out.println("HINT: metti | 'nome-server' 123 456 | come parametri nella run configuration di ServerApp");
+            System.out.println("HINT: metti | 'nome-server' 1099 456 | come parametri nella run configuration di ServerApp");
             System.exit(-1);
         }
         int RMIport = 0;
@@ -26,14 +24,10 @@ public class ServerApp {
             System.out.println("Illegal Argument Format, killing this server.");
             System.exit(-1);
         }
-        //System.setProperty("java.rmi.server.hostname", args[0]);
+        System.setProperty("java.rmi.server.hostname", "127.0.0.1");
         System.out.println("Hello from Server");
         System.out.println("RMI port: " + RMIport);
-        System.out.println("Socket port: " + socketPort+"\n");
-        ServerInterface rmiServer = new RMIServer(RMIport);
-        //((RMIServer) rmiServer).startServer();
-
-
+        System.out.println("Socket port: " + socketPort+"\n-------------\n");
         //link a lobby controller to the controller dispatcher
         System.out.println("Creating and linking LobbyController and ControllerDispatcher");
         LobbyController lobbyController = new LobbyController();
@@ -41,8 +35,15 @@ public class ServerApp {
         //link  a controller(and lobby) dispatcher to a server dispatcher
         System.out.println("Creating and linking ServerDispatcher to ControllerDispatcher(/w LobbyController)");
         ServerDispatcher serverDispatcher= new ServerDispatcher(controllerDispatcher);
+
+        System.out.println("\u001B[33mStarting RMI server...\u001B[0m");
+        RMIServer rmiServer = new RMIServer(controllerDispatcher,lobbyController);
+        rmiServer.startServer(RMIport);
+
+
+
         //create an Accepter that will connect the server port and dispatcher to a client
-        System.out.println("Starting the Accepter...");
+        System.out.println("\u001B[33mStarting Socket server...\u001B[0m");
         SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort,lobbyController);
         //link the lobby the serverDispatcher that will be linked to the client, so that the lobby will be able to connect the client to the game
         lobbyController.setControllerDispatcher(controllerDispatcher);

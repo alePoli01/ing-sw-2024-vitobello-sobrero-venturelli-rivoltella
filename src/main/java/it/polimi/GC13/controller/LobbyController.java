@@ -10,6 +10,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameM
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
 import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,7 +36,7 @@ public class LobbyController implements LostConnectionToClientInterface {
         return this.startedGameMap;
     }
 
-    public void checkForExistingGame(ClientInterface client) {
+    public void checkForExistingGame(ClientInterface client) throws RemoteException {
         // upon check just provide the answer
         if(disconnectedClients.contains(client)){
             System.out.println("Disconnected client recognised");
@@ -50,7 +51,7 @@ public class LobbyController implements LostConnectionToClientInterface {
     /*
         METHOD TO ADD EACH PLAYER TO THE GAME
      */
-    public synchronized void addPlayerToGame(ClientInterface client, String playerNickname, String gameName) {
+    public synchronized void addPlayerToGame(ClientInterface client, String playerNickname, String gameName) throws RemoteException {
         System.out.println("--Received: PlayerJoiningMessage: [player:" + playerNickname+"]");
         try {
             // creates the player
@@ -77,7 +78,7 @@ public class LobbyController implements LostConnectionToClientInterface {
     /*
         METHOD TO CREATE A NEW GAME
      */
-    public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) {
+    public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) throws RemoteException {
         Game workingGame;
         if (this.startedGameMap.containsKey(gameName) | this.joinableGameMap.containsKey(gameName)) {
             client.sendMessage(new OnGameNameAlreadyTakenMessage(playerNickname, gameName));

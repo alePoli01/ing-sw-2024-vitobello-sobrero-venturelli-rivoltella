@@ -5,7 +5,7 @@ import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
 import java.util.Map;
-
+import java.rmi.RemoteException;
 public record OnNewGoldCardsAvailableMessage(Map<Integer, Boolean> goldCardSerial) implements MessagesFromServer {
 
     @Override
@@ -14,7 +14,7 @@ public record OnNewGoldCardsAvailableMessage(Map<Integer, Boolean> goldCardSeria
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 

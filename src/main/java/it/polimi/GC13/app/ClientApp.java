@@ -2,19 +2,18 @@ package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.rmi.RMIClient;
-import it.polimi.GC13.network.rmi.RMIServer;
+import it.polimi.GC13.network.rmi.RMIClientAdapter;
+import it.polimi.GC13.network.rmi.RMIClientImpl;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.TUI.TUI;
+import it.polimi.GC13.view.View;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.rmi.NotBoundException;
 
 
 public class ClientApp {
@@ -24,7 +23,7 @@ public class ClientApp {
 
         if (args.length != 2) {
             System.err.println("Missing Parameters, killing this server.");
-            System.err.println("HINT: metti | 'nome-server' 123 456 | come parametri nella run configuration di ClientApp");
+            System.err.println("HINT: metti | 'nome-server' 1099 456 | come parametri nella run configuration di ClientApp");
             System.exit(-1);
         }
 
@@ -38,19 +37,20 @@ public class ClientApp {
             System.err.println("Illegal Argument Format, killing this client.");
             System.exit(-1);
         }
-       // System.setProperty("java.rmi.server.hostname", args[0]);
+        // System.setProperty("java.rmi.server.hostname", args[0]);
 
         /*
         quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
         */
         System.out.println("Hello from Client");
         System.out.println("RMI port: " + RMIport);
-        System.out.println("Socket port: " + socketPort+"\n");
+        System.out.println("Socket port: " + socketPort + "\n");
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
 
         int connectionChoice = 0;
         ServerInterface virtualServer = null;
-        ClientDispatcher clientDispatcher = null;
+        ClientDispatcher clientDispatcher;
+        View view = null;
 
         // INTERNET PROTOCOL CHOICE
         do {
@@ -73,37 +73,37 @@ public class ClientApp {
             }
         } while (viewChoice != 1 && viewChoice != 2);
 
-        System.out.println("Starting "+ (viewChoice == 1 ? "TUI" : "GUI") + " with connection type "+ (connectionChoice == 1 ? "RMI" : "SOCKET"));
-
-        // RMI SETUP
-        if (connectionChoice == 1) {
-            try {
-                virtualServer = new RMIServer(RMIport);
-                ClientInterface client = new RMIClient(reader.readLine());
-                ((RMIClient) client).startRMIConnection();
-            } catch (NotBoundException | IOException e) {
-                System.err.println("Binding with server failed");
-            }
-        // SOCKET SETUP
+        System.out.println("\u001B[33mStarting " + (viewChoice == 1 ? "TUI" : "GUI") + " with connection type " + (connectionChoice == 1 ? "RMI" : "SOCKET") + "\u001B[0m");
+        clientDispatcher = new ClientDispatcher();
+        if (viewChoice == 1) {
+            view = new TUI();
         } else {
+            view = new FrameManager();
+        }
+        clientDispatcher.setView(view);
+
+        if (connectionChoice == 1) {
+            // RMI SETUP
+            ClientInterface rmiClientImpl = new RMIClientImpl(clientDispatcher);//used to receive mess form server, assed to server by RMIClient
+            RMIClientAdapter rmiClientAdapter = new RMIClientAdapter(rmiClientImpl);
+
+            //virtualServer becomes RMIServer
+            virtualServer = rmiClientAdapter.startRMIConnection("127.0.0.1", RMIport);
+            System.out.println("Connection completed");
+        } else {
+            // SOCKET SETUP
             try {
                 Socket socket = new Socket("localhost", socketPort); // creating socket that represents the server
-                clientDispatcher = new ClientDispatcher();
                 virtualServer = new SocketServer(socket, clientDispatcher, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
                 new Thread((SocketServer) virtualServer).start();
             } catch (IOException e) {
-                System.err.println("Failed to create socket!");
+                System.err.println("Failed to create socket.");
             }
         }
 
-        if (viewChoice == 1) {
-            if (clientDispatcher != null) {
-                clientDispatcher.setView(new TUI(virtualServer));
-            }
-        } else {
-            if (clientDispatcher != null) {
-                clientDispatcher.setView(new FrameManager(virtualServer));
-            }
-        }
+        view.setVirtualServer(virtualServer);
+        view.startView();
+
+
     }
 }

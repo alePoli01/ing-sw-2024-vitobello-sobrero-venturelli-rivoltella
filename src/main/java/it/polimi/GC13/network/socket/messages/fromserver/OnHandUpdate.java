@@ -4,6 +4,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 
 public record OnHandUpdate(String playerNickname, LinkedList<Integer> availableCards) implements MessagesFromServer {
@@ -14,8 +15,8 @@ public record OnHandUpdate(String playerNickname, LinkedList<Integer> availableC
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
-        client.sendMessage(this);
+    public void notifyClient(ClientInterface client) throws RemoteException {
+            client.sendMessage(this);
     }
 
     @Override

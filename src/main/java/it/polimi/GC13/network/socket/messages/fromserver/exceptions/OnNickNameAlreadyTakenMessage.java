@@ -4,6 +4,8 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
+
 public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
     private final String playerNickname;
     private final String errorMessage;
@@ -41,7 +43,7 @@ public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 

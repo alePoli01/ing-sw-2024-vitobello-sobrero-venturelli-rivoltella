@@ -4,6 +4,8 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
+
 public record OnPlayerScoreUpdateMessage(String playerNickname, int newPlayerScore ) implements MessagesFromServer {
     @Override
     public void pokeMessageDispatch(ClientDispatcherInterface clientDispatcher) {
@@ -11,7 +13,7 @@ public record OnPlayerScoreUpdateMessage(String playerNickname, int newPlayerSco
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 

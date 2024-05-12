@@ -28,7 +28,7 @@ public class SocketServer implements ServerInterface, Runnable {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
-        this.connectionStatus=connectionStatus;
+        this.connectionStatus = connectionStatus;
     }
 
     /*
@@ -104,7 +104,7 @@ public class SocketServer implements ServerInterface, Runnable {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> this.clientDispatcher.registerFromServerMessage(message));
             } catch (IOException | ClassNotFoundException e) {
-                if(this.connectionOpen){
+                if (this.connectionOpen) {
                     this.connectionOpen = false;
                     this.connectionStatus.connectionLost(this);
                 }

@@ -5,6 +5,8 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
+
 public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor) implements MessagesFromServer {
 
     @Override
@@ -13,7 +15,7 @@ public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor)
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client)throws RemoteException {
         client.sendMessage(this);
     }
 

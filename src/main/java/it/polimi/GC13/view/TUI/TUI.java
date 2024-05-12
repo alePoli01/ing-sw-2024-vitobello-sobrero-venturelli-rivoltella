@@ -10,12 +10,14 @@ import it.polimi.GC13.view.View;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TUI implements View {
-    private final ServerInterface virtualServer;
+    private ServerInterface virtualServer;
     private String nickname;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
@@ -35,8 +37,17 @@ public class TUI implements View {
     private final Map<String, String> chat = new HashMap<>();
     private boolean newMessage = false;
 
-    public TUI(ServerInterface virtualServer) {
+    public TUI() {
+        this.virtualServer = null;
+    }
+
+    @Override
+    public void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
+    }
+
+    @Override
+    public void startView() {
         this.checkForExistingGame();
     }
 
@@ -159,7 +170,7 @@ public class TUI implements View {
         this.nickname = this.reader.readLine();
 
         System.out.println("Joinable Games:");
-        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game: [" + string + "] --|players in waiting room: " + numCurrPlayer +"|"));
+        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game: [" + string + "] --|players in waiting room: " + numCurrPlayer + "|"));
         do {
             System.out.print("Select the game to join using its name: ");
             gameName = this.reader.readLine();

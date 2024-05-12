@@ -4,7 +4,7 @@ import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
-
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class OnForbiddenCellMessage implements OnInputExceptionMessage {
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 

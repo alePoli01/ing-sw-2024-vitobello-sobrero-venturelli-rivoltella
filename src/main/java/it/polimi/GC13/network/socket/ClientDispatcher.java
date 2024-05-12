@@ -5,10 +5,11 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.messages.fromserver.*;
 import it.polimi.GC13.view.View;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClientDispatcher implements ClientDispatcherInterface, LostConnectionToServerInterface {
+public class ClientDispatcher implements Serializable,ClientDispatcherInterface, LostConnectionToServerInterface {
     private View view;
     private final List<MessagesFromServer> messageFromServerList = new LinkedList<>();
 

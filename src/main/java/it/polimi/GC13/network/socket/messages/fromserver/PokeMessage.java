@@ -5,6 +5,8 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
+
 public record PokeMessage() implements MessagesFromServer {
 
     @Override
@@ -13,7 +15,7 @@ public record PokeMessage() implements MessagesFromServer {
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 

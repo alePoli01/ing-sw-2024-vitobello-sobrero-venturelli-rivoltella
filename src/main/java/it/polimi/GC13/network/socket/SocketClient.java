@@ -9,6 +9,7 @@ import it.polimi.GC13.network.socket.messages.fromserver.*;
 import java.io.*;
 import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,10 +55,6 @@ public class SocketClient implements ClientInterface, Runnable {
         }
     }
 
-    @Override
-    public void startRMIConnection() {
-
-    }
 
     @Override
     public synchronized void poke() {
@@ -81,7 +78,11 @@ public class SocketClient implements ClientInterface, Runnable {
                 if (!connectionOpen) break;
                 MessagesFromClient message = (MessagesFromClient) ois.readObject();
                 executorService.submit(() -> {
-                    serverDispatcher.sendToControllerDispatcher(message, this);
+                    try {
+                        serverDispatcher.sendToControllerDispatcher(message, this);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 });
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {

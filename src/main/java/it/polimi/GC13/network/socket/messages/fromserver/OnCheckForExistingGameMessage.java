@@ -5,6 +5,7 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaitingPlayersMap) implements MessagesFromServer {
@@ -15,7 +16,7 @@ public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaiting
     }
 
     @Override
-    public void notifyClient(ClientInterface client) {
+    public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessage(this);
     }
 
