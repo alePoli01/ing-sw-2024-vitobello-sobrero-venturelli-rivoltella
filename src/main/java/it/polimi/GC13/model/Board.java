@@ -177,15 +177,15 @@ public class Board implements Serializable {
                         .filter(Resource::isReign)
                         .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
             }
-        } else {
-            if (!isFlipped) {
-                // add card played resource to the board
-                Arrays.stream(cardToPlace.edgeResource)
-                        .filter(resource -> resource.isObject() || resource.isReign())
-                        .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
-            } else {
-                collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
-            }
+        } else if (isFlipped) {
+            collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
+        }
+
+        if (!isFlipped) {
+            // add card played resource to the board
+            Arrays.stream(cardToPlace.edgeResource)
+                    .filter(resource -> resource.isObject() || resource.isReign())
+                    .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
         }
     }
 

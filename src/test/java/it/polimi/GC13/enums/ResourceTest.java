@@ -4,7 +4,4 @@ import junit.framework.TestCase;
 
 public class ResourceTest extends TestCase {
 
-    public void testTestToString() {
-        Resource.EMPTY.toString(0);
-    }
 }

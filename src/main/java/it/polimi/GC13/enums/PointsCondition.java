@@ -1,7 +1,7 @@
 package it.polimi.GC13.enums;
 
 public enum PointsCondition {
-    INKWELL, MANUSCRIPT, QUILL, EDGE,NULL;
+    INKWELL, MANUSCRIPT, QUILL, EDGE, NULL;
     String red = "\u001b[31m";   // Red
     String green = "\u001b[32m"; // green
     String blue = "\u001b[36m";  // Blue

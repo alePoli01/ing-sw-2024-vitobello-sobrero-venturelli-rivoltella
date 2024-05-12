@@ -116,6 +116,10 @@ public class Table implements Serializable {
         } else {
             throw new GenericException("Card: " + cardToDraw.serialNumber + " not found in any deck.");
         }
+        System.out.println("GOLD");
+        this.goldCardMap.forEach((card, side) -> System.out.println(card.serialNumber + " " + side + "; "));
+        System.out.println("RESOURCE");
+        this.resourceCardMap.forEach((card, side) -> System.out.println(card.serialNumber + " " + side + "; "));
     }
 
     /*
@@ -148,10 +152,7 @@ public class Table implements Serializable {
 
     public void setPlayerScore(Player player, int newPlayerScore) {
         System.out.println("Dovrei aggiornare " + player.getNickname() + " score to: " + newPlayerScore);
-        this.getPlayersScore().entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().equals(player))
-                .forEach(entry -> entry.setValue(newPlayerScore));
+        this.playersScore.put(player, newPlayerScore);
 
         this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), newPlayerScore));
         System.out.println(player.getNickname() + " score updated to " + newPlayerScore);

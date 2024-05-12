@@ -26,18 +26,15 @@ public class PlayableCard implements Serializable {
 
     // method to calculate points given after a gold card is placed
     public int getPointsGiven(Board board, int X, int Y) {
-        if (this.condition != null) {
-            return switch (condition) {
-                case QUILL -> board.getCollectedResources().get(Resource.QUILL) * pointsGiven;
-                case MANUSCRIPT -> board.getCollectedResources().get(Resource.MANUSCRIPT) * pointsGiven;
-                case INKWELL -> board.getCollectedResources().get(Resource.INKWELL) * pointsGiven;
-                case EDGE -> board.surroundingCardsNumber(X, Y) * pointsGiven;
-                case NULL -> pointsGiven;
-            };
-        } else {
-            return pointsGiven;
-        }
+        return switch (condition) {
+            case QUILL -> board.getCollectedResources().get(Resource.QUILL) * pointsGiven;
+            case MANUSCRIPT -> board.getCollectedResources().get(Resource.MANUSCRIPT) * pointsGiven;
+            case INKWELL -> board.getCollectedResources().get(Resource.INKWELL) * pointsGiven;
+            case EDGE -> board.surroundingCardsNumber(X, Y) * pointsGiven;
+            case NULL -> pointsGiven;
+        };
     }
+
     public void cardPrinter(boolean isFlipped){
 
         //colors of the characters

@@ -8,6 +8,8 @@ import it.polimi.GC13.model.Player;
 import it.polimi.GC13.view.TUI.BoardView;
 import junit.framework.TestCase;
 
+import java.util.List;
+
 public class ControllerTest extends TestCase {
     Game game = new Game(2, "test");
     SetupPhase setupPhase;
@@ -188,7 +190,30 @@ public class ControllerTest extends TestCase {
         assert (!this.player1.isMyTurn());
     }
 
-    public void testChoosePrivateObjective() {
+    /*
+        PASSED -> MID PHASE
+     */
+    public void testCardPoints() throws GenericException {
+        this.midPhase = new MidPhase(new Controller(this.game, null, null));
+        try {
+            this.game.addPlayerToGame(this.player1);
+            this.game.addPlayerToGame(this.player2);
+            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
+        } catch (GenericException e) {
+            throw new RuntimeException(e);
+        }
+        this.boardView.insertCard(50, 50, this.player1.getHand().getFirst().serialNumber, 0, true);
+        this.setupPhase.placeStartCard(this.player1, true);
+        this.setupPhase.placeStartCard(this.player2, true);
+
+        PlayableCard cardToPlace = this.player1.getTable().getDeck().getCard(18);
+        this.player1.addToHand(List.of(cardToPlace));
+
+        this.player1.setMyTurn(true);
+        assert (this.player1.getTable().getPlayersScore().get(this.player1) == 0);
+        this.midPhase.placeCard(this.player1, cardToPlace.serialNumber, false, 51, 51);
+        assert (!this.player1.getHand().contains(cardToPlace));
+        assert (this.player1.getTable().getPlayersScore().get(this.player1) == 1);
     }
 
     public void testAddPlayerToExistingGame() {
