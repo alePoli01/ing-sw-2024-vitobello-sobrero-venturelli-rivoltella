@@ -36,7 +36,6 @@ public class TUI implements View {
     private boolean newMessage = false;
 
     public TUI() {
-        this.virtualServer = null;
     }
 
     @Override
