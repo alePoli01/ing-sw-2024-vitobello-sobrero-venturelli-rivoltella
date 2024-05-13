@@ -237,7 +237,7 @@ public class TUI implements View {
         this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
 
-    /*
+    /**
         NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
         OTHERS -> ADDS TO LOG OPERATION
      */
@@ -262,7 +262,7 @@ public class TUI implements View {
 
     }
 
-    /*
+    /**
         NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
     */
     @Override
@@ -270,7 +270,7 @@ public class TUI implements View {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
 
-    /*
+    /**
         METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
      */
     @Override
@@ -292,7 +292,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
      */
     @Override
@@ -311,7 +311,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         METHOD TO REQUEST DRAW CARD
      */
     @Override
@@ -337,7 +337,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         METHOD TO SHOW TO THE CLIENT ALL POSSIBLE MOVES
      */
     @Override
@@ -476,7 +476,7 @@ public class TUI implements View {
 
     }
 
-    /*
+    /**
         METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
      */
     @Override
@@ -493,7 +493,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         METHOD USED TO PLACE CARD ON THE BOARD
      */
     @Override
@@ -595,7 +595,7 @@ public class TUI implements View {
         }
     }
 
-    /*
+    /**
         NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
         OTHERS -> ADDS TO LOG OPERATION
      */
