@@ -17,32 +17,45 @@ import java.util.List;
 
 
 public class FrameManager extends JFrame implements View {
-    protected final ServerInterface virtualServer;
-    private LoginFrame loginFrame;
-    private MainPage gamePage;
-    int choice = -1;
-    private final List<Integer> hand = new ArrayList<>();
+    protected ServerInterface virtualServer;
     private String nickname;
-
-
+    private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
-    private final List<String> gamesLog = new ArrayList<>();
+    private int turnPlayed = - 1;
+    private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
-    private int turnPlayed = - 1;
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    private final List<String> gamesLog = new ArrayList<>();
+    private boolean cooking = false;
+    private final Map<String, List<String>> chat = new HashMap<>();
+    private boolean newMessage = false;
+
+    private LoginFrame loginFrame;
+    private MainPage gamePage;
 
 
 
+    //TODO: capire come piazzare il frame in primo piano
+    // NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
 
-    public FrameManager(ServerInterface virtualServer) {
-        this.virtualServer = virtualServer;
-        this.toFront();
+    public FrameManager(/*ServerInterface virtualServer*/) {
+        //this.virtualServer = virtualServer;
+        this.virtualServer = null;
+        //this.toFront(); //non funziona
+    }
+
+    @Override
+    public void startView() {
         this.checkForExistingGame();
-        //System.out.println("++Sent: checkForExistingGame");
+    }
+
+    @Override
+    public void setVirtualServer(ServerInterface virtualServer) {
+        this.virtualServer = virtualServer;
     }
 
     public ServerInterface getVirtualServer() {
@@ -61,9 +74,6 @@ public class FrameManager extends JFrame implements View {
                 this.hand.addAll(availableCard);
                 gamePage.setHand(this.hand);
             }
-            if (turnPlayed >= 1) {
-                //this.printer.comeBack(this); //???
-            }
         } else {
             //this.gamesLog.add(playerNickname + " has drawn a card");
         }
@@ -74,20 +84,35 @@ public class FrameManager extends JFrame implements View {
         this.virtualServer.checkForExistingGame();
     }
 
+
+    /**
+      JOINING PHASE
+     * YES_OPTION --> create new game
+     * NO_OPTION --> join an existing one
+     */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
-         //   NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
-
-        //TODO: capire come piazzare il frame in primo piano
+        int choice = -1; //da capire se va bene renderlo parametro locale
         if (gameNameWaitingPlayersMap.isEmpty()) {
-            loginFrame = new LoginFrame(this);
+            SwingUtilities.invokeLater(() -> {
+                loginFrame = new LoginFrame(this);
+
+                //TEST per mettere il frame in primo piano --> eliminare se non funziona
+                loginFrame.toFront();
+                loginFrame.repaint();
+
+            });
+            //loginFrame = new LoginFrame(this);
+
         } else {
             Object[] options = {"Create Game", "Join Game"};
-            choice = JOptionPane.showOptionDialog(this, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+            //potrebbe non funzionare --> togliere loginFrame
+            choice = JOptionPane.showOptionDialog(/*loginFrame*/ null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
             if (choice == JOptionPane.YES_OPTION) {
-                //SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this));
-                loginFrame = new LoginFrame(this);
+                SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this));
+                //loginFrame = new LoginFrame(this);
 
             } else if (choice == JOptionPane.NO_OPTION){
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this, gameNameWaitingPlayersMap));
@@ -96,6 +121,8 @@ public class FrameManager extends JFrame implements View {
         choice = -1;
     }
 
+
+
     //TODO: aggiungere il numero di giocatori in attesa nella waiting room
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
@@ -103,23 +130,14 @@ public class FrameManager extends JFrame implements View {
             this.loginFrame.dispose();
             SwingUtilities.invokeLater(() -> gamePage = new MainPage(this, tokenColorList));
         } else {
-            /*JLabel label = loginFrame.getLabelNums();
-            label.setText(loginFrame.setEdgesPlayerNumberText(readyPlayers,neededPlayers));
-            loginFrame.setLabelNums(label);*/
+            //gamePage.createWaitingLobby(); //Da capire se serve
         }
     }
 
-    @Override
-    public void startView() {
-
-    }
-
-    @Override
-    public void setVirtualServer(ServerInterface virtualServer) {
-
-    }
-
-
+    /**
+     SETUP PHASE methods to the player
+     startCardSetupPhase to chose which side to place your start card
+     */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if(playerNickname.equals(this.nickname)){
@@ -141,23 +159,23 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
-      /*  if (playerNickname.equals(this.nickname)) {
+        if (playerNickname.equals(this.nickname)) {
             JOptionPane.showMessageDialog(this, onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
-        }*/
+        }
     }
 
 
     @Override
     public void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial) {
-       /* this.goldCardsAvailable.clear();
-        this.goldCardsAvailable.putAll(goldCardSerial);*/
+        this.goldCardsAvailable.clear();
+        this.goldCardsAvailable.putAll(goldCardSerial);
     }
 
    @Override
-    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial) {
-     /* @   this.resourceCardsAvailable.clear();
-        this.resourceCardsAvailable.putAll(resourceFacedUpSerial);*/
+    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceFacedUpSerial) {
+        this.resourceCardsAvailable.clear();
+        this.resourceCardsAvailable.putAll(resourceFacedUpSerial);
     }
 
 
@@ -178,6 +196,19 @@ public class FrameManager extends JFrame implements View {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
+        this.serialCommonObjectiveCard = serialCommonObjectiveCard;
+    }
+
+
+    @Override
+    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
+        this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
+        this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
+    }
+
 
 
 
@@ -206,11 +237,7 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    @Override
-    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
-        //this.serialCommonObjectiveCard = serialCommonObjectiveCard;
-        //this.printer.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", serialCommonObjectiveCard);
-    }
+
 
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
@@ -376,9 +403,6 @@ public class FrameManager extends JFrame implements View {
 
 
 
-
-
-
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
       /*  System.out.println("Available cells are: ");
@@ -431,15 +455,36 @@ public class FrameManager extends JFrame implements View {
         }*/
     }
 
-    @Override
-    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
 
-    }
 
     @Override
-    public void onNewMessage(String sender, String receiver, String message) {
-
+    public void onNewMessage(String sender, String recipient, String message) {
+        if (recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        // CASE B -> BROADCAST MESSAGE
+        else if (recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        // CASE C -> I AM THE SENDER
+        else if (sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
+        }
     }
+
+    private void registerChatMessage(String key, String message) {
+        if (this.chat.containsKey(key)) {
+            synchronized (this.chat.get(key)) {
+                this.chat.get(key).add(message);
+            }
+        } else {
+            synchronized (this.chat) {
+                this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
+            }
+        }
+        this.newMessage = true;
+    }
+
 
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
