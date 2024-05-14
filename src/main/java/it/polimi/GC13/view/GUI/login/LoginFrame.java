@@ -150,9 +150,8 @@ public class LoginFrame extends JFrame implements WaitingLobby {
                     playersNumber = 4;
                 }
                 //JOptionPane.showMessageDialog(null, "player: "+ nickname + "game: "+ gameName+ "num: "+ playersNumber);
-                frameManager.getVirtualServer().createNewGame(nickname, playersNumber, gameName);
                 frameManager.setNickname(nickname);
-                //dispose();
+                frameManager.getVirtualServer().createNewGame(nickname, playersNumber, gameName);
 
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {
@@ -260,6 +259,7 @@ public class LoginFrame extends JFrame implements WaitingLobby {
                 String nickname = nicknameField.getText();
                 //String gameName = existingGameList.getSelectedValue();
                 String gameName = map.get(existingGameList.getSelectedValue());
+                frameManager.setNickname(nickname);
                 frameManager.getVirtualServer().addPlayerToGame(nickname, gameName);
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {

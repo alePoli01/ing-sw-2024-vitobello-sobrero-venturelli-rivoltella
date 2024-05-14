@@ -3,11 +3,8 @@ package it.polimi.GC13.view.GUI.game;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 import it.polimi.GC13.view.GUI.FrameManager;
-import it.polimi.GC13.view.GUI.WaitingLobby;
 
 import javax.swing.*;
-import javax.swing.Timer;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -26,44 +23,38 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
+public class MainPage extends JFrame implements ActionListener, CardManager {
     private final static String TOKEN_DIR = "src/main/utils/token/";
     private final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
     private final static String TOKEN_FILE_SUFFIX = "_token.png";
     private final static String GREY_TOKEN_FILE_NAME = "grey";
 
     private static final String RESOURCE_DIR = "src/main/utils/resource_card/";
-    /*private static final String RESOURCE_FRONT = RESOURCE_DIR + "resource_card_front/";
-    private static final String RESOURCE_BACK = RESOURCE_DIR + "resource_card_back/";*/
-
     private static final String GOLD_DIR = "src/main/utils/gold_card/";
-    /*private static final String GOLD_FRONT = RESOURCE_DIR + "gold_card_front/";
-    private static final String GOLD_BACK = RESOURCE_DIR + "gold_card_back/";*/
-
     private static final String STARTER_DIR = "src/main/utils/starter_card/";
-   /* private static final String STARTER_FRONT = RESOURCE_DIR + "starter_card_front/";
-    private static final String STARTER_BACK = RESOURCE_DIR + "starter_card_back/";*/
-
     private static final String OBJECTIVE_DIR = "src/main/utils/objective_card/";
-   /*private static final String OBJECTIVE_FRONT = RESOURCE_DIR + "objective_card_front/";
-    private static final String OBJECTIVE_BACK = RESOURCE_DIR + "objective_card_back/";*/
-
-    //private final List<TokenColor> tokenColorList;
 
     private final JPanel panelContainer;
-    private JPanel gamePanelContainer;
+    private JPanel choosePanel;
     final static String PANEL1 = "Game";
     final static String PANEL2 = "Scoreboard";
-    int progress;
-    int colorIndex = 0;
-    private String tokenColorChosen;
 
     private JPanel board;
     private String nickname;
     private TokenColor token;
     private List<Integer> hand;
+
+
     JLabel starterCardFrontLabel;
     JLabel starterCardBackLabel;
+
+    private List<TokenColor> tokenColorList;
+    JPanel tokenPanel;
+    JPanel namePanel;
+    JPanel checkBoxPanel;
+    ButtonGroup buttonGroup;
+    Map<JLabel, JCheckBox> tokenLabelCheckBox;
+    private final JButton confirmButton;
 
 /*
     private ArrayList<JLabel> cardLabel;
@@ -71,12 +62,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 */
 
     public MainPage(FrameManager frameManager, List<TokenColor> tokenColorList) {
-        //this.tokenColorList = tokenColorList;
-
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setSize(1700, 900);
+        setSize(1700, 900); //for debugging
         setResizable(false);
 
         panelContainer = new JPanel(new GridBagLayout());
@@ -87,141 +76,38 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setBorderInsets(tokenLabel, 0, 0, 90, 0);
         panelContainer.add(tokenLabel, createGridBagConstraints(0, 0));
 
-        GridBagConstraints gbc2 = createGridBagConstraints(0, 1);
-        JPanel tokenPanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
-        tokenPanel.setOpaque(false);
-        panelContainer.add(tokenPanel, gbc2);
 
-        JPanel checkBoxPanel = new JPanel(new FlowLayout());
-        checkBoxPanel.setOpaque(false);
-        ButtonGroup buttonGroup = new ButtonGroup();
-        panelContainer.add(checkBoxPanel, gbc2);
+        choosePanel = new JPanel(new GridBagLayout());
+        choosePanel.setOpaque(false);
+        panelContainer.add(choosePanel, createGridBagConstraints(0,1));
 
-        JPanel namePanel = new JPanel(new FlowLayout()); //pannello dove inserire i nomi dei utils.token
-        namePanel.setOpaque(false);
-        panelContainer.add(namePanel, createGridBagConstraints(0, 2));
+        showTokenChoose(tokenColorList);
 
-        Map<JLabel, JCheckBox> tokenLabelCheckBox = new HashMap<>();
-
-        Arrays.stream(TokenColor.values()).forEach( tokenColor -> {
-            JLabel tokenLabelImage = new JLabel((tokenColorList.contains(tokenColor)) ? createPlayableTokenImageIcon(tokenColor, 300) : createGreyTokenImageIcon(300));
-            tokenPanel.add(tokenLabelImage);
-
-            JLabel tokenLabelText = createTextLabelFont(tokenColor.toString().toLowerCase(), 32);
-            setBorderInsets(tokenLabelText, 30, 124, 80, 120);
-            namePanel.add(tokenLabelText);
-
-            JCheckBox jCheckBox = new JCheckBox(tokenColor.toString().toLowerCase());
-            jCheckBox.setFocusPainted(false);
-            jCheckBox.setBorderPainted(false);
-            jCheckBox.setForeground(panelContainer.getBackground());
-            buttonGroup.add(jCheckBox);
-            setBorderInsets(jCheckBox, 0, 140, 70, 125);
-            jCheckBox.setOpaque(false);
-            checkBoxPanel.add(jCheckBox);
-            tokenLabelCheckBox.put(tokenLabelText, jCheckBox);
-        });
-
-        JButton confirmButton = createButton("Select", 32);
-        panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
-
-        ActionListener actionListener = e -> {
-            confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
-
-            tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-            tokenLabelCheckBox.entrySet()
-                    .stream()
-                    .filter(en -> en.getValue().equals(e.getSource()))
-                    .findFirst()
-                    .orElseThrow()
-                    .getKey()
-                    .setForeground(Color.RED);
-        };
-
-        for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+        confirmButton = createButton("Select", 32);
+        panelContainer.add(confirmButton, createGridBagConstraints(0, 2));
 
         confirmButton.addActionListener (e -> {
+            String tokenColorChosen;
             for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
                 if (checkBox.isSelected()) {
                     tokenColorChosen = checkBox.getText();
-                    //JOptionPane.showMessageDialog(panel0, "Hai selezionato: " + tokenColorChosen); //for debugging
-                    frameManager.getVirtualServer().chooseToken(TokenColor.valueOf(tokenColorChosen.toUpperCase()));
-
                     if (e.getActionCommand().equals("Select")) {
-                        panelContainer.removeAll();
-                        panelContainer.setLayout(new BorderLayout());
-                        //JOptionPane.showMessageDialog(panelContainer, "Hai selezionato: " + tokenColorChosen); //for debugging
-                        panelContainer.add(createWaitingLobby(), BorderLayout.CENTER);
-                        panelContainer.revalidate();
-                        panelContainer.repaint();
+                        frameManager.getVirtualServer().chooseToken(TokenColor.valueOf(tokenColorChosen.toUpperCase()));
                     }
                     break;
                 }
             }
         });
-
         setVisible(true);
     }
 
 
-    @Override
-    public JPanel createWaitingLobby() {
-        JPanel waitingLobby = new JPanel();
-        ArrayList<Color> colors = new ArrayList<>();
-        waitingLobby.setLayout(new GridBagLayout());
-        waitingLobby.setBackground(new Color(237,230,188,255));
-
-        for(int i=0; i<4; i++) {
-            colors.add(new Color(107, 189, 192, 255));
-            colors.add(new Color(233, 73, 23, 255));
-            colors.add(new Color(113, 192, 124, 255));
-            colors.add(new Color(171, 63, 148, 255));
-        }
-
-        JLabel label = createTextLabelFont("Waiting for players' choice", 35);
-        setBorderInsets(label, 0, 0, 70, 0);
-        waitingLobby.add(label, createGridBagConstraints(0,0));
-
-        JPanel tokenPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10 , 10));
-        tokenPanel.setOpaque(false);
-        JLabel label2 = createTextLabelFont("You choose: ", 20);
-        setBorderInsets(label2, 0, 0, 50, 0);
-        tokenPanel.add(label2);
-
-        JLabel tokenLabel = new JLabel(createPlayableTokenImageIcon(TokenColor.valueOf(tokenColorChosen.toUpperCase()), 50));
-        tokenPanel.add(tokenLabel);
-        waitingLobby.add(tokenPanel, createGridBagConstraints(0,1));
-
-        JProgressBar progressBar = new JProgressBar(0, 100);
-        progressBar.setPreferredSize(new Dimension(300,30));
-        progressBar.setForeground(colors.get(colorIndex));
-        colorIndex++;
-        waitingLobby.add(progressBar, createGridBagConstraints(0,2));
-
-        Timer timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                progress += 5;
-                if (progress > 100) {
-                    progress = 0;
-                    progressBar.setForeground(colors.get(colorIndex));
-                    colorIndex = (colorIndex + 1) % colors.size();
-                }
-                progressBar.setValue(progress);
-            }
-        });
-        timer.start();
-
-        return waitingLobby;
-    }
-
-
-    public JPanel createGamePanel() {
-        gamePanelContainer = new JPanel(new CardLayout());
+    public void createGamePanel() {
+        panelContainer.setLayout(new CardLayout());
         JPanel panel1 = new JPanel(new BorderLayout());
-        //panel1.setVisible(false);
+        panel1.setVisible(false);
 
+        //da vedere sta parte
         JPanel panel2 = new JPanel(new BorderLayout());
         panel2.setBackground(new Color(237,230,188,255));
 
@@ -229,8 +115,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         scoreboard.setOpaque(false);
         panel2.add(scoreboard, BorderLayout.CENTER);
 
-        gamePanelContainer.add(panel1, PANEL1);
-        gamePanelContainer.add(panel2, PANEL2);
+        panelContainer.add(panel1, PANEL1);
+        panelContainer.add(panel2, PANEL2);
 
 
         //pagina 1: Game
@@ -388,8 +274,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             //label.setIcon(tokenIcon);
             tokenManager.getTokenInGame().get(i).getLabel().setBounds(tokenManager.getTokenInGame().get(i).getX(), tokenManager.getTokenInGame().get(i).getY(), tokenIcon.getIconWidth(), tokenIcon.getIconHeight());
             panel2.add(tokenManager.getTokenInGame().get(i).getLabel());
-
-
         }*/
 
         /*
@@ -404,8 +288,36 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         tokenManager.moveDiagonal(tokenManager.getTokenInGame().get(0));
         */
 
-        return gamePanelContainer;
     }
+
+    public void showTokenChoose(List<TokenColor> tokenColorList){
+        GridBagConstraints gbc2 = createGridBagConstraints(0, 0);
+        tokenPanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
+        tokenPanel.setOpaque(false);
+        choosePanel.add(tokenPanel, gbc2);
+
+        checkBoxPanel = new JPanel(new FlowLayout());
+        checkBoxPanel.setOpaque(false);
+        buttonGroup = new ButtonGroup();
+        choosePanel.add(checkBoxPanel, gbc2);
+
+        namePanel = new JPanel(new FlowLayout()); //pannello dove inserire i nomi dei token
+        namePanel.setOpaque(false);
+        choosePanel.add(namePanel, createGridBagConstraints(0, 1));
+
+        tokenLabelCheckBox = new HashMap<>();
+
+        setTokenColorList(tokenColorList);
+    }
+
+
+
+
+
+
+
+
+
 
     private static JTable createTable(String[] columnNames, Object[][] data) {
         DefaultTableModel model = new DefaultTableModel(data, columnNames){
@@ -488,11 +400,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        CardLayout cardLayout = (CardLayout) gamePanelContainer.getLayout();
+        CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
         if (e.getActionCommand().equals("Go to scoreboard")) {
-            cardLayout.show(gamePanelContainer, PANEL2);
+            cardLayout.show(panelContainer, PANEL2);
         } else if (e.getActionCommand().equals("Go to game")) {
-            cardLayout.show(gamePanelContainer, PANEL1);
+            cardLayout.show(panelContainer, PANEL1);
         } else if (e.getActionCommand().equals("Confirm")) {
             //premendo confirm la carta viene posizionata in centro allo schermo
 
@@ -554,10 +466,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
-    public JPanel getGamePanelContainer() {
-        return gamePanelContainer;
-    }
-
     public Path identifyPathCard(int numberCard){
         Path startDir;
         if (numberCard > 0 && numberCard <= 40)
@@ -572,7 +480,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             JOptionPane.showMessageDialog(this, "ErrorMsg: ", "Invalid card", JOptionPane.ERROR_MESSAGE);
             return null;
         }
-
         return startDir;
     }
 
@@ -634,5 +541,47 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
     */
 
+    public void setTokenColorList(List<TokenColor> tokenColorList) {
+        this.tokenColorList = tokenColorList;
 
+        Arrays.stream(TokenColor.values()).forEach( tokenColor -> {
+            JLabel tokenLabelImage = new JLabel((this.tokenColorList.contains(tokenColor)) ? createPlayableTokenImageIcon(tokenColor, 300) : createGreyTokenImageIcon(300));
+            tokenPanel.add(tokenLabelImage);
+
+            JLabel tokenLabelText = createTextLabelFont(tokenColor.toString().toLowerCase(), 32);
+            setBorderInsets(tokenLabelText, 30, 124, 80, 120);
+            namePanel.add(tokenLabelText);
+
+            JCheckBox jCheckBox = new JCheckBox(tokenColor.toString().toLowerCase());
+            jCheckBox.setFocusPainted(false);
+            jCheckBox.setBorderPainted(false);
+            jCheckBox.setForeground(panelContainer.getBackground());
+            buttonGroup.add(jCheckBox);
+            setBorderInsets(jCheckBox, 0, 140, 70, 125);
+            jCheckBox.setOpaque(false);
+            checkBoxPanel.add(jCheckBox);
+            tokenLabelCheckBox.put(tokenLabelText, jCheckBox);
+        });
+
+        ActionListener actionListener = e -> {
+            confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
+
+            tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+            tokenLabelCheckBox.entrySet()
+                    .stream()
+                    .filter(en -> en.getValue().equals(e.getSource()))
+                    .findFirst()
+                    .orElseThrow()
+                    .getKey()
+                    .setForeground(Color.RED);
+        };
+
+        for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+    }
+
+
+    public JPanel getChoosePanel() {
+        return choosePanel;
+    }
 }

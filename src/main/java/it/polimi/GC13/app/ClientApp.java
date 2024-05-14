@@ -19,7 +19,6 @@ import java.net.Socket;
 public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
-        //SwingUtilities.invokeLater(() -> new WaitingLobby(1, 2)); //per testare la grafica
 
         if (args.length != 2) {
             System.err.println("Missing Parameters, killing this server.");
@@ -103,7 +102,5 @@ public class ClientApp {
 
         view.setVirtualServer(virtualServer);
         view.startView();
-
-
     }
 }

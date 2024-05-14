@@ -42,10 +42,8 @@ public class FrameManager extends JFrame implements View {
     //TODO: capire come piazzare il frame in primo piano
     // NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
 
-    public FrameManager(/*ServerInterface virtualServer*/) {
-        //this.virtualServer = virtualServer;
+    public FrameManager() {
         this.virtualServer = null;
-        //this.toFront(); //non funziona
     }
 
     @Override
@@ -97,18 +95,23 @@ public class FrameManager extends JFrame implements View {
             SwingUtilities.invokeLater(() -> {
                 loginFrame = new LoginFrame(this);
 
-                //TEST per mettere il frame in primo piano --> eliminare se non funziona
-                loginFrame.toFront();
+                loginFrame.setAlwaysOnTop(true);
                 loginFrame.repaint();
+                loginFrame.setAlwaysOnTop(false);
 
             });
-            //loginFrame = new LoginFrame(this);
 
         } else {
             Object[] options = {"Create Game", "Join Game"};
 
-            //potrebbe non funzionare --> togliere loginFrame
-            choice = JOptionPane.showOptionDialog(/*loginFrame*/ null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            JFrame jFrame = new JFrame();
+            jFrame.setAlwaysOnTop(true);
+            choice = JOptionPane.showOptionDialog(jFrame, "There are existing games, choose: ",
+                    "Create Game / Join Game",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, options,
+                    options[0]);
 
             if (choice == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this));
@@ -128,9 +131,14 @@ public class FrameManager extends JFrame implements View {
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
         if (readyPlayers == neededPlayers) {
             this.loginFrame.dispose();
-            SwingUtilities.invokeLater(() -> gamePage = new MainPage(this, tokenColorList));
-        } else {
-            //gamePage.createWaitingLobby(); //Da capire se serve
+            if(gamePage == null){
+                SwingUtilities.invokeLater(() -> gamePage = new MainPage(this, tokenColorList));
+            } else{
+                gamePage.getChoosePanel().removeAll();
+                gamePage.showTokenChoose(tokenColorList);
+                gamePage.getChoosePanel().revalidate();
+                gamePage.getChoosePanel().repaint();
+            }
         }
     }
 
@@ -140,21 +148,20 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
-        if(playerNickname.equals(this.nickname)){
+
+        if(playerNickname.equals(this.nickname)) {
+            System.out.println("Sega");
             gamePage.setNickname(playerNickname);
             gamePage.setToken(tokenColor);
             gamePage.getPanelContainer().removeAll();
-            gamePage.remove(gamePage.getPanelContainer());
-            //refreshGamePage();
-            gamePage.add(gamePage.createGamePanel(), BorderLayout.CENTER);
+            gamePage.createGamePanel();
             refreshGamePage();
-            // TODO: aprire la schermata se va bene
         }
     }
 
     private void refreshGamePage(){
-        gamePage.getPanelContainer().revalidate();
-        gamePage.getPanelContainer().repaint();
+        gamePage.getContentPane().revalidate();
+        gamePage.getContentPane().repaint();
     }
 
     @Override
