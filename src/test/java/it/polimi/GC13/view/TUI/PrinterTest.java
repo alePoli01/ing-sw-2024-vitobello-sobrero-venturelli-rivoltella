@@ -28,5 +28,7 @@ public class PrinterTest extends TestCase {
     }
 
     public void testLoserString() {
+        Printer printer = new Printer();
+        printer.loserString();
     }
 }

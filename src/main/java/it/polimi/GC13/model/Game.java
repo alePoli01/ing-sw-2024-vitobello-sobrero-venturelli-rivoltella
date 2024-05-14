@@ -168,11 +168,6 @@ public class Game implements Serializable {
         }
     }
 
-    public void setWinner(Player winner) {
-        this.winner = winner;
-        this.observer.notifyClients(new OnGameWinnerMessage(this.winner.getNickname()));
-    }
-
     public void registerChatMessage(String sender, String recipient, String message) {
         if (!recipient.equalsIgnoreCase("global")) {
             // grants always the same key for chat between two players
@@ -200,5 +195,30 @@ public class Game implements Serializable {
         }
 
         this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
+    }
+
+    public String setWinner() {
+        this.finalScoreCalculation();
+        this.winner = this.playerList.getFirst();
+        for (Player player : this.playerList) {
+            if (player.getScore() > winner.getScore()) {
+                winner = player;
+            }
+        }
+        this.observer.notifyClients(new OnGameWinnerMessage(this.winner.getNickname()));
+        return winner.getNickname();
+    }
+
+    /**
+     * method used to calculate final score with private and common objective cards
+     */
+    private void finalScoreCalculation() {
+        for (Player player : this.playerList) {
+            //set player score = player score + player's objective points(based on his board)
+            this.table.setPlayerScore(player,
+                    player.getTable().getPlayersScore().get(player)
+                            + player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
+            );
+        }
     }
 }

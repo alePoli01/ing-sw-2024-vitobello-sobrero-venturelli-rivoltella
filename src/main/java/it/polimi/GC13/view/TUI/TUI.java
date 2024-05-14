@@ -556,6 +556,7 @@ public class TUI implements View {
         } else {
             this.printer.loserString();
         }
+        this.printer.showPlayersScore(this.playersScore);
     }
 
     private void registerChatMessage(String key, String message) {

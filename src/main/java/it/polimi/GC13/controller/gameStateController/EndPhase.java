@@ -12,31 +12,8 @@ public class EndPhase implements GamePhase {
 
     public EndPhase(Controller controller) {
         this.controller = controller;
-        System.out.println("Winner is " + this.setWinner());
-    }
-
-    private Player setWinner() {
-        finalScoreCalculation();
-        Player winner = this.controller.getGame().getPlayerList().getFirst();
-        for (Player player : this.controller.getGame().getPlayerList()) {
-            if (player.getScore() > winner.getScore()) {
-                winner = player;
-            }
-        }
-        return winner;
-    }
-
-    /**
-     * method used to calculate final score with private and common objective cards
-     */
-    private void finalScoreCalculation() {
-        for (Player player : this.controller.getGame().getPlayerList()) {
-            //set player score = player score + player's objective points(based on his board)
-            player.getTable().setPlayerScore(player,
-                    player.getTable().getPlayersScore().get(player)
-                            + player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
-            );
-        }
+        String winner = this.controller.getGame().setWinner();
+        System.out.println("GAME OVER -> Winner is " + winner);
     }
 
     public void chooseToken(Player player, TokenColor token) {

@@ -1,5 +1,6 @@
 package it.polimi.GC13.model;
 
+import com.sun.jdi.Value;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.messages.fromserver.OnNewGoldCardsAvailableMessage;
@@ -151,9 +152,13 @@ public class Table implements Serializable {
     }
 
     public void setPlayerScore(Player player, int newPlayerScore) {
-        this.playersScore.put(player, newPlayerScore);
+        if (!this.playersScore.containsKey(player)) {
+            this.playersScore.put(player, newPlayerScore);
+        } else {
+            this.playersScore.computeIfPresent(player, (k, v) -> v + newPlayerScore);
+        }
 
-        this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), newPlayerScore));
-        System.out.println(player.getNickname() + " score updated to " + newPlayerScore);
+        this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), this.playersScore.get(player)));
+        System.out.println(player.getNickname() + " score updated to " + this.playersScore.get(player));
     }
 }
