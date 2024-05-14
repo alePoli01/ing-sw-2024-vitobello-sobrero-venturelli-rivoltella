@@ -125,7 +125,6 @@ public class PlayableCard implements Serializable {
 
     }
 
-
     public void linePrinter(int version, int line, boolean isFlipped) {
         String red = "\u001b[31m";   // Red
         String green = "\u001b[32m"; // green

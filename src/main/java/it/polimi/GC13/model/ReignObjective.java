@@ -50,6 +50,19 @@ public class ReignObjective extends ObjectiveCard{
         System.out.println("║                 ║");
         System.out.println("╚═════════════════╝");
     }
+
+    public void printLineObjectiveCard(int line) {
+        String gold = "\u001b[93m";  // gold
+        String reset = "\u001b[0m";  // reset color of the characters
+        switch(line){
+            case 0:System.out.print("╔═══════╦═╦═══════╗");break;
+            case 1:System.out.print("║       ║"+gold+"2"+reset+"║       ║");
+            case 2:System.out.print("║                 ║"); break;
+            case 3:System.out.print("║    ["+this.type.toString()+", "+this.type.toString()+", "+this.type.toString()+"]    ║"); break;
+            case 4:System.out.print("║                 ║"); break;
+            case 5:System.out.print("╚═════════════════╝"); break;
+        }
+    }
     //constructor
 
 

@@ -1,12 +1,15 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.PlayableCard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -66,17 +69,30 @@ public class Printer {
     public void showHand(List<Integer> hand) {
         // PRINTS START CARD
         if (hand.size() == 1) {
-            System.out.println("card: " + hand.getFirst());
-            visualDeck.getCard(hand.getFirst()).cardPrinter(false);
-            System.out.println("       FRONT");
-            visualDeck.getCard(hand.getFirst()).cardPrinter(true);
-            System.out.println("        BACK");
+            System.out.println("Start card serial: [" + hand.getFirst() + "]\n");
+            PlayableCard startCard = visualDeck.getCard(hand.getFirst());
+            for (int i = 0; i < 6; i++) {
+                startCard.linePrinter(0, i, false);
+                System.out.print(" ░ ");
+                startCard.linePrinter(0, i, true);
+                System.out.println();
+            }
+            System.out.print("       FRONT                 BACK");
         } else {
-            hand
-                .forEach(serialCard -> {
-                    visualDeck.getCard(serialCard).cardPrinter(false);
-                    System.out.println("        [" + serialCard + "]");
-                });
+            AtomicInteger lineCounter = new AtomicInteger(0);
+            LinkedList<PlayableCard> cardsOnHand = new LinkedList<>();
+
+            hand.forEach(serialCard -> cardsOnHand.add(visualDeck.getCard(serialCard)));
+
+            for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
+                cardsOnHand
+                        .forEach(card -> {
+                            card.linePrinter(0, lineCounter.get(), false);
+                            System.out.print(" ░ ");
+                        } );
+                System.out.println();
+            }
+            hand.forEach(serialCard -> System.out.print("        [" + serialCard + "]          "));
         }
     }
 
