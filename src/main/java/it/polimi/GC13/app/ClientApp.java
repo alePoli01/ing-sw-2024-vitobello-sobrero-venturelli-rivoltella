@@ -83,8 +83,7 @@ public class ClientApp {
 
         if (connectionChoice == 1) {
             // RMI SETUP
-            ClientInterface rmiClientImpl = new RMIClientImpl(clientDispatcher);//used to receive mess form server, assed to server by RMIClient
-            RMIClientAdapter rmiClientAdapter = new RMIClientAdapter(rmiClientImpl);
+            RMIClientAdapter rmiClientAdapter = new RMIClientAdapter(clientDispatcher);
 
             //virtualServer becomes RMIServer
             virtualServer = rmiClientAdapter.startRMIConnection("127.0.0.1", RMIport);

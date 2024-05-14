@@ -1,6 +1,7 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.network.messages.fromclient.TokenChoiceMessage;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 import it.polimi.GC13.view.GUI.FrameManager;
 
@@ -92,7 +93,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
                 if (checkBox.isSelected()) {
                     tokenColorChosen = checkBox.getText();
                     if (e.getActionCommand().equals("Select")) {
-                        frameManager.getVirtualServer().chooseToken(TokenColor.valueOf(tokenColorChosen.toUpperCase()));
+                        frameManager.getVirtualServer().sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen.toUpperCase())));
                     }
                     break;
                 }
