@@ -78,7 +78,6 @@ public class TUI implements View {
 
     @Override
     public void checkForExistingGame() {
-        //this.virtualServer.checkForExistingGame();
         //System.out.println("++Sent: checkForExistingGame");
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
@@ -125,7 +124,6 @@ public class TUI implements View {
             }
             this.choice = 0;
         }
-
     }
 
     private void createNewGame() throws IOException {
@@ -155,7 +153,6 @@ public class TUI implements View {
         } while (playersNumber < 2 || playersNumber > 4);
 
         //massage is ready to be sent
-        //virtualServer.createNewGame(this.nickname, playersNumber, gameName);
         this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
         System.out.println("++Sent: addPlayerToGame");
     }
@@ -174,7 +171,6 @@ public class TUI implements View {
         } while (!gameNameWaitingPlayersMap.containsKey(gameName));
 
         //massage is ready to be sent
-        //this.virtualServer.addPlayerToGame(this.nickname, gameName);
         this.virtualServer.sendMessageFromClient(new AddPlayerToGameMessage(this.nickname, gameName));
         System.out.println("++Sent: addPlayerToGame");
     }
@@ -205,7 +201,6 @@ public class TUI implements View {
                 if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
                     flag = true;
                     // calls the controller to update the model
-                    //this.virtualServer.chooseToken(TokenColor.valueOf(tokenColorChosen));
                     this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
                 } else {
                     System.out.println("Color not valid, you can chose: " + joiner);
@@ -236,7 +231,6 @@ public class TUI implements View {
                 }
             } while (this.choice < 1 || this.choice > 2);
 
-            //this.virtualServer.placeStartCard(this.choice != 1);
             this.virtualServer.sendMessageFromClient(new PlaceStartCardMessage(this.choice != 1));
             this.choice = 0;
         }
@@ -289,7 +283,7 @@ public class TUI implements View {
                     System.out.print("Choose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
                 }
-                //this.virtualServer.choosePrivateObjectiveCard(choice);
+
                 this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
                 this.choice = 0;
                 //System.out.println("++Sent private objective card choice message");
@@ -330,7 +324,7 @@ public class TUI implements View {
                     System.out.print("Choose the card to withdraw: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
                 } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
-                //this.virtualServer.drawCard(choice);
+
                 this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
                 System.out.println("+++ Sent draw card");
                 this.choice = 0;
@@ -517,7 +511,7 @@ public class TUI implements View {
             } catch (InputMismatchException e) {
                 System.out.print("Error: Please input valid numbers.");
             }
-            //this.virtualServer.placeCard(serialCardToPlace, isFlipped, X, Y);
+
             this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, isFlipped, X, Y));
         } else if (!this.myTurn) {
             System.out.println("It's not your turn");
@@ -587,7 +581,7 @@ public class TUI implements View {
                 System.out.print("Write down your message: ");
                 message = reader.readLine();
             } while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global")));
-            //this.virtualServer.writeMessage(this.nickname, playerChosen, message);
+
             this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
         } catch (IOException e) {
             System.err.println("Error parsing the name");
