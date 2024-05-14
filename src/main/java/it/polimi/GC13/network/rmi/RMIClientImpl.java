@@ -2,9 +2,8 @@ package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.socket.ClientDispatcherInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -18,7 +17,7 @@ public class RMIClientImpl implements Remote, Serializable, ClientInterface {
     }
 
     @Override
-    public void sendMessage(MessagesFromServer message) throws RemoteException {
+    public void sendMessageFromServer(MessagesFromServer message) throws RemoteException {
         //message.methodToCall(this.view);
     }
 }

@@ -1,7 +1,7 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

@@ -3,8 +3,8 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.network.socket.messages.fromserver.*;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
+import it.polimi.GC13.network.messages.fromserver.*;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 import java.io.Serializable;
 import java.util.*;

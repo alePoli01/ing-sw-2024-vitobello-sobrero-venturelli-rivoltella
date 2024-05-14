@@ -4,7 +4,7 @@ import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.*;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 import java.util.List;
 import java.util.NoSuchElementException;

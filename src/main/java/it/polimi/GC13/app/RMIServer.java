@@ -4,6 +4,7 @@ import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.rmi.RMIServerInterface;
 
 import java.rmi.RemoteException;
@@ -34,6 +35,11 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         }
         clientList = new ArrayList<>();
         System.out.println("RMI Server is ready");
+    }
+
+    @Override
+    public void registerMessageFromClient(MessagesFromClient message) throws RemoteException {
+        //message.methodToCall(this.lobbyController, this.controllerDispatcher.getCon);
     }
 
     @Override

@@ -3,11 +3,15 @@ package it.polimi.GC13.network.rmi;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface RMIServerInterface extends Remote{
+public interface RMIServerInterface extends Remote {
+
+    void registerMessageFromClient(MessagesFromClient message) throws RemoteException;
+
     void login(ClientInterface client) throws RemoteException;
 
     void checkForExistingGame(ClientInterface client) throws RemoteException;

@@ -1,6 +1,6 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.network.socket.messages.fromserver.*;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 public interface ClientDispatcherInterface {
 

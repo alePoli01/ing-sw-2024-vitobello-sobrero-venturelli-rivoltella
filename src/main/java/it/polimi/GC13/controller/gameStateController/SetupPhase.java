@@ -5,9 +5,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
-
-import java.util.List;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
 public class SetupPhase implements GamePhase {
     private final Controller controller;

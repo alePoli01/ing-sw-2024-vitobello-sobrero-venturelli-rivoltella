@@ -93,7 +93,7 @@ public class ClientApp {
             // SOCKET SETUP
             try {
                 Socket socket = new Socket("localhost", socketPort); // creating socket that represents the server
-                virtualServer = new SocketServer(socket, clientDispatcher, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
+                virtualServer = new SocketServer(socket, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
                 new Thread((SocketServer) virtualServer).start();
             } catch (IOException e) {
                 System.err.println("Failed to create socket.");

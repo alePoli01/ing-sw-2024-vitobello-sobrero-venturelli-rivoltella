@@ -3,8 +3,8 @@ package it.polimi.GC13.network.socket;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.*;
-import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromclient.*;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,21 +21,20 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ClientDispatcherInterface clientDispatcher;
-    private final LostConnectionToServerInterface connectionStatus;
     private boolean connectionOpen = true;
 
-    public SocketServer(Socket socket, ClientDispatcher clientDispatcher, LostConnectionToServerInterface connectionStatus) throws IOException {
+    public SocketServer(Socket socket, ClientDispatcher clientDispatcher) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
-        this.connectionStatus = connectionStatus;
     }
 
     /*
         TODO gestione eccezioni in modo intelligiente: creare metodo eccezioni nella tui
      */
 
-    private void sendMessage(MessagesFromClient messages) {
+    @Override
+    public void sendMessageFromClient(MessagesFromClient messages) {
         try {
             if (!connectionOpen) {
                 return;
@@ -45,55 +44,8 @@ public class SocketServer implements ServerInterface, Runnable {
         } catch (IOException e) {
             connectionOpen = false;
             System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
-            connectionStatus.connectionLost(this);
+            //connectionStatus.connectionLost(this);
         }
-    }
-
-    @Override
-    public synchronized void createNewGame(String playerNickname, int numOfPlayers, String gameName) {
-        CreateNewGameMessage createNewGameMessage = new CreateNewGameMessage(playerNickname, numOfPlayers, gameName);
-        this.sendMessage(createNewGameMessage);
-    }
-
-    @Override
-    public synchronized void addPlayerToGame(String playerNickname, String gameName) {
-        AddPlayerToGameMessage addPlayerToGameMessage = new AddPlayerToGameMessage(playerNickname, gameName);
-        this.sendMessage(addPlayerToGameMessage);
-    }
-
-    @Override
-    public void checkForExistingGame() {
-        this.sendMessage(new CheckForExistingGameMessage());
-    }
-
-    @Override
-    public void chooseToken(TokenColor tokenColor) {
-        this.sendMessage(new TokenChoiceMessage(tokenColor));
-    }
-
-    @Override
-    public void placeStartCard(boolean isFlipped) {
-        this.sendMessage(new PlaceStartCardMessage(isFlipped));
-    }
-
-    @Override
-    public void placeCard(int serialCardToPlace, boolean isFlipped, int X, int Y) {
-        this.sendMessage(new PlaceCardMessage(serialCardToPlace, isFlipped, X, Y));
-    }
-
-    @Override
-    public void writeMessage(String sender, String receiver, String message) {
-        this.sendMessage(new NewMessage(sender, receiver,message));
-    }
-
-    @Override
-    public void drawCard(int serialCardToDraw) {
-        this.sendMessage(new DrawCardFromDeckMessage(serialCardToDraw));
-    }
-
-    @Override
-    public void choosePrivateObjectiveCard(int serialPrivateObjectiveCard) {
-        this.sendMessage(new ChoosePrivateObjectiveCardMessage(serialPrivateObjectiveCard));
     }
 
     // LISTEN CALLS FROM SERVER
@@ -106,7 +58,7 @@ public class SocketServer implements ServerInterface, Runnable {
             } catch (IOException | ClassNotFoundException e) {
                 if (this.connectionOpen) {
                     this.connectionOpen = false;
-                    this.connectionStatus.connectionLost(this);
+                    //this.connectionStatus.connectionLost(this);
                 }
             }
         }

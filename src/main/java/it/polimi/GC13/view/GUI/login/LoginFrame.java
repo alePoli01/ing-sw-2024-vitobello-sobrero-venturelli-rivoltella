@@ -1,6 +1,8 @@
 package it.polimi.GC13.view.GUI.login;
 
 import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.network.messages.fromclient.AddPlayerToGameMessage;
+import it.polimi.GC13.network.messages.fromclient.CreateNewGameMessage;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.WaitingLobby;
@@ -150,8 +152,9 @@ public class LoginFrame extends JFrame implements WaitingLobby {
                     playersNumber = 4;
                 }
                 //JOptionPane.showMessageDialog(null, "player: "+ nickname + "game: "+ gameName+ "num: "+ playersNumber);
+                frameManager.getVirtualServer().sendMessageFromClient(new CreateNewGameMessage(nickname, playersNumber, gameName));
                 frameManager.setNickname(nickname);
-                frameManager.getVirtualServer().createNewGame(nickname, playersNumber, gameName);
+                //dispose();
 
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {
@@ -259,8 +262,7 @@ public class LoginFrame extends JFrame implements WaitingLobby {
                 String nickname = nicknameField.getText();
                 //String gameName = existingGameList.getSelectedValue();
                 String gameName = map.get(existingGameList.getSelectedValue());
-                frameManager.setNickname(nickname);
-                frameManager.getVirtualServer().addPlayerToGame(nickname, gameName);
+                frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {
                     waitingLobby = createWaitingLobby();

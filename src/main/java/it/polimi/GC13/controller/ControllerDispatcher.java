@@ -3,7 +3,7 @@ package it.polimi.GC13.controller;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
+import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -28,14 +28,11 @@ public class ControllerDispatcher {
     }
 
     public void dispatchMessagesFromClient(ClientInterface client, MessagesFromClient messagesFromClient) {
-        this.clientPlayerMap.compute(client, (key, value) -> {
-            try {
-                messagesFromClient.methodToCall(this.lobbyController, this.clientControllerMap.get(client), client, this.clientPlayerMap.get(client));
-            } catch (RemoteException e) {
-                System.err.println("RMI: Error while dispatching messages from client.");
-                e.printStackTrace();
-            }
-            return value;
-        });
+        try {
+            messagesFromClient.methodToCall(this.lobbyController, this.clientControllerMap.get(client), client, this.clientPlayerMap.get(client));
+        } catch (RemoteException e) {
+            System.err.println("RMI: Error while dispatching messages from client.");
+            e.printStackTrace();
+        }
     }
 }

@@ -2,9 +2,9 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlaceCardMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnForbiddenCellMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNotEnoughResourceToPlaceMessage;
+import it.polimi.GC13.network.messages.fromserver.OnPlaceCardMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnForbiddenCellMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnNotEnoughResourceToPlaceMessage;
 
 import java.io.Serializable;
 import java.util.*;

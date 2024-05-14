@@ -2,9 +2,9 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.network.socket.messages.fromserver.OnNewGoldCardsAvailableMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnNewResourceCardsAvailableMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.OnPlayerScoreUpdateMessage;
+import it.polimi.GC13.network.messages.fromserver.OnNewGoldCardsAvailableMessage;
+import it.polimi.GC13.network.messages.fromserver.OnNewResourceCardsAvailableMessage;
+import it.polimi.GC13.network.messages.fromserver.OnPlayerScoreUpdateMessage;
 
 import java.io.Serializable;
 import java.util.*;

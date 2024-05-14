@@ -1,6 +1,6 @@
 package it.polimi.GC13.network.rmi;
 
-import it.polimi.GC13.network.socket.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.view.View;
 
 import java.io.Serializable;

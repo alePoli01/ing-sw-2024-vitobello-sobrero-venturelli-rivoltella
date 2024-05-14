@@ -1,9 +1,8 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.*;
+import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 
-import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 

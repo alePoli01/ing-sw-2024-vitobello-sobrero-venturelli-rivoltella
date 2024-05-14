@@ -1,6 +1,6 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.network.socket.messages.fromserver.PokeMessage;
+import it.polimi.GC13.network.messages.fromserver.PokeMessage;
 
 public class ServerImpulse implements Runnable {
     private final SocketClient socketClient;
@@ -14,7 +14,7 @@ public class ServerImpulse implements Runnable {
     @Override
     public void run() {
         while (true) {
-            this.socketClient.sendMessage(new PokeMessage());
+            this.socketClient.sendMessageFromServer(new PokeMessage());
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {

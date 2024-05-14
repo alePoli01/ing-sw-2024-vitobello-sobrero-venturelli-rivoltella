@@ -4,9 +4,8 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +49,6 @@ public interface View {
     void updateTurn(String playerNickname, boolean turn);
 
     void displayAvailableCells(List<Coordinates> availableCells);
-
-    void connectionLost();
 
     void onSetLastTurn(String playerNickname, Position position);
 

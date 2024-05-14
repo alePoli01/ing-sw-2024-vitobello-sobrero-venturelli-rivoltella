@@ -6,9 +6,9 @@ import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.LostConnectionToClientInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
+import it.polimi.GC13.network.messages.fromserver.OnCheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -45,7 +45,7 @@ public class LobbyController implements LostConnectionToClientInterface {
         System.out.println("--Received: checkForExistingGame");
         Map<String, Integer> gameNameWaitingPlayersMap = new ConcurrentHashMap<>();
         this.joinableGameMap.forEach((gameName, game) -> gameNameWaitingPlayersMap.put(gameName, game.getCurrNumPlayer()));
-        client.sendMessage(new OnCheckForExistingGameMessage(gameNameWaitingPlayersMap));
+        client.sendMessageFromServer(new OnCheckForExistingGameMessage(gameNameWaitingPlayersMap));
     }
 
     /*
@@ -70,7 +70,7 @@ public class LobbyController implements LostConnectionToClientInterface {
             // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
             this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
         } catch (GenericException e) {
-            client.sendMessage(new OnNickNameAlreadyTakenMessage(playerNickname));
+            client.sendMessageFromServer(new OnNickNameAlreadyTakenMessage(playerNickname));
             System.err.println(e.getMessage());
         }
     }
@@ -81,7 +81,7 @@ public class LobbyController implements LostConnectionToClientInterface {
     public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) throws RemoteException {
         Game workingGame;
         if (this.startedGameMap.containsKey(gameName) | this.joinableGameMap.containsKey(gameName)) {
-            client.sendMessage(new OnGameNameAlreadyTakenMessage(playerNickname, gameName));
+            client.sendMessageFromServer(new OnGameNameAlreadyTakenMessage(playerNickname, gameName));
         } else {
             workingGame = new Game(playersNumber, gameName);
             // updates useful maps

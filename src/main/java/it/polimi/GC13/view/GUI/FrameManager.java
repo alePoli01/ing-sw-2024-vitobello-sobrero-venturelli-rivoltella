@@ -4,7 +4,8 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.socket.messages.fromserver.exceptions.OnInputExceptionMessage;
+import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
 import it.polimi.GC13.view.TUI.BoardView;
@@ -79,7 +80,7 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void checkForExistingGame() {
-        this.virtualServer.checkForExistingGame();
+        this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
 
@@ -190,18 +191,6 @@ public class FrameManager extends JFrame implements View {
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
 
-    }
-
-
-    @Override
-    public void connectionLost() {
-        try {
-            this.wait();
-        } catch (InterruptedException e) { //da capire se va bene mettere entrambi in dispose()
-            loginFrame.dispose();
-            gamePage.dispose();
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

@@ -1,16 +1,13 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.network.LostConnectionToClientInterface;
-import it.polimi.GC13.model.Game;
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.messages.fromclient.MessagesFromClient;
-import it.polimi.GC13.network.socket.messages.fromserver.*;
+import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
+import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.io.*;
 import java.net.Socket;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,7 +38,7 @@ public class SocketClient implements ClientInterface, Runnable {
         Generic method to send messages from server to client
      */
     @Override
-    public synchronized void sendMessage(MessagesFromServer message) {
+    public synchronized void sendMessageFromServer(MessagesFromServer message) {
         try {
             if (!connectionOpen) {
                 return;
