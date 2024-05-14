@@ -86,7 +86,7 @@ public class ClientApp {
             RMIClientAdapter rmiClientAdapter = new RMIClientAdapter(clientDispatcher);
 
             //virtualServer becomes RMIServer
-            virtualServer = rmiClientAdapter.startRMIConnection("127.0.0.1", RMIport);
+            virtualServer = rmiClientAdapter.startRMIConnection("localhost", RMIport);
             System.out.println("Connection completed");
         } else {
             // SOCKET SETUP

@@ -20,6 +20,7 @@ public class Game implements Serializable {
     private final String gameName;
     private final Observer observer;
     private final Map<String, List<String>> chat = new HashMap<>();
+    private Player winner;
 
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
@@ -165,6 +166,11 @@ public class Game implements Serializable {
                 throw new GenericException("Nickname: " + nickname + " was already choose");
             }
         }
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
+        this.observer.notifyClients(new OnGameWinnerMessage(this.winner.getNickname()));
     }
 
     public void registerChatMessage(String sender, String recipient, String message) {

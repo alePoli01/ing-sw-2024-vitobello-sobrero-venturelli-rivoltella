@@ -468,6 +468,11 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
+    @Override
+    public void gameOver(String winner) {
+
+    }
+
     private void registerChatMessage(String key, String message) {
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {

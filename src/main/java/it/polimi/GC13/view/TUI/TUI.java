@@ -549,6 +549,15 @@ public class TUI implements View {
         }
     }
 
+    @Override
+    public void gameOver(String winner) {
+        if (winner.equals(this.nickname)) {
+            this.printer.winnerString();
+        } else {
+            this.printer.loserString();
+        }
+    }
+
     private void registerChatMessage(String key, String message) {
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {

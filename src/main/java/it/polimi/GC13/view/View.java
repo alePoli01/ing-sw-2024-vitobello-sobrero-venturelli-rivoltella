@@ -60,4 +60,6 @@ public interface View {
     void updatePlayerScore(String playerNickname, int newPlayerScore);
 
     void onNewMessage(String sender, String receiver, String message);
+
+    void gameOver(String winner);
 }

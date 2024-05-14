@@ -21,4 +21,12 @@ public class PrinterTest extends TestCase {
 
         printer.showHand(List.of(13, 15, 67));
     }
+
+    public void testWinnerString() {
+        Printer printer = new Printer();
+        printer.winnerString();
+    }
+
+    public void testLoserString() {
+    }
 }
