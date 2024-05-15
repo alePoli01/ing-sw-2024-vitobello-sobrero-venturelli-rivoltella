@@ -51,20 +51,14 @@ public class PrinterTest extends TestCase {
         printer.loserString();
     }
 
-    public void testintro(){
+    public void testIntro(){
         Printer printer = new Printer();
         printer.intro();
     }
-    public void testlineprinterObjective(){
-        Deck testDeck = new Deck();
-        for(int i=0;i<6;i++) {
-        for(ObjectiveCard card:testDeck.getObjectiveDeck()){
 
-                card.printLineObjectiveCard(i);
-                System.out.print(" | ");
-
-            }
-            System.out.println();
-        }
+    public void testLinePrinterObjective(){
+        Printer printer = new Printer();
+        printer.showObjectiveCard("PRIVATE", List.of(98, 96));
+        printer.showObjectiveCard("COMMON", List.of(100, 101));
     }
 }

@@ -38,7 +38,6 @@ public class ObjectObjective extends ObjectiveCard {
 
     @Override
     public void printObjectiveCard() {
-
         //colors of the background
         String backgroundRed = "\u001b[41m";   // red background
         String backgroundGreen = "\u001b[42m"; // Green Background
@@ -68,9 +67,6 @@ public class ObjectObjective extends ObjectiveCard {
                 break;
             }
         }
-
-
-
     }
 
     @Override

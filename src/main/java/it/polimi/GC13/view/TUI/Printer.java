@@ -1,15 +1,13 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.ObjectiveCard;
 import it.polimi.GC13.model.PlayableCard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -50,16 +48,21 @@ public class Printer {
     /**
         METHOD USED TO PRINT OBJECTIVE CARD
      */
-    public void showObjectiveCard(String message, List<Integer> privateObjectiveCards) {
+    public void showObjectiveCard(String message, List<Integer> serialObjectiveCards) {
         System.out.println("\n" + message);
+        List<ObjectiveCard> objectiveCards = new LinkedList<>();
+        serialObjectiveCards.forEach(card -> objectiveCards.add(visualDeck.getObjectiveDeck().get(card - 87)));
+        AtomicInteger lineCounter = new AtomicInteger(0);
 
-        visualDeck.getObjectiveDeck()
-                .stream()
-                .filter(card -> privateObjectiveCards.contains(card.serialNumber))
-                .forEach(card -> {
-                    card.printObjectiveCard();
-                    System.out.println("\t    [" + card.serialNumber + "]");
-                });
+        for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
+            objectiveCards.forEach(card -> {
+                card.printLineObjectiveCard(lineCounter.get());
+                System.out.print(" ░ ");
+            });
+            System.out.println();
+        }
+        objectiveCards.forEach(card -> System.out.print("        [" + card.serialNumber + "]          "));
+        System.out.println();
     }
 
     /**
@@ -91,7 +94,7 @@ public class Printer {
                         } );
                 System.out.println();
             }
-            hand.forEach(serialCard -> System.out.print("        [" + serialCard + "]          "));
+            cardsOnHand.forEach(card -> System.out.print("        [" + card.serialNumber + "]          "));
             System.out.println();
         }
     }
@@ -141,20 +144,17 @@ public class Printer {
                   ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║   ██║██║╚██╗██║
                    ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝╚██████╔╝██║ ╚████║
                    ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═══╝
-                                                                           \s
                 """);
     }
 
     public void loserString() {
         System.out.println("""
-                
                 ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗      ██████╗ ███████╗████████╗
                 ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║     ██╔═══██╗██╔════╝╚══██╔══╝
-                 ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║  \s
-                  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║  \s
-                   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║  \s
-                   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝  \s
-                                                                                \s
+                 ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║
+                  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║
+                   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║
+                   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝
                 """);
     }
 
@@ -166,7 +166,6 @@ public class Printer {
                 ██║     ██║   ██║██║  ██║██╔══╝   ██╔██╗     ██║╚██╗██║██╔══██║   ██║   ██║   ██║██╔══██╗██╔══██║██║     ██║╚════██║
                 ╚██████╗╚██████╔╝██████╔╝███████╗██╔╝ ██╗    ██║ ╚████║██║  ██║   ██║   ╚██████╔╝██║  ██║██║  ██║███████╗██║███████║
                  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝
-                                                                                                                                   \s
                 """);
     }
 }
