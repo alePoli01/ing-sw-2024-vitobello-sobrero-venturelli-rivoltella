@@ -50,7 +50,7 @@ public class Printer {
     /**
         METHOD USED TO PRINT OBJECTIVE CARD
      */
-    public synchronized void showObjectiveCard(String message, List<Integer> privateObjectiveCards) {
+    public void showObjectiveCard(String message, List<Integer> privateObjectiveCards) {
         System.out.println("\n" + message);
 
         visualDeck.getObjectiveDeck()
