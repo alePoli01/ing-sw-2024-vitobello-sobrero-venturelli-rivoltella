@@ -560,6 +560,11 @@ public class TUI implements View {
         this.printer.showPlayersScore(this.playersScore);
     }
 
+    /**
+     *
+     * @param key can be [global] or a player [nickname], it is used to map the chat
+     * @param message message sent in chat by the player
+     */
     private void registerChatMessage(String key, String message) {
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
