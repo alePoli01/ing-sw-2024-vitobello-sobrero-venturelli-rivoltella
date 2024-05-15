@@ -16,7 +16,6 @@ import java.util.List;
 public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
     private ControllerDispatcher controllerDispatcher;
     private final LobbyController lobbyController;
-    private List<ClientInterface> clientList;
 
     protected RMIServer(ControllerDispatcher controllerDispatcher, LobbyController lobbyController) throws RemoteException {
         this.controllerDispatcher = controllerDispatcher;
@@ -32,12 +31,12 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         } catch (Exception e) {
             System.err.println("Failed to bind server to RMI registry");
         }
-        clientList = new ArrayList<>();
         System.out.println("RMI Server is ready");
     }
 
     @Override
     public void registerMessageFromClient(MessagesFromClient message, ClientInterface client) throws RemoteException {
-        message.methodToCall(this.lobbyController, this.controllerDispatcher.getClientControllerMap().get(client),client,this.controllerDispatcher.getClientPlayerMap().get(client));
+        System.out.println("received a message from client: "+client);
+        message.methodToCall(this.lobbyController, this.controllerDispatcher.getClientControllerMap().get(client), client, this.controllerDispatcher.getClientPlayerMap().get(client));
     }
 }

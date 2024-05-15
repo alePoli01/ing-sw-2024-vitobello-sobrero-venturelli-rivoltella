@@ -1,9 +1,7 @@
 package it.polimi.GC13.app;
 
-import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.rmi.RMIClientAdapter;
-import it.polimi.GC13.network.rmi.RMIClientImpl;
+import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
 import it.polimi.GC13.view.GUI.FrameManager;
@@ -20,9 +18,9 @@ public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 2) {
+        if (args.length != 3) {
             System.err.println("Missing Parameters, killing this server.");
-            System.err.println("HINT: metti | 'nome-server' 1099 456 | come parametri nella run configuration di ClientApp");
+            System.err.println("HINT: metti | 'nome-server'(a cui ti vuoi collegare in RMI) 1099 456 | come parametri nella run configuration di ClientApp");
             System.exit(-1);
         }
 
@@ -30,13 +28,13 @@ public class ClientApp {
         int socketPort = 0;
 
         try {
-            RMIport = Integer.parseInt(args[0]);
-            socketPort = Integer.parseInt(args[1]);
+            RMIport = Integer.parseInt(args[1]);
+            socketPort = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
             System.err.println("Illegal Argument Format, killing this client.");
             System.exit(-1);
         }
-        // System.setProperty("java.rmi.server.hostname", args[0]);
+        System.setProperty("java.rmi.server.hostname", args[0]);
 
         /*
         quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
@@ -83,15 +81,13 @@ public class ClientApp {
 
         if (connectionChoice == 1) {
             // RMI SETUP
-            RMIClientAdapter rmiClientAdapter = new RMIClientAdapter(clientDispatcher);
-
-            //virtualServer becomes RMIServer
-            virtualServer = rmiClientAdapter.startRMIConnection("localhost", RMIport);
+            RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
+            virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.rmi.server.hostname"), RMIport);
             System.out.println("Connection completed");
         } else {
             // SOCKET SETUP
             try {
-                Socket socket = new Socket("localhost", socketPort); // creating socket that represents the server
+                Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort); // creating socket that represents the server
                 virtualServer = new SocketServer(socket, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
                 new Thread((SocketServer) virtualServer).start();
             } catch (IOException e) {

@@ -36,9 +36,6 @@ public class TUI implements View {
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
 
-    public TUI() {
-    }
-
     @Override
     public void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -451,8 +448,8 @@ public class TUI implements View {
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
-            System.out.println("Launching an exception");
-            System.out.println(onInputExceptionMessage.getErrorMessage());
+            System.out.println("\u001B[31mLaunching an exception\u001B[0m");
+            System.out.println("\u001B[33m"+onInputExceptionMessage.getErrorMessage()+"\u001B[0m");
             onInputExceptionMessage.methodToRecall(this);
         }
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
@@ -627,9 +624,9 @@ public class TUI implements View {
     private void menuOption() {
         System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + " ---");
         if (this.myTurn) {
-            System.out.println("It's your turn");
+            System.out.println("\u001B[32mIt's your turn\u001B[0m");
         } else {
-            System.out.println("It's not your turn");
+            System.out.println("\u001B[31mIt's not your turn\u001B[0m");
         }
         System.out.println("\t[1] to view your hand");
         System.out.println("\t[2] to place a card (only when in turn)");

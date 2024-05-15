@@ -1,6 +1,5 @@
 package it.polimi.GC13.network.rmi;
 
-import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
@@ -15,12 +14,12 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RMIClientAdapter extends UnicastRemoteObject implements ServerInterface, ClientInterface {
+public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerInterface, ClientInterface {
     private final ExecutorService executorService;
     public RMIServerInterface serverStub;
     private final ClientDispatcher clientDispatcher;
 
-    public RMIClientAdapter(ClientDispatcher clientDispatcher1) throws RemoteException {
+    public RMIConnectionAdapter(ClientDispatcher clientDispatcher1) throws RemoteException {
         super();
         this.clientDispatcher = clientDispatcher1;
         this.executorService = Executors.newCachedThreadPool();
@@ -47,17 +46,18 @@ public class RMIClientAdapter extends UnicastRemoteObject implements ServerInter
 
     @Override
     public void sendMessageFromClient(MessagesFromClient message) {
-        executorService.submit(() -> {
-            try {
-                serverStub.registerMessageFromClient(message, this);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try {
+            serverStub.registerMessageFromClient(message, this);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
     public void sendMessageFromServer(MessagesFromServer message) throws RemoteException {
-        this.clientDispatcher.registerMessageFromServer(message);
+        executorService.submit(() -> {
+            this.clientDispatcher.registerMessageFromServer(message);
+        });
     }
 }
