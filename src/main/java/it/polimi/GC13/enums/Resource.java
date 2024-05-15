@@ -18,11 +18,11 @@ public enum Resource {
     }
 
     public String toString(){
-        String red = "\u001b[31m";   // Red
-        String green = "\u001b[32m"; // green
-        String blue = "\u001b[36m";  // Blue
-        String magenta = "\u001b[35m";  // Magenta
-        String gold = "\u001b[93m";  // gold
+        String red = "\033[38;2;233;73;23m";   // Red
+        String green = "\033[38;2;113;192;124m"; // green
+        String blue = "\033[38;2;107;189;192m";  // Blue
+        String magenta = "\033[38;2;171;63;148m";  // Magenta
+        String gold = "\033[38;2;255;215;0m";  // gold
         String reset = "\u001b[0m";
         /*
             String black = "\u001b[90m";  // black

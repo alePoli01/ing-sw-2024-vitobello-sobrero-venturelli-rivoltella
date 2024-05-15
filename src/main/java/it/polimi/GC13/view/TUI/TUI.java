@@ -184,6 +184,7 @@ public class TUI implements View {
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
 
         if (readyPlayers == neededPlayers) {
+            this.printer.intro();
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
             System.out.println("Choose your token color: " + joiner);

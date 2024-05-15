@@ -45,7 +45,7 @@ public class ObjectObjective extends ObjectiveCard {
         String backgroundBlue = "\u001b[46m";  // Blue background
         String backgroundmagenta = "\u001b[45m";  // Blue
         String resetbackground = "\u001b[0m";  // Reset color of the background
-        String gold = "\u001b[93m";  // gold
+        String gold = "\033[38;2;255;215;0m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
         switch(this.object.size()){
             case(3):{
@@ -73,4 +73,73 @@ public class ObjectObjective extends ObjectiveCard {
 
     }
 
+    @Override
+    public void printLineObjectiveCard(int line) {
+        String gold = "\033[38;2;255;215;0m";  // gold
+        String reset = "\u001b[0m";  // reset color of the characters
+        switch (this.object.size()) {
+            case 3: {
+                switch (line) {
+                    case 0: {
+                        System.out.print("╔═══════╦═╦═══════╗");
+                        break;
+                    }
+                    case 1: {
+                        System.out.print("║       ║" + gold + this.object.size() + reset + "║       ║");
+                        break;
+                    }
+                    case 2: {
+                        System.out.print("║                 ║");
+                        break;
+                    }
+                    case 3: {
+                        System.out.print("║    " + this.object.toString() + "    ║");
+                        break;
+                    }
+                    case 4: {
+                        System.out.print("║                 ║");
+                        break;
+                    }
+                    case 5: {
+                        System.out.print("╚═════════════════╝");
+                        break;
+                    }
+                }
+                break;
+            }
+            case (1): {
+                switch (line) {
+                    case 0: {
+                        System.out.print("╔═══════╦═╦═══════╗");
+                        break;
+                    }
+                    case 1: {
+                        System.out.print("║       ║" + gold + (this.object.size() + 1) + reset + "║       ║");
+                        break;
+                    }
+                    case 2: {
+                        System.out.print("║                 ║");
+                        break;
+                    }
+                    case 3: {
+                        System.out.print("║     " + this.object.toString() + " " + this.object.toString() + "     ║");
+                        break;
+                    }
+                    case 4: {
+                        System.out.print("║                 ║");
+                        break;
+                    }
+                    case 5: {
+                        System.out.print("╚═════════════════╝");
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
 }
+
+
+
+

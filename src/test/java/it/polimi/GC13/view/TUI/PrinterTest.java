@@ -1,5 +1,8 @@
 package it.polimi.GC13.view.TUI;
 
+import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.ObjectObjective;
+import it.polimi.GC13.model.ObjectiveCard;
 import junit.framework.TestCase;
 
 import java.util.HashMap;
@@ -46,5 +49,22 @@ public class PrinterTest extends TestCase {
     public void testLoserString() {
         Printer printer = new Printer();
         printer.loserString();
+    }
+
+    public void testintro(){
+        Printer printer = new Printer();
+        printer.intro();
+    }
+    public void testlineprinterObjective(){
+        Deck testDeck = new Deck();
+        for(int i=0;i<6;i++) {
+        for(ObjectiveCard card:testDeck.getObjectiveDeck()){
+
+                card.printLineObjectiveCard(i);
+                System.out.print(" | ");
+
+            }
+            System.out.println();
+        }
     }
 }
