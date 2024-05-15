@@ -76,7 +76,7 @@ public class Printer {
                 startCard.linePrinter(0, i, true);
                 System.out.println();
             }
-            System.out.print("       FRONT                 BACK");
+            System.out.println("       FRONT                 BACK");
         } else {
             AtomicInteger lineCounter = new AtomicInteger(0);
             LinkedList<PlayableCard> cardsOnHand = new LinkedList<>();
@@ -92,6 +92,7 @@ public class Printer {
                 System.out.println();
             }
             hand.forEach(serialCard -> System.out.print("        [" + serialCard + "]          "));
+            System.out.println();
         }
     }
 

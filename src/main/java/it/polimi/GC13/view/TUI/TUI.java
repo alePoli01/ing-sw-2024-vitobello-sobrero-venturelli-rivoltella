@@ -22,7 +22,7 @@ public class TUI implements View {
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
-    private int turnPlayed = - 1;
+    private int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
@@ -249,7 +249,7 @@ public class TUI implements View {
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
 
         if (playerNickname.equals(this.nickname)) {
-            if (this.turnPlayed >= 0) {
+            if (serialCardPlaced <= 80) {
                 System.out.println(message);
                 this.showHomeMenu(); // show menu after placing a card
             } else {
@@ -296,7 +296,6 @@ public class TUI implements View {
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
         if (playerNickname.equals(this.nickname)) {
-            this.turnPlayed++;
             this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
             String message = "Your private objective card is " + serialPrivateObjectiveCard;
             System.out.println(message + ".");
