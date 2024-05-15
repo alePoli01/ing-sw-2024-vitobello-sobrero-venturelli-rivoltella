@@ -314,7 +314,11 @@ public class TUI implements View {
      */
     @Override
     public void drawCard() {
-        this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
+        System.out.println("\n--- DRAWABLE CARDS ---");
+        System.out.println("--- Gold Deck ---");
+        this.printer.showDrawableCards(this.goldCardsAvailable);
+        System.out.println("\n\n--- Resource Deck ---");
+        this.printer.showDrawableCards(this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
             try {
                 do {
