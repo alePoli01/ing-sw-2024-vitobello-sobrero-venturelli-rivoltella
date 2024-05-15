@@ -12,7 +12,6 @@ import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -39,12 +38,13 @@ public class FrameManager extends JFrame implements View {
     private MainPage gamePage;
 
 
-
-    //TODO: capire come piazzare il frame in primo piano
-    // NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
-
+    //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
     public FrameManager() {
-        this.virtualServer = null;
+    }
+
+    @Override
+    public void setVirtualServer(ServerInterface virtualServer) {
+        this.virtualServer = virtualServer;
     }
 
     @Override
@@ -53,8 +53,27 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public void setVirtualServer(ServerInterface virtualServer) {
-        this.virtualServer = virtualServer;
+    public void handUpdate(String playerNickname, List<Integer> availableCard) {
+        if (playerNickname.equals(this.nickname)) {
+            synchronized (this.hand){
+                this.hand.clear();
+                this.hand.addAll(availableCard);
+            }
+        } else {
+            //this.gamesLog.add(playerNickname + " has drawn a card");
+        }
+    }
+
+    @Override
+    public void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial) {
+        this.goldCardsAvailable.clear();
+        this.goldCardsAvailable.putAll(goldCardSerial);
+    }
+
+    @Override
+    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceFacedUpSerial) {
+        this.resourceCardsAvailable.clear();
+        this.resourceCardsAvailable.putAll(resourceFacedUpSerial);
     }
 
     public ServerInterface getVirtualServer() {
@@ -65,18 +84,6 @@ public class FrameManager extends JFrame implements View {
         this.nickname = nickname;
     }
 
-    @Override
-    public void handUpdate(String playerNickname, List<Integer> availableCard) {
-        if (playerNickname.equals(this.nickname)) {
-            synchronized (this.hand){
-                this.hand.clear();
-                this.hand.addAll(availableCard);
-                gamePage.setHand(this.hand);
-            }
-        } else {
-            //this.gamesLog.add(playerNickname + " has drawn a card");
-        }
-    }
 
     @Override
     public void checkForExistingGame() {
@@ -91,17 +98,18 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
-        int choice = -1; //da capire se va bene renderlo parametro locale
+        int choice;
         if (gameNameWaitingPlayersMap.isEmpty()) {
-            SwingUtilities.invokeLater(() -> {
-                loginFrame = new LoginFrame(this);
-
-                loginFrame.setAlwaysOnTop(true);
-                loginFrame.repaint();
-                loginFrame.setAlwaysOnTop(false);
-
-            });
-
+            if(loginFrame == null) {
+                SwingUtilities.invokeLater(() -> {
+                    loginFrame = new LoginFrame(this);
+                    loginFrame.setAlwaysOnTop(true);
+                    loginFrame.repaint();
+                    loginFrame.setAlwaysOnTop(false);
+                });
+            } else { // da testare
+                refreshFrame(loginFrame);
+            }
         } else {
             Object[] options = {"Create Game", "Join Game"};
 
@@ -116,29 +124,29 @@ public class FrameManager extends JFrame implements View {
 
             if (choice == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this));
-                //loginFrame = new LoginFrame(this);
 
             } else if (choice == JOptionPane.NO_OPTION){
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this, gameNameWaitingPlayersMap));
             }
         }
-        choice = -1;
     }
 
 
-
-    //TODO: aggiungere il numero di giocatori in attesa nella waiting room
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
         if (readyPlayers == neededPlayers) {
             this.loginFrame.dispose();
             if(gamePage == null){
-                SwingUtilities.invokeLater(() -> gamePage = new MainPage(this, tokenColorList));
+                SwingUtilities.invokeLater(() -> {
+                    gamePage = new MainPage(tokenColorList);
+                    gamePage.setFrameManager(this);
+                });
             } else{
                 gamePage.getChoosePanel().removeAll();
                 gamePage.showTokenChoose(tokenColorList);
-                gamePage.getChoosePanel().revalidate();
-                gamePage.getChoosePanel().repaint();
+                refreshFrame(gamePage);
+                //gamePage.getChoosePanel().revalidate();
+                //gamePage.getChoosePanel().repaint();
             }
         }
     }
@@ -147,22 +155,32 @@ public class FrameManager extends JFrame implements View {
      SETUP PHASE methods to the player
      startCardSetupPhase to chose which side to place your start card
      */
+
+
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
-
         if(playerNickname.equals(this.nickname)) {
-            System.out.println("Sega");
-            gamePage.setNickname(playerNickname);
-            gamePage.setToken(tokenColor);
+            setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
-            gamePage.createGamePanel();
-            refreshGamePage();
+            //gamePage.createGamePanel();
+            gamePage.startCardSetup();
+
+            //da rivedere refreshFrame
+            gamePage.getContentPane().revalidate();
+            gamePage.getContentPane().repaint();
         }
     }
 
-    private void refreshGamePage(){
-        gamePage.getContentPane().revalidate();
-        gamePage.getContentPane().repaint();
+    //DA TESTARE L'AGGIUNTA DEL PARAMETRO frame
+    private void refreshFrame(JFrame frame){
+        frame.getContentPane().revalidate();
+        frame.getContentPane().repaint();
+    }
+
+    private void setDataSetupPhase(String playerNickname, TokenColor tokenColor){
+        gamePage.setNickname(playerNickname);
+        gamePage.setToken(tokenColor);
+        gamePage.setHand(this.hand);
     }
 
     @Override
@@ -171,19 +189,6 @@ public class FrameManager extends JFrame implements View {
             JOptionPane.showMessageDialog(this, onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
         }
-    }
-
-
-    @Override
-    public void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial) {
-        this.goldCardsAvailable.clear();
-        this.goldCardsAvailable.putAll(goldCardSerial);
-    }
-
-   @Override
-    public void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceFacedUpSerial) {
-        this.resourceCardsAvailable.clear();
-        this.resourceCardsAvailable.putAll(resourceFacedUpSerial);
     }
 
 

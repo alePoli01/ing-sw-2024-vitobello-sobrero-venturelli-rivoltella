@@ -19,21 +19,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class LoginFrame extends JFrame implements WaitingLobby {
+public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private JTextField nicknameField;
     private JTextField gameNameField;
     private JList<String> existingGameList;
-    private JRadioButton radioButton1;
-    private JRadioButton radioButton2;
-    private JRadioButton radioButton3;
-    private JButton loginButton;
 
+    private JButton loginButton;
 
     final static String PANEL1 = "Panel 1";
     final static String PANEL2 = "Panel 2";
     private JPanel waitingLobby;
     int progress;
     int colorIndex = 0;
+
+    //PARTE NUOVA
+    ArrayList<JRadioButton> radiobuttons;
+    private FrameManager frameManager;
+    private JPanel cards;
+    Object source;
+    boolean flag;
+    String nickname;
+    String gameName;
+    int playersNumber = -1;
 
 
 /*JOINING PHASE
@@ -43,7 +50,6 @@ public class LoginFrame extends JFrame implements WaitingLobby {
             2.b) Join existing game --> LoginFrame(Map<String, Integer> gameNameWaitingPlayersMap)
        */
 
-
     public LoginFrame(FrameManager frameManager) {
         setTitle("Login Page");
         setSize(750, 750);
@@ -52,7 +58,8 @@ public class LoginFrame extends JFrame implements WaitingLobby {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        JPanel cards = new JPanel(new CardLayout());
+        cards = new JPanel(new CardLayout());
+        //JPanel cards = new JPanel(new CardLayout());
         add(cards);
 
         BackgroundPanel backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
@@ -82,29 +89,13 @@ public class LoginFrame extends JFrame implements WaitingLobby {
         setBoundsComponent(numPlayerLabel, 345, 25, 230, -40);
         backgroundPanel.add(numPlayerLabel);
 
-
-        radioButton1 = new JRadioButton("2");
-        radioButton2 = new JRadioButton("3");
-        radioButton3 = new JRadioButton("4");
-
+        //PARTE NUOVA
+        this.frameManager = frameManager;
         ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(radioButton1);
-        buttonGroup.add(radioButton2);
-        buttonGroup.add(radioButton3);
-
-        //TODO: inserire i radiobuttons in un pannello e impostare FlowLayout
-        setBoundsComponent(radioButton1, 100, 30, 100, -10);
-        setBoundsComponent(radioButton2, 100, 30, 140, -10);
-        setBoundsComponent(radioButton3, 100, 30, 180, -10);
-
-        radioButton1.setOpaque(false);
-        radioButton2.setOpaque(false);
-        radioButton3.setOpaque(false);
-
-        backgroundPanel.add(radioButton1);
-        backgroundPanel.add(radioButton2);
-        backgroundPanel.add(radioButton3);
-
+        JPanel radioButtonPanel = new JPanel(new FlowLayout());
+        radioButtonPanel.setOpaque(false);
+        backgroundPanel.add(radioButtonPanel);
+        radiobuttons = new ArrayList<>();
 
         ActionListener textRadioListener = e -> enableLoginButton();
 
@@ -127,43 +118,20 @@ public class LoginFrame extends JFrame implements WaitingLobby {
 
         nicknameField.getDocument().addDocumentListener(documentListener);
         gameNameField.getDocument().addDocumentListener(documentListener);
-        radioButton1.addActionListener(textRadioListener);
-        radioButton2.addActionListener(textRadioListener);
-        radioButton3.addActionListener(textRadioListener);
 
 
-        //Start button
+        for(int i=0; i<3; i++){
+            setRadioButton(radiobuttons, radioButtonPanel, buttonGroup, String.valueOf(i+2), textRadioListener);
+        }
+
+        setBoundsComponent(radioButtonPanel, 200, 30, 100, -10);
+
         loginButton = createButton("Start", 20);
         loginButton.setEnabled(false);
         setBoundsComponent(loginButton, 85, 33, 100, 40);
         loginButton.setBackground(new Color(177,163,28));
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nickname = nicknameField.getText();
-                String gameName = gameNameField.getText();
-                int playersNumber = -1;
 
-                if (radioButton1.isSelected()) {
-                    playersNumber = 2;
-                } else if (radioButton2.isSelected()) {
-                    playersNumber = 3;
-                } else if (radioButton3.isSelected()){
-                    playersNumber = 4;
-                }
-                //JOptionPane.showMessageDialog(null, "player: "+ nickname + "game: "+ gameName+ "num: "+ playersNumber);
-                frameManager.getVirtualServer().sendMessageFromClient(new CreateNewGameMessage(nickname, playersNumber, gameName));
-                frameManager.setNickname(nickname);
-                //dispose();
-
-                CardLayout cardLayout = (CardLayout) cards.getLayout();
-                if (e.getActionCommand().equals("Start")) {
-                    waitingLobby = createWaitingLobby();
-                    cards.add(waitingLobby, PANEL2);
-                    cardLayout.show(cards, PANEL2);
-                }
-            }
-        });
+        loginButton.addActionListener(this);
 
         backgroundPanel.add(loginButton);
         setVisible(true);
@@ -193,13 +161,10 @@ public class LoginFrame extends JFrame implements WaitingLobby {
         setBoundsComponent(nicknameField, 200, 25, -65, -40);
         backgroundPanel.add(nicknameField);
 
-
         //Selection of the existing game
         JLabel gameNameLabel = createTextLabelFont("Choose an existing game: ", 20);
         setBoundsComponent(gameNameLabel, 345, 25, 5, -5);
         backgroundPanel.add(gameNameLabel);
-
-
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
         existingGameList = new JList<>(listModel);
@@ -212,12 +177,12 @@ public class LoginFrame extends JFrame implements WaitingLobby {
         }
         existingGameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        //existingGameList.setPreferredSize(new Dimension(170, 55));
-
         existingGameList.setBorder(BorderFactory.createEtchedBorder());
 
 
-        //TODO: FAR FUNZIONARE LO SCROLLPANE
+
+
+        //TODO: FARE UN JCOMBOBOX
         //JScrollPane scrollPane = addScrollPane(existingGameList);
         //setBoundsComponent(scrollPane, 100, 25, -115, +30);
         setBoundsComponent(existingGameList, 100, 25, -115, +30);
@@ -263,6 +228,7 @@ public class LoginFrame extends JFrame implements WaitingLobby {
                 //String gameName = existingGameList.getSelectedValue();
                 String gameName = map.get(existingGameList.getSelectedValue());
                 frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
+                frameManager.setNickname(nickname);
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {
                     waitingLobby = createWaitingLobby();
@@ -290,7 +256,11 @@ public class LoginFrame extends JFrame implements WaitingLobby {
 
     private void enableLoginButton() {
         boolean fieldsFilled = !nicknameField.getText().isEmpty() && !gameNameField.getText().isEmpty();
-        boolean radioButtonSelected = radioButton1.isSelected() || radioButton2.isSelected() || radioButton3.isSelected();
+        //boolean radioButtonSelected = radioButton1.isSelected() || radioButton2.isSelected() || radioButton3.isSelected();
+
+        //PARTE NUOVA
+        boolean radioButtonSelected = radiobuttons.stream().anyMatch(AbstractButton::isSelected);
+
         loginButton.setEnabled(fieldsFilled && radioButtonSelected);
     }
 
@@ -316,12 +286,9 @@ public class LoginFrame extends JFrame implements WaitingLobby {
             colors.add(new Color(171, 63, 148, 255));
         }
 
-
-
         JLabel label = createTextLabelFont("Welcome to waiting lobby", 35);
         setBorderInsets(label,0,0,70,0);
         waitingLobby.add(label, createGridBagConstraints(0,0));
-
 
         JLabel label2 = createTextLabelFont("Waiting for the players: ", 20);
         setBorderInsets(label,0,0,50,0);
@@ -381,4 +348,39 @@ public class LoginFrame extends JFrame implements WaitingLobby {
     }
 
 
+    private void setRadioButton(ArrayList<JRadioButton> arrayButton, JPanel panel, ButtonGroup buttonGroup, String text, ActionListener textRadioListener){
+        JRadioButton radioButton = new JRadioButton(text);
+        buttonGroup.add(radioButton);
+        arrayButton.add(radioButton);
+        radioButton.setOpaque(false);
+        radioButton.addActionListener(textRadioListener);
+        radioButton.addActionListener(this);
+        panel.add(radioButton);
+    }
+
+
+    //PARTE NUOVA
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        nickname = nicknameField.getText();
+        gameName = gameNameField.getText();
+        source = e.getSource();
+        flag = false;
+
+        if(source instanceof JRadioButton){
+            playersNumber = Integer.parseInt(((JRadioButton) source).getText());
+            //System.out.println(playersNumber);
+            //flag = true;
+        } else if(source instanceof JButton){
+            CardLayout cardLayout = (CardLayout) cards.getLayout();
+            //System.out.println(nickname);
+            //System.out.println(gameName);
+            //System.out.println(playersNumber);
+            frameManager.getVirtualServer().sendMessageFromClient(new CreateNewGameMessage(nickname, playersNumber, gameName));
+            frameManager.setNickname(nickname);
+            waitingLobby = createWaitingLobby();
+            cards.add(waitingLobby, PANEL2);
+            cardLayout.show(cards, PANEL2);
+        }
+    }
 }

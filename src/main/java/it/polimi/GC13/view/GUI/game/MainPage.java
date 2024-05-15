@@ -1,19 +1,19 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.network.messages.fromclient.PlaceStartCardMessage;
 import it.polimi.GC13.network.messages.fromclient.TokenChoiceMessage;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 import it.polimi.GC13.view.GUI.FrameManager;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +40,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     final static String PANEL1 = "Game";
     final static String PANEL2 = "Scoreboard";
 
-    private JPanel board;
+    private FrameManager frameManager;
+
     private String nickname;
     private TokenColor token;
     private List<Integer> hand;
@@ -50,6 +51,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     JLabel starterCardBackLabel;
 
     private List<TokenColor> tokenColorList;
+    private JPanel board;
     JPanel tokenPanel;
     JPanel namePanel;
     JPanel checkBoxPanel;
@@ -62,7 +64,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     private TokenManager tokenManager;
 */
 
-    public MainPage(FrameManager frameManager, List<TokenColor> tokenColorList) {
+    public MainPage(List<TokenColor> tokenColorList) {
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -73,19 +75,24 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         panelContainer.setBackground(new Color(237,230,188,255));
         add(panelContainer);
 
+        JLabel setupLabel = createTextLabelFont("setup phase [1/2] ", 32);
+        setBorderInsets(setupLabel, 0, 0, 60, 0);
+        panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
+
+
         JLabel tokenLabel = createTextLabelFont("Choose your token: ", 64);
         setBorderInsets(tokenLabel, 0, 0, 90, 0);
-        panelContainer.add(tokenLabel, createGridBagConstraints(0, 0));
+        panelContainer.add(tokenLabel, createGridBagConstraints(0, 1));
 
 
         choosePanel = new JPanel(new GridBagLayout());
         choosePanel.setOpaque(false);
-        panelContainer.add(choosePanel, createGridBagConstraints(0,1));
+        panelContainer.add(choosePanel, createGridBagConstraints(0,2));
 
         showTokenChoose(tokenColorList);
 
         confirmButton = createButton("Select", 32);
-        panelContainer.add(confirmButton, createGridBagConstraints(0, 2));
+        panelContainer.add(confirmButton, createGridBagConstraints(0, 3));
 
         confirmButton.addActionListener (e -> {
             String tokenColorChosen;
@@ -101,6 +108,229 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         });
         setVisible(true);
     }
+
+
+    public void showTokenChoose(List<TokenColor> tokenColorList){
+        GridBagConstraints gbc2 = createGridBagConstraints(0, 0);
+        tokenPanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
+        tokenPanel.setOpaque(false);
+        choosePanel.add(tokenPanel, gbc2);
+
+        checkBoxPanel = new JPanel(new FlowLayout());
+        checkBoxPanel.setOpaque(false);
+        buttonGroup = new ButtonGroup();
+        choosePanel.add(checkBoxPanel, gbc2);
+
+        namePanel = new JPanel(new FlowLayout()); //pannello dove inserire i nomi dei token
+        namePanel.setOpaque(false);
+        choosePanel.add(namePanel, createGridBagConstraints(0, 1));
+
+        tokenLabelCheckBox = new HashMap<>();
+
+        setTokenColorList(tokenColorList);
+    }
+
+
+    public void setTokenColorList(List<TokenColor> tokenColorList) {
+        this.tokenColorList = tokenColorList;
+
+        Arrays.stream(TokenColor.values()).forEach( tokenColor -> {
+            JLabel tokenLabelImage = new JLabel((this.tokenColorList.contains(tokenColor)) ? createPlayableTokenImageIcon(tokenColor, 300) : createGreyTokenImageIcon(300));
+            tokenPanel.add(tokenLabelImage);
+
+            JLabel tokenLabelText = createTextLabelFont(tokenColor.toString().toLowerCase(), 32);
+            setBorderInsets(tokenLabelText, 30, 124, 80, 120);
+            namePanel.add(tokenLabelText);
+
+            JCheckBox jCheckBox = new JCheckBox(tokenColor.toString().toLowerCase());
+            jCheckBox.setFocusPainted(false);
+            jCheckBox.setBorderPainted(false);
+            jCheckBox.setForeground(panelContainer.getBackground());
+            buttonGroup.add(jCheckBox);
+            setBorderInsets(jCheckBox, 0, 140, 70, 125);
+            jCheckBox.setOpaque(false);
+            checkBoxPanel.add(jCheckBox);
+            tokenLabelCheckBox.put(tokenLabelText, jCheckBox);
+        });
+
+        ActionListener actionListener = e -> {
+            confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
+
+            tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+            tokenLabelCheckBox.entrySet()
+                    .stream()
+                    .filter(en -> en.getValue().equals(e.getSource()))
+                    .findFirst()
+                    .orElseThrow()
+                    .getKey()
+                    .setForeground(Color.RED);
+        };
+
+        for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+    }
+
+
+    private String getTokenFileName(TokenColor tokenColor) {
+        return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
+    }
+
+    private ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
+        return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
+    }
+
+    private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
+        return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
+    }
+
+    private ImageIcon createGreyTokenImageIcon(int dim) {
+        return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
+    }
+
+
+
+    public void startCardSetup(){
+        JLabel setupLabel = createTextLabelFont("setup phase [2/2] ", 32);
+        setBorderInsets(setupLabel, 0, 0, 60, 0);
+        panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
+
+        JLabel titleLabel = createTextLabelFont("SETUP START CARD: ", 64);
+        setBorderInsets(titleLabel, 0, 0, 60, 0);
+        panelContainer.add(titleLabel, createGridBagConstraints(0, 1));
+
+        JLabel startCardLabel = createTextLabelFont("Choose which side you would like to place your start card: ", 28);
+        setBorderInsets(startCardLabel, 0, 0, 90, 0);
+        panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
+
+
+        panelContainer.add(choosePanel, createGridBagConstraints(0,3));
+        refresh();
+
+        //System.out.println(hand.getFirst());
+        //JOptionPane.showMessageDialog(this, hand.getFirst() !=null? "hand: "+ hand.getFirst() : "Culo"); //non va
+
+        if(hand!=null) showCard(hand.getFirst());
+        else System.out.println("culo");
+
+
+        panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
+        confirmButton.addActionListener (e -> {
+            boolean isFlipped;
+            for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
+                if (checkBox.isSelected()) {
+                    isFlipped = !checkBox.getText().equals("Front");
+                    if (e.getActionCommand().equals("Select")) {
+                        //JOptionPane.showMessageDialog(null, "isFlipped: "+ isFlipped);
+                        frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
+                    }
+                    break;
+                }
+            }
+        });
+    }
+
+
+
+    private void refresh(){
+        tokenPanel.removeAll();
+        checkBoxPanel.removeAll();
+        namePanel.removeAll();
+        tokenLabelCheckBox.clear();
+
+        Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
+        while (checkBoxes.hasMoreElements()) {
+            AbstractButton button = checkBoxes.nextElement();
+            if (button instanceof JCheckBox) {
+                buttonGroup.remove(button);
+            }
+        }
+    }
+
+
+
+    public Path identifyPathCard(int numberCard){
+        Path startDir;
+        if (numberCard > 0 && numberCard <= 40)
+            startDir = Paths.get(RESOURCE_DIR);
+        else if (numberCard <= 80)
+            startDir = Paths.get(GOLD_DIR);
+        else if (numberCard <= 86)
+            startDir = Paths.get(STARTER_DIR);
+        else if (numberCard <= 102)
+            startDir = Paths.get(OBJECTIVE_DIR);
+        else {
+            JOptionPane.showMessageDialog(this, "ErrorMsg: ", "Invalid card", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        return startDir;
+    }
+
+    // metodo per mostrare una singola carta
+    @Override
+    public void showCard(Integer numberCard) {
+        Path startDir = identifyPathCard(numberCard);
+
+        System.out.println(startDir);
+
+        if(startDir != null){
+            try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString()))) {
+                paths.forEach(path -> {
+                    System.out.println(path);
+                    Image img = new ImageIcon(String.valueOf(path)).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL");
+                    tokenPanel.add(startCardLabelImage);
+
+                    JLabel startCardLabelText;
+                    JCheckBox jCheckBox;
+                    if(String.valueOf(path).contains("front")){
+                        startCardLabelText = createTextLabelFont("Front", 32);
+                        jCheckBox = new JCheckBox("false");
+                    } else {
+                        startCardLabelText = createTextLabelFont("Back", 32);
+                        jCheckBox = new JCheckBox("true");
+                    }
+
+                    setBorderInsets(startCardLabelText, 30, 124, 80, 120);
+                    namePanel.add(startCardLabelText);
+
+                    jCheckBox.setFocusPainted(false);
+                    jCheckBox.setBorderPainted(false);
+                    jCheckBox.setForeground(panelContainer.getBackground());
+                    buttonGroup.add(jCheckBox);
+                    setBorderInsets(jCheckBox, 0, 140, 70, 125);
+                    jCheckBox.setOpaque(false);
+                    checkBoxPanel.add(jCheckBox);
+                    tokenLabelCheckBox.put(startCardLabelText, jCheckBox);
+                });
+
+                ActionListener actionListener = e -> {
+                    confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
+
+                    tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                    tokenLabelCheckBox.entrySet()
+                            .stream()
+                            .filter(en -> en.getValue().equals(e.getSource()))
+                            .findFirst()
+                            .orElseThrow()
+                            .getKey()
+                            .setForeground(Color.RED);
+                };
+
+                for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+
+                //   List<Path> fileList = Files.walk(startDir).filter(Files::isRegularFile).filter(f->f.getFileName().toString().contains(numberCard.toString())).toList();
+                //   fileList.forEach(path->cardIconList.add(new ImageIcon(String.valueOf(path))));
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
+
+
 
 
     public void createGamePanel() {
@@ -174,7 +404,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
 
         //QUI ANDRÀ LA STARTCARD IN MANO --> HAND
 
-        ImageIcon imgI1 = new ImageIcon("src/main/utils/starter_card/starter_card_front/starter_card_083.png");
+        ImageIcon imgI1 = new ImageIcon("src/main/utils/starter_card/starter_card_front/starter_card_back_83.png");
         Image img = imgI1.getImage().getScaledInstance(imgI1.getIconWidth()/6,imgI1.getIconHeight()/6,Image.SCALE_SMOOTH);
         JLabel startCardLabel = new JLabel(new ImageIcon(img));
         southPanel.add(startCardLabel, BorderLayout.SOUTH);
@@ -291,33 +521,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
 
     }
 
-    public void showTokenChoose(List<TokenColor> tokenColorList){
-        GridBagConstraints gbc2 = createGridBagConstraints(0, 0);
-        tokenPanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
-        tokenPanel.setOpaque(false);
-        choosePanel.add(tokenPanel, gbc2);
-
-        checkBoxPanel = new JPanel(new FlowLayout());
-        checkBoxPanel.setOpaque(false);
-        buttonGroup = new ButtonGroup();
-        choosePanel.add(checkBoxPanel, gbc2);
-
-        namePanel = new JPanel(new FlowLayout()); //pannello dove inserire i nomi dei token
-        namePanel.setOpaque(false);
-        choosePanel.add(namePanel, createGridBagConstraints(0, 1));
-
-        tokenLabelCheckBox = new HashMap<>();
-
-        setTokenColorList(tokenColorList);
-    }
-
-
-
-
-
-
-
-
 
 
     private static JTable createTable(String[] columnNames, Object[][] data) {
@@ -372,21 +575,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         component.setMinimumSize(new Dimension(w, h));
     }
 
-    private String getTokenFileName(TokenColor tokenColor) {
-        return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
-    }
-
-    private ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
-        return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
-    }
-
-    private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
-        return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
-    }
-
-    private ImageIcon createGreyTokenImageIcon(int dim) {
-        return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
-    }
 
     private JLabel createTextLabelFont(String content, int dim) {
         JLabel jLabel = new JLabel(content);
@@ -398,6 +586,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
         jComponent.setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
     }
+
+    private void setCompoundBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight, String inset) {
+        Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
+        Border b = BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right);
+        switch (inset) {
+            case "TOP" ->
+                    jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black)));
+            case "BOTTOM" ->
+                    jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black)));
+            case "ALL" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createLineBorder(Color.black)));
+        }
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -427,21 +628,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
 
     }
 
-    private class ClickListener extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            JLabel clickedLabel = (JLabel) e.getSource();
-
-            if (clickedLabel == starterCardFrontLabel) {
-                starterCardFrontLabel.setVisible(true);
-                starterCardBackLabel.setVisible(false);
-            } else if (clickedLabel == starterCardBackLabel) {
-                starterCardFrontLabel.setVisible(false);
-                starterCardBackLabel.setVisible(true);
-            }
-        }
-    }
-
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -466,43 +652,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         return panelContainer;
     }
 
-
-    public Path identifyPathCard(int numberCard){
-        Path startDir;
-        if (numberCard > 0 && numberCard <= 40)
-            startDir = Paths.get(RESOURCE_DIR);
-        else if (numberCard <= 80)
-            startDir = Paths.get(GOLD_DIR);
-        else if (numberCard <= 86)
-            startDir = Paths.get(STARTER_DIR);
-        else if (numberCard <= 102)
-            startDir = Paths.get(OBJECTIVE_DIR);
-        else {
-            JOptionPane.showMessageDialog(this, "ErrorMsg: ", "Invalid card", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        return startDir;
+    public JPanel getChoosePanel() {
+        return choosePanel;
     }
 
-    // metodo per mostrare una singola carta
-    @Override
-    public ArrayList<ImageIcon> showCard(Integer numberCard) {
-        ArrayList<ImageIcon> cardIconList = new ArrayList<>();
-
-        Path startDir = identifyPathCard(numberCard);
-
-        try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString()))) {
-            paths.forEach(path -> cardIconList.add(new ImageIcon(String.valueOf(path))));
-            //   List<Path> fileList = Files.walk(startDir).filter(Files::isRegularFile).filter(f->f.getFileName().toString().contains(numberCard.toString())).toList();
-            //   fileList.forEach(path->cardIconList.add(new ImageIcon(String.valueOf(path))));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
-            return null; //da capire se va bene
-        }
-
-        return cardIconList;
+    public void setFrameManager(FrameManager frameManager) {
+        this.frameManager = frameManager;
     }
-
 
 
 
@@ -542,47 +698,5 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     }
     */
 
-    public void setTokenColorList(List<TokenColor> tokenColorList) {
-        this.tokenColorList = tokenColorList;
 
-        Arrays.stream(TokenColor.values()).forEach( tokenColor -> {
-            JLabel tokenLabelImage = new JLabel((this.tokenColorList.contains(tokenColor)) ? createPlayableTokenImageIcon(tokenColor, 300) : createGreyTokenImageIcon(300));
-            tokenPanel.add(tokenLabelImage);
-
-            JLabel tokenLabelText = createTextLabelFont(tokenColor.toString().toLowerCase(), 32);
-            setBorderInsets(tokenLabelText, 30, 124, 80, 120);
-            namePanel.add(tokenLabelText);
-
-            JCheckBox jCheckBox = new JCheckBox(tokenColor.toString().toLowerCase());
-            jCheckBox.setFocusPainted(false);
-            jCheckBox.setBorderPainted(false);
-            jCheckBox.setForeground(panelContainer.getBackground());
-            buttonGroup.add(jCheckBox);
-            setBorderInsets(jCheckBox, 0, 140, 70, 125);
-            jCheckBox.setOpaque(false);
-            checkBoxPanel.add(jCheckBox);
-            tokenLabelCheckBox.put(tokenLabelText, jCheckBox);
-        });
-
-        ActionListener actionListener = e -> {
-            confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
-
-            tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-            tokenLabelCheckBox.entrySet()
-                    .stream()
-                    .filter(en -> en.getValue().equals(e.getSource()))
-                    .findFirst()
-                    .orElseThrow()
-                    .getKey()
-                    .setForeground(Color.RED);
-        };
-
-        for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
-    }
-
-
-    public JPanel getChoosePanel() {
-        return choosePanel;
-    }
 }
