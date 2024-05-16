@@ -79,7 +79,6 @@ public class TUI implements View {
 
     @Override
     public void checkForExistingGame() {
-        //System.out.println("++Sent: checkForExistingGame");
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
@@ -155,7 +154,6 @@ public class TUI implements View {
 
         //massage is ready to be sent
         this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
-        System.out.println("++Sent: addPlayerToGame");
     }
 
     private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws IOException {
@@ -173,7 +171,6 @@ public class TUI implements View {
 
         //massage is ready to be sent
         this.virtualServer.sendMessageFromClient(new AddPlayerToGameMessage(this.nickname, gameName));
-        System.out.println("++Sent: addPlayerToGame");
     }
 
     /**
@@ -284,7 +281,6 @@ public class TUI implements View {
 
                 this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
                 this.choice = 0;
-                //System.out.println("++Sent private objective card choice message");
             } catch (NumberFormatException | IOException e) {
                 System.out.print("Error: Please put a number.\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
             }
