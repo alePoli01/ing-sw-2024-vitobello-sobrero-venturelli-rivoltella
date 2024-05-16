@@ -6,13 +6,14 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
 import java.util.List;
+import java.util.Set;
 
 public class EndPhase implements GamePhase {
     private final Controller controller;
 
     public EndPhase(Controller controller) {
         this.controller = controller;
-        String winner = this.controller.getGame().setWinner();
+        Set<String> winner = this.controller.getGame().setWinner();
         System.out.println("GAME OVER -> Winner is " + winner);
     }
 

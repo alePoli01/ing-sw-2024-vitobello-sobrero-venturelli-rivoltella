@@ -1,28 +1,25 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.ObjectiveCard;
 import it.polimi.GC13.model.PlayableCard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
-/*
+/**
     CLASS USED TO PRINT MESSAGES FROM TUI
  */
 public class Printer {
     private static final Deck visualDeck = new Deck();
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-    public Printer() {}
-
-    /*
+    /**
         METHOD USED TO SHOW GAME'S HISTORY
     */
     public void showHistory(List<String> gamesLog) {
@@ -30,40 +27,45 @@ public class Printer {
         gamesLog.forEach(log -> System.out.println(log + ";"));
     }
 
-    /*
+    /**
         METHOD USED TO SHOW DRAWABLE CARDS
      */
-    public void showDrawableCards(Map<Integer, Boolean> goldCardsAvailable, Map<Integer, Boolean> resourceCardsAvailable) {
-        System.out.println("\n--- DRAWABLE CARDS ---");
-        System.out.println("--- Gold Deck ---");
-        goldCardsAvailable.forEach((key, value) -> {
-            visualDeck.getCard(key).cardPrinter(value);
-            System.out.println("\t    [" + key + "]");
-        });
+    public void showDrawableCards(Map<Integer, Boolean> serialToDraw) {
+        AtomicInteger lineCounter = new AtomicInteger(0);
+        Map<PlayableCard, Boolean> cardsToDraw = new HashMap<>();
+        serialToDraw.forEach((key, value) -> cardsToDraw.put(visualDeck.getCard(key), value));
 
-        System.out.println("--- Resource Deck ---");
-        resourceCardsAvailable.forEach((key, value) -> {
-            visualDeck.getCard(key).cardPrinter(value);
-            System.out.println("\t    [" + key + "]");
-        });
+        for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
+            cardsToDraw.forEach((key, value) -> {
+                key.linePrinter(0, lineCounter.get(), value);
+                System.out.print(" ░ ");
+            });
+            System.out.println();
+        }
+        cardsToDraw.keySet().forEach(key -> System.out.print("        [" + key.serialNumber + "]          "));
     }
 
-    /*
+    /**
         METHOD USED TO PRINT OBJECTIVE CARD
      */
-    public synchronized void showObjectiveCard(String message, List<Integer> privateObjectiveCards) {
+    public void showObjectiveCard(String message, List<Integer> serialObjectiveCards) {
         System.out.println("\n" + message);
+        List<ObjectiveCard> objectiveCards = new LinkedList<>();
+        serialObjectiveCards.forEach(card -> objectiveCards.add(visualDeck.getObjectiveDeck().get(card - 87)));
+        AtomicInteger lineCounter = new AtomicInteger(0);
 
-        visualDeck.getObjectiveDeck()
-                .stream()
-                .filter(card -> privateObjectiveCards.contains(card.serialNumber))
-                .forEach(card -> {
-                    card.printObjectiveCard();
-                    System.out.println("\t    [" + card.serialNumber + "]");
-                });
+        for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
+            objectiveCards.forEach(card -> {
+                card.printLineObjectiveCard(lineCounter.get());
+                System.out.print(" ░ ");
+            });
+            System.out.println();
+        }
+        objectiveCards.forEach(card -> System.out.print("        [" + card.serialNumber + "]          "));
+        System.out.println();
     }
 
-    /*
+    /**
         METHOD USED TO PRINT PLAYABLE CARDS
      */
     public void showHand(List<Integer> hand) {
@@ -77,7 +79,7 @@ public class Printer {
                 startCard.linePrinter(0, i, true);
                 System.out.println();
             }
-            System.out.print("       FRONT                 BACK");
+            System.out.println("       FRONT                 BACK");
         } else {
             AtomicInteger lineCounter = new AtomicInteger(0);
             LinkedList<PlayableCard> cardsOnHand = new LinkedList<>();
@@ -92,13 +94,14 @@ public class Printer {
                         } );
                 System.out.println();
             }
-            hand.forEach(serialCard -> System.out.print("        [" + serialCard + "]          "));
+            cardsOnHand.forEach(card -> System.out.print("        [" + card.serialNumber + "]          "));
+            System.out.println();
         }
     }
 
     /**
      *
-     * @param playersScore players' score list; prints all players score present in the map
+     * @param playersScore players' score map; prints all players score present in the map
      *
      */
     public void showPlayersScore(Map<String, Integer> playersScore) {
@@ -141,21 +144,28 @@ public class Printer {
                   ╚██╔╝  ██║   ██║██║   ██║    ██║███╗██║██║   ██║██║╚██╗██║
                    ██║   ╚██████╔╝╚██████╔╝    ╚███╔███╔╝╚██████╔╝██║ ╚████║
                    ╚═╝    ╚═════╝  ╚═════╝      ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═══╝
-                                                                           \s
                 """);
     }
 
     public void loserString() {
         System.out.println("""
-                
                 ██╗   ██╗ ██████╗ ██╗   ██╗    ██╗      ██████╗ ███████╗████████╗
                 ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║     ██╔═══██╗██╔════╝╚══██╔══╝
-                 ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║  \s
-                  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║  \s
-                   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║  \s
-                   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝  \s
-                                                                                \s
+                 ╚████╔╝ ██║   ██║██║   ██║    ██║     ██║   ██║███████╗   ██║
+                  ╚██╔╝  ██║   ██║██║   ██║    ██║     ██║   ██║╚════██║   ██║
+                   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║   ██║
+                   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝   ╚═╝
                 """);
     }
 
+    public void intro(){
+        System.out.println("""
+                 ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗    ███╗   ██╗ █████╗ ████████╗██╗   ██╗██████╗  █████╗ ██╗     ██╗███████╗
+                ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝    ████╗  ██║██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔══██╗██║     ██║██╔════╝
+                ██║     ██║   ██║██║  ██║█████╗   ╚███╔╝     ██╔██╗ ██║███████║   ██║   ██║   ██║██████╔╝███████║██║     ██║███████╗
+                ██║     ██║   ██║██║  ██║██╔══╝   ██╔██╗     ██║╚██╗██║██╔══██║   ██║   ██║   ██║██╔══██╗██╔══██║██║     ██║╚════██║
+                ╚██████╗╚██████╔╝██████╔╝███████╗██╔╝ ██╗    ██║ ╚████║██║  ██║   ██║   ╚██████╔╝██║  ██║██║  ██║███████╗██║███████║
+                 ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝
+                """);
+    }
 }

@@ -66,9 +66,9 @@ public class DeckTest extends TestCase {
                 System.out.println(i+": "+card.edgeResource[i]);
             }
 
-            System.out.println("-FRONT REIGN-");
-            for(int i = 0; i<card.frontReigns.length; i++) {
-                System.out.println(card.frontReigns[i]);
+            System.out.println("-BACK REIGN-");
+            for(int i = 0; i<card.backReigns.length; i++) {
+                System.out.println(card.backReigns[i]);
             }
 
             System.out.println("-----------------------");

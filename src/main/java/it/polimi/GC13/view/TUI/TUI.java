@@ -22,7 +22,7 @@ public class TUI implements View {
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
-    private int turnPlayed = - 1;
+    private int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
@@ -35,6 +35,10 @@ public class TUI implements View {
     private final Printer printer = new Printer();
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
+
+    public TUI() {
+        this.printer.intro();
+    }
 
     @Override
     public void setVirtualServer(ServerInterface virtualServer) {
@@ -179,7 +183,6 @@ public class TUI implements View {
      */
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
-        String tokenColorChosen;
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
 
@@ -189,18 +192,16 @@ public class TUI implements View {
             System.out.println("Choose your token color: " + joiner);
             do {
                 try {
-                    tokenColorChosen = this.reader.readLine().toUpperCase();
+                    String tokenColorChosen = this.reader.readLine().toUpperCase();
+                    if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(tokenColorChosen))) {
+                        flag = true;
+                        // calls the controller to update the model
+                        this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
+                    } else {
+                        System.out.println("Color not valid, you can chose: " + joiner);
+                    }
                 } catch (IOException e) {
                     System.out.println("error in reading input");
-                    tokenColorChosen = null;
-                }
-                String finalTokenColor = tokenColorChosen; //per debugging
-                if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
-                    flag = true;
-                    // calls the controller to update the model
-                    this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
-                } else {
-                    System.out.println("Color not valid, you can chose: " + joiner);
                 }
             } while (!flag);
         } else {
@@ -249,7 +250,7 @@ public class TUI implements View {
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
 
         if (playerNickname.equals(this.nickname)) {
-            if (this.turnPlayed >= 0) {
+            if (serialCardPlaced <= 80) {
                 System.out.println(message);
                 this.showHomeMenu(); // show menu after placing a card
             } else {
@@ -296,7 +297,6 @@ public class TUI implements View {
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
         if (playerNickname.equals(this.nickname)) {
-            this.turnPlayed++;
             this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
             String message = "Your private objective card is " + serialPrivateObjectiveCard;
             System.out.println(message + ".");
@@ -314,7 +314,11 @@ public class TUI implements View {
      */
     @Override
     public void drawCard() {
-        this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
+        System.out.println("\n--- DRAWABLE CARDS ---");
+        System.out.println("--- Gold Deck ---");
+        this.printer.showDrawableCards(this.goldCardsAvailable);
+        System.out.println("\n\n--- Resource Deck ---");
+        this.printer.showDrawableCards(this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
             try {
                 do {
@@ -547,8 +551,8 @@ public class TUI implements View {
     }
 
     @Override
-    public void gameOver(String winner) {
-        if (winner.equals(this.nickname)) {
+    public void gameOver(Set<String> winner) {
+        if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
             this.printer.winnerString();
         } else {
             this.printer.loserString();
@@ -556,6 +560,11 @@ public class TUI implements View {
         this.printer.showPlayersScore(this.playersScore);
     }
 
+    /**
+     *
+     * @param key can be [global] or a player [nickname], it is used to map the chat
+     * @param message message sent in chat by the player
+     */
     private void registerChatMessage(String key, String message) {
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
@@ -615,9 +624,9 @@ public class TUI implements View {
             }
         }
         if (turn) {
-            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
+            this.gamesLog.add("It's " + playerNickname + "'s turn");
         } else {
-            this.gamesLog.add("\n" + playerNickname + " passed the turn");
+            this.gamesLog.add(playerNickname + " passed the turn");
         }
     }
 

@@ -1,13 +1,32 @@
 package it.polimi.GC13.view.TUI;
 
+import it.polimi.GC13.model.Deck;
+import it.polimi.GC13.model.ObjectObjective;
+import it.polimi.GC13.model.ObjectiveCard;
 import junit.framework.TestCase;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PrinterTest extends TestCase {
 
     public void testShowDrawableCards() {
+        Printer printer = new Printer();
+        Map<Integer, Boolean> goldCards = new HashMap<>();
+        Map<Integer, Boolean> resourceCards = new HashMap<>();
+        resourceCards.put(1, true);
+        resourceCards.put(2, false);
+        resourceCards.put(3, false);
+        goldCards.put(60, false);
+        goldCards.put(70, false);
+        goldCards.put(54, true);
 
+        System.out.println("\n--- DRAWABLE CARDS ---");
+        System.out.println("--- Gold Deck ---");
+        printer.showDrawableCards(goldCards);
+        System.out.println("\n\n--- Resource Deck ---");
+        printer.showDrawableCards(resourceCards);
     }
 
     public void testShowObjectiveCard() {
@@ -16,7 +35,7 @@ public class PrinterTest extends TestCase {
 
     public void testShowHand() {
         Printer printer = new Printer();
-        printer.showHand(List.of(84));
+        printer.showHand(List.of(82));
         System.out.println("\n");
 
         printer.showHand(List.of(13, 15, 67));
@@ -30,5 +49,16 @@ public class PrinterTest extends TestCase {
     public void testLoserString() {
         Printer printer = new Printer();
         printer.loserString();
+    }
+
+    public void testIntro(){
+        Printer printer = new Printer();
+        printer.intro();
+    }
+
+    public void testLinePrinterObjective(){
+        Printer printer = new Printer();
+        printer.showObjectiveCard("PRIVATE", List.of(98, 96));
+        printer.showObjectiveCard("COMMON", List.of(100, 101));
     }
 }

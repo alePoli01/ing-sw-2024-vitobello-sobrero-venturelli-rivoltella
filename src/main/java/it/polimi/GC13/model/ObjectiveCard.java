@@ -23,4 +23,5 @@ public abstract class ObjectiveCard implements Serializable {
 
     public abstract void printObjectiveCard();
 
+    public abstract void printLineObjectiveCard(int line);
 }

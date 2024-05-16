@@ -89,10 +89,10 @@ public class Board implements Serializable {
 
     /** place the card to the board
      *
-     * @param xy
-     * @param cardToPlace
-     * @param isFlipped
-     * @throws GenericException
+     * @param xy coordinate to place card
+     * @param cardToPlace card to place on the board
+     * @param isFlipped side to place the card
+     * @throws GenericException exception thrown in case the card isn't placed on the board for any reason
      */
     public void placeCardToTheBoard(Coordinates xy, PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
@@ -172,8 +172,8 @@ public class Board implements Serializable {
                 Arrays.stream(((StartCard) cardToPlace).reignBackPointEdge)
                         .filter(Resource::isReign)
                         .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
-            } else {
-                Arrays.stream(((StartCard) cardToPlace).frontReigns)
+
+                Arrays.stream(((StartCard) cardToPlace).backReigns)
                         .filter(Resource::isReign)
                         .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
             }

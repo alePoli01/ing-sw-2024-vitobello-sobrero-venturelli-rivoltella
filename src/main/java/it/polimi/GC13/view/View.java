@@ -8,6 +8,7 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMes
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface View {
 
@@ -61,5 +62,5 @@ public interface View {
 
     void onNewMessage(String sender, String receiver, String message);
 
-    void gameOver(String winner);
+    void gameOver(Set<String> winner);
 }

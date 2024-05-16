@@ -1,12 +1,15 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceStartCardMessage;
 import it.polimi.GC13.network.messages.fromclient.TokenChoiceMessage;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
 import it.polimi.GC13.view.GUI.FrameManager;
+import it.polimi.GC13.view.GUI.WaitingLobby;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-public class MainPage extends JFrame implements ActionListener, CardManager {
+public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
     private final static String TOKEN_DIR = "src/main/utils/token/";
     private final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
     private final static String TOKEN_FILE_SUFFIX = "_token.png";
@@ -47,17 +50,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     private List<Integer> hand;
 
 
-    JLabel starterCardFrontLabel;
-    JLabel starterCardBackLabel;
+   // JLabel starterCardFrontLabel;
+  //  JLabel starterCardBackLabel;
 
     private List<TokenColor> tokenColorList;
     private JPanel board;
     JPanel tokenPanel;
     JPanel namePanel;
     JPanel checkBoxPanel;
+    JPanel commonPanel;
     ButtonGroup buttonGroup;
     Map<JLabel, JCheckBox> tokenLabelCheckBox;
     private final JButton confirmButton;
+
+    private WaitingLobby lobby;
+    int progress = 0;
+    int colorIndex = 0;
 
 /*
     private ArrayList<JLabel> cardLabel;
@@ -75,7 +83,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         panelContainer.setBackground(new Color(237,230,188,255));
         add(panelContainer);
 
-        JLabel setupLabel = createTextLabelFont("setup phase [1/2] ", 32);
+        JLabel setupLabel = createTextLabelFont("setup phase [1/3] ", 28);
         setBorderInsets(setupLabel, 0, 0, 60, 0);
         panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
 
@@ -190,7 +198,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
 
 
     public void startCardSetup(){
-        JLabel setupLabel = createTextLabelFont("setup phase [2/2] ", 32);
+        JLabel setupLabel = createTextLabelFont("setup phase [2/3] ", 28);
         setBorderInsets(setupLabel, 0, 0, 60, 0);
         panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
 
@@ -198,7 +206,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         setBorderInsets(titleLabel, 0, 0, 60, 0);
         panelContainer.add(titleLabel, createGridBagConstraints(0, 1));
 
-        JLabel startCardLabel = createTextLabelFont("Choose which side you would like to place your start card: ", 28);
+        JLabel startCardLabel = createTextLabelFont("Choose which side you would like to place your start card: ", 32);
         setBorderInsets(startCardLabel, 0, 0, 90, 0);
         panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
 
@@ -206,29 +214,27 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         panelContainer.add(choosePanel, createGridBagConstraints(0,3));
         refresh();
 
-        //System.out.println(hand.getFirst());
-        //JOptionPane.showMessageDialog(this, hand.getFirst() !=null? "hand: "+ hand.getFirst() : "Culo"); //non va
+        showCard(hand.getFirst());
 
-        if(hand!=null) showCard(hand.getFirst());
-        else System.out.println("culo");
-
-
+        confirmButton.setText("Confirm");
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
         confirmButton.addActionListener (e -> {
             boolean isFlipped;
             for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
                 if (checkBox.isSelected()) {
                     isFlipped = !checkBox.getText().equals("Front");
-                    if (e.getActionCommand().equals("Select")) {
-                        //JOptionPane.showMessageDialog(null, "isFlipped: "+ isFlipped);
+                    if (e.getActionCommand().equals("Confirm")) {
+                        //JOptionPane.showMessageDialog(this, "isFlipped: "+ isFlipped);
                         frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
+                        createLobby();
+                        getContentPane().revalidate();
+                        getContentPane().repaint();
                     }
                     break;
                 }
             }
         });
     }
-
 
 
     private void refresh(){
@@ -270,12 +276,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
     public void showCard(Integer numberCard) {
         Path startDir = identifyPathCard(numberCard);
 
-        System.out.println(startDir);
-
         if(startDir != null){
             try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString()))) {
                 paths.forEach(path -> {
-                    System.out.println(path);
                     Image img = new ImageIcon(String.valueOf(path)).getImage();
                     JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
                     setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL");
@@ -291,7 +294,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
                         jCheckBox = new JCheckBox("true");
                     }
 
-                    setBorderInsets(startCardLabelText, 30, 124, 80, 120);
+                    setBorderInsets(startCardLabelText, 30, 230, 80, 230);
                     namePanel.add(startCardLabelText);
 
                     jCheckBox.setFocusPainted(false);
@@ -320,13 +323,217 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
 
                 for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
 
-                //   List<Path> fileList = Files.walk(startDir).filter(Files::isRegularFile).filter(f->f.getFileName().toString().contains(numberCard.toString())).toList();
-                //   fileList.forEach(path->cardIconList.add(new ImageIcon(String.valueOf(path))));
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
+
+
+    public void showCommonObjectiveCard(Integer numberCard) {
+        Path startDir = identifyPathCard(numberCard);
+
+        if(startDir != null){
+            try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString())).filter(f -> f.getFileName().toString().contains("front"))) {
+                paths.forEach(path -> {
+                    Image img = new ImageIcon(String.valueOf(path)).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null) / 3, img.getHeight(null) / 3, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL");
+                    commonPanel.add(startCardLabelImage);
+                });
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+
+    }
+
+
+    public void showPrivateObjectiveCard(Integer numberCard) {
+        Path startDir = identifyPathCard(numberCard);
+
+        if(startDir != null){
+            try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString())).filter(f -> f.getFileName().toString().contains("front"))) {
+                paths.forEach(path -> {
+                    Image img = new ImageIcon(String.valueOf(path)).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 20, 100, "ALL");
+                    tokenPanel.add(startCardLabelImage);
+
+                    JLabel startCardLabelText;
+                    JCheckBox jCheckBox;
+
+                    if(numberCard>=87 && numberCard<=94){
+                        startCardLabelText = createTextLabelFont("Pattern", 32);
+                    }else if(numberCard<=98){
+                        startCardLabelText = createTextLabelFont("Tris Reign", 32);
+                    }else {
+                        startCardLabelText = createTextLabelFont("Objects", 32);
+                    }
+
+                    jCheckBox = new JCheckBox(numberCard.toString());
+                    setBorderInsets(startCardLabelText, 0, 230, 80, 230);
+                    namePanel.add(startCardLabelText);
+
+                    jCheckBox.setFocusPainted(false);
+                    jCheckBox.setBorderPainted(false);
+                    jCheckBox.setForeground(panelContainer.getBackground());
+                    buttonGroup.add(jCheckBox);
+                    setBorderInsets(jCheckBox, 0, 140, 60, 125);
+                    jCheckBox.setOpaque(false);
+                    checkBoxPanel.add(jCheckBox);
+                    tokenLabelCheckBox.put(startCardLabelText, jCheckBox);
+                });
+
+                ActionListener actionListener = e -> {
+                    confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
+
+                    tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                    tokenLabelCheckBox.entrySet()
+                            .stream()
+                            .filter(en -> en.getValue().equals(e.getSource()))
+                            .findFirst()
+                            .orElseThrow()
+                            .getKey()
+                            .setForeground(Color.RED);
+                };
+
+                for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
+
+
+    @Override
+    public void createLobby(){
+        panelContainer.removeAll();
+        ArrayList<Color> colors = new ArrayList<>();
+
+        panelContainer.setLayout(new GridBagLayout());
+        panelContainer.setBackground(new Color(237,230,188,255));
+
+        for(int i=0; i<4; i++) {
+            colors.add(new Color(107, 189, 192));
+            colors.add(new Color(233, 73, 23));
+            colors.add(new Color(113, 192, 124));
+            colors.add(new Color(171, 63, 148));
+        }
+
+        JLabel label2 = createTextLabelFont("Waiting for the players: ", 30);
+        setBorderInsets(label2,30,0,30,0);
+        panelContainer.add(label2, createGridBagConstraints(0,1));
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setPreferredSize(new Dimension(300,30));
+        progressBar.setForeground(colors.get(colorIndex));
+        colorIndex++;
+        panelContainer.add(progressBar, createGridBagConstraints(0,2));
+
+        Timer timer = new Timer(100, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                progress += 5;
+                if (progress > 100) {
+                    progress = 0;
+                    progressBar.setForeground(colors.get(colorIndex));
+                    colorIndex = (colorIndex + 1) % colors.size();
+                }
+                progressBar.setValue(progress);
+            }
+        });
+        timer.start();
+    }
+
+
+    public void setupObjectiveCard(List<Integer> serialCommonObjectiveCard, List<Integer> privateObjectiveCards){
+        getContentPane().remove(panelContainer);
+        JScrollPane scrollPane = new JScrollPane(panelContainer);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setOpaque(false);
+        getContentPane().add(scrollPane);
+
+
+        JLabel setupLabel = createTextLabelFont("setup phase [3/3] ", 28); //20
+        setBorderInsets(setupLabel, 20, 0, 40, 0);
+        panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
+
+        JLabel titleLabel1 = createTextLabelFont("SETUP OBJECTIVE CARD: ", 64); //50
+        setBorderInsets(titleLabel1, 0, 0, 60, 0);
+        panelContainer.add(titleLabel1, createGridBagConstraints(0, 1));
+
+        JLabel startCardLabel = createTextLabelFont("These are the Common Objective Cards: ", 32); //25
+        setBorderInsets(startCardLabel, 0, 0, 40, 0);
+        panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
+
+        commonPanel = new JPanel(new FlowLayout());
+        commonPanel.setOpaque(false);
+        panelContainer.add(commonPanel, createGridBagConstraints(0, 3));
+
+        for(Integer commonCard : serialCommonObjectiveCard) {
+            showCommonObjectiveCard(commonCard);
+        }
+
+        JLabel titleLabel2 = createTextLabelFont("Choose your private objective card: ", 32);
+        setBorderInsets(titleLabel2, 40, 0, 40, 0);
+        panelContainer.add(titleLabel2, createGridBagConstraints(0, 4));
+
+        panelContainer.add(choosePanel, createGridBagConstraints(0,5));
+        refresh();
+
+        for(int privateCard : privateObjectiveCards) {
+            showPrivateObjectiveCard(privateCard);
+        }
+
+        confirmButton.setText("Let's Roll");
+        JPanel panelButton = new JPanel();
+        panelButton.setOpaque(false);
+        panelButton.add(confirmButton, createGridBagConstraints(0, 6));
+        setBorderInsets(panelButton, 0,10,30, 10);
+        panelContainer.add(panelButton, createGridBagConstraints(0, 6));
+        confirmButton.addActionListener (e -> {
+            int choice;
+            for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
+                if (checkBox.isSelected()) {
+                    choice = Integer.parseInt(checkBox.getText());
+                    if (e.getActionCommand().equals("Let's Roll")) {
+                        JOptionPane.showMessageDialog(this, "choice: "+ choice);
+                        frameManager.getVirtualServer().sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
+
+                        createLobby();
+                        getContentPane().revalidate();
+                        getContentPane().repaint();
+                    }
+                    break;
+                }
+            }
+        });
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -412,34 +619,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager {
         southPanel.add(Box.createHorizontalGlue());
         panel1.add(southPanel, BorderLayout.SOUTH);
 
-        //DA RIVEDERE/COMPLETARE
-        //Mappa serialnumber->ArrayList<Front, Back> ??
 
-     /*   starterCardFrontLabel = new JLabel();
-        starterCardBackLabel = new JLabel();
-        ArrayList<ImageIcon> iconStarter;
-        iconStarter = showCard(hand.getFirst());
-
-        starterCardBackLabel.setIcon(iconStarter.getFirst()); //back
-        starterCardFrontLabel.setIcon(iconStarter.getLast()); //front
-
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
-
-        starterCardFrontLabel.setBorder(border);
-        starterCardBackLabel.setBorder(border);
-        southPanel.add(starterCardFrontLabel);
-        southPanel.add(starterCardBackLabel);
-
-        starterCardFrontLabel.addMouseListener(new ClickListener());
-        starterCardBackLabel.addMouseListener(new ClickListener());
-
-        JButton confirm = createButton("Confirm", 20); //tasto per posizionare la carta al centro, una volta cliccato la carta si piazza in automatico
-        setBoxComponentSize(confirm, 120, 30);
-        confirm.addActionListener(this);
-        southPanel.add(confirm);
-
-        southPanel.add(Box.createHorizontalGlue());
-        panel1.add(southPanel, BorderLayout.SOUTH); */
 
 
 

@@ -4,8 +4,9 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
 import java.rmi.RemoteException;
+import java.util.Set;
 
-public record OnGameWinnerMessage(String winner) implements MessagesFromServer {
+public record OnGameWinnerMessage(Set<String> winner) implements MessagesFromServer {
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
         client.sendMessageFromServer(this);
