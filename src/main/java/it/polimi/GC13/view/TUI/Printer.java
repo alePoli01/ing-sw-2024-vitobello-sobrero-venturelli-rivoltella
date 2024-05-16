@@ -43,6 +43,7 @@ public class Printer {
             System.out.println();
         }
         cardsToDraw.keySet().forEach(key -> System.out.print("        [" + key.serialNumber + "]          "));
+        System.out.println();
     }
 
     /**
@@ -159,6 +160,7 @@ public class Printer {
     }
 
     public void intro(){
+        System.out.println();
         System.out.println("""
                  ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗    ███╗   ██╗ █████╗ ████████╗██╗   ██╗██████╗  █████╗ ██╗     ██╗███████╗
                 ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝    ████╗  ██║██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔══██╗██║     ██║██╔════╝

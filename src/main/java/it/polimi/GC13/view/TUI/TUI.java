@@ -278,7 +278,7 @@ public class TUI implements View {
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCards);
             try {
                 while (!privateObjectiveCards.contains(choice)) {
-                    System.out.print("Choose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
+                    System.out.print("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
                 }
 
@@ -317,7 +317,7 @@ public class TUI implements View {
         System.out.println("\n--- DRAWABLE CARDS ---");
         System.out.println("--- Gold Deck ---");
         this.printer.showDrawableCards(this.goldCardsAvailable);
-        System.out.println("\n\n--- Resource Deck ---");
+        System.out.println("\n--- Resource Deck ---");
         this.printer.showDrawableCards(this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
             try {
@@ -464,7 +464,7 @@ public class TUI implements View {
         String cellCoordinates = availableCells.stream()
                 .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
                 .collect(Collectors.joining("\n"));
-        System.out.println("Available cells: " + cellCoordinates + ".");
+        System.out.println("Available cells are:\n" + cellCoordinates + ".");
         this.showHomeMenu();
     }
 

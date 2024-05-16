@@ -19,6 +19,7 @@ public class DealingPhase implements GamePhase {
         try {
             Game game = this.controller.getGame();
             game.giveFirstCards();
+            game.getTable().tableSetup();
             game.setCommonObjectiveCards();
             game.dealPrivateObjectiveCards();
             game.setPlayersPosition();

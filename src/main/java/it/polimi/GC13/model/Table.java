@@ -1,6 +1,5 @@
 package it.polimi.GC13.model;
 
-import com.sun.jdi.Value;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.messages.fromserver.OnNewGoldCardsAvailableMessage;
@@ -126,20 +125,21 @@ public class Table implements Serializable {
     /*
         METHOD CALLED FROM DRAW CARD
      */
-    private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard cardToDraw, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
+    private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard drawnCard, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
         // if the card is covered
-        if (deckCardMap.get(cardToDraw)) {
-            // it removes the card from the deck
+        if (deckCardMap.get(drawnCard)) {
+            // it removes the card the first card from the deck because it was still available in case the other deck finished
             deckToManage.removeFirst();
         } else {
             // the old card that was covered is now visible
             deckCardMap.entrySet()
                     .stream()
                     .filter(Map.Entry::getValue)
-                    .forEach(entry -> entry.setValue(false));
+                    .findFirst()
+                    .ifPresent(entry -> entry.setValue(false));
         }
-        // it removes the card from the drawable
-        deckCardMap.remove(cardToDraw);
+        // it removes the card from the drawable cards
+        deckCardMap.remove(drawnCard);
         // it adds the card from the correct deck
         if (!deckCardMap.isEmpty()) {
             deckCardMap.put(deckToManage.getFirst(), true);

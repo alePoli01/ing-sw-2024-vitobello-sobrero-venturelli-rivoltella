@@ -58,11 +58,11 @@ public class Deck implements Serializable {
         Gson gson = new Gson();
 
         try {
-            BufferedReader readerPlayable = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../Decks.json"))));
-            BufferedReader readerStarter = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../Starter.json"))));
-            BufferedReader readerPattern = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../PatternObjective.json"))));
-            BufferedReader readerReign = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../ReignObjective.json"))));
-            BufferedReader readerObject = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../ObjectObjective.json"))));
+            BufferedReader readerPlayable = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("Decks.json"))));
+            BufferedReader readerStarter = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("Starter.json"))));
+            BufferedReader readerPattern = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("PatternObjective.json"))));
+            BufferedReader readerReign = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("ReignObjective.json"))));
+            BufferedReader readerObject = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("ObjectObjective.json"))));
 
             LinkedList<PatternObjective> PatternDeck;
             LinkedList<ReignObjective> ReignDeck;
@@ -76,7 +76,8 @@ public class Deck implements Serializable {
 
             // start Deck initialization
             Type starter = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
-            this.startDeck = gson.fromJson(readerStarter, starter);
+            Map<String, LinkedList<StartCard>> mapStarter = gson.fromJson(readerStarter, starter);
+            this.startDeck = mapStarter.get("startDeck");
 
             Type pattern = new TypeToken<Map<String, LinkedList<PatternObjective>>>(){}.getType();
             Map<String, LinkedList<PatternObjective>> mapPattern = gson.fromJson(readerPattern, pattern);

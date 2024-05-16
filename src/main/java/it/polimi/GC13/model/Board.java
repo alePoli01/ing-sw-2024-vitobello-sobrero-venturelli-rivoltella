@@ -115,13 +115,15 @@ public class Board implements Serializable {
             Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
             // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
-            if (isFlipped) {
-                this.availableCells.add(coordinatesToCheck);
-            } else if (resource.equals(Resource.NULL) && !this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
-                notAvailableCells.add(coordinatesToCheck);
-                // else it is added to availableCells
-            } else {
-                this.availableCells.add(coordinatesToCheck);
+            if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
+                if (isFlipped) {
+                    this.availableCells.add(coordinatesToCheck);
+                } else if (resource.equals(Resource.NULL)) {
+                    notAvailableCells.add(coordinatesToCheck);
+                    // else it is added to availableCells
+                } else {
+                    this.availableCells.add(coordinatesToCheck);
+                }
             }
             i++;
         }

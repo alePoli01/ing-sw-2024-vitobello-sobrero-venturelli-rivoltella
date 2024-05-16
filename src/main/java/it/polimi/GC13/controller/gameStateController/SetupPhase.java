@@ -17,7 +17,6 @@ public class SetupPhase implements GamePhase {
 
     private void prepareTable(Game game) {
         try {
-            game.getTable().tableSetup();
             game.dealStartCard();
             // sets initial player's score to zero
             game.getPlayerList()
