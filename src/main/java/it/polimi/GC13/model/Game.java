@@ -222,7 +222,7 @@ public class Game implements Serializable {
                     .stream()
                     .collect(Collectors.toSet());
         }
-        
+
         // create the set of the winners' nickname to send to the clients (views)
         Set<String> winnersNickname = this.winner.stream().map(Player::getNickname).collect(Collectors.toSet());
 

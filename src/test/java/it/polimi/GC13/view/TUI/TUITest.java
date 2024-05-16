@@ -9,12 +9,13 @@ public class TUITest extends TestCase {
 
     public void testGameOver() {
         TUI tui1 = new TUI();
-        TUI tui2 = new TUI();
 
         Set<String> winners = new HashSet<>();
         winners.add("player 1");
 
         tui1.gameOver(winners);
+
+        TUI tui2 = new TUI();
         tui2.gameOver(winners);
     }
 }
