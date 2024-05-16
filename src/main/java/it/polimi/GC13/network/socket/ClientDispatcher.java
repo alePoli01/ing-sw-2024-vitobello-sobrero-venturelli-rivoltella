@@ -7,13 +7,13 @@ import it.polimi.GC13.view.View;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
-public class ClientDispatcher implements Serializable,ClientDispatcherInterface {
+public class ClientDispatcher implements Serializable, ClientDispatcherInterface {
     private View view;
-    private final LinkedList<MessagesFromServer> messageFromServerList = new LinkedList<>();
-
-    public ClientDispatcher() {
-    }
+    private final BlockingDeque<MessagesFromServer> messageFromServerList = new LinkedBlockingDeque<>();
 
     public void setView(View view) {
         this.view = view;
@@ -21,13 +21,21 @@ public class ClientDispatcher implements Serializable,ClientDispatcherInterface 
 
     private void callMessages() {
         do {
-            this.messageFromServerList.removeFirst().methodToCall(view);
+            try {
+                this.messageFromServerList.takeFirst().methodToCall(view);
+            } catch (InterruptedException e) {
+                System.err.println("Interrupted while executing messages from server");
+            }
         } while (!this.messageFromServerList.isEmpty());
     }
 
     @Override
     public void registerMessageFromServer(MessagesFromServer messagesFromServer) {
-        this.messageFromServerList.addLast(messagesFromServer);
+        try {
+            this.messageFromServerList.put(messagesFromServer);
+        } catch (InterruptedException e) {
+            System.err.println("Interrupted while saving messages from server");
+        }
         this.callMessages();
     }
-    }
+}

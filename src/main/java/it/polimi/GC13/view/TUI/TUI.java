@@ -323,10 +323,9 @@ public class TUI implements View {
                 } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
 
                 this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
-                System.out.println("+++ Sent draw card");
+
                 this.choice = 0;
                 this.turnPlayed++;
-                System.out.println("You have passed the turn");
             } catch (IOException | NumberFormatException e) {
                 System.out.println("Error: Please put a number");
             }
@@ -615,13 +614,17 @@ public class TUI implements View {
                 } else {
                     this.menuOption();
                 }
-            } else if (!this.myTurn) { // at the end of the turn, the player will see the MAIN MENU
+            } else if (!this.myTurn) {
+                // at the end of the turn, the player will see the MAIN MENU
+                if (this.turnPlayed > 0) {
+                    System.out.println("You have passed the turn");
+                }
                 this.showHomeMenu();
             }
         }
         if (turn) {
             this.gamesLog.add("It's " + playerNickname + "'s turn");
-        } else {
+        } else if (this.turnPlayed > 0) {
             this.gamesLog.add(playerNickname + " passed the turn");
         }
     }
