@@ -5,6 +5,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
@@ -12,8 +13,10 @@ import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class FrameManager extends JFrame implements View {
@@ -198,11 +201,6 @@ public class FrameManager extends JFrame implements View {
 
     }
 
-    @Override
-    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
-        this.serialCommonObjectiveCard = serialCommonObjectiveCard;
-    }
-
 
     @Override
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
@@ -211,93 +209,52 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-
-
-
-
-
-
-
-    //TODO: ANCORA DA FARE --------------------------------------------------------------------------------------------------
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
-       /* String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
-        if (playerNickname.equals(this.nickname)) {
-            if (this.turnPlayed >= 0) {
-                System.out.println(message);
-                //this.printer.comeBack(this);
-            } else {
-                System.out.println(message + ".\nWaiting for other players...");
-            }
-        }
-        if (!this.playerPositions.containsKey(playerNickname)) {
+        //String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
+        if (!this.playersBoard.containsKey(playerNickname)) {
             this.playersBoard.put(playerNickname, new BoardView());
         }
-        this.gamesLog.add(message);
-        this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);*/
+        //this.gamesLog.add(message);
+        this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
+        //TODO: INSERIRE IL METODO PER PIAZZARE LA CARTA INIZIALE AL CENTRO DEL FRAME
+
+
+        // DA RENDERE HOMEMENU COME CRONOLOGIA DELLE AZIONI DEI GIOCATORI (+ ALTRO)
+      /*  if (playerNickname.equals(this.nickname)) {
+            if (this.turnPlayed >= 0) {
+                //System.out.println(message);
+                //this.showHomeMenu();
+            } else {
+                //System.out.println(message + ".\nWaiting for other players...");
+            }
+        }*/
     }
 
 
+    @Override
+    public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
+        this.serialCommonObjectiveCard = serialCommonObjectiveCard;
+    }
 
 
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
-        /*if (playerNickname.equals(this.nickname)) {
-            this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCards);
-            try {
-                while (!privateObjectiveCards.contains(choice)) {
-                    System.out.print("Choose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
-                    this.choice = Integer.parseInt(this.reader.readLine());
-                }
-                this.virtualServer.choosePrivateObjectiveCard(choice);
-                this.choice = 0;
-                //System.out.println("++Sent private objective card choice message");
-            } catch (NumberFormatException | IOException e) {
-                System.out.print("Error: Please put a number.\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
+        if (playerNickname.equals(this.nickname)) {
+            gamePage.getPanelContainer().removeAll();
+
+            for(Integer i: serialCommonObjectiveCard ){
+                System.out.println("Carta: " + i);
             }
-        }*/
-    }
 
-
-    @Override
-    public void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
-       /* if (playerNickname.equals(this.nickname)) {
-            this.turnPlayed++;
-            this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
-            String message = "Your private objective card is " + serialPrivateObjectiveCard;
-            System.out.println(message + ".");
-            this.gamesLog.add(message);
-        } else {
-            this.gamesLog.add(playerNickname + " choose private objective card");
+            gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
+            gamePage.getContentPane().revalidate();
+            gamePage.getContentPane().repaint();
         }
-        if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
-            System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
-        }*/
     }
 
-    @Override
-    public void drawCard() {
-     /*   this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
-        if (this.myTurn && this.hand.size() == 2) {
-            try {
-                do {
-                    System.out.print("Choose the card to withdraw: ");
-                    this.choice = Integer.parseInt(this.reader.readLine());
-                } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
-                this.virtualServer.drawCard(choice);
-                System.out.println("+++ Sent draw card");
-                this.choice = 0;
-                this.turnPlayed++;
-                System.out.println("You have passed the turn");
-                this.printer.comeBack(this);
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("Error: Please put a number");
-            }
-        } else {
-            System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
-            this.printer.comeBack(this);
-        }*/
-    }
+
+
 
 
     @Override
@@ -401,6 +358,61 @@ public class FrameManager extends JFrame implements View {
         }
         this.choice = 0;*/
     }
+
+
+
+
+
+    //TODO: ANCORA DA FARE --------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+    @Override
+    public void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
+       /* if (playerNickname.equals(this.nickname)) {
+            this.turnPlayed++;
+            this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
+            String message = "Your private objective card is " + serialPrivateObjectiveCard;
+            System.out.println(message + ".");
+            this.gamesLog.add(message);
+        } else {
+            this.gamesLog.add(playerNickname + " choose private objective card");
+        }
+        if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
+            System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
+        }*/
+    }
+
+    @Override
+    public void drawCard() {
+     /*   this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
+        if (this.myTurn && this.hand.size() == 2) {
+            try {
+                do {
+                    System.out.print("Choose the card to withdraw: ");
+                    this.choice = Integer.parseInt(this.reader.readLine());
+                } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
+                this.virtualServer.drawCard(choice);
+                System.out.println("+++ Sent draw card");
+                this.choice = 0;
+                this.turnPlayed++;
+                System.out.println("You have passed the turn");
+                this.printer.comeBack(this);
+            } catch (IOException | NumberFormatException e) {
+                System.out.println("Error: Please put a number");
+            }
+        } else {
+            System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
+            this.printer.comeBack(this);
+        }*/
+    }
+
+
+
 
 
 
