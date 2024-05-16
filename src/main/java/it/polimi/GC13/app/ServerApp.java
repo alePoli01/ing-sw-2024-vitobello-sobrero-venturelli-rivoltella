@@ -4,29 +4,44 @@ import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.network.socket.ServerDispatcher;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ServerApp {
     public static void main(String[] args) throws IOException {
-
-        if(args.length != 3) {
-            System.out.println("Missing Parameters, killing this server.");
-            System.out.println("HINT: metti | 'nome-server' 1099 456 | come parametri nella run configuration di ServerApp");
-            System.exit(-1);
-        }
         int RMIport = 0;
         int socketPort = 0;
-        try{
-            RMIport = Integer.parseInt(args[1]);
-            socketPort = Integer.parseInt(args[2]);
+        String rmiHostname = null;
 
-        } catch(NumberFormatException e) {
-            System.out.println("Illegal Argument Format, killing this server.");
+        if (args.length < 2) {
+            System.err.println("Missing Parameters, killing this server.");
+            System.err.println("HINT: metti | 'nome-server'(a cui ti vuoi collegare in RMI) 1099 456 | come parametri nella run configuration di ClientApp");
             System.exit(-1);
+        } else if (args.length == 2) {
+            try {
+                RMIport = Integer.parseInt(args[0]);
+                socketPort = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.err.println("Illegal Argument Format, killing this client.\nHINT: check port numbers");
+                System.exit(-1);
+            }
+            BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
+            System.out.println("Insert address of the Server:");
+            rmiHostname = reader.readLine();
+        } else {
+            try {
+                RMIport = Integer.parseInt(args[1]);
+                socketPort = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                System.err.println("Illegal Argument Format, killing this client.");
+                System.exit(-1);
+            }
+            rmiHostname = args[0];
         }
-        System.setProperty("java.rmi.server.hostname", args[0]);
+        System.setProperty("java.rmi.server.hostname", rmiHostname);
 
-        System.out.println("Hello from Server");
+        System.out.println("\u001B[35mHello from Server\u001B[0m");
         System.out.println("RMI HostName: " + System.getProperty("java.rmi.server.hostname"));
         System.out.println("RMI port: " + RMIport);
         System.out.println("Socket port: " + socketPort+"\n-------------\n");

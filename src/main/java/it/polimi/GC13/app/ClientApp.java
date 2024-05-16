@@ -17,32 +17,44 @@ import java.net.Socket;
 public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
+        int RMIport = 0;
+        int socketPort = 0;
+        String rmiHostname = null;
 
-        if (args.length != 3) {
+        if (args.length < 2) {
             System.err.println("Missing Parameters, killing this server.");
             System.err.println("HINT: metti | 'nome-server'(a cui ti vuoi collegare in RMI) 1099 456 | come parametri nella run configuration di ClientApp");
             System.exit(-1);
+        } else if (args.length == 2) {
+            try {
+                RMIport = Integer.parseInt(args[0]);
+                socketPort = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.err.println("Illegal Argument Format, killing this client.\nHINT: check port numbers");
+                System.exit(-1);
+            }
+            System.out.println("Insert address of the Server:");
+            rmiHostname = reader.readLine();
+        } else {
+            try {
+                RMIport = Integer.parseInt(args[1]);
+                socketPort = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                System.err.println("Illegal Argument Format, killing this client.");
+                System.exit(-1);
+            }
+            rmiHostname = args[0];
         }
-
-        int RMIport = 0;
-        int socketPort = 0;
-
-        try {
-            RMIport = Integer.parseInt(args[1]);
-            socketPort = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            System.err.println("Illegal Argument Format, killing this client.");
-            System.exit(-1);
-        }
-        System.setProperty("java.rmi.server.hostname", args[0]);
+        System.setProperty("java.rmi.server.hostname", rmiHostname);
 
         /*
         quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
         */
-        System.out.println("Hello from Client");
+        System.out.println("\u001B[35mHello from Client\u001B[0m");
         System.out.println("RMI port: " + RMIport);
         System.out.println("Socket port: " + socketPort + "\n");
-        BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
+
 
         int connectionChoice = 0;
         ServerInterface virtualServer = null;
