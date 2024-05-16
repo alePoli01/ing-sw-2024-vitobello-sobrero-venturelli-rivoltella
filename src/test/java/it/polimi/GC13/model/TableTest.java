@@ -6,14 +6,14 @@ import junit.framework.TestCase;
 public class TableTest extends TestCase {
     Table table =new Table(new Game(4, "test"));
 
-    private void backupCards(Table table,PlayableCard[] resourceCards,PlayableCard[] goldCards){
+    private void backupCards(Table table, PlayableCard[] resourceCards, PlayableCard[] goldCards) {
         //get first 3 cards of each deck
         for (int i = 0; i < 3; i++) {
-            System.out.println("carte numero:"+(i+1));
-            System.out.println("\tresource\t#"+table.getDeck().getResourceDeck().get(i).serialNumber);
-            System.out.println("\tgold\t\t#"+table.getDeck().getGoldDeck().get(i).serialNumber);
-            resourceCards[i]=table.getDeck().getResourceDeck().get(i);
-            goldCards[i]=table.getDeck().getGoldDeck().get(i);
+            System.out.println("carte numero:" + (i + 1));
+            System.out.println("\tresource\t#" + table.getDeck().getResourceDeck().get(i).serialNumber);
+            System.out.println("\tgold\t\t#" + table.getDeck().getGoldDeck().get(i).serialNumber);
+            resourceCards[i] = table.getDeck().getResourceDeck().get(i);
+            goldCards[i] = table.getDeck().getGoldDeck().get(i);
         }
     }
 
@@ -42,42 +42,40 @@ public class TableTest extends TestCase {
         assertSame(goldCards[2],table.getGoldFacedDown());
     }*/
 
-    public void testDrawCard(){
-        /** after setting up the table(all 4 cards faced up and 2 cards faced down)
-         *  remove one card at a time(3 resource then 3 gold)
-         *  try to remove 2 more(1 resource and 1 gold)
-         */
+    /** after setting up the table(all 4 cards faced up and 2 cards faced down)
+             remove one card at a time(3 resource then 3 gold)
+             try to remove 2 more(1 resource and 1 gold)
+     */
+    public void testDrawCard() {
+
         table.getDeck().shuffleDecks();
 
-        PlayableCard[] resourceCards= new PlayableCard[3];
-        PlayableCard[] goldCards= new PlayableCard[3];
+        PlayableCard[] resourceCards = new PlayableCard[3];
+        PlayableCard[] goldCards = new PlayableCard[3];
 
-        backupCards(table,resourceCards,goldCards);
+        backupCards(table, resourceCards, goldCards);
         table.tableSetup();
 
         //the fetched cards are on the table faced up now
-        for(int i=0;i<3;i++){
-            try{
+        for (int i = 0; i < 3; i++) {
+            try {
                 table.drawCard(resourceCards[i]);
                 table.drawCard(goldCards[i]);
-            }
-            catch(GenericException e1){
-                fail("card #"+resourceCards[i].serialNumber+" should be found on the table");
+            } catch (GenericException e1) {
+                fail("card #" + resourceCards[i].serialNumber + " should be found on the table");
             }
         }
         //now there's no cards on the table
-        try{
+        try {
             table.drawCard(resourceCards[0]);
-            fail("card #"+resourceCards[0].serialNumber+" should NOT be on the table");
-        }
-        catch(GenericException e){
+            fail("card #" + resourceCards[0].serialNumber + " should NOT be on the table");
+        } catch (GenericException e) {
             System.out.println(e.getMessage());
         }
-        try{
+        try {
             table.drawCard(goldCards[0]);
-            fail("card #"+goldCards[0].serialNumber+" should NOT be on the table");
-        }
-        catch(GenericException e){
+            fail("card #" + goldCards[0].serialNumber + " should NOT be on the table");
+        } catch (GenericException e) {
             System.out.println(e.getMessage());
         }
     }

@@ -93,7 +93,7 @@ public class Table implements Serializable {
     /*
         METHOD USED TO GET SERIAL NUMBER FROM PLAYABLE CARDS
      */
-    private Map<Integer, Boolean> getCardSerialMap(Map<PlayableCard, Boolean> cardMap) {
+    public Map<Integer, Boolean> getCardSerialMap(Map<PlayableCard, Boolean> cardMap) {
         return cardMap.entrySet()
                 .stream()
                 .collect(Collectors.toMap(e -> e.getKey().serialNumber, Map.Entry::getValue));
@@ -126,11 +126,8 @@ public class Table implements Serializable {
         METHOD CALLED FROM DRAW CARD
      */
     private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard drawnCard, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
-        // if the card is covered
-        if (deckCardMap.get(drawnCard)) {
-            // it removes the card the first card from the deck because it was still available in case the other deck finished
-            deckToManage.removeFirst();
-        } else {
+        // if the card isn't covered
+        if (!deckCardMap.get(drawnCard)) {
             // the old card that was covered is now visible
             deckCardMap.entrySet()
                     .stream()
@@ -138,12 +135,14 @@ public class Table implements Serializable {
                     .findFirst()
                     .ifPresent(entry -> entry.setValue(false));
         }
+        // it removes the card the first card from the deck because it was still available in case the other deck finished
+        deckToManage.removeFirst();
         // it removes the card from the drawable cards
         deckCardMap.remove(drawnCard);
         // it adds the card from the correct deck
-        if (!deckCardMap.isEmpty()) {
+        if (!deckToManage.isEmpty()) {
             deckCardMap.put(deckToManage.getFirst(), true);
-        } else if (backupDeck.get(1) != null) {
+        } else if (backupDeck.size() >= 2) {
             System.out.println("Card drawn from the backup deck");
             deckCardMap.put(backupDeck.get(1), true);
         } else {

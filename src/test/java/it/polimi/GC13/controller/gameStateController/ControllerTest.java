@@ -6,9 +6,12 @@ import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.view.TUI.BoardView;
+import it.polimi.GC13.view.TUI.Printer;
 import junit.framework.TestCase;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ControllerTest extends TestCase {
     Game game = new Game(2, "test");
@@ -153,13 +156,27 @@ public class ControllerTest extends TestCase {
         PlayableCard cardToDraw;
 
         if (flag) {
-            cardToDraw = this.player1.getTable().getResourceCardMap().keySet().stream().findAny().orElseThrow();
+            Printer printer = new Printer();
+            Map<PlayableCard, Boolean> cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            printer.showDrawableCards(this.player1.getTable().getCardSerialMap(cardToDrawMap));
+
+            cardToDrawMap.clear();
+
+            cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream()
+                    .filter(entry -> !entry.getValue())
+                    .findFirst()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+
+            cardToDraw = cardToDrawMap.keySet().stream().findFirst().orElseThrow();
 
             System.out.println("Test serial card to draw: " + cardToDraw.serialNumber);
             assert (this.game.getTable().getResourceCardMap().containsKey(cardToDraw));
+            assert (this.player1.isMyTurn());
 
             // METHOD TO CHECK
-            assert (this.player1.isMyTurn());
             this.midPhase.drawCard(player1, cardToDraw.serialNumber);
 
             // check that the player has the selected card in his hand and that hand size is 3
@@ -169,6 +186,11 @@ public class ControllerTest extends TestCase {
             assert (!this.player1.getTable().getResourceCardMap().containsKey(cardToDraw));
             assert (this.game.getTable().getGoldCardMap().size() == 3);
             assert (this.game.getTable().getResourceCardMap().size() == 3);
+
+            cardToDrawMap.clear();
+            cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            printer.showDrawableCards(this.player1.getTable().getCardSerialMap(cardToDrawMap));
+
         } else {
             cardToDraw = this.player1.getTable().getGoldCardMap().keySet().stream().findAny().orElseThrow();
 
