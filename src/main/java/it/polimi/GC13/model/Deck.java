@@ -4,10 +4,8 @@ package it.polimi.GC13.model;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Type;
-import java.io.FileReader;
-import java.io.IOException;
 
 import java.util.*;
 
@@ -59,13 +57,12 @@ public class Deck implements Serializable {
     public void parseJSON() {
         Gson gson = new Gson();
 
-        //lettura carte risorsa (
         try {
-            FileReader readerPlayable = new FileReader("src/main/resources/Decks.json");
-            FileReader readerStarter = new FileReader("src/main/resources/Starter.json");
-            FileReader readerPattern = new FileReader("src/main/resources/PatternObjective.json");
-            FileReader readerReign = new FileReader("src/main/resources/ReignObjective.json");
-            FileReader readerObject = new FileReader("src/main/resources/ObjectObjective.json");
+            BufferedReader readerPlayable = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../Decks.json"))));
+            BufferedReader readerStarter = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../Starter.json"))));
+            BufferedReader readerPattern = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../PatternObjective.json"))));
+            BufferedReader readerReign = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../ReignObjective.json"))));
+            BufferedReader readerObject = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Deck.class.getResourceAsStream("../ObjectObjective.json"))));
 
             LinkedList<PatternObjective> PatternDeck;
             LinkedList<ReignObjective> ReignDeck;
@@ -74,10 +71,12 @@ public class Deck implements Serializable {
             // resource / gold Deck initialization
             Type playable = new TypeToken<Map<String, LinkedList<PlayableCard>>>(){}.getType();
             Map<String, LinkedList<PlayableCard>> mapPlayable = gson.fromJson(readerPlayable, playable);
+            this.resourceDeck = mapPlayable.get("resourceDeck");
+            this.goldDeck = mapPlayable.get("goldDeck");
 
             // start Deck initialization
             Type starter = new TypeToken<Map<String, LinkedList<StartCard>>>(){}.getType();
-            Map<String, LinkedList<StartCard>> mapStarter = gson.fromJson(readerStarter, starter);
+            this.startDeck = gson.fromJson(readerStarter, starter);
 
             Type pattern = new TypeToken<Map<String, LinkedList<PatternObjective>>>(){}.getType();
             Map<String, LinkedList<PatternObjective>> mapPattern = gson.fromJson(readerPattern, pattern);
@@ -87,10 +86,6 @@ public class Deck implements Serializable {
 
             Type object = new TypeToken<Map<String, LinkedList<ObjectObjective>>>(){}.getType();
             Map<String, LinkedList<ObjectObjective>> mapObject = gson.fromJson(readerObject, object);
-
-            this.resourceDeck = mapPlayable.get("resourceDeck");
-            this.goldDeck = mapPlayable.get("goldDeck");
-            this.startDeck = mapStarter.get("startDeck");
 
             PatternDeck = mapPattern.get("PatternDeck");
             ReignDeck = mapReign.get("ReignDeck");
@@ -106,7 +101,7 @@ public class Deck implements Serializable {
             readerObject.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error parsing file from Json.");
         }
     }
 }

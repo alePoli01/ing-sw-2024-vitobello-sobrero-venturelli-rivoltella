@@ -1,0 +1,154 @@
+{
+  "startDeck": [
+    {
+      "serialNumber": 81,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "INSECT",
+        "EMPTY",
+        "PLANT",
+        "EMPTY"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "EMPTY",
+        "INSECT",
+        "EMPTY"
+      ],
+      "edgeResource": [
+        "INSECT",
+        "ANIMAL",
+        "PLANT",
+        "FUNGI"
+      ]
+    },
+    {
+      "serialNumber": 82,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "EMPTY",
+        "FUNGI",
+        "EMPTY",
+        "ANIMAL"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "EMPTY",
+        "FUNGI",
+        "EMPTY"
+      ],
+      "edgeResource": [
+        "FUNGI",
+        "INSECT",
+        "ANIMAL",
+        "PLANT"
+      ]
+    },
+    {
+      "serialNumber": 83,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "EMPTY",
+        "EMPTY",
+        "EMPTY",
+        "EMPTY"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "PLANT",
+        "EMPTY",
+        "FUNGI"
+      ],
+      "edgeResource": [
+        "FUNGI",
+        "PLANT",
+        "ANIMAL",
+        "INSECT"
+      ]
+    },
+    {
+      "serialNumber": 84,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "EMPTY",
+        "EMPTY",
+        "EMPTY",
+        "EMPTY"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "ANIMAL",
+        "EMPTY",
+        "INSECT"
+      ],
+      "edgeResource": [
+        "ANIMAL",
+        "FUNGI",
+        "INSECT",
+        "PLANT"
+      ]
+    },
+    {
+      "serialNumber": 85,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "NULL",
+        "NULL",
+        "EMPTY",
+        "EMPTY"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "ANIMAL",
+        "INSECT",
+        "PLANT"
+      ],
+      "edgeResource": [
+        "PLANT",
+        "ANIMAL",
+        "FUNGI",
+        "INSECT"
+      ]
+    },
+    {
+      "serialNumber": 86,
+      "reign": "NULL",
+      "cardType": "STARTER",
+      "reignBackPointEdge": [
+        "NULL",
+        "NULL",
+        "EMPTY",
+        "EMPTY"
+      ],
+      "resourceNeeded": {},
+      "pointsGiven": 0,
+      "condition": "",
+      "backReigns": [
+        "PLANT",
+        "ANIMAL",
+        "FUNGI"
+      ],
+      "edgeResource": [
+        "PLANT",
+        "INSECT",
+        "ANIMAL",
+        "FUNGI"
+      ]
+    }
+  ]
+}
