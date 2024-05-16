@@ -36,6 +36,10 @@ public class TUI implements View {
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
 
+    public TUI() {
+        this.printer.intro();
+    }
+
     @Override
     public void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
@@ -179,29 +183,25 @@ public class TUI implements View {
      */
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
-        String tokenColorChosen;
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
 
         if (readyPlayers == neededPlayers) {
-            this.printer.intro();
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
             System.out.println("Choose your token color: " + joiner);
             do {
                 try {
-                    tokenColorChosen = this.reader.readLine().toUpperCase();
+                    String tokenColorChosen = this.reader.readLine().toUpperCase();
+                    if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(tokenColorChosen))) {
+                        flag = true;
+                        // calls the controller to update the model
+                        this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
+                    } else {
+                        System.out.println("Color not valid, you can chose: " + joiner);
+                    }
                 } catch (IOException e) {
                     System.out.println("error in reading input");
-                    tokenColorChosen = null;
-                }
-                String finalTokenColor = tokenColorChosen; //per debugging
-                if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(finalTokenColor))) {
-                    flag = true;
-                    // calls the controller to update the model
-                    this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
-                } else {
-                    System.out.println("Color not valid, you can chose: " + joiner);
                 }
             } while (!flag);
         } else {
@@ -551,8 +551,8 @@ public class TUI implements View {
     }
 
     @Override
-    public void gameOver(String winner) {
-        if (winner.equals(this.nickname)) {
+    public void gameOver(Set<String> winner) {
+        if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
             this.printer.winnerString();
         } else {
             this.printer.loserString();
@@ -624,9 +624,9 @@ public class TUI implements View {
             }
         }
         if (turn) {
-            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
+            this.gamesLog.add("It's " + playerNickname + "'s turn");
         } else {
-            this.gamesLog.add("\n" + playerNickname + " passed the turn");
+            this.gamesLog.add(playerNickname + " passed the turn");
         }
     }
 

@@ -151,11 +151,11 @@ public class Table implements Serializable {
         }
     }
 
-    public void setPlayerScore(Player player, int newPlayerScore) {
+    public void setPlayerScore(Player player, int newPoints) {
         if (!this.playersScore.containsKey(player)) {
-            this.playersScore.put(player, newPlayerScore);
+            this.playersScore.put(player, newPoints);
         } else {
-            this.playersScore.computeIfPresent(player, (k, v) -> v + newPlayerScore);
+            this.playersScore.computeIfPresent(player, (k, v) -> v + newPoints);
         }
 
         this.game.getObserver().notifyClients(new OnPlayerScoreUpdateMessage(player.getNickname(), this.playersScore.get(player)));

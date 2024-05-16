@@ -474,7 +474,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public void gameOver(String winner) {
+    public void gameOver(Set<String> winner) {
 
     }
 

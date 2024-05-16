@@ -38,7 +38,7 @@ public class LobbyController implements LostConnectionToClientInterface {
 
     public void checkForExistingGame(ClientInterface client) throws RemoteException {
         // upon check just provide the answer
-        if(disconnectedClients.contains(client)){
+        if (disconnectedClients.contains(client)) {
             System.out.println("Disconnected client recognised");
         }
         //upon check just provide the answer

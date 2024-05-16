@@ -8,6 +8,7 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMes
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Game implements Serializable {
@@ -20,7 +21,7 @@ public class Game implements Serializable {
     private final String gameName;
     private final Observer observer;
     private final Map<String, List<String>> chat = new HashMap<>();
-    private Player winner;
+    private Set<Player> winner;
 
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
@@ -197,28 +198,63 @@ public class Game implements Serializable {
         this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
     }
 
-    public String setWinner() {
-        this.finalScoreCalculation();
-        this.winner = this.playerList.getFirst();
-        for (Player player : this.playerList) {
-            if (player.getScore() > winner.getScore()) {
-                winner = player;
-            }
+    public Set<String> setWinner() {
+        Map<Player, Integer> objectivesAchieved = new HashMap<>();
+        // in case two or more players have the same final score, the number of objectives achieved will be used to determine the winner
+        this.playerList.forEach(player -> objectivesAchieved.put(player, this.finalScoreCalculation(player)));
+
+        // Filter out players with the maximum score
+        Set<Player> playersWithHighestScore = this.getTable().getPlayersScore().entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .stream()
+                .collect(Collectors.toSet());
+
+        // if the size is 1, it's not necessary to check how many objective each player has achieved and the control is skipped
+        if (this.winner.size() > 1) {
+            Map<Player, Integer> objectiveAchievedByPlayersWithHighestScore = new HashMap<>();
+            playersWithHighestScore.forEach(player -> objectiveAchievedByPlayersWithHighestScore.put(player, objectivesAchieved.get(player)));
+
+            // adds to the winner set players with the highest number of objects achieved
+            this.winner = objectiveAchievedByPlayersWithHighestScore.entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .stream()
+                    .collect(Collectors.toSet());
         }
-        this.observer.notifyClients(new OnGameWinnerMessage(this.winner.getNickname()));
-        return winner.getNickname();
+        
+        // create the set of the winners' nickname to send to the clients (views)
+        Set<String> winnersNickname = this.winner.stream().map(Player::getNickname).collect(Collectors.toSet());
+
+        this.observer.notifyClients(new OnGameWinnerMessage(winnersNickname));
+        return winnersNickname;
     }
 
     /**
      * method used to calculate final score with private and common objective cards
      */
-    private void finalScoreCalculation() {
-        for (Player player : this.playerList) {
-            //set player score = player score + player's objective points(based on his board)
-            this.table.setPlayerScore(player,
-                    player.getTable().getPlayersScore().get(player)
-                            + player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
-            );
+    private int finalScoreCalculation(Player player) {
+        // used to track how many objective the player has achieved
+        AtomicInteger objectivesAchieved = new AtomicInteger(0);
+
+        // points scored with objective cards
+        AtomicInteger objectiveCommonCardsPoint = new AtomicInteger(0);
+        table.getCommonObjectiveCard().forEach(objectiveCard -> {
+                    // if the player achieved a point with a common objective card, the counter is incremented
+                    if (objectiveCard.getObjectivePoints(player.getBoard()) > 0) {
+                        objectivesAchieved.incrementAndGet();
+                        objectiveCommonCardsPoint.addAndGet(objectiveCard.getObjectivePoints(player.getBoard()));
+                    }
+                });
+
+        // if the player achieved a point with his private card, the counter is incremented
+        if (player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) > 0) {
+            objectivesAchieved.incrementAndGet();
         }
+
+        // add player's final score = player's private objective points (based on his board) + common objective points (based on his board)
+        this.table.setPlayerScore(player, player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
+                + objectiveCommonCardsPoint.get());
+        return objectivesAchieved.get();
     }
 }

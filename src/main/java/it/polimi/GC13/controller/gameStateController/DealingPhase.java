@@ -6,8 +6,6 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
-import java.util.List;
-
 public class DealingPhase implements GamePhase {
     private final Controller controller;
     private int readyPlayers = 0;
