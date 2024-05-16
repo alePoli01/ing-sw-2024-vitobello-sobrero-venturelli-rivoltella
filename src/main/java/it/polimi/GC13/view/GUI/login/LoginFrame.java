@@ -1,6 +1,5 @@
 package it.polimi.GC13.view.GUI.login;
 
-import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.AddPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromclient.CreateNewGameMessage;
 import it.polimi.GC13.view.GUI.BackgroundPanel;
@@ -23,19 +22,12 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private JTextField nicknameField;
     private JTextField gameNameField;
     private JList<String> existingGameList;
-
     private JButton loginButton;
-
-    final static String PANEL1 = "Panel 1";
-    final static String PANEL2 = "Panel 2";
-    private JPanel waitingLobby;
     int progress;
     int colorIndex = 0;
-
-    //PARTE NUOVA
     ArrayList<JRadioButton> radiobuttons;
     private FrameManager frameManager;
-    private JPanel cards;
+    private JPanel backgroundPanel;
     Object source;
     boolean flag;
     String nickname;
@@ -57,14 +49,9 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
-        cards = new JPanel(new CardLayout());
-        //JPanel cards = new JPanel(new CardLayout());
-        add(cards);
-
-        BackgroundPanel backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
+        backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
         backgroundPanel.setLayout(null);
-        cards.add(backgroundPanel, PANEL1);
+        getContentPane().add(backgroundPanel);
 
         JLabel nicknameLabel = createTextLabelFont("Insert your nickname: ", 20);
         setBoundsComponent(nicknameLabel, 345, 25, 5, -70);
@@ -89,7 +76,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setBoundsComponent(numPlayerLabel, 345, 25, 230, -40);
         backgroundPanel.add(numPlayerLabel);
 
-        //PARTE NUOVA
+
         this.frameManager = frameManager;
         ButtonGroup buttonGroup = new ButtonGroup();
         JPanel radioButtonPanel = new JPanel(new FlowLayout());
@@ -135,6 +122,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         backgroundPanel.add(loginButton);
         setVisible(true);
+
     }
 
 
@@ -145,11 +133,9 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel cards = new JPanel(new CardLayout());
-        add(cards);
 
-        BackgroundPanel backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
-        cards.add(backgroundPanel, PANEL1);
+        backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
+        getContentPane().add(backgroundPanel);
         backgroundPanel.setLayout(null);
 
         //insertion of the player nickname
@@ -225,15 +211,13 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nickname = nicknameField.getText();
-                //String gameName = existingGameList.getSelectedValue();
                 String gameName = map.get(existingGameList.getSelectedValue());
                 frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
                 frameManager.setNickname(nickname);
-                CardLayout cardLayout = (CardLayout) cards.getLayout();
                 if (e.getActionCommand().equals("Start")) {
-                    waitingLobby = createWaitingLobby();
-                    cards.add(waitingLobby, PANEL2);
-                    cardLayout.show(cards, PANEL2);
+                    createLobby();
+                    getContentPane().revalidate();
+                    getContentPane().repaint();
                 }
             }
         });
@@ -272,33 +256,29 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     }
 
     @Override
-    public JPanel createWaitingLobby(){
-        JPanel waitingLobby = new JPanel();
+    public void createLobby(){
+        backgroundPanel.removeAll();
         ArrayList<Color> colors = new ArrayList<>();
 
-        waitingLobby.setLayout(new GridBagLayout());
-        waitingLobby.setBackground(new Color(237,230,188,255));
+        backgroundPanel.setLayout(new GridBagLayout());
+        backgroundPanel.setBackground(new Color(237,230,188,255));
 
         for(int i=0; i<4; i++) {
-            colors.add(new Color(107, 189, 192, 255));
-            colors.add(new Color(233, 73, 23, 255));
-            colors.add(new Color(113, 192, 124, 255));
-            colors.add(new Color(171, 63, 148, 255));
+            colors.add(new Color(107, 189, 192));
+            colors.add(new Color(233, 73, 23));
+            colors.add(new Color(113, 192, 124));
+            colors.add(new Color(171, 63, 148));
         }
 
-        JLabel label = createTextLabelFont("Welcome to waiting lobby", 35);
-        setBorderInsets(label,0,0,70,0);
-        waitingLobby.add(label, createGridBagConstraints(0,0));
-
-        JLabel label2 = createTextLabelFont("Waiting for the players: ", 20);
-        setBorderInsets(label,0,0,50,0);
-        waitingLobby.add(label2, createGridBagConstraints(0,1));
+        JLabel label2 = createTextLabelFont("Waiting for the players: ", 30);
+        setBorderInsets(label2,30,0,30,0);
+        backgroundPanel.add(label2, createGridBagConstraints(0,0));
 
         JProgressBar progressBar = new JProgressBar(0, 100);
         progressBar.setPreferredSize(new Dimension(300,30));
         progressBar.setForeground(colors.get(colorIndex));
         colorIndex++;
-        waitingLobby.add(progressBar, createGridBagConstraints(0,2));
+        backgroundPanel.add(progressBar, createGridBagConstraints(0,1));
 
         Timer timer = new Timer(100, new ActionListener() {
             @Override
@@ -313,8 +293,6 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
             }
         });
         timer.start();
-
-        return waitingLobby;
     }
 
 
@@ -369,18 +347,12 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         if(source instanceof JRadioButton){
             playersNumber = Integer.parseInt(((JRadioButton) source).getText());
-            //System.out.println(playersNumber);
-            //flag = true;
         } else if(source instanceof JButton){
-            CardLayout cardLayout = (CardLayout) cards.getLayout();
-            //System.out.println(nickname);
-            //System.out.println(gameName);
-            //System.out.println(playersNumber);
             frameManager.getVirtualServer().sendMessageFromClient(new CreateNewGameMessage(nickname, playersNumber, gameName));
             frameManager.setNickname(nickname);
-            waitingLobby = createWaitingLobby();
-            cards.add(waitingLobby, PANEL2);
-            cardLayout.show(cards, PANEL2);
+            createLobby();
+            getContentPane().revalidate();
+            getContentPane().repaint();
         }
     }
 }

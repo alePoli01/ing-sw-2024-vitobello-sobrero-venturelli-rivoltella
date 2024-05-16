@@ -5,5 +5,5 @@ import it.polimi.GC13.enums.TokenColor;
 import javax.swing.*;
 
 public interface WaitingLobby {
-    JPanel createWaitingLobby();
+    void createLobby();
 }
