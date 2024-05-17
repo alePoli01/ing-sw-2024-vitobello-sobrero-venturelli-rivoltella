@@ -90,8 +90,9 @@ public class Table implements Serializable {
         this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(getCardSerialMap(this.resourceCardMap)));
     }
 
-    /*
+    /**
         METHOD USED TO GET SERIAL NUMBER FROM PLAYABLE CARDS
+        @param cardMap card map used to get serial number
      */
     public Map<Integer, Boolean> getCardSerialMap(Map<PlayableCard, Boolean> cardMap) {
         return cardMap.entrySet()
@@ -99,9 +100,10 @@ public class Table implements Serializable {
                 .collect(Collectors.toMap(e -> e.getKey().serialNumber, Map.Entry::getValue));
     }
 
-    /*
+    /**
         METHOD THAT IDENTIFIES THE TYPE OF THE CARD
         THEN CALLS THE METHOD TO UPDATE CARD/RESOURCE CARD MAP AND THE DECK
+        @param cardToDraw card to draw from the deck
      */
     public void drawCard(PlayableCard cardToDraw) throws GenericException {
         // if cardToDraw is the goldMap
@@ -116,10 +118,6 @@ public class Table implements Serializable {
         } else {
             throw new GenericException("Card: " + cardToDraw.serialNumber + " not found in any deck.");
         }
-        System.out.println("GOLD");
-        this.goldCardMap.forEach((card, side) -> System.out.println(card.serialNumber + " " + side + "; "));
-        System.out.println("RESOURCE");
-        this.resourceCardMap.forEach((card, side) -> System.out.println(card.serialNumber + " " + side + "; "));
     }
 
     /*

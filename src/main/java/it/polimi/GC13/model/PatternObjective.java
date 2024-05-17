@@ -328,7 +328,7 @@ public int getObjectivePoints(Board board) {
             switch (this.orientation) {
                 case (0): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║  │"+gold+"2"+reset+"│            ║");
+                    System.out.println("║  ║"+gold+"2"+reset+"║            ║");
                     System.out.println("║          "+black+backgroundRed+"  F  "+resetbackground+reset+"  ║");
                     System.out.println("║      "+black+backgroundRed+"  F  "+resetbackground+reset+"      ║");
                     System.out.println("║  "+black+backgroundRed+"  F  "+resetbackground+reset+"          ║");
@@ -337,7 +337,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (2): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║  │"+gold+"2"+reset+"│            ║");
+                    System.out.println("║  ║"+gold+"2"+reset+"║            ║");
                     System.out.println("║          "+black+backgroundBlue+"  A  "+resetbackground+reset+"  ║");
                     System.out.println("║      "+black+backgroundBlue+"  A  "+resetbackground+reset+"      ║");
                     System.out.println("║  "+black+backgroundBlue+"  A  "+resetbackground+reset+"          ║");
@@ -346,7 +346,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (1): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║            │"+gold+"2"+reset+"│  ║");
+                    System.out.println("║            ║"+gold+"2"+reset+"║  ║");
                     System.out.println("║  "+black+backgroundmagenta+"  I  "+resetbackground+reset+"          ║");
                     System.out.println("║      "+black+backgroundmagenta+"  I  "+resetbackground+reset+"      ║");
                     System.out.println("║          "+black+backgroundmagenta+"  I  "+resetbackground+reset+"  ║");
@@ -355,7 +355,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (3): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║            │"+gold+"2"+reset+"│  ║");
+                    System.out.println("║            ║"+gold+"2"+reset+"║  ║");
                     System.out.println("║  "+black+backgroundGreen+"  P  "+resetbackground+reset+"          ║");
                     System.out.println("║      "+black+backgroundGreen+"  P  "+resetbackground+reset+"      ║");
                     System.out.println("║          "+black+backgroundGreen+"  P  "+resetbackground+reset+"  ║");
@@ -367,7 +367,7 @@ public int getObjectivePoints(Board board) {
             switch (this.orientation) {
                 case (0): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║  │"+gold+"3"+reset+"│            ║");
+                    System.out.println("║  ║"+gold+"3"+reset+"║            ║");
                     System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
                     System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
                     System.out.println("║    "+black+backgroundmagenta+"  I  "+resetbackground+reset+"        ║");
@@ -376,7 +376,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (2): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║  │"+gold+"3"+reset+"│            ║");
+                    System.out.println("║  ║"+gold+"3"+reset+"║            ║");
                     System.out.println("║         "+black+backgroundRed+"  F  "+resetbackground+reset+"   ║");
                     System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
                     System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
@@ -385,7 +385,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (1): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║            │"+gold+"3"+reset+"│  ║");
+                    System.out.println("║            ║"+gold+"3"+reset+"║  ║");
                     System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
                     System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
                     System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
@@ -394,7 +394,7 @@ public int getObjectivePoints(Board board) {
                 }
                 case (3): {
                     System.out.println("╔═════════════════╗");
-                    System.out.println("║            │"+gold+"3"+reset+"│  ║");
+                    System.out.println("║            ║"+gold+"3"+reset+"║  ║");
                     System.out.println("║   "+black+backgroundBlue+"  A  "+resetbackground+reset+"         ║");
                     System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
                     System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
@@ -418,7 +418,7 @@ public int getObjectivePoints(Board board) {
                 case (0): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  │"+gold+"2"+reset+"│            ║");break;
+                        case 1:System.out.print("║  ║"+gold+"2"+reset+"║            ║");break;
                         case 2:System.out.print("║          "+black+backgroundRed+"  F  "+resetbackground+reset+"  ║");break;
                         case 3:System.out.print("║      "+black+backgroundRed+"  F  "+resetbackground+reset+"      ║");break;
                         case 4:System.out.print("║  "+black+backgroundRed+"  F  "+resetbackground+reset+"          ║");break;
@@ -429,7 +429,7 @@ public int getObjectivePoints(Board board) {
                 case (2): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  │"+gold+"2"+reset+"│            ║");break;
+                        case 1:System.out.print("║  ║"+gold+"2"+reset+"║            ║");break;
                         case 2:System.out.print("║          "+black+backgroundBlue+"  A  "+resetbackground+reset+"  ║");break;
                         case 3:System.out.print("║      "+black+backgroundBlue+"  A  "+resetbackground+reset+"      ║");break;
                         case 4:System.out.print("║  "+black+backgroundBlue+"  A  "+resetbackground+reset+"          ║");break;
@@ -441,7 +441,7 @@ public int getObjectivePoints(Board board) {
                 case (1): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            │"+gold+"2"+reset+"│  ║");break;
+                        case 1:System.out.print("║            ║"+gold+"2"+reset+"║  ║");break;
                         case 2:System.out.print("║  "+black+backgroundmagenta+"  I  "+resetbackground+reset+"          ║");break;
                         case 3:System.out.print("║      "+black+backgroundmagenta+"  I  "+resetbackground+reset+"      ║");break;
                         case 4:System.out.print("║          "+black+backgroundmagenta+"  I  "+resetbackground+reset+"  ║");break;
@@ -453,7 +453,7 @@ public int getObjectivePoints(Board board) {
                 case (3): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            │"+gold+"2"+reset+"│  ║");break;
+                        case 1:System.out.print("║            ║"+gold+"2"+reset+"║  ║");break;
                         case 2:System.out.print("║  "+black+backgroundGreen+"  P  "+resetbackground+reset+"          ║");break;
                         case 3:System.out.print("║      "+black+backgroundGreen+"  P  "+resetbackground+reset+"      ║");break;
                         case 4:System.out.print("║          "+black+backgroundGreen+"  P  "+resetbackground+reset+"  ║");break;
@@ -468,7 +468,7 @@ public int getObjectivePoints(Board board) {
                 case (0): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  │"+gold+"3"+reset+"│            ║");break;
+                        case 1:System.out.print("║  ║"+gold+"3"+reset+"║            ║");break;
                         case 2:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
                         case 3:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
                         case 4:System.out.print("║    "+black+backgroundmagenta+"  I  "+resetbackground+reset+"        ║");break;
@@ -479,7 +479,7 @@ public int getObjectivePoints(Board board) {
                 case (2): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  │"+gold+"3"+reset+"│            ║");break;
+                        case 1:System.out.print("║  ║"+gold+"3"+reset+"║            ║");break;
                         case 2:System.out.print("║         "+black+backgroundRed+"  F  "+resetbackground+reset+"   ║");break;
                         case 3:System.out.print("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");break;
                         case 4:System.out.print("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");break;
@@ -490,7 +490,7 @@ public int getObjectivePoints(Board board) {
                 case (1): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            │"+gold+"3"+reset+"│  ║");break;
+                        case 1:System.out.print("║            ║"+gold+"3"+reset+"║  ║");break;
                         case 2:System.out.print("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");break;
                         case 3:System.out.print("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");break;
                         case 4:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
@@ -501,7 +501,7 @@ public int getObjectivePoints(Board board) {
                 case (3): {
                     switch(line){
                         case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            │"+gold+"3"+reset+"│  ║");break;
+                        case 1:System.out.print("║            ║"+gold+"3"+reset+"║  ║");break;
                         case 2:System.out.print("║   "+black+backgroundBlue+"  A  "+resetbackground+reset+"         ║");break;
                         case 3:System.out.print("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");break;
                         case 4:System.out.print("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");break;

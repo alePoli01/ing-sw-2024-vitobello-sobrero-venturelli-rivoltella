@@ -134,7 +134,6 @@ public class Game implements Serializable {
             currNumPlayer++;
             this.table.getPlayerBoardMap().put(player, new Board(player));
             if (!this.playerList.contains(player)) {
-                System.out.println("lancio eccezione");
                 this.observer.notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), this.gameName));
                 throw new GenericException(player.getNickname() + " was not added to the game " + this.gameName);
             }

@@ -121,15 +121,11 @@ public class DeckTest extends TestCase {
             System.out.println("_______________");
         }
     }
-    public void testprintObjectiveCard() {
-        Deck deck=new Deck();
+
+    public void testPrintObjectiveCard() {
+        Deck deck = new Deck();
         for(ObjectiveCard card: deck.getObjectiveDeck()){
-
-                card.printObjectiveCard();
-
-            
+            card.printObjectiveCard();
         }
-
     }
-
 }

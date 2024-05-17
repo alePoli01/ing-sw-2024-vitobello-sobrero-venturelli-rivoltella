@@ -6,8 +6,8 @@ import junit.framework.TestCase;
 public class BoardViewTest extends TestCase {
 
     public void testPrintBoard() {
-        Deck deck=new Deck();
-        BoardView board=new BoardView();
+        Deck deck = new Deck();
+        BoardView board = new BoardView();
 
         /*board.InsertCard(49,49,42,4, true);
         board.InsertCard(51,51,42,1, false);
@@ -73,7 +73,7 @@ public class BoardViewTest extends TestCase {
         board.InsertCard(52,58,80,2, false);
         */
         
-        board.insertCard(50,50,86,0, false);
+        board.insertCard(50,50,83,0, true);
         board.insertCard(51,51,34,1, false);
         board.insertCard(52,52,41,2, false);
         board.insertCard(50,52,12,3, false);

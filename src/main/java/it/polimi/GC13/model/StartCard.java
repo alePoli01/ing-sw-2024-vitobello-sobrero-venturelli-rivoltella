@@ -48,7 +48,7 @@ public class StartCard extends PlayableCard {
         if (back) {
             System.out.println("╔═══╦═════════╦═══╗");
             System.out.println("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
-            System.out.println("╠═══╝  │"+ this.backReigns[0].toString() +this.backReigns[1].toString() +this.backReigns[2].toString() +"│  ╚═══╣");
+            System.out.println("╠═══╝  ║"+ this.backReigns[0].toString() +this.backReigns[1].toString() +this.backReigns[2].toString() +"║  ╚═══╣");
             System.out.println("╠═══╗         ╔═══╣");
             System.out.println("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
             System.out.println("╚═══╩═════════╩═══╝");
@@ -85,7 +85,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("╠═══╝         ╚═══╣");
@@ -140,7 +140,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("╠═══╝         ╚═══╣");
@@ -196,7 +196,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("╠═══╝         ╚═══╣");
@@ -252,7 +252,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ");
 
                         } else {
                             System.out.print("╠═══╝         ");
@@ -308,7 +308,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("         ╚═══╣");
@@ -365,7 +365,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("         ╚═══╣");
@@ -421,7 +421,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ");
 
                         } else {
                             System.out.print("╠═══╝         ");
@@ -478,7 +478,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("╠═══╝  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ╚═══╣");
+                            System.out.print("╠═══╝  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ╚═══╣");
 
                         } else {
                             System.out.print("╠═══╝         ╚═══╣");
@@ -534,7 +534,7 @@ public class StartCard extends PlayableCard {
                     }
                     case (2): {//third line printed
                         if (back) {
-                            System.out.print("  │" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "│  ");
+                            System.out.print("  ║" + this.backReigns[0].toString() + this.backReigns[1].toString() + this.backReigns[2].toString() + "║  ");
 
                         } else {
                             System.out.print("         ");

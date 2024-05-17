@@ -1,17 +1,12 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.network.LostConnectionToServerInterface;
-import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.view.View;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Objects;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class ClientDispatcher implements Serializable, ClientDispatcherInterface {
+public class ClientDispatcher implements ClientDispatcherInterface {
     private View view;
     private final BlockingDeque<MessagesFromServer> messageFromServerList = new LinkedBlockingDeque<>();
 

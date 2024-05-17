@@ -16,20 +16,23 @@ public class Board implements Serializable {
     private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);     //counter for each type of object present on the board
     private final List<Coordinates> availableCells = new LinkedList<>();
     private final List<Coordinates> notAvailableCells = new LinkedList<>();   // -> used to not add available cell
-    private final List<Coordinates> offset = new LinkedList<>();
+    private final List<Coordinates> offset = List.of(
+            new Coordinates(-1, +1),
+            new Coordinates(+1, +1),
+            new Coordinates(+1, -1),
+            new Coordinates(-1, -1)
+    );
 
-    //initialize all the values to zero
+    /**
+     *
+     * @param owner player that will place his cards on this board
+     */
     public Board(Player owner) {
         this.owner = owner;
         // populate map with 0 for each reign and object
         Arrays.stream(Resource.values()).sequential()
                 .filter(resource -> resource.isObject() || resource.isReign())
                 .forEach(resource -> collectedResources.put(resource, 0));
-        // offset to use in methods
-        this.offset.add(new Coordinates(-1, +1));
-        this.offset.add(new Coordinates(+1, +1));
-        this.offset.add(new Coordinates(+1, -1));
-        this.offset.add(new Coordinates(-1, -1));
     }
 
     public Map<Coordinates, Cell> getBoardMap() {
@@ -51,7 +54,6 @@ public class Board implements Serializable {
     }
 
     /**
-     *
      * @param X coordinate x
      * @param Y coordinate y
      * @return returns the coordinate from the board if it is possible to place or throw a GenericException
