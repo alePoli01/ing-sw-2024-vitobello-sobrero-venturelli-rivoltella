@@ -49,7 +49,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
+        backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
         backgroundPanel.setLayout(null);
         getContentPane().add(backgroundPanel);
 
@@ -134,7 +134,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        backgroundPanel = new BackgroundPanel("src/main/utils/CodexLogo.jpg", true);
+        backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
         getContentPane().add(backgroundPanel);
         backgroundPanel.setLayout(null);
 
@@ -350,6 +350,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         } else if(source instanceof JButton){
             frameManager.getVirtualServer().sendMessageFromClient(new CreateNewGameMessage(nickname, playersNumber, gameName));
             frameManager.setNickname(nickname);
+
             createLobby();
             getContentPane().revalidate();
             getContentPane().repaint();

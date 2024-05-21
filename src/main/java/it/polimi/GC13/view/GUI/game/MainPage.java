@@ -1,12 +1,11 @@
 package it.polimi.GC13.view.GUI.game;
 
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceStartCardMessage;
 import it.polimi.GC13.network.messages.fromclient.TokenChoiceMessage;
-import it.polimi.GC13.view.GUI.BackgroundPanel;
-import it.polimi.GC13.view.GUI.FrameManager;
-import it.polimi.GC13.view.GUI.WaitingLobby;
+import it.polimi.GC13.view.GUI.*;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -28,20 +27,28 @@ import java.util.stream.Stream;
 
 
 public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
-    private final static String TOKEN_DIR = "src/main/utils/token/";
+    private final static String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
     private final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
     private final static String TOKEN_FILE_SUFFIX = "_token.png";
     private final static String GREY_TOKEN_FILE_NAME = "grey";
 
-    private static final String RESOURCE_DIR = "src/main/utils/resource_card/";
-    private static final String GOLD_DIR = "src/main/utils/gold_card/";
-    private static final String STARTER_DIR = "src/main/utils/starter_card/";
-    private static final String OBJECTIVE_DIR = "src/main/utils/objective_card/";
+    private static final String RESOURCE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/resource_card/";
+    private static final String GOLD_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/gold_card/";
+    private static final String STARTER_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/starter_card/";
+    private static final String OBJECTIVE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/objective_card/";
 
-    private final JPanel panelContainer;
-    private JPanel choosePanel;
-    final static String PANEL1 = "Game";
-    final static String PANEL2 = "Scoreboard";
+    private final static String FUNGI_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/fungi_reign_logo.png";
+    private final static String ANIMAL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/animal_reign_logo.png";
+    private final static String PLANT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/plant_reign_logo.png";
+    private final static String INSECT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/insect_reign_logo.png";
+    private final static String QUILL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/quill.png";
+    private final static String MANUSCRIPT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/manuscript.png";
+    private final static String INKWELL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/inkwell.png";
+
+    private final static String FUNGI_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/fungi_judge.png";
+    private final static String ANIMAL_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/animal_judge.png";
+    private final static String PLANT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/plant_judge.png";
+    private final static String INSECT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/insect_judge.png";
 
     private FrameManager frameManager;
 
@@ -49,9 +56,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private TokenColor token;
     private List<Integer> hand;
 
-
-   // JLabel starterCardFrontLabel;
-  //  JLabel starterCardBackLabel;
+    private final JPanel panelContainer;
+    private JPanel choosePanel;
 
     private List<TokenColor> tokenColorList;
     private JPanel board;
@@ -61,11 +67,23 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     JPanel commonPanel;
     ButtonGroup buttonGroup;
     Map<JLabel, JCheckBox> tokenLabelCheckBox;
-    private final JButton confirmButton;
+    private JButton confirmButton;
+    private JButton flipButton;
 
     private WaitingLobby lobby;
     int progress = 0;
     int colorIndex = 0;
+
+    final static String PANEL1 = "Game";
+    final static String PANEL2 = "Scoreboard";
+
+    private JLabel turnLable;
+    Map<Integer, ArrayList<String>> handImageIcon;
+    private Map<String, Position> playerPositions;
+    private ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+
+
+
 
 /*
     private ArrayList<JLabel> cardLabel;
@@ -281,7 +299,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 paths.forEach(path -> {
                     Image img = new ImageIcon(String.valueOf(path)).getImage();
                     JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
-                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL");
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
                     tokenPanel.add(startCardLabelImage);
 
                     JLabel startCardLabelText;
@@ -338,7 +356,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 paths.forEach(path -> {
                     Image img = new ImageIcon(String.valueOf(path)).getImage();
                     JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null) / 3, img.getHeight(null) / 3, Image.SCALE_SMOOTH)));
-                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL");
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL", Color.BLACK, 1);
                     commonPanel.add(startCardLabelImage);
                 });
             } catch (IOException e) {
@@ -358,7 +376,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 paths.forEach(path -> {
                     Image img = new ImageIcon(String.valueOf(path)).getImage();
                     JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
-                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 20, 100, "ALL");
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 20, 100, "ALL", Color.BLACK, 1);
                     tokenPanel.add(startCardLabelImage);
 
                     JLabel startCardLabelText;
@@ -503,9 +521,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 if (checkBox.isSelected()) {
                     choice = Integer.parseInt(checkBox.getText());
                     if (e.getActionCommand().equals("Let's Roll")) {
-                        JOptionPane.showMessageDialog(this, "choice: "+ choice);
+                        //JOptionPane.showMessageDialog(this, "choice: "+ choice);
                         frameManager.getVirtualServer().sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
-
                         createLobby();
                         getContentPane().revalidate();
                         getContentPane().repaint();
@@ -514,28 +531,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 }
             }
         });
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -543,13 +539,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public void createGamePanel() {
         panelContainer.setLayout(new CardLayout());
         JPanel panel1 = new JPanel(new BorderLayout());
-        panel1.setVisible(false);
+        panel1.setOpaque(false);
 
         //da vedere sta parte
         JPanel panel2 = new JPanel(new BorderLayout());
         panel2.setBackground(new Color(237,230,188,255));
 
-        BackgroundPanel scoreboard = new BackgroundPanel("src/main/utils/scoreboard.png", false);
+        BackgroundPanel scoreboard = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png", false);
         scoreboard.setOpaque(false);
         panel2.add(scoreboard, BorderLayout.CENTER);
 
@@ -560,6 +556,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         //pagina 1: Game
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.LINE_AXIS));
+        setBorderInsets(northPanel, 15, 0, 15, 0);
 
         JButton buttonToScoreBoard = createButton("Go to scoreboard", 20);
         buttonToScoreBoard.addActionListener(this);
@@ -567,11 +564,18 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         northPanel.add(buttonToScoreBoard);
 
         northPanel.add(Box.createHorizontalGlue());
+        northPanel.add(Box.createHorizontalGlue());
 
-        //JLabel label = createTextLabelFont("Nickname giocatore", 16);
-        JLabel label = createTextLabelFont(nickname, 16);
-        northPanel.add(label);
+        JPanel turnNamePanel = new JPanel();
+        turnNamePanel.setOpaque(false);
+        turnNamePanel.setLayout(new BoxLayout(turnNamePanel, BoxLayout.Y_AXIS));
+        JLabel label = createTextLabelFont(nickname, 32);
+        turnNamePanel.add(label);
+        turnLable = createTextLabelFont("", 14);
+        turnNamePanel.add(turnLable);
+        northPanel.add(turnNamePanel);
 
+        northPanel.add(Box.createHorizontalGlue());
         northPanel.add(Box.createHorizontalGlue());
 
         JLabel rightLabel = new JLabel(createPlayableTokenImageIcon(token, 50));
@@ -586,16 +590,24 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         addScrollPane(board, panel1); //DA VERIFICARE SE ME LO METTE IN BORDERLAYOUT.CENTER
 
 
+        JPanel lateralPanelSX = new JPanel();
+
+        lateralPanelSX.setLayout(new BoxLayout(lateralPanelSX, BoxLayout.Y_AXIS));
+        setPlayerAvatar(lateralPanelSX);
+        panel1.add(lateralPanelSX, BorderLayout.WEST);
+
+
         JPanel lateralPanelDX = new JPanel();
+
         String[] columnNames = {"Reigns/Objects", "counter"};
         Object[][] data = {
-                {"Fungi", 0},
-                {"Animal", 0},
-                {"Plant", 0},
-                {"Insect", 0},
-                {"Quill", 0},
-                {"Manuscript", 0},
-                {"Inkwell", 0}
+                {createResizedTokenImageIcon(FUNGI_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(ANIMAL_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(PLANT_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(INSECT_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(QUILL_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(MANUSCRIPT_LOGO_DIR, 30), 0},
+                {createResizedTokenImageIcon(INKWELL_LOGO_DIR,30), 0}
         };
 
         JTable table = createTable(columnNames, data);
@@ -603,27 +615,68 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panel1.add(lateralPanelDX, BorderLayout.EAST);
 
 
-        JPanel southPanel = new JPanel();
+        JPanel southPanel = new JPanel(new FlowLayout());
         setBorderInsets(southPanel, 10, 0, 10, 0);
-        southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.LINE_AXIS));
 
-        southPanel.add(Box.createHorizontalGlue());
 
-        //QUI ANDRÀ LA STARTCARD IN MANO --> HAND
+        /*choosePanel = new JPanel(new GridBagLayout());
+        tokenPanel = new JPanel(new FlowLayout());
+        checkBoxPanel = new JPanel(new FlowLayout());*/
 
-        ImageIcon imgI1 = new ImageIcon("src/main/utils/starter_card/starter_card_front/starter_card_back_83.png");
-        Image img = imgI1.getImage().getScaledInstance(imgI1.getIconWidth()/6,imgI1.getIconHeight()/6,Image.SCALE_SMOOTH);
-        JLabel startCardLabel = new JLabel(new ImageIcon(img));
-        southPanel.add(startCardLabel, BorderLayout.SOUTH);
+        //DA SVUOTARE I TRE PANEL
 
-        southPanel.add(Box.createHorizontalGlue());
+        handImageIcon = showHand(hand);
+
+        for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()){
+            String frontIcon = entry.getValue().getLast();
+            Image img = new ImageIcon(frontIcon).getImage();
+            JLabel imageLabel = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/6 , img.getHeight(null)/6, Image.SCALE_SMOOTH)));
+            setCompoundBorderInsets(imageLabel, 0, 30, 0, 30, "ALL", Color.BLACK, 1);
+            tokenPanel.add(imageLabel);
+
+            JCheckBox jCheckBox = new JCheckBox("false");
+            jCheckBox.setFocusPainted(false);
+            jCheckBox.setBorderPainted(false);
+            jCheckBox.setForeground(panelContainer.getBackground());
+            buttonGroup.add(jCheckBox);
+            setBorderInsets(jCheckBox, 60, 100, 60, 100);
+            jCheckBox.setOpaque(false);
+            jCheckBox.addActionListener(this);
+            checkBoxPanel.add(jCheckBox);
+            checkBoxPanel.setOpaque(false);
+            tokenLabelCheckBox.put(imageLabel, jCheckBox);
+        }
+
+        choosePanel.add(tokenPanel, createGridBagConstraints(0,0));
+        choosePanel.add(checkBoxPanel, createGridBagConstraints(0,0));
+
+
+
+        namePanel =  new JPanel();
+        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
+
+        confirmButton = createButton("Confirm", 32);
+        confirmButton.addActionListener(this);
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setPreferredSize(new Dimension(200,5));
+        flipButton = createButton("Show Back", 32);
+        flipButton.addActionListener(this);
+
+        namePanel.add(confirmButton);
+        namePanel.add(emptyPanel);
+        namePanel.add(flipButton);
+
+        choosePanel.add(namePanel, createGridBagConstraints(1,0));
+
+        southPanel.add(namePanel, BorderLayout.SOUTH);
+        southPanel.add(choosePanel, BorderLayout.SOUTH);
+
         panel1.add(southPanel, BorderLayout.SOUTH);
 
 
 
 
-
-
+ /*
         JButton resourceDeck = createButton("Risorsa", 16);
         setBoxComponentSize(resourceDeck, 150, 40);
         //resourceDeck.setPreferredSize(new Dimension(150, 40));
@@ -632,7 +685,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setBoxComponentSize(goldDeck, 150, 40);
         //goldDeck.setPreferredSize(new Dimension(150, 40));
 
-     /*   //prova creazione popup
+      //prova creazione popup
         JButton popupButton = createButton("popup card", 16);
         setBoxComponentSize(popupButton, 150, 40);
         //popupButton.setPreferredSize(new Dimension(150, 40));
@@ -648,29 +701,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         //buttonGamePanel.setOpaque(false);
         JButton buttonToMainPage = createButton("Go to game", 20);
         setBoxComponentSize(buttonToMainPage, 180,40);
-        //buttonToMainPage.setPreferredSize(new Dimension(180, 40));
         buttonToMainPage.addActionListener(this);
         buttonGamePanel.add(buttonToMainPage);
         panel2.add(buttonGamePanel, BorderLayout.NORTH);
 
 
-        JPanel playersPanel = new JPanel();
-
-        String[] column = {"Order", "Nickname", "Token", "Score"};
-        Object[][] dataPlayers = {
-                {0, 0, "A", 0},
-                {0, 0, "B", 0},
-                {0, 0,  "C", 0},
-                {0, 0,  "D", 0}
-        };
-        JTable tablePlayer = createTable(column, dataPlayers);
-        addScrollPane(tablePlayer, playersPanel);
-        panel2.add(playersPanel, BorderLayout.WEST);
+        setVisible(true);
 
 
-        //inserimento dei token nella pagina
-
-        //TODO: fare in modo che ad ogni giocatore venga assegnato un token
 
         //int numPlayer = game.numPlayer; //devo usare numPlayer o .getCurrNumPlayer() ?
 /*
@@ -702,25 +740,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
-
     private static JTable createTable(String[] columnNames, Object[][] data) {
-        DefaultTableModel model = new DefaultTableModel(data, columnNames){
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
+        ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
         JTable table = new JTable(model);
+        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
 
         JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 30));
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-        table.setRowHeight(30);
+        table.setRowHeight(35);
 
         return table;
     }
@@ -728,10 +760,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     private static void addScrollPane(JComponent component, JPanel panel){
         JScrollPane scrollPane = new JScrollPane(component);
-        scrollPane.setPreferredSize(new Dimension(300, 243));
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        panel.add(component);
+        scrollPane.setPreferredSize(new Dimension(250, 285));
+        panel.add(scrollPane);
     }
 
 
@@ -767,29 +797,106 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         jComponent.setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
     }
 
-    private void setCompoundBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight, String inset) {
+    private void setCompoundBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight, String inset, Color color, int thickness) {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
         Border b = BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right);
         switch (inset) {
-            case "TOP" ->
-                    jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black)));
-            case "BOTTOM" ->
-                    jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black)));
-            case "ALL" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createLineBorder(Color.black)));
+            case "TOP" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black)));
+            case "BOTTOM" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black)));
+            case "ALL" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createLineBorder(color, thickness)));
         }
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+
+        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                .stream()
+                .filter(en -> en.getValue().equals(e.getSource()))
+                .findFirst()
+                .orElseThrow()
+                .getKey(), 0, 30, 0, 30, "ALL", new Color(255, 240, 1), 4);
+
+
         CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
         if (e.getActionCommand().equals("Go to scoreboard")) {
             cardLayout.show(panelContainer, PANEL2);
         } else if (e.getActionCommand().equals("Go to game")) {
             cardLayout.show(panelContainer, PANEL1);
-        } else if (e.getActionCommand().equals("Confirm")) {
-            //premendo confirm la carta viene posizionata in centro allo schermo
+        } else if (e.getActionCommand().equals("Show Back")) {
+            tokenPanel.removeAll();
+            checkBoxPanel.removeAll();
+            flipButton.setText("Show Front");
 
+            Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
+            while (checkBoxes.hasMoreElements()) {
+                AbstractButton button = checkBoxes.nextElement();
+                if (button instanceof JCheckBox) {
+                    buttonGroup.remove(button);
+                }
+            }
+
+            for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()){
+                String backIcon = entry.getValue().getFirst();
+                Image img = new ImageIcon(backIcon).getImage();
+                JLabel imageLabel = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/6 , img.getHeight(null)/6, Image.SCALE_SMOOTH)));
+                setCompoundBorderInsets(imageLabel, 0, 30, 0, 30, "ALL", Color.BLACK, 1);
+                tokenPanel.add(imageLabel);
+
+                JCheckBox jCheckBox;
+                jCheckBox = new JCheckBox("true");
+                jCheckBox.setFocusPainted(false);
+                jCheckBox.setBorderPainted(false);
+                jCheckBox.setForeground(panelContainer.getBackground());
+                buttonGroup.add(jCheckBox);
+                setBorderInsets(jCheckBox, 60, 100, 60, 100);
+                jCheckBox.setOpaque(false);
+                jCheckBox.addActionListener(this);
+                checkBoxPanel.add(jCheckBox);
+                checkBoxPanel.setOpaque(false);
+                tokenLabelCheckBox.put(imageLabel, jCheckBox);
+
+            }
+
+        }  else if (e.getActionCommand().equals("Show Front")) {
+            tokenPanel.removeAll();
+            checkBoxPanel.removeAll();
+            flipButton.setText("Show Back");
+
+            Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
+            while (checkBoxes.hasMoreElements()) {
+                AbstractButton button = checkBoxes.nextElement();
+                if (button instanceof JCheckBox) {
+                    buttonGroup.remove(button);
+                }
+            }
+
+            for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()) {
+                String frontIcon = entry.getValue().getLast();
+                Image img = new ImageIcon(frontIcon).getImage();
+                JLabel imageLabel = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null) / 6, img.getHeight(null) / 6, Image.SCALE_SMOOTH)));
+                setCompoundBorderInsets(imageLabel, 0, 30, 0, 30, "ALL", Color.BLACK, 1);
+                tokenPanel.add(imageLabel);
+
+                JCheckBox jCheckBox;
+                jCheckBox = new JCheckBox("false");
+                jCheckBox.setFocusPainted(false);
+                jCheckBox.setBorderPainted(false);
+                jCheckBox.setForeground(panelContainer.getBackground());
+                buttonGroup.add(jCheckBox);
+                setBorderInsets(jCheckBox, 60, 100, 60, 100);
+                jCheckBox.setOpaque(false);
+                jCheckBox.addActionListener(this);
+                checkBoxPanel.add(jCheckBox);
+                checkBoxPanel.setOpaque(false);
+                tokenLabelCheckBox.put(imageLabel, jCheckBox);
+
+            }
+
+        } else if (e.getActionCommand().equals("Confirm")) {
+            //inserisce l'immagine sul campo
         }
 
         /* } else if (e.getActionCommand().equals("popup card")){
@@ -840,43 +947,71 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         this.frameManager = frameManager;
     }
 
+    public JLabel getTurnLable() {
+        return turnLable;
+    }
+
+    public void setTurnLable(JLabel turnLable) {
+        this.turnLable = turnLable;
+    }
 
 
+    public Map<String, Position> getPlayerPositions() {
+        return playerPositions;
+    }
 
-    //metodo per mostrare la mano durante la partita (non lo uso per le carte starter)
-/*    public Map<Integer, ArrayList<ImageIcon>> showHand(List<Integer> hand) {
-        Map<Integer, ArrayList<ImageIcon>> handIcons = new HashMap<>();
+    public void setPlayerPositions(Map<String, Position> playerPositions) {
+        this.playerPositions = playerPositions;
+    }
+
+
+    public void setPlayerAvatar(JPanel lateralPanelSX){
+        Random random = new Random();
+
+        for (String player: playerPositions.keySet()) {
+            int randomIndex = random.nextInt(avatars.size());
+            String selectedAvatar = avatars.get(randomIndex);
+            avatars.remove(randomIndex);
+            JLabel label = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
+
+            JPanel playerAvatarPanel = new JPanel();
+            playerAvatarPanel.setOpaque(false);
+            JPanel playerNamePositionPanel = new JPanel();
+            playerNamePositionPanel.setOpaque(false);
+            playerNamePositionPanel.setLayout(new BoxLayout(playerNamePositionPanel, BoxLayout.Y_AXIS));
+            JLabel playerNameLabel = createTextLabelFont(player, 16);
+            playerNamePositionPanel.add(playerNameLabel);
+            JLabel playerPositionLabel = createTextLabelFont(playerPositions.get(player).toString().toLowerCase(), 12);
+            playerPositionLabel.setForeground(Color.GRAY);
+            playerNamePositionPanel.add(playerPositionLabel);
+            playerAvatarPanel.add(playerNamePositionPanel);
+            setBorderInsets(playerAvatarPanel, 5, 0, 15, 0);
+            playerAvatarPanel.add(label);
+            lateralPanelSX.add(playerAvatarPanel);
+        }
+    }
+
+
+    public Map<Integer, ArrayList<String>> showHand(List<Integer> hand) {
+        Map<Integer, ArrayList<String>> handIconsPaths = new HashMap<>();
 
         hand.forEach(serialCard -> {
-            Path startDir;
-            if(serialCard <= 40)
-                startDir = Paths.get(RESOURCE_DIR);
-            else if (serialCard <= 80)
-                startDir = Paths.get(GOLD_DIR);
-            else if (serialCard > 86 && serialCard <= 102)
-                startDir = Paths.get(OBJECTIVE_DIR);
-            else {
-                JOptionPane.showMessageDialog(this, "ErrorMsg: ", "Invalid card", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
+            Path startDir = identifyPathCard(serialCard);
             try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f->f.getFileName().toString().contains(serialCard.toString()))){
-                ArrayList<ImageIcon> cardIconList = new ArrayList<>();
-                paths.forEach(path-> cardIconList.add(new ImageIcon(String.valueOf(path))));
-                handIcons.put(serialCard, cardIconList);
-
-                //handIcons.put(serialCard, new ImageIcon(String.valueOf(path)))
-                //   List<Path> fileList = Files.walk(startDir).filter(Files::isRegularFile).filter(f->f.getFileName().toString().contains(serialCard.toString())).toList();
-                //   fileList.forEach(path->cardIconList.add(new ImageIcon(String.valueOf(path))));
+                ArrayList<String> cardIconList = new ArrayList<>();
+                paths.forEach(path-> {
+                    cardIconList.add(String.valueOf(path));
+                });
+                handIconsPaths.put(serialCard, cardIconList);
             } catch (IOException e){
                 JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
             }
         });
-
-
-        return handIcons;
+        return handIconsPaths;
     }
-    */
+
+
+
 
 
 }

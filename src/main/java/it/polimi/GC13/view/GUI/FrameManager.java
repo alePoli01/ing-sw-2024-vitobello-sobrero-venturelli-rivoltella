@@ -24,7 +24,7 @@ public class FrameManager extends JFrame implements View {
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
-    private int turnPlayed = - 1;
+    private int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
@@ -34,9 +34,11 @@ public class FrameManager extends JFrame implements View {
     private boolean cooking = false;
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
+    private int choice = -1;
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
+
 
 
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
@@ -61,7 +63,7 @@ public class FrameManager extends JFrame implements View {
                 this.hand.addAll(availableCard);
             }
         } else {
-            //this.gamesLog.add(playerNickname + " has drawn a card");
+            this.gamesLog.add(playerNickname + " has drawn a card");
         }
     }
 
@@ -99,7 +101,6 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
-        int choice;
         if (gameNameWaitingPlayersMap.isEmpty()) {
             if(loginFrame == null) {
                 SwingUtilities.invokeLater(() -> {
@@ -130,8 +131,8 @@ public class FrameManager extends JFrame implements View {
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this, gameNameWaitingPlayersMap));
             }
         }
+        choice = -1;
     }
-
 
     @Override
     public String getGameName() {
@@ -174,16 +175,15 @@ public class FrameManager extends JFrame implements View {
         if(playerNickname.equals(this.nickname)) {
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
-            //gamePage.createGamePanel();
             gamePage.startCardSetup();
 
             //da rivedere refreshFrame
             gamePage.getContentPane().revalidate();
             gamePage.getContentPane().repaint();
         }
+        this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
 
-    //DA TESTARE L'AGGIUNTA DEL PARAMETRO frame
     private void refreshFrame(JFrame frame){
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
@@ -201,13 +201,14 @@ public class FrameManager extends JFrame implements View {
             JOptionPane.showMessageDialog(this, onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
         }
+        this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
 
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
-
+        gamePage.setPlayerPositions(playerPositions);
     }
 
 
@@ -220,26 +221,22 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
-        //String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
         if (!this.playersBoard.containsKey(playerNickname)) {
             this.playersBoard.put(playerNickname, new BoardView());
         }
-        //this.gamesLog.add(message);
+        this.gamesLog.add( playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
+
         //TODO: INSERIRE IL METODO PER PIAZZARE LA CARTA INIZIALE AL CENTRO DEL FRAME
 
-
-        // DA RENDERE HOMEMENU COME CRONOLOGIA DELLE AZIONI DEI GIOCATORI (+ ALTRO)
-      /*  if (playerNickname.equals(this.nickname)) {
-            if (this.turnPlayed >= 0) {
-                //System.out.println(message);
+        if (playerNickname.equals(this.nickname)) {
+            if (serialCardPlaced <= 80) {
                 //this.showHomeMenu();
-            } else {
-                //System.out.println(message + ".\nWaiting for other players...");
-            }
-        }*/
+            } /*else {
+                System.out.println(message + ".\nWaiting for other players...");
+            }*/
+        }
     }
-
 
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
@@ -251,11 +248,6 @@ public class FrameManager extends JFrame implements View {
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
             gamePage.getPanelContainer().removeAll();
-
-            for(Integer i: serialCommonObjectiveCard ){
-                System.out.println("Carta: " + i);
-            }
-
             gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
             gamePage.getContentPane().revalidate();
             gamePage.getContentPane().repaint();
@@ -263,138 +255,207 @@ public class FrameManager extends JFrame implements View {
     }
 
 
+    @Override
+    public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
+        if (playerNickname.equals(this.nickname)) {
+            this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
+            this.gamesLog.add("Your private objective card is " + serialPrivateObjectiveCard + ".");
+        } else {
+            this.gamesLog.add(playerNickname + " choose private objective card");
+        }
+        if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
+            //provare a impostare una label in waitingLobby in cui si indica il numero di giocatori pronti sul totale
+        }
+    }
+
+
+    @Override
+    public void updateTurn(String playerNickname, boolean turn) {
+        if(playerNickname.equals(this.nickname)) {
+            //System.out.println("figa");
+            this.myTurn = turn;
+            if(this.turnPlayed == 0){
+                gamePage.getPanelContainer().removeAll();
+                gamePage.createGamePanel();
+                gamePage.getContentPane().revalidate();
+                gamePage.getContentPane().repaint();
+            }
+            if(this.myTurn){
+                gamePage.getTurnLable().setText("It's my turn!");
+            }else {
+                gamePage.getTurnLable().setText("waiting for my turn...");
+            }
+        }
+        if (turn) {
+            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
+        } else {
+            this.gamesLog.add("\n" + playerNickname + " passed the turn");
+        }
+    }
+
+
+
+    @Override
+    public void onNewMessage(String sender, String recipient, String message) {
+        if (recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        // CASE B -> BROADCAST MESSAGE
+        else if (recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        // CASE C -> I AM THE SENDER
+        else if (sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
+        }
+    }
+
+    private void registerChatMessage(String key, String message) {
+        if (this.chat.containsKey(key)) {
+            synchronized (this.chat.get(key)) {
+                this.chat.get(key).add(message);
+            }
+        } else {
+            synchronized (this.chat) {
+                this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
+            }
+        }
+        this.newMessage = true;
+    }
+
+
+
+    //METODO DA INVOCARE IN MAINPAGE
+    public void receiveActionFromGame(int action){
+        choice = action;
+        showHomeMenu();
+    }
+
+    public void receiveActionFromGame(int action, String playerChosen){
+        //viewPlayerBoard = playerChosen;
+        choice = action;
+        showHomeMenu();
+        //viewPlayerBoard = "";
+    }
 
 
 
     @Override
     public void showHomeMenu() {
-      /*  System.out.println("\n--- HOME MENU ---");
+        //System.out.println("\n--- HOME MENU ---");
         if (this.myTurn) {
-            System.out.println("It's your turn");
+            gamePage.getTurnLable().setText("It's your turn");
         } else {
-            System.out.println("It's not your turn");
+            gamePage.getTurnLable().setText("It's not your turn");
         }
-        System.out.println("\t[1] to view your hand");
+
+        //DA RIMUOVERE ALLA FINE
+        /*
         System.out.println("\t[2] to place a card (only when in turn)");
-        System.out.println("\t[3] to view common objective card");
-        System.out.println("\t[4] to view your private objective card");
-        System.out.println("\t[5] to view your board");
         System.out.println("\t[6] to view other players' board");
         System.out.println("\t[7] to send a message in the chat");
         System.out.println("\t[8] to show game's history");
         System.out.println("\t[9] to show players' turns");
         System.out.println("\t[10] to draw card (only when in turn)");
+        System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");*/
 
-        try {
-            do {
-                System.out.print("Your choice: ");
-                this.choice = Integer.parseInt(reader.readLine());
-                System.out.println("SELECTION: " + this.choice);
-                if (this.choice < 1 || this.choice > 10) {
-                    System.out.println("Invalid choice.");
-                }
-            } while (this.choice < 1 || this.choice > 10);
 
-        } catch (IOException e) {
-            System.out.print("Error: Please put a number: ");
-        }
         switch (this.choice) {
-            case 1: {
-                this.printer.showHand(this.hand);
-                this.printer.comeBack(this);
-                break;
-            }
+            //place a card
             case 2: {
                 this.placeCard();
-                // this.printer.comeBack(this); in method OnPlaceCard()
                 break;
             }
-            case 3: {
-                this.printer.showObjectiveCard("\n--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
-                this.printer.comeBack(this);
-                break;
-            }
-            case 4: {
-                this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", List.of(this.serialPrivateObjectiveCard));
-                this.printer.comeBack(this);
-                break;
-            }
-            case 5: {
-                this.playersBoard.get(this.nickname).printBoard();
-                this.printer.comeBack(this);
-                break;
-            }
+            //view other players' board
             case 6: {
-                try {
-                    String playerChosen;
-                    do {
-                        System.out.println("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]");
-                        System.out.print("Player: ");
-                        playerChosen = reader.readLine();
-                        while (!this.playersBoard.containsKey(playerChosen)) {
-                            System.out.print("Player " + playerChosen + " not found.\nEnter an existing player: ");
-                            playerChosen = reader.readLine();
-                        }
-                    } while (!this.playersBoard.containsKey(playerChosen));
-                    System.out.println("Player chosen: " + playerChosen);
-                    this.playersBoard.get(playerChosen).printBoard();
-                } catch (IOException e) {
-                    System.out.println("Error: Please put a number");
-                }
-                this.printer.comeBack(this);
+                this.cooking = true;
+
+
+                //System.out.println("Player chosen: " + playerChosen);
+                //this.playersBoard.get(viewPlayerBoard); // modificare metodo per mostrare board su schermo
+
+
+                this.cooking = false;
                 break;
             }
+            //send a message in the chat
             case 7: {
-                System.out.println("To do");
-                this.printer.comeBack(this);
+                this.cooking = true;
+                this.sendMessage();
+                this.cooking = false;
                 break;
             }
+            //show game's history
             case 8: {
-                this.printer.showHistory(this.gamesLog);
-                this.printer.comeBack(this);
+                //this.printer.showHistory(this.gamesLog);
                 break;
             }
+            //show players' turns
             case 9: {
+
                 System.out.println("Player's position are: ");
-                this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
-                // test -> this.playerPositions.forEach((key, value) -> System.out.print(String.join("\n", key + ": " + value)));
-                this.printer.comeBack(this);
+               // this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
                 break;
             }
-            case 10:
+            //draw card
+            case 10: {
                 this.drawCard();
                 break;
+            }
+            // view chat
+            case 12: {
+                //(this.newMessage ? "!" : "no new messages")
+                this.cooking = true;
+                synchronized (this.chat) {
+                    //this.printer.seeChat(this.chat); //adattare il metodo alla gui
+                    this.newMessage = false;
+                }
+                this.cooking = false;
+                break;
+            }
         }
-        this.choice = 0;*/
+        this.choice = -1;
     }
 
 
+
+    private void sendMessage() {
+   /*     try {
+            this.cooking = true;
+            String playerChosen;
+            String message;
+            do {
+                System.out.println("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [global]");
+                System.out.print("Player: ");
+                playerChosen = reader.readLine();
+                while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global"))) {
+                    System.out.print("Player " + playerChosen + " doesn't exist.\nEnter an existing player: ");
+                    playerChosen = reader.readLine();
+                }
+                System.out.print("Write down your message: ");
+                message = reader.readLine();
+            } while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global")));
+
+            this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
+        } catch (IOException e) {
+            System.err.println("Error parsing the name");
+        }*/
+    }
 
 
 
     //TODO: ANCORA DA FARE --------------------------------------------------------------------------------------------------
 
 
+    public void gameHistory(){
 
-
-
-
-
-    @Override
-    public void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
-       /* if (playerNickname.equals(this.nickname)) {
-            this.turnPlayed++;
-            this.serialPrivateObjectiveCard = serialPrivateObjectiveCard;
-            String message = "Your private objective card is " + serialPrivateObjectiveCard;
-            System.out.println(message + ".");
-            this.gamesLog.add(message);
-        } else {
-            this.gamesLog.add(playerNickname + " choose private objective card");
-        }
-        if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
-            System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
-        }*/
     }
+
+
+
+
+
+
 
     @Override
     public void drawCard() {
@@ -477,56 +538,8 @@ public class FrameManager extends JFrame implements View {
         }*/
     }
 
-
-
-    @Override
-    public void onNewMessage(String sender, String recipient, String message) {
-        if (recipient.equals(this.nickname)) {
-            this.registerChatMessage(sender, message);
-        }
-        // CASE B -> BROADCAST MESSAGE
-        else if (recipient.equals("global")) {
-            this.registerChatMessage("global", message);
-        }
-        // CASE C -> I AM THE SENDER
-        else if (sender.equals(this.nickname)) {
-            this.registerChatMessage(recipient, message);
-        }
-    }
-
     @Override
     public void gameOver(Set<String> winner) {
 
-    }
-
-    private void registerChatMessage(String key, String message) {
-        if (this.chat.containsKey(key)) {
-            synchronized (this.chat.get(key)) {
-                this.chat.get(key).add(message);
-            }
-        } else {
-            synchronized (this.chat) {
-                this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
-            }
-        }
-        this.newMessage = true;
-    }
-
-
-    @Override
-    public void updateTurn(String playerNickname, boolean turn) {
-      /*  if (playerNickname.equals(this.nickname)) {
-            this.myTurn = turn;
-            if (this.myTurn) {
-                this.showHomeMenu();
-            } else if (this.turnPlayed == 0) {
-                this.showHomeMenu();
-            }
-        }
-        if (turn) {
-            this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
-        } else {
-            this.gamesLog.add("\n" + playerNickname + " passed the turn");
-        }*/
     }
 }
