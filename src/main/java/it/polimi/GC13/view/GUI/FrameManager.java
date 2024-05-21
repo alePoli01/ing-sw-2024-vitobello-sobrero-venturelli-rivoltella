@@ -5,6 +5,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
@@ -40,7 +41,6 @@ public class FrameManager extends JFrame implements View {
     private MainPage gamePage;
 
 
-
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
     public FrameManager() {
     }
@@ -58,7 +58,7 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
         if (playerNickname.equals(this.nickname)) {
-            synchronized (this.hand){
+            synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
             }
@@ -95,14 +95,14 @@ public class FrameManager extends JFrame implements View {
 
 
     /**
-      JOINING PHASE
+     * JOINING PHASE
      * YES_OPTION --> create new game
      * NO_OPTION --> join an existing one
      */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         if (gameNameWaitingPlayersMap.isEmpty()) {
-            if(loginFrame == null) {
+            if (loginFrame == null) {
                 SwingUtilities.invokeLater(() -> {
                     loginFrame = new LoginFrame(this);
                     loginFrame.setAlwaysOnTop(true);
@@ -127,7 +127,7 @@ public class FrameManager extends JFrame implements View {
             if (choice == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this));
 
-            } else if (choice == JOptionPane.NO_OPTION){
+            } else if (choice == JOptionPane.NO_OPTION) {
                 SwingUtilities.invokeLater(() -> loginFrame = new LoginFrame(this, gameNameWaitingPlayersMap));
             }
         }
@@ -149,12 +149,12 @@ public class FrameManager extends JFrame implements View {
         if (readyPlayers == neededPlayers) {
             this.gameName = gameName;
             this.loginFrame.dispose();
-            if(gamePage == null){
+            if (gamePage == null) {
                 SwingUtilities.invokeLater(() -> {
                     gamePage = new MainPage(tokenColorList);
                     gamePage.setFrameManager(this);
                 });
-            } else{
+            } else {
                 gamePage.getChoosePanel().removeAll();
                 gamePage.showTokenChoose(tokenColorList);
                 refreshFrame(gamePage);
@@ -165,14 +165,14 @@ public class FrameManager extends JFrame implements View {
     }
 
     /**
-     SETUP PHASE methods to the player
-     startCardSetupPhase to chose which side to place your start card
+     * SETUP PHASE methods to the player
+     * startCardSetupPhase to chose which side to place your start card
      */
 
 
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
-        if(playerNickname.equals(this.nickname)) {
+        if (playerNickname.equals(this.nickname)) {
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
             gamePage.startCardSetup();
@@ -184,12 +184,12 @@ public class FrameManager extends JFrame implements View {
         this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
 
-    private void refreshFrame(JFrame frame){
+    private void refreshFrame(JFrame frame) {
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
     }
 
-    private void setDataSetupPhase(String playerNickname, TokenColor tokenColor){
+    private void setDataSetupPhase(String playerNickname, TokenColor tokenColor) {
         gamePage.setNickname(playerNickname);
         gamePage.setToken(tokenColor);
         gamePage.setHand(this.hand);
@@ -224,18 +224,11 @@ public class FrameManager extends JFrame implements View {
         if (!this.playersBoard.containsKey(playerNickname)) {
             this.playersBoard.put(playerNickname, new BoardView());
         }
-        this.gamesLog.add( playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
+        this.gamesLog.add(playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
 
         //TODO: INSERIRE IL METODO PER PIAZZARE LA CARTA INIZIALE AL CENTRO DEL FRAME
 
-        if (playerNickname.equals(this.nickname)) {
-            if (serialCardPlaced <= 80) {
-                //this.showHomeMenu();
-            } /*else {
-                System.out.println(message + ".\nWaiting for other players...");
-            }*/
-        }
     }
 
     @Override
@@ -271,18 +264,18 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
-        if(playerNickname.equals(this.nickname)) {
-            //System.out.println("figa");
+        if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
-            if(this.turnPlayed == 0){
+            if (this.turnPlayed == 0) {
                 gamePage.getPanelContainer().removeAll();
+
                 gamePage.createGamePanel();
                 gamePage.getContentPane().revalidate();
                 gamePage.getContentPane().repaint();
             }
-            if(this.myTurn){
+            if (this.myTurn) {
                 gamePage.getTurnLable().setText("It's my turn!");
-            }else {
+            } else {
                 gamePage.getTurnLable().setText("waiting for my turn...");
             }
         }
@@ -292,7 +285,6 @@ public class FrameManager extends JFrame implements View {
             this.gamesLog.add("\n" + playerNickname + " passed the turn");
         }
     }
-
 
 
     @Override
@@ -324,20 +316,18 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-
     //METODO DA INVOCARE IN MAINPAGE
-    public void receiveActionFromGame(int action){
+    public void receiveActionFromGame(int action) {
         choice = action;
         showHomeMenu();
     }
 
-    public void receiveActionFromGame(int action, String playerChosen){
+    public void receiveActionFromGame(int action, String playerChosen) {
         //viewPlayerBoard = playerChosen;
         choice = action;
         showHomeMenu();
         //viewPlayerBoard = "";
     }
-
 
 
     @Override
@@ -356,8 +346,7 @@ public class FrameManager extends JFrame implements View {
         System.out.println("\t[7] to send a message in the chat");
         System.out.println("\t[8] to show game's history");
         System.out.println("\t[9] to show players' turns");
-        System.out.println("\t[10] to draw card (only when in turn)");
-        System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");*/
+        System.out.println("\t[10] to draw card (only when in turn)");*/
 
 
         switch (this.choice) {
@@ -394,7 +383,7 @@ public class FrameManager extends JFrame implements View {
             case 9: {
 
                 System.out.println("Player's position are: ");
-               // this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
+                // this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
                 break;
             }
             //draw card
@@ -402,22 +391,12 @@ public class FrameManager extends JFrame implements View {
                 this.drawCard();
                 break;
             }
-            // view chat
-            case 12: {
-                //(this.newMessage ? "!" : "no new messages")
-                this.cooking = true;
-                synchronized (this.chat) {
-                    //this.printer.seeChat(this.chat); //adattare il metodo alla gui
-                    this.newMessage = false;
-                }
-                this.cooking = false;
-                break;
-            }
         }
         this.choice = -1;
     }
 
-
+    @Override
+    public void placeCard() {} //TODO: disattivare il tasto Confirm se la carta e la griglia non sono selezionate
 
     private void sendMessage() {
    /*     try {
@@ -443,18 +422,12 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-
     //TODO: ANCORA DA FARE --------------------------------------------------------------------------------------------------
 
 
-    public void gameHistory(){
+    public void gameHistory() {
 
     }
-
-
-
-
-
 
 
     @Override
@@ -482,17 +455,12 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-
-
-
-
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
       /*  System.out.println("Available cells are: ");
         System.out.println(availableCells);
         this.printer.comeBack(this);*/
     }
-
 
 
     @Override
@@ -504,42 +472,15 @@ public class FrameManager extends JFrame implements View {
         }*/
     }
 
-    @Override
-    public void placeCard() {
-     /*   if (this.myTurn && this.hand.size() == 3) {
-            int X = 0;
-            int Y = 0;
-            int serialCardToPlace = 0;
-            boolean isFlipped = false;
-            this.printer.showHand(this.hand);
-            System.out.println("Enter serial card, X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
-            System.out.println("example: " + this.hand.getFirst() + " (for serial card), 51 (for X), 51 (for Y), 1 (for side)");
-            Scanner scanner = new Scanner(System.in);
-            try {
-                serialCardToPlace = scanner.nextInt();
-                while (!this.hand.contains(serialCardToPlace)) {
-                    System.out.println("You don't have the selected card. Available are: ");
-                    this.hand.forEach(System.out::print);
-                    serialCardToPlace = scanner.nextInt();
-                }
-                X = (scanner.nextInt());
-                Y = (scanner.nextInt());
-                isFlipped = scanner.nextInt() == 2;
-            } catch (InputMismatchException e) {
-                System.out.print("Error: Please input valid numbers.");
-            }
-            this.virtualServer.placeCard(serialCardToPlace, isFlipped, X, Y);
-        } else if (!this.myTurn) {
-            System.out.println("It's not your turn");
-            this.printer.comeBack(this);
-        } else {
-            System.out.println("You have already placed a card. You need to draw a card to pass the turn.");
-            this.printer.comeBack(this);
-        }*/
-    }
 
     @Override
     public void gameOver(Set<String> winner) {
-
+        if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
+            //this.printer.winnerString();
+        } else {
+            //this.printer.loserString();
+        }
+        //this.printer.showPlayersScore(this.playersScore);
     }
+
 }

@@ -30,7 +30,7 @@ public interface View {
 
     void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial);
 
-    void checkForExistingGame();
+    void checkForExistingGame(); //TODO: non lo uso nella GUI
 
     void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap);
 
@@ -56,7 +56,7 @@ public interface View {
 
     void onSetLastTurn(String playerNickname, Position position);
 
-    void placeCard();
+    void placeCard(); //TODO: non lo uso nella GUI
 
     void updatePlayerScore(String playerNickname, int newPlayerScore);
 

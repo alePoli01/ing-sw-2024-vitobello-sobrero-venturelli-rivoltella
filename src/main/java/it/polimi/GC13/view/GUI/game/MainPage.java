@@ -537,6 +537,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
     public void createGamePanel() {
+        refresh();
         panelContainer.setLayout(new CardLayout());
         JPanel panel1 = new JPanel(new BorderLayout());
         panel1.setOpaque(false);
@@ -641,7 +642,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             buttonGroup.add(jCheckBox);
             setBorderInsets(jCheckBox, 60, 100, 60, 100);
             jCheckBox.setOpaque(false);
-            jCheckBox.addActionListener(this);
+            jCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+
+                    setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                            .stream()
+                            .filter(en -> en.getValue().equals(e.getSource()))
+                            .findFirst()
+                            .orElseThrow()
+                            .getKey(), 0, 30, 0, 30, "ALL", new Color(255, 240, 1), 4);
+                }
+            });
             checkBoxPanel.add(jCheckBox);
             checkBoxPanel.setOpaque(false);
             tokenLabelCheckBox.put(imageLabel, jCheckBox);
@@ -810,16 +823,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
-
-        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
-                .stream()
-                .filter(en -> en.getValue().equals(e.getSource()))
-                .findFirst()
-                .orElseThrow()
-                .getKey(), 0, 30, 0, 30, "ALL", new Color(255, 240, 1), 4);
-
-
         CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
         if (e.getActionCommand().equals("Go to scoreboard")) {
             cardLayout.show(panelContainer, PANEL2);
@@ -853,8 +856,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 buttonGroup.add(jCheckBox);
                 setBorderInsets(jCheckBox, 60, 100, 60, 100);
                 jCheckBox.setOpaque(false);
-                jCheckBox.addActionListener(this);
-                checkBoxPanel.add(jCheckBox);
+                jCheckBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+
+                        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().equals(e.getSource()))
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey(), 0, 30, 0, 30, "ALL", new Color(255, 240, 1), 4);
+                    }
+                });                checkBoxPanel.add(jCheckBox);
                 checkBoxPanel.setOpaque(false);
                 tokenLabelCheckBox.put(imageLabel, jCheckBox);
 
@@ -888,13 +902,23 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 buttonGroup.add(jCheckBox);
                 setBorderInsets(jCheckBox, 60, 100, 60, 100);
                 jCheckBox.setOpaque(false);
-                jCheckBox.addActionListener(this);
-                checkBoxPanel.add(jCheckBox);
+                jCheckBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+
+                        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().equals(e.getSource()))
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey(), 0, 30, 0, 30, "ALL", new Color(255, 240, 1), 4);
+                    }
+                });                checkBoxPanel.add(jCheckBox);
                 checkBoxPanel.setOpaque(false);
                 tokenLabelCheckBox.put(imageLabel, jCheckBox);
 
             }
-
         } else if (e.getActionCommand().equals("Confirm")) {
             //inserisce l'immagine sul campo
         }

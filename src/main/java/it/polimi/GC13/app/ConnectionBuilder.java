@@ -30,7 +30,7 @@ public class ConnectionBuilder {
 
     public View createView() {
         switch (this.viewChoice) {
-            case 0:
+            case 2:
                 this.view = new FrameManager();
                 break;
             case 1:
