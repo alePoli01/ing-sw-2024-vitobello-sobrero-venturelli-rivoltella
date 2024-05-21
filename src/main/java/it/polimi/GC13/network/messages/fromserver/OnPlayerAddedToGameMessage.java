@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNeeded) implements MessagesFromServer {
+public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNeeded, String gameName) implements MessagesFromServer {
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
@@ -18,6 +18,6 @@ public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNee
     @Override
     public void methodToCall(View view) {
         List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
-        view.chooseTokenSetupPhase(this.connectedPlayers, this.numPlayersNeeded, tokenColorList);
+        view.chooseTokenSetupPhase(this.connectedPlayers, this.numPlayersNeeded, tokenColorList, this.gameName());
     }
 }

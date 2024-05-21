@@ -139,7 +139,7 @@ public class Game implements Serializable {
             }
             System.out.println(player.getNickname() + " notified");
             System.out.println(this.observer.listenerList.size() + " listeners");
-            this.observer.notifyClients(new OnPlayerAddedToGameMessage(this.getCurrNumPlayer(), this.numPlayer));
+            this.observer.notifyClients(new OnPlayerAddedToGameMessage(this.getCurrNumPlayer(), this.numPlayer, this.getGameName()));
         } else {
             System.out.println("Error; max number of player reached: " + currNumPlayer);
         }

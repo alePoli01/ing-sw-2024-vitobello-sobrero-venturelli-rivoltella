@@ -1,20 +1,12 @@
 package it.polimi.GC13.app;
 
-import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
-import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
 import it.polimi.GC13.network.socket.ClientDispatcher;
-import it.polimi.GC13.network.socket.ClientDispatcherInterface;
-import it.polimi.GC13.network.socket.SocketServer;
-import it.polimi.GC13.view.GUI.FrameManager;
-import it.polimi.GC13.view.TUI.TUI;
 import it.polimi.GC13.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Socket;
-
 
 public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);
@@ -51,7 +43,7 @@ public class ClientApp {
         System.setProperty("java.rmi.server.hostname", rmiHostname);
 
         /*
-        quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
+            quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
         */
         System.out.println("\u001B[35mHello from Client\u001B[0m");
         System.out.println("RMI port: " + RMIport);
@@ -89,9 +81,9 @@ public class ClientApp {
         System.out.println("\u001B[33mStarting " + (viewChoice == 1 ? "TUI" : "GUI") + " with connection type " + (connectionChoice == 1 ? "RMI" : "SOCKET") + "\u001B[0m");
         clientDispatcher = new ClientDispatcher();
 
-        view = connectionBuilder.createView(view);
+        view = connectionBuilder.createView();
         clientDispatcher.setView(view);
-        virtualServer = connectionBuilder.createServerConnection(virtualServer, clientDispatcher);
+        virtualServer = connectionBuilder.createServerConnection(clientDispatcher);
         view.setVirtualServer(virtualServer);
         view.startView();
     }

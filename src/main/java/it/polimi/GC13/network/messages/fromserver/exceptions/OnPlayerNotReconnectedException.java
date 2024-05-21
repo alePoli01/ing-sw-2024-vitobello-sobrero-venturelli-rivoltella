@@ -24,9 +24,9 @@ public record OnPlayerNotReconnectedException(String playerNickname, int cause) 
 
     @Override
     public String getErrorMessage() {
-        if(cause==0){
+        if (cause == 0) {
             return "GameName not Found";
-        }else{
+        } else {
             return "PlayerName not Found";
         }
     }

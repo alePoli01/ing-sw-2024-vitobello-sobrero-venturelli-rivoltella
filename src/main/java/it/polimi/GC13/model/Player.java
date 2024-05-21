@@ -56,7 +56,7 @@ public class Player implements Serializable {
                         tokenColorsList.add(tc);
                     }
                 }
-                this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList));
+                this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList, this.game.getGameName()));
                 throw new GenericException(tokenColor + " already chose");
             }
             this.game.getObserver().notifyClients(new OnTokenChoiceMessage(this.getNickname(), this.tokenColor));

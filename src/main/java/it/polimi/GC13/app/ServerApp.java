@@ -57,11 +57,9 @@ public class ServerApp {
         RMIServer rmiServer = new RMIServer(controllerDispatcher,lobbyController);
         rmiServer.startServer(RMIport);
 
-
-
         //create an Accepter that will connect the server port and dispatcher to a client
         System.out.println("\u001B[33mStarting Socket server...\u001B[0m");
-        SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort,lobbyController);
+        SocketAccepter socketAccepter = new SocketAccepter(serverDispatcher, socketPort);
         //link the lobby the serverDispatcher that will be linked to the client, so that the lobby will be able to connect the client to the game
         lobbyController.setControllerDispatcher(controllerDispatcher);
         //start waiting for a client to connect

@@ -12,12 +12,15 @@ import java.util.Set;
 
 public interface View {
 
-    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList);
+    String getGameName();
+
+    String getNickname();
+
+    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName);
 
     void startView();
 
     void setVirtualServer(ServerInterface virtualServer);
-
 
     void handUpdate(String playerNickname, List<Integer> availableCard);
 
@@ -53,9 +56,6 @@ public interface View {
 
     void onSetLastTurn(String playerNickname, Position position);
 
-    /*
-        METHOD USED TO PLACE CARD ON THE BOARD
-    */
     void placeCard();
 
     void updatePlayerScore(String playerNickname, int newPlayerScore);

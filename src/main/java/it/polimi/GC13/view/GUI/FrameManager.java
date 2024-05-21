@@ -5,7 +5,6 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
@@ -13,15 +12,14 @@ import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class FrameManager extends JFrame implements View {
     protected ServerInterface virtualServer;
     private String nickname;
+    private String gameName;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
@@ -46,7 +44,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public void setVirtualServer(ServerInterface virtualServer) {
+    public synchronized void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
     }
 
@@ -136,8 +134,19 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
+    public String getGameName() {
+        return this.gameName;
+    }
+
+    @Override
+    public String getNickname() {
+        return this.nickname;
+    }
+
+    @Override
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         if (readyPlayers == neededPlayers) {
+            this.gameName = gameName;
             this.loginFrame.dispose();
             if(gamePage == null){
                 SwingUtilities.invokeLater(() -> {

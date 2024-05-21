@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class TUI implements View {
     private ServerInterface virtualServer;
     private String nickname;
+    private String gameName;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
@@ -41,7 +42,17 @@ public class TUI implements View {
     }
 
     @Override
-    public void setVirtualServer(ServerInterface virtualServer) {
+    public String getGameName() {
+        return this.gameName;
+    }
+
+    @Override
+    public String getNickname() {
+        return this.nickname;
+    }
+
+    @Override
+    public synchronized void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
     }
 
@@ -98,10 +109,13 @@ public class TUI implements View {
             }
         } else {
             //ask what the player wants to do
-            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game\n\t[3] to reconnect to the game");
+            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game");
             do {
                 try {
                     this.choice = Integer.parseInt(this.reader.readLine());
+                    while (this.choice < 1 || this.choice > 2) {
+                        System.out.println("Invalid choice");
+                    }
                 } catch (NumberFormatException | IOException e) {
                     System.out.println("Error: Please put a number");
                 }
@@ -179,10 +193,13 @@ public class TUI implements View {
         waiting when readPlayers < neededPlayers
      */
     @Override
-    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
         if (readyPlayers == neededPlayers) {
+            if (this.gameName == null) {
+                this.gameName = gameName;
+            }
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
             System.out.println("Choose your token color: " + joiner);

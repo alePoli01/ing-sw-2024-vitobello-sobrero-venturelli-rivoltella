@@ -7,6 +7,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface ServerDispatcherInterface extends Remote {
-
     void sendToControllerDispatcher(MessagesFromClient messagesFromClient, ClientInterface client) throws RemoteException;
 }

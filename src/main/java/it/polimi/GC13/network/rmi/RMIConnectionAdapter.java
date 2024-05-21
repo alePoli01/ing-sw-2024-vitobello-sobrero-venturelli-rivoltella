@@ -20,8 +20,6 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
     public RMIServerInterface serverStub;
     private final ClientDispatcherInterface clientDispatcher;
     private boolean connectionOpen = true;
-    private String gameName="2"; //used to reconnect to the server automatically
-    private String playerName="caio";
 
     public RMIConnectionAdapter(ClientDispatcherInterface clientDispatcher) throws RemoteException {
         super();
@@ -30,9 +28,8 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
     }
 
     /*
-    clientAdapter: implements ServerInterface, view uses the adapter to ignore the remote exception (view's code shouldn't change regardless of connection type)
-
-    RMIServer: implements RMIServerInterface, identical to ServerInterface but requires the client
+        clientAdapter: implements ServerInterface, view uses the adapter to ignore the remote exception (view's code shouldn't change regardless of connection type)
+        RMIServer: implements RMIServerInterface, identical to ServerInterface but requires the client
     */
     public ServerInterface startRMIConnection(String hostName, int port) throws RemoteException {
         System.out.println("Starting RMI connection to " + hostName + ":" + port + " ...");
@@ -55,22 +52,11 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-    @Override
-    public String getGameName() {
-        return gameName;
-    }
-
-    @Override
-    public String getPlayerName() {
-        return playerName;
     }
 
     @Override
     public boolean isConnectionOpen() {
-        return connectionOpen;
+        return this.connectionOpen;
     }
 
     @Override

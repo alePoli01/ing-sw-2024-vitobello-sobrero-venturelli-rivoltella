@@ -11,11 +11,13 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
     private final String errorMessage;
     private final ArrayList<TokenColor> availableTokenColors;
     private final String playerNickname;
+    private final String gameName;
 
-    public OnTokenAlreadyChosenMessage(String playerNickname, TokenColor token, ArrayList<TokenColor> tokenColors) {
+    public OnTokenAlreadyChosenMessage(String playerNickname, TokenColor token, ArrayList<TokenColor> tokenColors, String gameName) {
         errorMessage = token.toString() + " is already chosen. Available colors are:";
         this.availableTokenColors = tokenColors;
         this.playerNickname = playerNickname;
+        this.gameName = gameName;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
 
     @Override
     public void methodToRecall(View TUI) {
-        TUI.chooseTokenSetupPhase(0, 0, availableTokenColors);
+        TUI.chooseTokenSetupPhase(0, 0, availableTokenColors, this.gameName);
     }
 
     @Override
