@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.socket;
 
+import it.polimi.GC13.app.ConnectionBuilder;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
@@ -16,21 +17,22 @@ import java.util.concurrent.*;
     server where they'll be elaborated
  */
 public class SocketServer implements ServerInterface, Runnable {
-
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    private final ClientDispatcherInterface clientDispatcher;
+    private final ClientDispatcher clientDispatcher;
     private boolean connectionOpen = true;
+    private final ConnectionBuilder connectionBuilder;
 
-    public ClientDispatcherInterface getClientDispatcher() {
+    public ClientDispatcher getClientDispatcher() {
         return this.clientDispatcher;
     }
 
-    public SocketServer(Socket socket, ClientDispatcherInterface clientDispatcher) throws IOException {
+    public SocketServer(Socket socket, ClientDispatcher clientDispatcher, ConnectionBuilder connectionBuilder) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.outputStream.flush();
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
+        this.connectionBuilder = connectionBuilder;
     }
 
 
@@ -45,8 +47,7 @@ public class SocketServer implements ServerInterface, Runnable {
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
-            this.connectionOpen = false;
+            System.out.println(e.getMessage() + " errore nel mandare messaggio al server");
         }
     }
 
@@ -66,6 +67,8 @@ public class SocketServer implements ServerInterface, Runnable {
                 if (this.connectionOpen) {
                     this.connectionOpen = false;
                 }
+                System.out.println("\nError registering message from Server, trying to remap...");
+                this.connectionBuilder.connectionLost(this);
             }
         }
         executorService.shutdown();

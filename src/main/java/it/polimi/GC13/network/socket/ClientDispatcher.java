@@ -6,7 +6,7 @@ import it.polimi.GC13.view.View;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class ClientDispatcher implements ClientDispatcherInterface {
+public class ClientDispatcher {
     private View view;
     private final BlockingDeque<MessagesFromServer> messageFromServerList = new LinkedBlockingDeque<>();
 
@@ -24,7 +24,6 @@ public class ClientDispatcher implements ClientDispatcherInterface {
         } while (!this.messageFromServerList.isEmpty());
     }
 
-    @Override
     public void registerMessageFromServer(MessagesFromServer messagesFromServer) {
         try {
             this.messageFromServerList.put(messagesFromServer);

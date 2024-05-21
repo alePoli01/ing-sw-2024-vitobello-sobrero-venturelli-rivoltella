@@ -1,7 +1,6 @@
 package it.polimi.GC13.network.messages.fromserver;
 
 import it.polimi.GC13.network.ClientInterface;
-import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.view.View;
 
 import java.io.Serializable;

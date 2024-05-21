@@ -2,7 +2,7 @@ package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
-import it.polimi.GC13.network.socket.ClientDispatcherInterface;
+import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.TUI.TUI;
@@ -44,42 +44,45 @@ public class ConnectionBuilder {
         return view;
     }
 
-    public ServerInterface createServerConnection(ClientDispatcherInterface clientDispatcher) throws RemoteException {
+    public ServerInterface createServerConnection(ClientDispatcher clientDispatcher) throws RemoteException {
         if (connectionChoice == 1) {
             // RMI SETUP
             RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
-            virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.rmi.server.hostname"), this.RMIPort);
+            this.virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.rmi.server.hostname"), this.RMIPort);
             System.out.println("Connection completed");
         } else {
             // SOCKET SETUP
-            virtualServer = socketSetup(this.socketPort, clientDispatcher);
-            if (virtualServer == null) System.exit(-1);
-            new Thread((SocketServer) virtualServer).start();
+            try {
+                this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
+                if (virtualServer == null) System.exit(-1);
+                new Thread((SocketServer) this.virtualServer).start();
+            } catch (IOException e) {
+                System.err.println("Error creating socket");
+            }
         }
-        return virtualServer;
+        return this.virtualServer;
     }
 
-    public ServerInterface socketSetup(int socketPort, ClientDispatcherInterface clientDispatcher) {
-        try {
-            // creating socket that represents the server
-            Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort);
-            socket.connect(socket.getRemoteSocketAddress(), 3000);
-            // the connection is socket so the virtual server is a SocketServer object
-            return new SocketServer(socket, clientDispatcher);
-        } catch (IOException e) {
-            System.err.println("Failed to create socket.");
-            return null;
-        }
+    public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
+        // creating socket that represents the server
+        Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort);
+        socket.setSoTimeout(3000);
+        // the connection is socket so the virtual server is a SocketServer object
+        return new SocketServer(socket, clientDispatcher, this);
     }
 
-    private void connectionLost(ServerInterface virtualServer) {
+    /**
+     * this method is used to remap the new virtual server. if the virtual server is different, the
+     * @param virtualServer old virtual server
+     */
+    public synchronized void connectionLost(ServerInterface virtualServer) {
         if (virtualServer == this.virtualServer) {
             boolean connectionOpen = false;
-            int attemptCount = 0;       //after tot attempts ask to keep trying
-            int sleepTime = 1000;       //initial delay
-            int maxTime = 20000;        //caps the sleepTime
+            int attemptCount = 0;       // after tot attempts ask to keep trying
+            int sleepTime = 1000;       // initial delay
+            int maxTime = 20000;        // caps the sleepTime
             int totalElapsedTime = 0;   // to be deleted
-            double backOffBase = 1.05;  //changes the exponential growth of th time
+            double backOffBase = 1.05;  // changes the exponential growth of th time
 
             System.out.println("Internet Connection Lost, trying to reconnect...");
             while (!connectionOpen) {
@@ -97,7 +100,7 @@ public class ConnectionBuilder {
                     this.virtualServer = this.createServerConnection(virtualServer.getClientDispatcher());
                     this.view.setVirtualServer(this.virtualServer);
                 } catch (IOException e) {
-                    //exponential backoff algorithm
+                    // exponential backoff algorithm
                     attemptCount++;
                     totalElapsedTime += sleepTime;
                     sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);

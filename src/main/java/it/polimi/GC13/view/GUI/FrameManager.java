@@ -44,7 +44,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public synchronized void setVirtualServer(ServerInterface virtualServer) {
+    public void setVirtualServer(ServerInterface virtualServer) {
         this.virtualServer = virtualServer;
     }
 

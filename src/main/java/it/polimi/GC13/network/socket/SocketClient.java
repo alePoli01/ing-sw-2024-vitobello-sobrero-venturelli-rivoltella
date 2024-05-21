@@ -33,19 +33,19 @@ public class SocketClient implements ClientInterface, Runnable {
     @Override
     public synchronized void sendMessageFromServer(MessagesFromServer message) {
         try {
-            if (!connectionOpen) {
+            /*if (!connectionOpen) {
                 return;
-            }
+            }*/
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (IOException e) {
-            connectionOpen = false;
+            //connectionOpen = false;
             System.out.println("Error sending message: " + e.getMessage());
         }
     }
 
     /**
-        the methods above are for sending messages to the client chain of calls:
+        The methods above are for sending messages to the client chain of calls:
         1.(interface)MessageFromClients at runtime is one of the messages (example: MessageFromClient)
         2.MessageFromClient.dispatch calls the ServerDispatcher passing itself so that,based on the Class type, we know what to do
         3.ServerDispatcher.dispatch calls the ControllerDispatcher.specific_method
