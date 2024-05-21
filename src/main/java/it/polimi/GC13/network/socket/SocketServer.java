@@ -64,11 +64,8 @@ public class SocketServer implements ServerInterface, Runnable {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
             } catch (IOException | ClassNotFoundException e) {
-                if (this.connectionOpen) {
-                    this.connectionOpen = false;
-                }
                 System.out.println("\nError registering message from Server, trying to remap...");
-                this.connectionBuilder.connectionLost(this);
+                this.connectionBuilder.connectionLost(this, this.connectionOpen);
             }
         }
         executorService.shutdown();

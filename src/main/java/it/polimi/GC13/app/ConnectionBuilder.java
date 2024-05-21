@@ -75,9 +75,9 @@ public class ConnectionBuilder {
      * this method is used to remap the new virtual server. if the virtual server is different, the
      * @param virtualServer old virtual server
      */
-    public synchronized void connectionLost(ServerInterface virtualServer) {
+    public synchronized void connectionLost(ServerInterface virtualServer, boolean connectionOpen) {
         if (virtualServer == this.virtualServer) {
-            boolean connectionOpen = false;
+            connectionOpen = false;
             int attemptCount = 0;       // after tot attempts ask to keep trying
             int sleepTime = 1000;       // initial delay
             int maxTime = 20000;        // caps the sleepTime
@@ -99,6 +99,7 @@ public class ConnectionBuilder {
                     // WHEN CONNECTION CLIENT <-> IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = this.createServerConnection(virtualServer.getClientDispatcher());
                     this.view.setVirtualServer(this.virtualServer);
+                    connectionOpen = true;
                 } catch (IOException e) {
                     // exponential backoff algorithm
                     attemptCount++;

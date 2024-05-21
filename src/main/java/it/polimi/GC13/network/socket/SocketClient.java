@@ -66,7 +66,7 @@ public class SocketClient implements ClientInterface, Runnable {
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println(e.getMessage());
+                System.out.println("Client disconnected...");
             }
         }
     }

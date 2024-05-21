@@ -4,7 +4,6 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
 import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface MessagesFromServer extends Serializable {
