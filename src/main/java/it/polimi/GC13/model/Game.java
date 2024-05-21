@@ -30,7 +30,7 @@ public class Game implements Serializable {
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>();
         this.currNumPlayer = 0;
-        this.observer = new Observer();
+        this.observer = new Observer(new DiskManager(this));
     }
 
     public String getGameName() {
@@ -138,7 +138,7 @@ public class Game implements Serializable {
                 throw new GenericException(player.getNickname() + " was not added to the game " + this.gameName);
             }
             System.out.println(player.getNickname() + " notified");
-            System.out.println(this.observer.listenerList.size() + " listeners");
+            System.out.println(this.observer.getListenerSize() + " listeners");
             this.observer.notifyClients(new OnPlayerAddedToGameMessage(this.getCurrNumPlayer(), this.numPlayer, this.getGameName()));
         } else {
             System.out.println("Error; max number of player reached: " + currNumPlayer);
