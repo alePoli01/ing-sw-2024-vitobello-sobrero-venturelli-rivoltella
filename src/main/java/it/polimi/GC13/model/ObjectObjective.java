@@ -48,7 +48,7 @@ public class ObjectObjective extends ObjectiveCard {
         String reset = "\u001b[0m";  // reset color of the characters
         switch(this.object.size()){
             case(3):{
-                System.out.println("╔═══════╦═╦═══════╗");
+                System.out.println("╔═════════════════╗");
                 System.out.println("║       ║"+gold+this.object.size()+reset+"║       ║");
                 System.out.println("║                 ║");
                 System.out.println("║    "+this.object.toString()+"    ║");
@@ -58,7 +58,7 @@ public class ObjectObjective extends ObjectiveCard {
 
             }
             case(1):{
-                System.out.println("╔═══════╦═╦═══════╗");
+                System.out.println("╔═════════════════╗");
                 System.out.println("║       ║"+gold+(this.object.size()+1)+reset+"║       ║");
                 System.out.println("║                 ║");
                 System.out.println("║     "+this.object.toString()+" "+this.object.toString()+"     ║");
@@ -77,7 +77,7 @@ public class ObjectObjective extends ObjectiveCard {
             case 3: {
                 switch (line) {
                     case 0: {
-                        System.out.print("╔═══════╦═╦═══════╗");
+                        System.out.print("╔═════════════════╗");
                         break;
                     }
                     case 1: {
@@ -106,7 +106,7 @@ public class ObjectObjective extends ObjectiveCard {
             case (1): {
                 switch (line) {
                     case 0: {
-                        System.out.print("╔═══════╦═╦═══════╗");
+                        System.out.print("╔═════════════════╗");
                         break;
                     }
                     case 1: {

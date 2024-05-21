@@ -106,7 +106,7 @@ public class PlayableCard implements Serializable {
         if (this.serialNumber > 40 && this.serialNumber <= 80) {
             //gold card
             if (!isFlipped) {
-                System.out.println("╔═══╦════╦════╦═══╗");
+                System.out.println("╔═══╦═════════╦═══╗");
                 System.out.println("║ " + this.edgeResource[3].toString() +color+ " ║   " + gold + this.pointsGiven + reset +color+ "║" + gold + this.condition.toString() + reset +color+ "   ║ " + this.edgeResource[2].toString() +color+ " ║");
                 System.out.println("╠═══╝         ╚═══╣");
                 System.out.println("╠═══╗         ╔═══╣");
@@ -159,9 +159,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             } else {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             }
                             break;
                         }
@@ -214,9 +214,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             } else {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             }
                             break;
                         }
@@ -270,9 +270,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             } else {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             }
                             break;
                         }
@@ -326,9 +326,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════");
+                                System.out.print("╔═══╦═════════");
                             } else {
-                                System.out.print("╔═══╦════╦════");
+                                System.out.print("╔═══╦═════════");
                             }
                             break;
                         }
@@ -382,9 +382,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("════╦════╦═══╗");
+                                System.out.print("═════════╦═══╗");
                             } else {
-                                System.out.print("════╦════╦═══╗");
+                                System.out.print("═════════╦═══╗");
                             }
                             break;
                         }
@@ -439,9 +439,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("════╦════╦═══╗");
+                                System.out.print("═════════╦═══╗");
                             } else {
-                                System.out.print("════╦════╦═══╗");
+                                System.out.print("═════════╦═══╗");
                             }
                             break;
                         }
@@ -495,9 +495,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════");
+                                System.out.print("╔═══╦═════════");
                             } else {
-                                System.out.print("╔═══╦════╦════");
+                                System.out.print("╔═══╦═════════");
                             }
                             break;
                         }
@@ -552,9 +552,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             } else {
-                                System.out.print("╔═══╦════╦════╦═══╗");
+                                System.out.print("╔═══╦═════════╦═══╗");
                             }
                             break;
                         }
@@ -608,9 +608,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("════╦════");
+                                System.out.print("═════════");
                             } else {
-                                System.out.print("════╦════");
+                                System.out.print("═════════");
                             }
                             break;
                         }
@@ -664,9 +664,9 @@ public class PlayableCard implements Serializable {
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
-                                System.out.print("════╦════");
+                                System.out.print("═════════");
                             } else {
-                                System.out.print("════╦════");
+                                System.out.print("═════════");
                             }
                             break;
                         }

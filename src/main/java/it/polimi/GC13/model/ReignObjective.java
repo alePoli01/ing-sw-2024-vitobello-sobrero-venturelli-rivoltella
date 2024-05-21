@@ -23,7 +23,7 @@ public class ReignObjective extends ObjectiveCard{
         String reset = "\u001b[0m";  // reset color of the characters
 
 
-        System.out.println("╔═══════╦═╦═══════╗");
+        System.out.println("╔═════════════════╗");
         System.out.println("║       ║"+gold+"2"+reset+"║       ║");
         System.out.println("║                 ║");
         System.out.println("║    ["+this.type+", "+this.type+", "+this.type+"]    ║");
@@ -35,7 +35,7 @@ public class ReignObjective extends ObjectiveCard{
         String gold = "\u001b[93m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
         switch(line){
-            case 0:System.out.print("╔═══════╦═╦═══════╗");break;
+            case 0:System.out.print("╔═════════════════╗");break;
             case 1:System.out.print("║       ║"+gold+"2"+reset+"║       ║");break;
             case 2, 4:System.out.print("║                 ║"); break;
             case 3:System.out.print("║    ["+this.type+", "+this.type+", "+this.type+"]    ║"); break;
