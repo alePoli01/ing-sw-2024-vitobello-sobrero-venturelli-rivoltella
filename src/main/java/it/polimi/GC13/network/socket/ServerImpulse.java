@@ -8,7 +8,7 @@ public class ServerImpulse implements Runnable {
 
     public ServerImpulse(SocketClient socketClient) {
         this.socketClient = socketClient;
-        this.delay = 1000;//ms
+        this.delay = 4000; //ms
     }
 
     @Override

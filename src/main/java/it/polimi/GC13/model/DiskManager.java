@@ -33,8 +33,9 @@ public class DiskManager {
             this.gameManaged = (Game) objectInputStream.readObject();
             objectInputStream.close();
             fileInputStream.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
         } catch (IOException e) {
-            System.out.println("File doesn't exist or it wasn't saved");
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {
             System.out.println("Game doesn't exist or it wasn't saved");

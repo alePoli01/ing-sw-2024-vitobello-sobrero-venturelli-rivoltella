@@ -39,8 +39,6 @@ public class SocketServer implements ServerInterface, Runnable {
     @Override
     public void sendMessageFromClient(MessagesFromClient messages) {
         try {
-            //uncomment to simulate server crash
-            //connectionLost();
             if (!this.connectionOpen) {
                 return;
             }
@@ -65,7 +63,9 @@ public class SocketServer implements ServerInterface, Runnable {
                 executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("\nError registering message from Server, trying to remap...");
-                this.connectionBuilder.connectionLost(this, this.connectionOpen);
+                this.connectionOpen = false;
+                this.connectionBuilder.connectionLost(this, false);
+                this.connectionOpen = false;
             }
         }
         executorService.shutdown();

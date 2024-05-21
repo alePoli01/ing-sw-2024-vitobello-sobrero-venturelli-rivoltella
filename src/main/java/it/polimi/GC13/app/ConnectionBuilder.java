@@ -66,7 +66,7 @@ public class ConnectionBuilder {
     public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
         // creating socket that represents the server
         Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort);
-        socket.setSoTimeout(3000);
+        socket.setSoTimeout(8000);
         // the connection is socket so the virtual server is a SocketServer object
         return new SocketServer(socket, clientDispatcher, this);
     }
@@ -77,7 +77,6 @@ public class ConnectionBuilder {
      */
     public synchronized void connectionLost(ServerInterface virtualServer, boolean connectionOpen) {
         if (virtualServer == this.virtualServer) {
-            connectionOpen = false;
             int attemptCount = 0;       // after tot attempts ask to keep trying
             int sleepTime = 1000;       // initial delay
             int maxTime = 20000;        // caps the sleepTime

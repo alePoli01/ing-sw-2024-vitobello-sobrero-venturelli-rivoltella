@@ -54,9 +54,8 @@ public class SocketClient implements ClientInterface, Runnable {
     @Override
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
-        while (true) {
+        while (connectionOpen) {
             try {
-                if (!connectionOpen) break;
                 MessagesFromClient message = (MessagesFromClient) inputStream.readObject();
                 executorService.submit(() -> {
                     try {
@@ -66,6 +65,7 @@ public class SocketClient implements ClientInterface, Runnable {
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {
+                this.connectionOpen = false;
                 System.out.println("Client disconnected...");
             }
         }
