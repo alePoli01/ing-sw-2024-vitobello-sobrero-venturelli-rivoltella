@@ -8,13 +8,13 @@ public class ServerImpulse implements Runnable {
 
     public ServerImpulse(SocketClient socketClient) {
         this.socketClient = socketClient;
-        this.delay = 10000;
+        this.delay = 3000;//ms
     }
 
     @Override
     public void run() {
         while (true) {
-            this.socketClient.sendMessageFromServer(new PokeMessage());
+           // this.socketClient.sendMessageFromServer(new PokeMessage());
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {

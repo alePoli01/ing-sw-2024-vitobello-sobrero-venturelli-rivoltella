@@ -5,6 +5,7 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.network.socket.ClientDispatcher;
+import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -17,11 +18,14 @@ import java.util.concurrent.Executors;
 public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerInterface, ClientInterface {
     private final ExecutorService executorService;
     public RMIServerInterface serverStub;
-    private final ClientDispatcher clientDispatcher;
+    private final ClientDispatcherInterface clientDispatcher;
+    private boolean connectionOpen = true;
+    private String gameName="2"; //used to reconnect to the server automatically
+    private String playerName="caio";
 
-    public RMIConnectionAdapter(ClientDispatcher clientDispatcher1) throws RemoteException {
+    public RMIConnectionAdapter(ClientDispatcherInterface clientDispatcher) throws RemoteException {
         super();
-        this.clientDispatcher = clientDispatcher1;
+        this.clientDispatcher = clientDispatcher;
         this.executorService = Executors.newCachedThreadPool();
     }
 
@@ -52,6 +56,26 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public String getGameName() {
+        return gameName;
+    }
+
+    @Override
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    @Override
+    public boolean isConnectionOpen() {
+        return connectionOpen;
+    }
+
+    @Override
+    public ClientDispatcherInterface getClientDispatcher() {
+        return this.clientDispatcher;
     }
 
     @Override

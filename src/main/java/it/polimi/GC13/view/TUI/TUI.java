@@ -98,7 +98,7 @@ public class TUI implements View {
             }
         } else {
             //ask what the player wants to do
-            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game");
+            System.out.println("There are existing games, choose:\n\t[1] to create a new Game\n\t[2] to join an existing Game\n\t[3] to reconnect to the game");
             do {
                 try {
                     this.choice = Integer.parseInt(this.reader.readLine());
@@ -182,7 +182,6 @@ public class TUI implements View {
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList) {
         boolean flag = false;
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
-
         if (readyPlayers == neededPlayers) {
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");

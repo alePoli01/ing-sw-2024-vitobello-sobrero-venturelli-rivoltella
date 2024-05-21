@@ -19,32 +19,28 @@ public class SocketClient implements ClientInterface, Runnable {
    the class then creates the messages and sends them to the
    client where they'll be elaborated
     */
-    private final ObjectOutputStream oos;
-    private final ObjectInputStream ois;
+    private final ObjectOutputStream outputStream;
+    private final ObjectInputStream inputStream;
     private final ServerDispatcherInterface serverDispatcher;
     private final LostConnectionToClientInterface connectionStatus;
     private boolean connectionOpen = true;
 
     public SocketClient(Socket socket, ServerDispatcher serverDispatcher, LostConnectionToClientInterface connectionStatus) throws IOException {
-        this.oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-        this.ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+        this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        this.outputStream.flush();
+        this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
         this.serverDispatcher = serverDispatcher;
         this.connectionStatus = connectionStatus;
     }
 
-
-    /*
-        TODO: è possibile che andrà rivisto il nome e l'implementazione quando faremo RMI
-        Generic method to send messages from server to client
-     */
     @Override
     public synchronized void sendMessageFromServer(MessagesFromServer message) {
         try {
             if (!connectionOpen) {
                 return;
             }
-            oos.writeObject(message);
-            oos.flush();
+            outputStream.writeObject(message);
+            outputStream.flush();
         } catch (IOException e) {
             connectionOpen = false;
             System.out.println("Error sending message: " + e.getMessage());
@@ -67,12 +63,12 @@ public class SocketClient implements ClientInterface, Runnable {
         while (true) {
             try {
                 if (!connectionOpen) break;
-                MessagesFromClient message = (MessagesFromClient) ois.readObject();
+                MessagesFromClient message = (MessagesFromClient) inputStream.readObject();
                 executorService.submit(() -> {
                     try {
                         serverDispatcher.sendToControllerDispatcher(message, this);
                     } catch (RemoteException e) {
-                        e.printStackTrace();
+                        System.err.println("Client disconnected\n " + e.getMessage());
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {

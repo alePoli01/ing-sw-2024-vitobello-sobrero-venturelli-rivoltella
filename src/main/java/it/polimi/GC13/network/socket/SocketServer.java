@@ -1,7 +1,5 @@
 package it.polimi.GC13.network.socket;
 
-import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.network.LostConnectionToServerInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
@@ -22,29 +20,44 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ObjectOutputStream outputStream;
     private final ClientDispatcherInterface clientDispatcher;
     private boolean connectionOpen = true;
+    private String gameName="2"; //used to reconnect to the server automatically
+    private String playerName="caio";
 
-    public SocketServer(Socket socket, ClientDispatcher clientDispatcher) throws IOException {
+    public ClientDispatcherInterface getClientDispatcher() {
+        return this.clientDispatcher;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public boolean isConnectionOpen() {
+        return connectionOpen;
+    }
+    public SocketServer(Socket socket, ClientDispatcherInterface clientDispatcher) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
+        this.outputStream.flush();
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
     }
 
-    /*
-        TODO gestione eccezioni in modo intelligiente: creare metodo eccezioni nella tui
-     */
-
     @Override
     public void sendMessageFromClient(MessagesFromClient messages) {
         try {
+            //uncomment to simulate server crash
+            //connectionLost();
             if (!connectionOpen) {
                 return;
             }
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            connectionOpen = false;
             System.out.println(e.getMessage() + "errore nel mandare messaggio al server");
-            //connectionStatus.connectionLost(this);
+            connectionOpen = false;
         }
     }
 
@@ -57,11 +70,12 @@ public class SocketServer implements ServerInterface, Runnable {
                 executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
             } catch (IOException | ClassNotFoundException e) {
                 if (this.connectionOpen) {
-                    this.connectionOpen = false;
-                    //this.connectionStatus.connectionLost(this);
+                    connectionOpen=false;
                 }
             }
         }
         executorService.shutdown();
     }
+
+
 }

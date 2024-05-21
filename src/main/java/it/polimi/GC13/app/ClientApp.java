@@ -1,8 +1,10 @@
 package it.polimi.GC13.app;
 
+import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
 import it.polimi.GC13.network.socket.ClientDispatcher;
+import it.polimi.GC13.network.socket.ClientDispatcherInterface;
 import it.polimi.GC13.network.socket.SocketServer;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.TUI.TUI;
@@ -82,31 +84,14 @@ public class ClientApp {
             }
         } while (viewChoice != 1 && viewChoice != 2);
 
+        ConnectionBuilder connectionBuilder = new ConnectionBuilder(viewChoice, connectionChoice, socketPort, RMIport);
+
         System.out.println("\u001B[33mStarting " + (viewChoice == 1 ? "TUI" : "GUI") + " with connection type " + (connectionChoice == 1 ? "RMI" : "SOCKET") + "\u001B[0m");
         clientDispatcher = new ClientDispatcher();
-        if (viewChoice == 1) {
-            view = new TUI();
-        } else {
-            view = new FrameManager();
-        }
+
+        view = connectionBuilder.createView(view);
         clientDispatcher.setView(view);
-
-        if (connectionChoice == 1) {
-            // RMI SETUP
-            RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
-            virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.rmi.server.hostname"), RMIport);
-            System.out.println("Connection completed");
-        } else {
-            // SOCKET SETUP
-            try {
-                Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort); // creating socket that represents the server
-                virtualServer = new SocketServer(socket, clientDispatcher); //the connection is socket so the virtual server is a SocketServer object
-                new Thread((SocketServer) virtualServer).start();
-            } catch (IOException e) {
-                System.err.println("Failed to create socket.");
-            }
-        }
-
+        virtualServer = connectionBuilder.createServerConnection(virtualServer, clientDispatcher);
         view.setVirtualServer(virtualServer);
         view.startView();
     }
