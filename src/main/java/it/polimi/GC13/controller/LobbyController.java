@@ -97,11 +97,8 @@ public class LobbyController implements Serializable {
         if (this.restartGames(gameName, playerName)) {
             System.out.println("Game and Player name was found, reconnecting client");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
-        } /*else if (!(startedGameMap.containsKey(gameName))) {
-            System.err.println(playerName + " inserted an incorrect game name: " + gameName + ".");
-            client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName, 0));
-        }*/ else {
-            System.err.println("player: " + playerName + " or game:  " + gameName + " weren't not found in game.");
+        } else {
+            System.err.println("player: " + playerName + " or game:  " + gameName + " were not found in game.");
             client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName));
         }
     }
