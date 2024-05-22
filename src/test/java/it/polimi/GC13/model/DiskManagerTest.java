@@ -3,7 +3,10 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.exception.GenericException;
+import it.polimi.GC13.network.socket.SocketClient;
 import junit.framework.TestCase;
+
+import java.util.List;
 
 public class DiskManagerTest extends TestCase {
 
@@ -37,8 +40,6 @@ public class DiskManagerTest extends TestCase {
 
         assert (p1.isMyTurn());
         assert (!p2.isMyTurn());
-
-        game.getTable().drawCard(p1.getTable().getGoldCardMap().keySet().stream().findFirst().get());
 
         assert (p1.getBoard().boardMapContainsKeyOfValue(50, 50));
         assert (game.getPlayerList().size() == 2);

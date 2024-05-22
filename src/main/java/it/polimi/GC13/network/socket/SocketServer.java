@@ -65,9 +65,9 @@ public class SocketServer implements ServerInterface, Runnable {
                 System.out.println("\nError registering message from Server, trying to remap...");
                 this.connectionOpen = false;
                 this.connectionBuilder.connectionLost(this, false);
-                this.connectionOpen = false;
             }
         }
+        this.connectionOpen = true;
         executorService.shutdown();
     }
 }

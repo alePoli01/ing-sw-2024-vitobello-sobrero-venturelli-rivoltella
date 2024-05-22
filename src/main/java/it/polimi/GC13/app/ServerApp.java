@@ -54,7 +54,6 @@ public class ServerApp {
         ControllerDispatcher controllerDispatcher = new ControllerDispatcher(lobbyController);
         // link the lobby the serverDispatcher that will be linked to the client, so that the lobby will be able to connect the client to the game
         lobbyController.setControllerDispatcher(controllerDispatcher);
-        restartGames(lobbyController, controllerDispatcher);
 
         // link a controller(and lobby) dispatcher to a server dispatcher
         System.out.println("Creating and linking ServerDispatcher to ControllerDispatcher(/w LobbyController)");
@@ -70,22 +69,5 @@ public class ServerApp {
 
         // start waiting for a client to connect
         new Thread(socketAccepter).start();
-    }
-
-    public static void restartGames(LobbyController lobbyController, ControllerDispatcher controllerDispatcher) {
-        File gamesFolder = new File("");
-        File[] listOfGame = gamesFolder.listFiles((dir, name) -> name.endsWith(".ser"));
-        if (listOfGame != null) {
-            DiskManager diskManager = new DiskManager();
-            for (File file : listOfGame) {
-                if (file.isFile()) {
-                    System.out.println("Found serialized file: " + file.getName());
-                }
-                lobbyController.getStartedGameMap().put(file.getName(), diskManager.readFromDisk(file.getName()));
-            }
-            lobbyController.getStartedGameMap().values()
-                    .forEach(game -> lobbyController.getGameControllerMap().put(game, new Controller(game, lobbyController, controllerDispatcher)));
-            System.out.println("Finished restarting games");
-        }
     }
 }

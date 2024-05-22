@@ -44,7 +44,7 @@ public class ConnectionBuilder {
         return view;
     }
 
-    public ServerInterface createServerConnection(ClientDispatcher clientDispatcher) throws RemoteException {
+    public ServerInterface createServerConnection(ClientDispatcher clientDispatcher) throws IOException {
         if (connectionChoice == 1) {
             // RMI SETUP
             RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
@@ -52,13 +52,9 @@ public class ConnectionBuilder {
             System.out.println("Connection completed");
         } else {
             // SOCKET SETUP
-            try {
-                this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
-                if (virtualServer == null) System.exit(-1);
-                new Thread((SocketServer) this.virtualServer).start();
-            } catch (IOException e) {
-                System.err.println("Error creating socket");
-            }
+            this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
+            if (virtualServer == null) System.exit(-1);
+            new Thread((SocketServer) this.virtualServer).start();
         }
         return this.virtualServer;
     }

@@ -5,7 +5,7 @@ import it.polimi.GC13.view.View;
 
 import java.rmi.RemoteException;
 
-public record OnPlayerNotReconnectedMessage(String playerNickname, int cause) implements OnInputExceptionMessage {
+public record OnPlayerNotReconnectedMessage(String playerNickname) implements OnInputExceptionMessage {
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {
@@ -24,11 +24,11 @@ public record OnPlayerNotReconnectedMessage(String playerNickname, int cause) im
 
     @Override
     public String getErrorMessage() {
-        if (cause == 0) {
-            return "GameName not Found";
-        } else {
+        //if (cause == 0) {
+            return "GameName or PlayerName not Found";
+        /*} else {
             return "PlayerName not Found";
-        }
+        }*/
     }
 
     @Override

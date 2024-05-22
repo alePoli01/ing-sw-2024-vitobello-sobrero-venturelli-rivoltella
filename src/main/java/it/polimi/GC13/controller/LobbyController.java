@@ -1,5 +1,6 @@
 package it.polimi.GC13.controller;
 
+import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.controller.gameStateController.Controller;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.Game;
@@ -11,6 +12,7 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotReconnec
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
+import java.io.File;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -21,7 +23,6 @@ public class LobbyController implements Serializable {
     private final Map<String, Game> startedGameMap = new ConcurrentHashMap<>();
     private transient final Map<Game, Controller> gameControllerMap = new ConcurrentHashMap<>(); //contains all ongoing games controller
     private ControllerDispatcher controllerDispatcher;
-    private final List<ClientInterface> disconnectedClients = new ArrayList<>();//list of all the disconnected clients
 
     public void setControllerDispatcher(ControllerDispatcher controllerDispatcher) {
         this.controllerDispatcher = controllerDispatcher;
@@ -40,10 +41,6 @@ public class LobbyController implements Serializable {
     }
 
     public void checkForExistingGame(ClientInterface client) throws RemoteException {
-        // upon check just provide the answer
-        if (disconnectedClients.contains(client)) {
-            System.out.println("Disconnected client recognised");
-        }
         //upon check just provide the answer
         System.out.println("--Received: checkForExistingGame");
         Map<String, Integer> gameNameWaitingPlayersMap = new ConcurrentHashMap<>();
@@ -72,7 +69,6 @@ public class LobbyController implements Serializable {
             this.controllerDispatcher.getClientPlayerMap().put(client, player);
             // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
             this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(workingGame));
-
         } catch (GenericException e) {
             client.sendMessageFromServer(new OnNickNameAlreadyTakenMessage(playerNickname));
             System.err.println(e.getMessage());
@@ -97,16 +93,33 @@ public class LobbyController implements Serializable {
 
     public synchronized void reconnectPlayerToGame(ClientInterface client, String gameName, String playerName) throws RemoteException {
         System.out.println("--Received: reconnectPlayerToGame");
-        if (startedGameMap.containsKey(gameName) && startedGameMap.get(gameName).getPlayerList().stream().anyMatch(player -> player.getNickname().equals(playerName))) {
-            System.out.println("Game and Player name was found, reconnecting client");
 
+        if (this.restartGames(gameName, playerName)) {
+            System.out.println("Game and Player name was found, reconnecting client");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
-        } else if (!(startedGameMap.containsKey(gameName))) {
+        } /*else if (!(startedGameMap.containsKey(gameName))) {
             System.err.println(playerName + " inserted an incorrect game name: " + gameName + ".");
             client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName, 0));
-        } else {
-            System.err.println(playerName + " was not found in game: " + gameName + ".");
-            client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName, 1));
+        }*/ else {
+            System.err.println("player: " + playerName + " or game:  " + gameName + " weren't not found in game.");
+            client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName));
         }
+    }
+
+    public boolean restartGames(String gameName, String playerName) {
+        DiskManager diskManager = new DiskManager();
+        Game game = diskManager.readFromDisk(gameName);
+
+        if (game != null) {
+            System.out.println("Found serialized file: " + game.getGameName());
+            if (game.getPlayerList().stream().anyMatch(player -> player.getNickname().equals(playerName))) {
+                this.getStartedGameMap().putIfAbsent(gameName, game);
+                // Create a new controller for the game and put it in the map
+                Controller controller = new Controller(game, this, this.controllerDispatcher);
+                this.getGameControllerMap().put(game, controller);
+                return true;
+            }
+        }
+        return false;
     }
 }

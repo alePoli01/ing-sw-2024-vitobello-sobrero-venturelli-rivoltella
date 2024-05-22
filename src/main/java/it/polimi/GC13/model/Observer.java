@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Observer implements Serializable {
-    private transient final List<ClientInterface> listenerList = new ArrayList<>();
+    private transient List<ClientInterface> listenerList = new ArrayList<>();
     private final DiskManager diskManager;
 
     public Observer(DiskManager diskManager, Game game) {
@@ -24,6 +24,10 @@ public class Observer implements Serializable {
 
     public void addListener(ClientInterface listener) {
         this.listenerList.add(listener);
+    }
+
+    public void rebuildClientList(List<ClientInterface> listenerList) {
+        this.listenerList = listenerList;
     }
 
     public void notifyClients(MessagesFromServer message) {
