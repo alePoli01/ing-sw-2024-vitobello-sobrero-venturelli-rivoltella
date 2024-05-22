@@ -12,7 +12,6 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotReconnec
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
-import java.io.File;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -94,7 +93,7 @@ public class LobbyController implements Serializable {
     public synchronized void reconnectPlayerToGame(ClientInterface client, String gameName, String playerName) throws RemoteException {
         System.out.println("--Received: reconnectPlayerToGame");
 
-        if (this.restartGames(gameName, playerName)) {
+        if (this.restartGames(gameName, playerName, client)) {
             System.out.println("Game and Player name was found, reconnecting client");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
         } else {
@@ -103,7 +102,7 @@ public class LobbyController implements Serializable {
         }
     }
 
-    public boolean restartGames(String gameName, String playerName) {
+    public boolean restartGames(String gameName, String playerName, ClientInterface client) throws RemoteException {
         DiskManager diskManager = new DiskManager();
         Game game = diskManager.readFromDisk(gameName);
 
@@ -114,6 +113,7 @@ public class LobbyController implements Serializable {
                 // Create a new controller for the game and put it in the map
                 Controller controller = new Controller(game, this, this.controllerDispatcher);
                 this.getGameControllerMap().put(game, controller);
+                game.getObserver().rebuildClientList(client);
                 return true;
             }
         }
