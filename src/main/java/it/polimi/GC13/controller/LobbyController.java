@@ -102,7 +102,7 @@ public class LobbyController implements Serializable {
         }
     }
 
-    public boolean restartGames(String gameName, String playerName, ClientInterface client) throws RemoteException {
+    public boolean restartGames(String gameName, String playerName, ClientInterface client) {
         DiskManager diskManager = new DiskManager();
         Game game = diskManager.readFromDisk(gameName);
 
@@ -113,7 +113,7 @@ public class LobbyController implements Serializable {
                 // Create a new controller for the game and put it in the map
                 Controller controller = new Controller(game, this, this.controllerDispatcher);
                 this.getGameControllerMap().put(game, controller);
-                game.getObserver().rebuildClientList(client);
+                game.getObserver().rebuildClientList(List.of(client));
                 return true;
             }
         }
