@@ -237,6 +237,10 @@ public class TUI implements View {
             do {
                 try {
                     this.choice = Integer.parseInt(this.reader.readLine());
+                    while (this.choice < 1 || this.choice > 2) {
+                        System.out.print("Choose between 1 and 2: ");
+                        this.choice = Integer.parseInt(this.reader.readLine());
+                    }
                 } catch (NumberFormatException | IOException e) {
                     System.out.println("Error: Please put a number");
                 }
