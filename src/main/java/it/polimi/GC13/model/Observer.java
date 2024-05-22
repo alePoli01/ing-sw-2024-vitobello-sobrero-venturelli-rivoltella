@@ -1,18 +1,21 @@
 package it.polimi.GC13.model;
 
+import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Observer {
-    private final List<ClientInterface> listenerList = new ArrayList<>();
+public class Observer implements Serializable {
+    private transient final List<ClientInterface> listenerList = new ArrayList<>();
     private final DiskManager diskManager;
 
-    public Observer(DiskManager diskManager) {
+    public Observer(DiskManager diskManager, Game game) {
         this.diskManager = diskManager;
+        this.diskManager.setGameManaged(game);
     }
 
     public int getListenerSize() {
@@ -33,5 +36,9 @@ public class Observer {
                 }
         });
         this.diskManager.writeOnDisk();
+    }
+
+    public DiskManager getDiskManager() {
+        return this.diskManager;
     }
 }

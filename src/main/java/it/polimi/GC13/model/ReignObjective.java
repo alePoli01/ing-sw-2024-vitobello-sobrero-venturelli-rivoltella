@@ -2,7 +2,7 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.Resource;
 
-public class ReignObjective extends ObjectiveCard{
+public class ReignObjective extends ObjectiveCard {
     public final Resource type; //Which reign is required
 
     public ReignObjective(int serialNumber, int comboPoints, Resource type) {

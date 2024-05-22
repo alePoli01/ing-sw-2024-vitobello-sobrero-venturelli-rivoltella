@@ -1,5 +1,6 @@
 package it.polimi.GC13.model;
 
+import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.GenericException;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 
 public class Game implements Serializable {
     private GameState gameState;
@@ -23,6 +25,11 @@ public class Game implements Serializable {
     private final Map<String, List<String>> chat = new HashMap<>();
     private Set<Player> winner;
 
+    /**
+     *
+     * @param numPlayer number of players who will play the game. It is set by the creator.
+     * @param gameName name of the game. It is a unique readable identifier for the game
+     */
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
         this.gameState = GameState.JOINING;
@@ -30,7 +37,7 @@ public class Game implements Serializable {
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>();
         this.currNumPlayer = 0;
-        this.observer = new Observer(new DiskManager(this));
+        this.observer = new Observer(new DiskManager(), this);
     }
 
     public String getGameName() {

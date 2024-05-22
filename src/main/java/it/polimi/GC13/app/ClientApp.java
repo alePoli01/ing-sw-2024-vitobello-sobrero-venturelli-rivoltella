@@ -40,7 +40,7 @@ public class ClientApp {
             }
             rmiHostname = args[0];
         }
-        System.setProperty("java.rmi.server.hostname", rmiHostname);
+        System.setProperty("java.server.hostname", rmiHostname);
 
         /*
             quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'

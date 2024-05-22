@@ -48,7 +48,7 @@ public class ConnectionBuilder {
         if (connectionChoice == 1) {
             // RMI SETUP
             RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
-            this.virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.rmi.server.hostname"), this.RMIPort);
+            this.virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), this.RMIPort);
             System.out.println("Connection completed");
         } else {
             // SOCKET SETUP
@@ -65,7 +65,7 @@ public class ConnectionBuilder {
 
     public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
         // creating socket that represents the server
-        Socket socket = new Socket(System.getProperty("java.rmi.server.hostname"), socketPort);
+        Socket socket = new Socket(System.getProperty("java.server.hostname"), socketPort);
         socket.setSoTimeout(8000);
         // the connection is socket so the virtual server is a SocketServer object
         return new SocketServer(socket, clientDispatcher, this);
@@ -95,10 +95,11 @@ public class ConnectionBuilder {
                         System.err.println("GameName or PlayerName is Null");
                         System.exit(1);
                     }
-                    // WHEN CONNECTION CLIENT <-> IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
+                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = this.createServerConnection(virtualServer.getClientDispatcher());
                     this.view.setVirtualServer(this.virtualServer);
                     connectionOpen = true;
+                    this.view.reconnectToGame();
                 } catch (IOException e) {
                     // exponential backoff algorithm
                     attemptCount++;

@@ -50,6 +50,8 @@ public interface View {
 
     void setPlayersOrder(Map<String, Position> playerPositions);
 
+    void reconnectToGame();
+
     void updateTurn(String playerNickname, boolean turn);
 
     void displayAvailableCells(List<Coordinates> availableCells);

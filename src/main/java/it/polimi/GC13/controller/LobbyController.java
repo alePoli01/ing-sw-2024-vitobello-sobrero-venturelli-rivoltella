@@ -6,7 +6,8 @@ import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotReconnectedException;
+import it.polimi.GC13.network.messages.fromserver.OnReconnectPlayerToGameMessage;
+import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotReconnectedMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnNickNameAlreadyTakenMessage;
 
@@ -24,6 +25,10 @@ public class LobbyController implements Serializable {
 
     public void setControllerDispatcher(ControllerDispatcher controllerDispatcher) {
         this.controllerDispatcher = controllerDispatcher;
+    }
+
+    public Map<Game, Controller> getGameControllerMap() {
+        return this.gameControllerMap;
     }
 
     public Map<String, Game> getJoinableGameMap() {
@@ -94,13 +99,14 @@ public class LobbyController implements Serializable {
         System.out.println("--Received: reconnectPlayerToGame");
         if (startedGameMap.containsKey(gameName) && startedGameMap.get(gameName).getPlayerList().stream().anyMatch(player -> player.getNickname().equals(playerName))) {
             System.out.println("Game and Player name was found, reconnecting client");
-            //TODO: RECONNECT CLIENT
+
+            client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
         } else if (!(startedGameMap.containsKey(gameName))) {
             System.err.println(playerName + " inserted an incorrect game name: " + gameName + ".");
-            client.sendMessageFromServer(new OnPlayerNotReconnectedException(playerName, 0));
+            client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName, 0));
         } else {
             System.err.println(playerName + " was not found in game: " + gameName + ".");
-            client.sendMessageFromServer(new OnPlayerNotReconnectedException(playerName, 1));
+            client.sendMessageFromServer(new OnPlayerNotReconnectedMessage(playerName, 1));
         }
     }
 }

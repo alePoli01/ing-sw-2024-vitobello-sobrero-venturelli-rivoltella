@@ -506,15 +506,17 @@ public class TUI implements View {
             int Y = 0;
             int serialCardToPlace = 0;
             boolean isFlipped = false;
+            this.playersBoard.get(this.nickname).printBoard();
+            System.out.println();
             this.printer.showHand(this.hand);
             System.out.println("Enter serial card, X coordinate, Y coordinate, and [1] for FRONT [2] for BACK");
-            System.out.println("example: " + this.hand.getFirst() + " (for serial card), 51 (for X), 51 (for Y), 1 (for side)");
+            System.out.println("Example: " + this.hand.getFirst() + " (for serial card), 51 (for X), 51 (for Y), 1 (for side)");
             Scanner scanner = new Scanner(System.in);
             try {
                 serialCardToPlace = scanner.nextInt();
                 while (!this.hand.contains(serialCardToPlace)) {
-                    System.out.println("You don't have the selected card. Available are: ");
-                    this.hand.forEach(System.out::print);
+                    System.out.println("You don't have the selected card. Available cards are: ");
+                    this.hand.forEach(card -> System.out.print(" " + card));
                     serialCardToPlace = scanner.nextInt();
                 }
                 X = (scanner.nextInt());
@@ -613,6 +615,11 @@ public class TUI implements View {
         } catch (IOException e) {
             System.err.println("Error parsing the name");
         }
+    }
+
+    @Override
+    public void reconnectToGame() {
+        this.virtualServer.sendMessageFromClient(new ReconnectPlayerToGameMessage(this.gameName, this.nickname));
     }
 
     /**

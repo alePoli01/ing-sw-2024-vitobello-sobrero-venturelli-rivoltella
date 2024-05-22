@@ -5,7 +5,7 @@ import it.polimi.GC13.view.View;
 
 import java.rmi.RemoteException;
 
-public record OnPlayerNotReconnectedException(String playerNickname, int cause) implements OnInputExceptionMessage {
+public record OnPlayerNotReconnectedMessage(String playerNickname, int cause) implements OnInputExceptionMessage {
 
     @Override
     public void notifyClient(ClientInterface client) throws RemoteException {

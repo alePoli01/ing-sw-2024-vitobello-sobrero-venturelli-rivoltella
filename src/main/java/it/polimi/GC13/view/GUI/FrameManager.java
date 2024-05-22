@@ -211,6 +211,11 @@ public class FrameManager extends JFrame implements View {
         gamePage.setPlayerPositions(playerPositions);
     }
 
+    @Override
+    public void reconnectToGame() {
+
+    }
+
 
     @Override
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {

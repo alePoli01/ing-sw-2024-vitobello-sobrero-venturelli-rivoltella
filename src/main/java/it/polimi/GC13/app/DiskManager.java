@@ -1,15 +1,12 @@
-package it.polimi.GC13.model;
+package it.polimi.GC13.app;
 
 import it.polimi.GC13.enums.GameState;
+import it.polimi.GC13.model.Game;
 
 import java.io.*;
 
-public class DiskManager {
+public class DiskManager implements Serializable {
     private Game gameManaged;
-
-    public DiskManager(Game game) {
-        this.gameManaged = game;
-    }
 
     public void writeOnDisk() {
         if (this.gameManaged.getGameState() == GameState.MID || this.gameManaged.getGameState() == GameState.END) {
@@ -26,7 +23,7 @@ public class DiskManager {
         }
     }
 
-    public void readFromDisk(String gameName) {
+    public Game readFromDisk(String gameName) {
         try {
             FileInputStream fileInputStream = new FileInputStream(gameName + ".ser");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -42,5 +39,10 @@ public class DiskManager {
             System.out.println(e.getMessage());
         }
         System.out.println("Reading from disk completed");
+        return this.gameManaged;
+    }
+
+    public void setGameManaged(Game gameManaged) {
+        this.gameManaged = gameManaged;
     }
 }

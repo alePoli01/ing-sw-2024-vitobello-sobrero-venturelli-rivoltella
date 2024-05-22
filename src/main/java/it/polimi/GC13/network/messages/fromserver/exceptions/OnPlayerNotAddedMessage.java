@@ -5,14 +5,7 @@ import it.polimi.GC13.view.View;
 
 import java.rmi.RemoteException;
 
-public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
-    private final String errorMessage;
-    private final String playerNickname;
-
-    public OnPlayerNotAddedMessage(String playerNickname, String gameName) {
-        this.errorMessage = gameName + " already started.";
-        this.playerNickname = playerNickname;
-    }
+public record OnPlayerNotAddedMessage(String gameName, String playerNickname) implements OnInputExceptionMessage {
 
     @Override
     public void methodToRecall(View TUI) {
@@ -21,12 +14,12 @@ public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
 
     @Override
     public String getErrorMessage() {
-        return this.errorMessage;
+        return this.gameName() + " already started.";
     }
 
     @Override
     public String getPlayerNickname() {
-        return this.playerNickname;
+        return this.playerNickname();
     }
 
     @Override
@@ -36,6 +29,6 @@ public class OnPlayerNotAddedMessage implements OnInputExceptionMessage {
 
     @Override
     public void methodToCall(View view) {
-        view.exceptionHandler(this.playerNickname, this);
+        view.exceptionHandler(this.playerNickname(), this);
     }
 }
