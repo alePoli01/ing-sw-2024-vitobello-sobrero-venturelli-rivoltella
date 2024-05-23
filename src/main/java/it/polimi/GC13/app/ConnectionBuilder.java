@@ -10,7 +10,6 @@ import it.polimi.GC13.view.View;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class ConnectionBuilder {

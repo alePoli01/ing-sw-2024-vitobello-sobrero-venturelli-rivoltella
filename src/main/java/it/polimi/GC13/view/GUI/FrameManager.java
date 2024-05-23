@@ -5,7 +5,6 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
@@ -100,7 +99,7 @@ public class FrameManager extends JFrame implements View {
      * NO_OPTION --> join an existing one
      */
     @Override
-    public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
+    public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws InterruptedException {
         if (gameNameWaitingPlayersMap.isEmpty()) {
             if (loginFrame == null) {
                 SwingUtilities.invokeLater(() -> {
@@ -145,7 +144,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) throws InterruptedException {
         if (readyPlayers == neededPlayers) {
             this.gameName = gameName;
             this.loginFrame.dispose();
@@ -171,7 +170,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws InterruptedException {
         if (playerNickname.equals(this.nickname)) {
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
@@ -243,7 +242,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
+    public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws InterruptedException {
         if (playerNickname.equals(this.nickname)) {
             gamePage.getPanelContainer().removeAll();
             gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
@@ -357,7 +356,11 @@ public class FrameManager extends JFrame implements View {
         switch (this.choice) {
             //place a card
             case 2: {
-                this.placeCard();
+                try {
+                    this.placeCard();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             }
             //view other players' board
@@ -393,7 +396,11 @@ public class FrameManager extends JFrame implements View {
             }
             //draw card
             case 10: {
-                this.drawCard();
+                try {
+                    this.drawCard();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             }
         }
@@ -401,7 +408,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public void placeCard() {} //TODO: disattivare il tasto Confirm se la carta e la griglia non sono selezionate
+    public void placeCard() throws InterruptedException {} //TODO: disattivare il tasto Confirm se la carta e la griglia non sono selezionate
 
     private void sendMessage() {
    /*     try {
@@ -436,7 +443,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void drawCard() {
+    public void drawCard() throws InterruptedException {
      /*   this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
             try {
@@ -486,6 +493,11 @@ public class FrameManager extends JFrame implements View {
             //this.printer.loserString();
         }
         //this.printer.showPlayersScore(this.playersScore);
+    }
+
+    @Override
+    public void interruptReader() {
+
     }
 
 }

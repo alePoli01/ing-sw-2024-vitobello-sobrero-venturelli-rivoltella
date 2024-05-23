@@ -32,7 +32,11 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
 
     @Override
     public void methodToRecall(View TUI) {
-        TUI.chooseTokenSetupPhase(0, 0, availableTokenColors, this.gameName);
+        try {
+            TUI.chooseTokenSetupPhase(0, 0, availableTokenColors, this.gameName);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

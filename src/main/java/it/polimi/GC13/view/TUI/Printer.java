@@ -4,12 +4,8 @@ import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.ObjectiveCard;
 import it.polimi.GC13.model.PlayableCard;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 /**
@@ -17,7 +13,6 @@ import java.util.stream.Collectors;
  */
 public class Printer {
     private static final Deck visualDeck = new Deck();
-    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     /**
         METHOD USED TO SHOW GAME'S HISTORY
@@ -108,33 +103,6 @@ public class Printer {
     public void showPlayersScore(Map<String, Integer> playersScore) {
         System.out.println("\n--- PLAYERS SCORE ---");
         playersScore.forEach((key, value) -> System.out.println(key + "'s current score is " + value));
-    }
-
-    public void seeChat(Map<String, List<String>> chat) {
-        if (!chat.isEmpty()) {
-            try {
-                String playerChosen;
-                do {
-                    System.out.println("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]"));
-                    System.out.print("Player: ");
-                    playerChosen = reader.readLine();
-                    while (!chat.containsKey(playerChosen)) {
-                        System.out.print("Chat with " + playerChosen + " doesn't exist.\nEnter an existing player chat: ");
-                        playerChosen = reader.readLine();
-                    }
-                } while (!(chat.containsKey(playerChosen) || playerChosen.equals("global")));
-                synchronized (chat.get(playerChosen)) {
-                    System.out.println("CHAT WITH " + playerChosen.toUpperCase() + "\n" + chat.get(playerChosen)
-                            .stream()
-                            .map(message -> message + ";\n")
-                            .collect(Collectors.joining()));
-                }
-            } catch (IOException e) {
-                System.err.println("Error parsing the name");
-            }
-        } else {
-            System.out.println("No message exists.");
-        }
     }
 
     public void winnerString() {

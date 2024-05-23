@@ -15,6 +15,10 @@ public record OnDealPrivateObjectiveCardsMessage(String playerNickname, List<Int
 
     @Override
     public void methodToCall(View view) {
-        view.choosePrivateObjectiveCard(this.playerNickname,this.privateObjectiveCards());
+        try {
+            view.choosePrivateObjectiveCard(this.playerNickname,this.privateObjectiveCards());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

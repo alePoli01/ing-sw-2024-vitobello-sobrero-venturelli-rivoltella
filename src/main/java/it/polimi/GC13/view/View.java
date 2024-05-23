@@ -16,7 +16,7 @@ public interface View {
 
     String getNickname();
 
-    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName);
+    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) throws InterruptedException;
 
     void startView();
 
@@ -32,17 +32,17 @@ public interface View {
 
     void checkForExistingGame(); //TODO: non lo uso nella GUI
 
-    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap);
+    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws InterruptedException;
 
-    void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor);
+    void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws InterruptedException;
 
-    void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards);
+    void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws InterruptedException;
 
     void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn);
 
     void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
-    void drawCard();
+    void drawCard() throws InterruptedException;
 
     void showHomeMenu();
 
@@ -58,11 +58,13 @@ public interface View {
 
     void onSetLastTurn(String playerNickname, Position position);
 
-    void placeCard(); //TODO: non lo uso nella GUI
+    void placeCard() throws InterruptedException; //TODO: non lo uso nella GUI
 
     void updatePlayerScore(String playerNickname, int newPlayerScore);
 
     void onNewMessage(String sender, String receiver, String message);
 
     void gameOver(Set<String> winner);
+
+    void interruptReader();
 }

@@ -15,6 +15,10 @@ public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaiting
 
     @Override
     public void methodToCall(View view) {
-        view.joiningPhase(this.gameNameWaitingPlayersMap);
+        try {
+            view.joiningPhase(this.gameNameWaitingPlayersMap);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

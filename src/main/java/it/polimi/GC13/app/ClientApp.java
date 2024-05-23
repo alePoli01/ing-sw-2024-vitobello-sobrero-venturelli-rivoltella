@@ -14,6 +14,10 @@ public class ClientApp {
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
         int RMIport = 0;
         int socketPort = 0;
+        int connectionChoice = 0;
+        ServerInterface virtualServer;
+        ClientDispatcher clientDispatcher;
+        View view;
         String rmiHostname = null;
 
         if (args.length < 2) {
@@ -24,12 +28,12 @@ public class ClientApp {
             try {
                 RMIport = Integer.parseInt(args[0]);
                 socketPort = Integer.parseInt(args[1]);
+                System.out.println("Insert address of the Server:");
+                rmiHostname = reader.readLine();
             } catch (NumberFormatException e) {
                 System.err.println("Illegal Argument Format, killing this client.\nHINT: check port numbers");
                 System.exit(-1);
             }
-            System.out.println("Insert address of the Server:");
-            rmiHostname = reader.readLine();
         } else {
             try {
                 RMIport = Integer.parseInt(args[1]);
@@ -50,17 +54,12 @@ public class ClientApp {
         System.out.println("Socket port: " + socketPort + "\n");
 
 
-        int connectionChoice = 0;
-        ServerInterface virtualServer = null;
-        ClientDispatcher clientDispatcher;
-        View view = null;
-
         // INTERNET PROTOCOL CHOICE
         do {
             System.out.print("Chose the connection:\n\t[1] RMI or [2] SOCKET\nYour choice: ");
             try {
                 connectionChoice = Integer.parseInt(reader.readLine());
-            } catch (NumberFormatException | IOException e) {
+            } catch (NumberFormatException e) {
                 System.err.println("Invalid value!");
             }
         } while (connectionChoice != 1 && connectionChoice != 2);
@@ -71,7 +70,7 @@ public class ClientApp {
             System.out.print("Chose your view:\n\t[1] TUI or [2] GUI\nYour choice: ");
             try {
                 viewChoice = Integer.parseInt(reader.readLine());
-            } catch (NumberFormatException | IOException e) {
+            } catch (NumberFormatException e) {
                 System.err.println("Invalid value!");
             }
         } while (viewChoice != 1 && viewChoice != 2);
