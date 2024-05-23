@@ -5,14 +5,17 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromclient.DrawCardFromDeckMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
+import it.polimi.GC13.view.GUI.game.WinningFrame;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
 import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class FrameManager extends JFrame implements View {
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
+    private WinningFrame winningFrame;
 
 
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
@@ -61,6 +65,8 @@ public class FrameManager extends JFrame implements View {
             synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
+                /*if(gamePage!=null)
+                    gamePage.setHand(this.hand);*/
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
@@ -192,7 +198,6 @@ public class FrameManager extends JFrame implements View {
     private void setDataSetupPhase(String playerNickname, TokenColor tokenColor) {
         gamePage.setNickname(playerNickname);
         gamePage.setToken(tokenColor);
-        gamePage.setHand(this.hand);
     }
 
     @Override
@@ -208,12 +213,7 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
-        gamePage.setPlayerPositions(playerPositions);
-    }
-
-    @Override
-    public void reconnectToGame() {
-
+        //gamePage.setPlayerPositions(playerPositions);
     }
 
 
@@ -231,9 +231,6 @@ public class FrameManager extends JFrame implements View {
         }
         this.gamesLog.add(playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
-
-        //TODO: INSERIRE IL METODO PER PIAZZARE LA CARTA INIZIALE AL CENTRO DEL FRAME
-
     }
 
     @Override
@@ -246,7 +243,8 @@ public class FrameManager extends JFrame implements View {
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
             gamePage.getPanelContainer().removeAll();
-            gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
+            //gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
+            gamePage.setupObjectiveCard(privateObjectiveCards);
             gamePage.getContentPane().revalidate();
             gamePage.getContentPane().repaint();
         }
@@ -273,7 +271,6 @@ public class FrameManager extends JFrame implements View {
             this.myTurn = turn;
             if (this.turnPlayed == 0) {
                 gamePage.getPanelContainer().removeAll();
-
                 gamePage.createGamePanel();
                 gamePage.getContentPane().revalidate();
                 gamePage.getContentPane().repaint();
@@ -336,72 +333,17 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void showHomeMenu() {
-        //System.out.println("\n--- HOME MENU ---");
-        if (this.myTurn) {
-            gamePage.getTurnLable().setText("It's your turn");
-        } else {
-            gamePage.getTurnLable().setText("It's not your turn");
-        }
-
-        //DA RIMUOVERE ALLA FINE
-        /*
-        System.out.println("\t[2] to place a card (only when in turn)");
-        System.out.println("\t[6] to view other players' board");
-        System.out.println("\t[7] to send a message in the chat");
-        System.out.println("\t[8] to show game's history");
-        System.out.println("\t[9] to show players' turns");
-        System.out.println("\t[10] to draw card (only when in turn)");*/
-
-
-        switch (this.choice) {
-            //place a card
-            case 2: {
-                this.placeCard();
-                break;
-            }
-            //view other players' board
-            case 6: {
-                this.cooking = true;
-
-
-                //System.out.println("Player chosen: " + playerChosen);
-                //this.playersBoard.get(viewPlayerBoard); // modificare metodo per mostrare board su schermo
-
-
-                this.cooking = false;
-                break;
-            }
-            //send a message in the chat
-            case 7: {
-                this.cooking = true;
-                this.sendMessage();
-                this.cooking = false;
-                break;
-            }
-            //show game's history
-            case 8: {
-                //this.printer.showHistory(this.gamesLog);
-                break;
-            }
-            //show players' turns
-            case 9: {
-
-                System.out.println("Player's position are: ");
-                // this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
-                break;
-            }
-            //draw card
-            case 10: {
-                this.drawCard();
-                break;
-            }
-        }
-        this.choice = -1;
-    }
+    public void showHomeMenu() {}
 
     @Override
-    public void placeCard() {} //TODO: disattivare il tasto Confirm se la carta e la griglia non sono selezionate
+    public void placeCard() {
+
+
+
+
+
+
+    } //TODO: disattivare il tasto Confirm se la carta e la griglia non sono selezionate
 
     private void sendMessage() {
    /*     try {
@@ -437,25 +379,23 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void drawCard() {
-     /*   this.printer.showDrawableCards(this.goldCardsAvailable, this.resourceCardsAvailable);
-        if (this.myTurn && this.hand.size() == 2) {
+        /*if (this.myTurn && this.hand.size() == 2) {
             try {
                 do {
                     System.out.print("Choose the card to withdraw: ");
                     this.choice = Integer.parseInt(this.reader.readLine());
                 } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
-                this.virtualServer.drawCard(choice);
-                System.out.println("+++ Sent draw card");
+
+                this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
+
                 this.choice = 0;
                 this.turnPlayed++;
-                System.out.println("You have passed the turn");
-                this.printer.comeBack(this);
             } catch (IOException | NumberFormatException e) {
                 System.out.println("Error: Please put a number");
             }
         } else {
             System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
-            this.printer.comeBack(this);
+            this.showHomeMenu();
         }*/
     }
 
@@ -480,12 +420,52 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void gameOver(Set<String> winner) {
-        if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
-            //this.printer.winnerString();
-        } else {
-            //this.printer.loserString();
-        }
-        //this.printer.showPlayersScore(this.playersScore);
+        SwingUtilities.invokeLater(()-> {
+            winningFrame = new WinningFrame();
+            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
+                winningFrame.setWin(true);
+                winningFrame.getWinnerLabel().setText("You win!");
+            } else {
+                winningFrame.setWin(false);
+                winningFrame.getWinnerLabel().setText("You lose!");
+            }
+        });
     }
 
+
+
+
+    public Map<String, Integer> getPlayersScore() {
+        return playersScore;
+    }
+
+    public Map<String, Position> getPlayerPositions() {
+        return playerPositions;
+    }
+
+    public List<Integer> getHand() {
+        return hand;
+    }
+
+    public Map<String, List<String>> getChat() {
+        return chat;
+    }
+
+    public List<Integer> getSerialCommonObjectiveCard() {
+        return serialCommonObjectiveCard;
+    }
+
+    public Map<Integer, Boolean> getGoldCardsAvailable() {
+        return goldCardsAvailable;
+    }
+
+    public Map<Integer, Boolean> getResourceCardsAvailable() {
+        return resourceCardsAvailable;
+    }
+
+
+    @Override
+    public void reconnectToGame() {
+
+    }
 }
