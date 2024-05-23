@@ -432,7 +432,10 @@ public class FrameManager extends JFrame implements View {
         });
     }
 
+    @Override
+    public void interruptReader() {
 
+    }
 
 
     public Map<String, Integer> getPlayersScore() {
