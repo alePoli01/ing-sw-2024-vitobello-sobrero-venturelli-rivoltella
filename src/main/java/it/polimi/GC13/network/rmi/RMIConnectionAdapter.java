@@ -31,11 +31,8 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
         RMIServer: implements RMIServerInterface, identical to ServerInterface but requires the client
     */
     public ServerInterface startRMIConnection(String hostName, int port) throws RemoteException {
-        System.out.println("Starting RMI connection to " + hostName + ":" + port + " ...");
-        System.out.println("\t\tgetting registry");
         Registry registry = LocateRegistry.getRegistry(hostName, port);
         try {
-            System.out.println("\t\tgetting server stub");
             this.serverStub = (RMIServerInterface) registry.lookup("server");
         } catch (RemoteException | NotBoundException e) {
             System.err.println("Registry Lookup for server stub failed.");

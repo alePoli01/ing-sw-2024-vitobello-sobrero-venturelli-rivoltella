@@ -49,7 +49,7 @@ public class ConnectionBuilder {
             // RMI SETUP
             RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
             this.virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), this.RMIPort);
-            System.out.println("Connection completed");
+            //System.out.println("Connection completed");
         } else {
             // SOCKET SETUP
             this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
