@@ -1,8 +1,8 @@
 package it.polimi.GC13.view.GUI.game;
 
-import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
+import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceStartCardMessage;
 import it.polimi.GC13.network.messages.fromclient.TokenChoiceMessage;
 import it.polimi.GC13.view.GUI.*;
@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,34 +26,14 @@ import java.util.stream.Stream;
 
 
 public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
-    private final static String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
-    private final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
-    private final static String TOKEN_FILE_SUFFIX = "_token.png";
-    private final static String GREY_TOKEN_FILE_NAME = "grey";
 
-    private static final String RESOURCE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/resource_card/";
-    private static final String GOLD_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/gold_card/";
-    private static final String STARTER_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/starter_card/";
-    private static final String OBJECTIVE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/objective_card/";
-
-    private final static String FUNGI_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/fungi_reign_logo.png";
-    private final static String ANIMAL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/animal_reign_logo.png";
-    private final static String PLANT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/plant_reign_logo.png";
-    private final static String INSECT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/insect_reign_logo.png";
-    private final static String QUILL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/quill.png";
-    private final static String MANUSCRIPT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/manuscript.png";
-    private final static String INKWELL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/inkwell.png";
-
-    private final static String FUNGI_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/fungi_judge.png";
-    private final static String ANIMAL_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/animal_judge.png";
-    private final static String PLANT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/plant_judge.png";
-    private final static String INSECT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/insect_judge.png";
+    private record CardData(JLabel label, JCheckBox checkBox) {}
 
     private FrameManager frameManager;
 
     private String nickname;
     private TokenColor token;
-    private List<Integer> hand;
+    private ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
 
     private final JPanel panelContainer;
     private JPanel choosePanel;
@@ -66,11 +45,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     JPanel checkBoxPanel;
     JPanel commonPanel;
     ButtonGroup buttonGroup;
-    Map<JLabel, JCheckBox> tokenLabelCheckBox;
+    Map<JLabel, JCheckBox> labelCheckBoxMap;
+
+    Map<Integer, CardData> serialNumerCheckBoxMap = new HashMap<>();
+
     private JButton confirmButton;
     private JButton flipButton;
 
-    private WaitingLobby lobby;
     int progress = 0;
     int colorIndex = 0;
 
@@ -79,15 +60,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     private JLabel turnLable;
     Map<Integer, ArrayList<String>> handImageIcon;
-    private Map<String, Position> playerPositions;
-    private ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
-
-
-
+    //private Map<String, Position> playerPositions;
 
 /*
     private ArrayList<JLabel> cardLabel;
     private TokenManager tokenManager;
+
 */
 
     public MainPage(List<TokenColor> tokenColorList) {
@@ -122,7 +100,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         confirmButton.addActionListener (e -> {
             String tokenColorChosen;
-            for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
+            for (JCheckBox checkBox : labelCheckBoxMap.values()) {
                 if (checkBox.isSelected()) {
                     tokenColorChosen = checkBox.getText();
                     if (e.getActionCommand().equals("Select")) {
@@ -151,7 +129,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         namePanel.setOpaque(false);
         choosePanel.add(namePanel, createGridBagConstraints(0, 1));
 
-        tokenLabelCheckBox = new HashMap<>();
+        labelCheckBoxMap = new HashMap<>();
 
         setTokenColorList(tokenColorList);
     }
@@ -175,25 +153,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             buttonGroup.add(jCheckBox);
             setBorderInsets(jCheckBox, 0, 140, 70, 125);
             jCheckBox.setOpaque(false);
+            jCheckBox.addActionListener(e -> {
+                confirmButton.setEnabled(labelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
+
+                labelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                labelCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().equals(e.getSource()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey()
+                        .setForeground(Color.RED);
+            });
             checkBoxPanel.add(jCheckBox);
-            tokenLabelCheckBox.put(tokenLabelText, jCheckBox);
+            labelCheckBoxMap.put(tokenLabelText, jCheckBox);
         });
-
-        ActionListener actionListener = e -> {
-            confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
-
-            tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-            tokenLabelCheckBox.entrySet()
-                    .stream()
-                    .filter(en -> en.getValue().equals(e.getSource()))
-                    .findFirst()
-                    .orElseThrow()
-                    .getKey()
-                    .setForeground(Color.RED);
-        };
-
-        for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
     }
 
 
@@ -230,15 +205,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         panelContainer.add(choosePanel, createGridBagConstraints(0,3));
+        namePanel.removeAll();
         refresh();
 
-        showCard(hand.getFirst());
+        showStartCard(frameManager.getHand().getFirst());
+
 
         confirmButton.setText("Confirm");
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
         confirmButton.addActionListener (e -> {
             boolean isFlipped;
-            for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
+            for (JCheckBox checkBox : labelCheckBoxMap.values()) {
                 if (checkBox.isSelected()) {
                     isFlipped = !checkBox.getText().equals("Front");
                     if (e.getActionCommand().equals("Confirm")) {
@@ -258,8 +235,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private void refresh(){
         tokenPanel.removeAll();
         checkBoxPanel.removeAll();
-        namePanel.removeAll();
-        tokenLabelCheckBox.clear();
+        labelCheckBoxMap.clear();
 
         Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
         while (checkBoxes.hasMoreElements()) {
@@ -269,7 +245,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             }
         }
     }
-
 
 
     public Path identifyPathCard(int numberCard){
@@ -289,9 +264,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return startDir;
     }
 
-    // metodo per mostrare una singola carta
     @Override
-    public void showCard(Integer numberCard) {
+    public void showStartCard(Integer numberCard) {
         Path startDir = identifyPathCard(numberCard);
 
         if(startDir != null){
@@ -321,25 +295,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     buttonGroup.add(jCheckBox);
                     setBorderInsets(jCheckBox, 0, 140, 70, 125);
                     jCheckBox.setOpaque(false);
+                    jCheckBox.addActionListener(e -> {
+                        confirmButton.setEnabled(labelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
+
+                        labelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                        labelCheckBoxMap.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().equals(e.getSource()))
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey()
+                                .setForeground(Color.RED);
+                    });
                     checkBoxPanel.add(jCheckBox);
-                    tokenLabelCheckBox.put(startCardLabelText, jCheckBox);
+                    labelCheckBoxMap.put(startCardLabelText, jCheckBox);
                 });
-
-                ActionListener actionListener = e -> {
-                    confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
-
-                    tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-                    tokenLabelCheckBox.entrySet()
-                            .stream()
-                            .filter(en -> en.getValue().equals(e.getSource()))
-                            .findFirst()
-                            .orElseThrow()
-                            .getKey()
-                            .setForeground(Color.RED);
-                };
-
-                for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
@@ -401,15 +372,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     setBorderInsets(jCheckBox, 0, 140, 60, 125);
                     jCheckBox.setOpaque(false);
                     checkBoxPanel.add(jCheckBox);
-                    tokenLabelCheckBox.put(startCardLabelText, jCheckBox);
+                    labelCheckBoxMap.put(startCardLabelText, jCheckBox);
                 });
 
                 ActionListener actionListener = e -> {
-                    confirmButton.setEnabled(tokenLabelCheckBox.values().stream().anyMatch(AbstractButton::isSelected));
+                    confirmButton.setEnabled(labelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
 
-                    tokenLabelCheckBox.keySet().forEach(k -> k.setForeground(Color.BLACK));
+                    labelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
 
-                    tokenLabelCheckBox.entrySet()
+                    labelCheckBoxMap.entrySet()
                             .stream()
                             .filter(en -> en.getValue().equals(e.getSource()))
                             .findFirst()
@@ -418,7 +389,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                             .setForeground(Color.RED);
                 };
 
-                for(JCheckBox c : tokenLabelCheckBox.values()) c.addActionListener(actionListener);
+                for(JCheckBox c : labelCheckBoxMap.values()) c.addActionListener(actionListener);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
             }
@@ -469,7 +440,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
-    public void setupObjectiveCard(List<Integer> serialCommonObjectiveCard, List<Integer> privateObjectiveCards){
+    //public void setupObjectiveCard(List<Integer> serialCommonObjectiveCard, List<Integer> privateObjectiveCards){
+    public void setupObjectiveCard(List<Integer> privateObjectiveCards){
         getContentPane().remove(panelContainer);
         JScrollPane scrollPane = new JScrollPane(panelContainer);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -494,7 +466,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         commonPanel.setOpaque(false);
         panelContainer.add(commonPanel, createGridBagConstraints(0, 3));
 
-        for(Integer commonCard : serialCommonObjectiveCard) {
+        //for(Integer commonCard : serialCommonObjectiveCard) {
+        for(Integer commonCard : frameManager.getSerialCommonObjectiveCard()) {
             showCommonObjectiveCard(commonCard);
         }
 
@@ -503,6 +476,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panelContainer.add(titleLabel2, createGridBagConstraints(0, 4));
 
         panelContainer.add(choosePanel, createGridBagConstraints(0,5));
+        namePanel.removeAll();
         refresh();
 
         for(int privateCard : privateObjectiveCards) {
@@ -517,7 +491,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panelContainer.add(panelButton, createGridBagConstraints(0, 6));
         confirmButton.addActionListener (e -> {
             int choice;
-            for (JCheckBox checkBox : tokenLabelCheckBox.values()) {
+            for (JCheckBox checkBox : labelCheckBoxMap.values()) {
                 if (checkBox.isSelected()) {
                     choice = Integer.parseInt(checkBox.getText());
                     if (e.getActionCommand().equals("Let's Roll")) {
@@ -537,7 +511,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
     public void createGamePanel() {
+        namePanel.removeAll();
         refresh();
+
         panelContainer.setLayout(new CardLayout());
         JPanel panel1 = new JPanel(new BorderLayout());
         panel1.setOpaque(false);
@@ -620,13 +596,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setBorderInsets(southPanel, 10, 0, 10, 0);
 
 
-        /*choosePanel = new JPanel(new GridBagLayout());
-        tokenPanel = new JPanel(new FlowLayout());
-        checkBoxPanel = new JPanel(new FlowLayout());*/
 
-        //DA SVUOTARE I TRE PANEL
 
-        handImageIcon = showHand(hand);
+        handImageIcon = showHand(frameManager.getHand());
 
         for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()){
             String frontIcon = entry.getValue().getLast();
@@ -645,9 +617,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             jCheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+                    labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
-                    setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                    setCompoundBorderInsets(labelCheckBoxMap.entrySet()
                             .stream()
                             .filter(en -> en.getValue().equals(e.getSource()))
                             .findFirst()
@@ -657,12 +629,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             });
             checkBoxPanel.add(jCheckBox);
             checkBoxPanel.setOpaque(false);
-            tokenLabelCheckBox.put(imageLabel, jCheckBox);
+            labelCheckBoxMap.put(imageLabel, jCheckBox);
+
+            CardData record = new CardData(imageLabel, jCheckBox);
+            serialNumerCheckBoxMap.put(entry.getKey(), record);
         }
 
         choosePanel.add(tokenPanel, createGridBagConstraints(0,0));
         choosePanel.add(checkBoxPanel, createGridBagConstraints(0,0));
-
 
 
         namePanel =  new JPanel();
@@ -684,28 +658,32 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         southPanel.add(namePanel, BorderLayout.SOUTH);
         southPanel.add(choosePanel, BorderLayout.SOUTH);
 
+
+
+        /*JPanel deckPanel= new JPanel();
+        deckPanel.setLayout(new BoxLayout(deckPanel, BoxLayout.Y_AXIS));
+
+        JButton resourceDeck = createButton("Resource", 32);
+        setBoxComponentSize(resourceDeck, 150, 40);
+        deckPanel.add(resourceDeck);
+
+        JPanel emptyPanel2 = new JPanel();
+        emptyPanel.setPreferredSize(new Dimension(200,5));
+        deckPanel.add(emptyPanel2);
+
+        JButton goldDeck = createButton("Gold", 32);
+        setBoxComponentSize(goldDeck, 150, 40);
+        deckPanel.add(goldDeck);
+
+
+        southPanel.add(deckPanel);*/
         panel1.add(southPanel, BorderLayout.SOUTH);
 
 
 
 
- /*
-        JButton resourceDeck = createButton("Risorsa", 16);
-        setBoxComponentSize(resourceDeck, 150, 40);
-        //resourceDeck.setPreferredSize(new Dimension(150, 40));
 
-        JButton goldDeck = createButton("Oro", 16);
-        setBoxComponentSize(goldDeck, 150, 40);
         //goldDeck.setPreferredSize(new Dimension(150, 40));
-
-      //prova creazione popup
-        JButton popupButton = createButton("popup card", 16);
-        setBoxComponentSize(popupButton, 150, 40);
-        //popupButton.setPreferredSize(new Dimension(150, 40));
-        popupButton.addActionListener(this);
-        southPanel.add(popupButton);
-        southPanel.add(resourceDeck);
-        southPanel.add(goldDeck); */
 
 
 
@@ -829,17 +807,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         } else if (e.getActionCommand().equals("Go to game")) {
             cardLayout.show(panelContainer, PANEL1);
         } else if (e.getActionCommand().equals("Show Back")) {
-            tokenPanel.removeAll();
-            checkBoxPanel.removeAll();
             flipButton.setText("Show Front");
+            refresh();
 
-            Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
-            while (checkBoxes.hasMoreElements()) {
-                AbstractButton button = checkBoxes.nextElement();
-                if (button instanceof JCheckBox) {
-                    buttonGroup.remove(button);
-                }
-            }
 
             for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()){
                 String backIcon = entry.getValue().getFirst();
@@ -859,9 +829,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 jCheckBox.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+                        labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
-                        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                        setCompoundBorderInsets(labelCheckBoxMap.entrySet()
                                 .stream()
                                 .filter(en -> en.getValue().equals(e.getSource()))
                                 .findFirst()
@@ -870,22 +840,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     }
                 });                checkBoxPanel.add(jCheckBox);
                 checkBoxPanel.setOpaque(false);
-                tokenLabelCheckBox.put(imageLabel, jCheckBox);
+                labelCheckBoxMap.put(imageLabel, jCheckBox);
+
+
+                /*CardData record = new CardData(imageLabel, jCheckBox);
+                serialNumerCheckBoxMap.put(entry.getKey(), record);*/
 
             }
 
         }  else if (e.getActionCommand().equals("Show Front")) {
-            tokenPanel.removeAll();
-            checkBoxPanel.removeAll();
             flipButton.setText("Show Back");
-
-            Enumeration<AbstractButton> checkBoxes = buttonGroup.getElements();
-            while (checkBoxes.hasMoreElements()) {
-                AbstractButton button = checkBoxes.nextElement();
-                if (button instanceof JCheckBox) {
-                    buttonGroup.remove(button);
-                }
-            }
+            refresh();
 
             for(Map.Entry<Integer, ArrayList<String>> entry : handImageIcon.entrySet()) {
                 String frontIcon = entry.getValue().getLast();
@@ -905,9 +870,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 jCheckBox.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        tokenLabelCheckBox.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
+                        labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
-                        setCompoundBorderInsets(tokenLabelCheckBox.entrySet()
+                        setCompoundBorderInsets(labelCheckBoxMap.entrySet()
                                 .stream()
                                 .filter(en -> en.getValue().equals(e.getSource()))
                                 .findFirst()
@@ -916,7 +881,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     }
                 });                checkBoxPanel.add(jCheckBox);
                 checkBoxPanel.setOpaque(false);
-                tokenLabelCheckBox.put(imageLabel, jCheckBox);
+                labelCheckBoxMap.put(imageLabel, jCheckBox);
+
+
 
             }
         } else if (e.getActionCommand().equals("Confirm")) {
@@ -928,13 +895,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             popup.setVisible(true);
 
             //testing
-            Object[] options = { "Create Game", "Join Game" };
-            int choice = JOptionPane.showOptionDialog(null,"There are existing games, choose: ","Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null, options, options[0]);
+            /*Object[] options = {"Create Game", "Join Game"};
+            int choice = JOptionPane.showOptionDialog(null, "There are existing games, choose: ", "Create Game / Join Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
             if (choice == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(null,"Tua mamma");
-            } else if(choice == JOptionPane.NO_OPTION) {
-                JOptionPane.showMessageDialog(null,"Quella troia");
+                JOptionPane.showMessageDialog(null, "Tua mamma");
+            } else if (choice == JOptionPane.NO_OPTION) {
+                JOptionPane.showMessageDialog(null, "Quella troia");
             }*/
 
     }
@@ -955,10 +922,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return token;
     }
 
-    public void setHand(List<Integer> hand) {
-        this.hand = hand;
-    }
-
     public JPanel getPanelContainer() {
         return panelContainer;
     }
@@ -975,24 +938,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return turnLable;
     }
 
-    public void setTurnLable(JLabel turnLable) {
-        this.turnLable = turnLable;
-    }
-
-
-    public Map<String, Position> getPlayerPositions() {
-        return playerPositions;
-    }
-
-    public void setPlayerPositions(Map<String, Position> playerPositions) {
-        this.playerPositions = playerPositions;
-    }
 
 
     public void setPlayerAvatar(JPanel lateralPanelSX){
         Random random = new Random();
 
-        for (String player: playerPositions.keySet()) {
+        for (String player: frameManager.getPlayerPositions().keySet()) {
             int randomIndex = random.nextInt(avatars.size());
             String selectedAvatar = avatars.get(randomIndex);
             avatars.remove(randomIndex);
@@ -1005,7 +956,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             playerNamePositionPanel.setLayout(new BoxLayout(playerNamePositionPanel, BoxLayout.Y_AXIS));
             JLabel playerNameLabel = createTextLabelFont(player, 16);
             playerNamePositionPanel.add(playerNameLabel);
-            JLabel playerPositionLabel = createTextLabelFont(playerPositions.get(player).toString().toLowerCase(), 12);
+            JLabel playerPositionLabel = createTextLabelFont(frameManager.getPlayerPositions().get(player).toString().toLowerCase(), 12);
             playerPositionLabel.setForeground(Color.GRAY);
             playerNamePositionPanel.add(playerPositionLabel);
             playerAvatarPanel.add(playerNamePositionPanel);

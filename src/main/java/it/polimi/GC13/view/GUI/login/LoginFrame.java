@@ -22,6 +22,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private JTextField nicknameField;
     private JTextField gameNameField;
     private JList<String> existingGameList;
+    //private JComboBox<String> comboBox;
     private JButton loginButton;
     int progress;
     int colorIndex = 0;
@@ -165,22 +166,20 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         existingGameList.setBorder(BorderFactory.createEtchedBorder());
 
-
-
-
-        //TODO: FARE UN JCOMBOBOX
         //JScrollPane scrollPane = addScrollPane(existingGameList);
         //setBoundsComponent(scrollPane, 100, 25, -115, +30);
         setBoundsComponent(existingGameList, 100, 25, -115, +30);
 
         backgroundPanel.add(existingGameList);
 
+        /*comboBox = new JComboBox<>();
 
-        /*int width5 = 100;
-        int heigth5 = 25;
-        scrollPane.setPreferredSize(new Dimension(width5, heigth5));
-        scrollPane.setBounds((getWidth() - width5)/2 - 115, (getHeight() - heigth5)/2 + 30, width5, heigth5);*/
-        //backgroundPanel.add(scrollPane);
+        Map<String, String> map = new HashMap<>();
+        for(String s : gameNameWaitingPlayersMap.keySet()){
+            String concat = s + " (" + gameNameWaitingPlayersMap.get(s).toString() + " players waiting)";
+            map.put(concat, s);
+            comboBox.addItem(concat);
+        }*/
 
 
         DocumentListener documentListener = new DocumentListener() {
@@ -212,6 +211,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
             public void actionPerformed(ActionEvent e) {
                 String nickname = nicknameField.getText();
                 String gameName = map.get(existingGameList.getSelectedValue());
+                //String gameName = map.get((String) comboBox.getSelectedItem());
                 frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
                 frameManager.setNickname(nickname);
                 if (e.getActionCommand().equals("Start")) {
