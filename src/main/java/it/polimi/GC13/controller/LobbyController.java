@@ -92,7 +92,6 @@ public class LobbyController implements Serializable {
 
     public synchronized void reconnectPlayerToGame(ClientInterface client, String gameName, String playerName) throws RemoteException {
         System.out.println("--Received: reconnectPlayerToGame");
-
         if (this.restartGames(gameName, playerName, client)) {
             System.out.println("Game and Player name was found, reconnecting client");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
@@ -113,7 +112,8 @@ public class LobbyController implements Serializable {
                 // Create a new controller for the game and put it in the map
                 Controller controller = new Controller(game, this, this.controllerDispatcher);
                 this.getGameControllerMap().put(game, controller);
-                game.getObserver().rebuildClientList(List.of(client));
+                game.setObserver();
+                game.getObserver().addListener(client);
                 return true;
             }
         }

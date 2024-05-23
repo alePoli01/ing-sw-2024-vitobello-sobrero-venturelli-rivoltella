@@ -21,7 +21,7 @@ public class Game implements Serializable {
     private final List<Player> playerList;
     private int lastRound;
     private final String gameName;
-    private final Observer observer;
+    private transient Observer observer;
     private final Map<String, List<String>> chat = new HashMap<>();
     private Set<Player> winner;
 
@@ -37,7 +37,7 @@ public class Game implements Serializable {
         this.numPlayer = numPlayer;
         this.playerList = new ArrayList<>();
         this.currNumPlayer = 0;
-        this.observer = new Observer(new DiskManager(), this);
+        this.setObserver();
     }
 
     public String getGameName() {
@@ -46,6 +46,10 @@ public class Game implements Serializable {
 
     public Observer getObserver() {
         return this.observer;
+    }
+
+    public void setObserver() {
+        this.observer = new Observer(new DiskManager(), this);
     }
 
     public void setGameState(GameState newState) {

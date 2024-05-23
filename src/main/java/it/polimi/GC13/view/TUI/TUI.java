@@ -360,7 +360,7 @@ public class TUI implements View {
      */
     @Override
     public void showHomeMenu() {
-        this.menuOption();
+        this.menuOptions();
         try {
             do {
                 this.choice = Integer.parseInt(reader.readLine());
@@ -519,7 +519,7 @@ public class TUI implements View {
             try {
                 serialCardToPlace = scanner.nextInt();
                 while (!this.hand.contains(serialCardToPlace)) {
-                    System.out.println("You don't have the selected card. Available cards are: ");
+                    System.out.print("You don't have the selected card. Available cards are: ");
                     this.hand.forEach(card -> System.out.print(" " + card));
                     serialCardToPlace = scanner.nextInt();
                 }
@@ -639,7 +639,7 @@ public class TUI implements View {
                 if (this.playerPositions.get(this.nickname).equals(Position.FIRST) && this.turnPlayed == 0) {
                     this.showHomeMenu();
                 } else {
-                    this.menuOption();
+                    this.menuOptions();
                 }
             } else if (!this.myTurn) {
                 // at the end of the turn, the player will see the MAIN MENU
@@ -656,7 +656,7 @@ public class TUI implements View {
         }
     }
 
-    private void menuOption() {
+    private void menuOptions() {
         System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + " ---");
         if (this.myTurn) {
             System.out.println("\u001B[32mIt's your turn\u001B[0m");
