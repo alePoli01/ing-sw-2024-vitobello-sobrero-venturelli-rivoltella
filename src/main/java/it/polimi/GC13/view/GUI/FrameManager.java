@@ -33,7 +33,7 @@ public class FrameManager extends JFrame implements View {
     private final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
-    private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    public final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
     private final Map<String, List<String>> chat = new HashMap<>();

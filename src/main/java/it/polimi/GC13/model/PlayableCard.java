@@ -1222,5 +1222,6 @@ public class PlayableCard implements Serializable {
 
         }
     }
+
 }
 

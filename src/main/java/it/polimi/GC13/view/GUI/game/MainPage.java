@@ -39,7 +39,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private JPanel choosePanel;
 
     private List<TokenColor> tokenColorList;
-    private JPanel board;
+    private JLayeredPane board;
     JPanel tokenPanel;
     JPanel namePanel;
     JPanel checkBoxPanel;
@@ -71,8 +71,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public MainPage(List<TokenColor> tokenColorList) {
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setSize(1700, 900); //for debugging
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //setSize(1700, 900); //for debugging
         setResizable(false);
 
         panelContainer = new JPanel(new GridBagLayout());
@@ -562,9 +562,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         //da verificarne il funzionamento
-        board = new JPanel(new GridLayout(100, 100, 70, 100)); //sarà la board di gioco, da capire con che Layout implementarla
-        board.setOpaque(false);
+        board = new JLayeredPane();
+        int boardheight = 11220;
+        int boardwidth = 16830;
+        board.setPreferredSize(new Dimension(boardwidth, boardheight)); //sarà la board di gioco, da capire con che Layout implementarla
+
         addScrollPane(board, panel1); //DA VERIFICARE SE ME LO METTE IN BORDERLAYOUT.CENTER
+
+       //System.out.println("debug  "+frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber);
+        addImageToLayeredPane(board, getDirectory( frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2, boardheight/2, frameManager.playersBoard.get(nickname).Board[50][50].weight); // Sostituisci con il percorso reale dell'immagine
+        addImageToLayeredPane(board, getDirectory( 1,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2+(1*152), boardheight/2+(1*78), frameManager.playersBoard.get(nickname).Board[50][50].weight+1); // Sostituisci con il percorso reale dell'immagine
+        for(int i=2;i<37;i++){
+            addImageToLayeredPane(board, getDirectory( i,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2+(i*152), boardheight/2+(i*78), frameManager.playersBoard.get(nickname).Board[50][50].weight+i);
+        }
+        board.revalidate();
+        board.repaint();
+        panel1.setVisible(true);
 
 
         JPanel lateralPanelSX = new JPanel();
@@ -593,7 +606,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         JPanel southPanel = new JPanel(new FlowLayout());
-        setBorderInsets(southPanel, 10, 0, 10, 0);
+        setBorderInsets(southPanel, 1, 0, 1, 0);
 
 
 
@@ -730,6 +743,49 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     }
 
+    public static void addImageToLayeredPane(JLayeredPane layeredPane, String imagePath, int x, int y, int layer) {
+        ImageIcon originalIcon = new ImageIcon(imagePath);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(originalIcon.getIconWidth() / 5, originalIcon.getIconHeight() / 5, Image.SCALE_SMOOTH); // Scala l'immagine
+        ImageIcon imageIcon = new ImageIcon(scaledImage);
+        JLabel imageLabel = new JLabel(imageIcon);
+        imageLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
+        System.out.println("altezza "+imageIcon.getIconHeight());
+        System.out.println("larghezza "+imageIcon.getIconWidth());
+        imageLabel.setBounds(x, y, imageIcon.getIconWidth(), imageIcon.getIconHeight());
+        layeredPane.add(imageLabel, Integer.valueOf(layer));
+    }
+
+    public String getDirectory(int serialnumber,boolean isflipped){
+        if(serialnumber<=40){
+            if(isflipped){
+                return RESOURCE_DIR+"/resource_card_front/resource_card_front_"+serialnumber+".png";
+            }else{
+                return RESOURCE_DIR+"/resource_card_back/resource_card_back_"+serialnumber+".png";
+            }
+        }
+        if(serialnumber>40&&serialnumber<=80){
+            if(isflipped){
+                return GOLD_DIR+"/gold_card_front/gold_card_front_"+serialnumber+".png";
+            }else{
+                return GOLD_DIR+"/gold_card_back/gold_card_back_"+serialnumber+".png";
+            }
+        }
+        if(serialnumber>80&&serialnumber<=86){
+            if(isflipped){
+                return STARTER_DIR+"/starter_card_front/starter_card_front_"+serialnumber+".png";
+            }else{
+                return STARTER_DIR+"/starter_card_back/starter_card_back_"+serialnumber+".png";
+            }
+        }
+        if(serialnumber>86&&serialnumber<=102){
+            if(isflipped){
+                return null;
+            }else{
+                return null;
+            }
+        }
+        return null;
+    }
 
     private static JTable createTable(String[] columnNames, Object[][] data) {
         ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
@@ -749,10 +805,27 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
-    private static void addScrollPane(JComponent component, JPanel panel){
-        JScrollPane scrollPane = new JScrollPane(component);
+    private  void addScrollPane(JComponent component, JPanel panel){
+        JScrollPane scrollPane = new JScrollPane(component);//aggiungi allo scrollpane la board
         scrollPane.setPreferredSize(new Dimension(250, 285));
+        if(component==board){
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            DragScrollListener dragScrollListener = new DragScrollListener(scrollPane);
+            board.addMouseListener(dragScrollListener);
+            board.addMouseMotionListener(dragScrollListener);
+        }
+        //aggiungi al panel1 lo scrollpane
         panel.add(scrollPane);
+        SwingUtilities.invokeLater(() -> {
+            JViewport viewport = scrollPane.getViewport();
+            Dimension viewportSize = viewport.getSize();
+            Dimension layeredPaneSize = viewport.getViewSize();
+
+            int offsetX = (layeredPaneSize.width - viewportSize.width) / 2;
+            int offsetY = (layeredPaneSize.height - viewportSize.height) / 2;
+
+            viewport.setViewPosition(new Point(offsetX, offsetY));
+        });
     }
 
 
