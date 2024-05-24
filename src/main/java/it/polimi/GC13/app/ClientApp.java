@@ -7,6 +7,7 @@ import it.polimi.GC13.view.View;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ThreadInfo;
 
 public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);

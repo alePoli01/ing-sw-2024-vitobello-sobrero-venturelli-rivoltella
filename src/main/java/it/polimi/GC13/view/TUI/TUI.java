@@ -35,7 +35,7 @@ public class TUI implements View {
     private boolean newMessage = false;
 
     public TUI() {
-        this.newReader.start();
+        new Thread(this.newReader, "READER").start();
         this.printer.intro();
     }
 
@@ -254,7 +254,7 @@ public class TUI implements View {
             this.printer.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCards);
             while (!privateObjectiveCards.contains(choice)) {
-                this.choice = userIntegerInput("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]: ");
+                this.choice = userIntegerInput("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]");
             }
 
             this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
@@ -478,8 +478,8 @@ public class TUI implements View {
             this.printer.showHand(this.hand);
             serialCardToPlace = userIntegerInput("Enter serial card");
             while (!this.hand.contains(serialCardToPlace)) {
-                System.out.print("You don't have the selected card. Available cards are: ");
-                this.hand.forEach(card -> System.out.print(" " + card));
+                System.out.print("You don't have the selected card. Available cards are:");
+                this.hand.forEach(card -> System.out.print(Collectors.joining(" " + card," ", "\n")));
                 serialCardToPlace = userIntegerInput("Enter serial card");
             }
             X = userIntegerInput("Enter X coordinate");
@@ -569,19 +569,21 @@ public class TUI implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
-            // this.turnPlayed == 0 after private card is chosen
-            if (this.myTurn && this.turnPlayed >= 0 && !cooking) {
-                if (this.playerPositions.get(this.nickname).equals(Position.FIRST) && this.turnPlayed == 0) {
+            // prints for the first time the main menu
+            if (myTurn && this.turnPlayed == 0 && this.playerPositions.get(this.nickname).equals(Position.FIRST)) {
+                this.showHomeMenu();
+            } else if (!myTurn && this.turnPlayed == 0) {
+                this.showHomeMenu();
+            } else {
+                // notifies the player has passed the turn
+                if (!this.myTurn) {
+                    System.out.println("You have passed the turn");
                     this.showHomeMenu();
-                } else {
+                }
+                // if the player is sending a message he is not interrupted
+                if (!this.cooking) {
                     this.interruptReader();
                 }
-            } else if (!this.myTurn) {
-                // at the end of the turn, the player will see the MAIN MENU
-                if (this.turnPlayed > 0) {
-                    System.out.println("You have passed the turn");
-                }
-                this.showHomeMenu();
             }
         }
         if (turn) {
@@ -593,7 +595,7 @@ public class TUI implements View {
 
     @Override
     public void interruptReader() {
-        this.newReader.interruptThread();
+        this.newReader.wakeUpMainThread();
     }
 
     private void menuOptions() {
