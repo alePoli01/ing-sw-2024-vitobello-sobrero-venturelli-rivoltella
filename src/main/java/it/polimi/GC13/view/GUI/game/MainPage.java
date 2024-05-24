@@ -569,11 +569,18 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         addScrollPane(board, panel1); //DA VERIFICARE SE ME LO METTE IN BORDERLAYOUT.CENTER
 
-       //System.out.println("debug  "+frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber);
-        addImageToLayeredPane(board, getDirectory( frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2, boardheight/2, frameManager.playersBoard.get(nickname).Board[50][50].weight); // Sostituisci con il percorso reale dell'immagine
-        addImageToLayeredPane(board, getDirectory( 1,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2+(1*152), boardheight/2+(1*78), frameManager.playersBoard.get(nickname).Board[50][50].weight+1); // Sostituisci con il percorso reale dell'immagine
-        for(int i=2;i<37;i++){
-            addImageToLayeredPane(board, getDirectory( i,frameManager.playersBoard.get(nickname).Board[50][50].isFlipped), boardwidth/2+(i*152), boardheight/2+(i*78), frameManager.playersBoard.get(nickname).Board[50][50].weight+i);
+        //System.out.println("debug  "+frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber);
+        for (int i = 10; i < 80; i++) {
+            for (int j = 10; j < 80; j++) {
+                if (i % 2 == 0 && j % 2 == 0 || i % 2 == 1 && j % 2 == 1) {
+                    System.out.println("i=" + i + ",j=" + j);
+                    if (frameManager.playersBoard.get(nickname).Board[i][j] != null) {
+                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), frameManager.playersBoard.get(nickname).Board[i][j].weight);
+                    }else{
+                        //bisogna controllare se le coordinate sono appartenenti alla lista delle available cells
+                    }
+                }
+            }
         }
         board.revalidate();
         board.repaint();
