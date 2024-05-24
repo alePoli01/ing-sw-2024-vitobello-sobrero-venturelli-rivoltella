@@ -6,21 +6,17 @@ public class Reader extends Thread {
     private String input;
     private boolean inputReady = false;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private Thread mainThread;
 
     public synchronized String readInput() throws InterruptedException {
         while (!this.inputReady) {
-            if (mainThread == null) {
-                mainThread = this;
-            }
-            mainThread.wait();
+            this.wait();
         }
         this.inputReady = false;
         return this.input;
     }
 
     public void wakeUpMainThread() {
-        this.mainThread.interrupt();
+        this.interrupt();
     }
 
     @Override
