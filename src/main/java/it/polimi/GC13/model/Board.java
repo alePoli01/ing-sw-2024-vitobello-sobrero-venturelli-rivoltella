@@ -84,7 +84,7 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         } else {
-            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, owner.getTurnPlayed()));
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, this.owner.getTurnPlayed(), this.availableCells));
         }
         this.updateAvailableCells(cardToPlace, xy, isFlipped);
     }
@@ -103,7 +103,7 @@ public class Board implements Serializable {
             throw new GenericException("Sever didn't update the Board");
         }
         this.updateAvailableCells(cardToPlace, xy, isFlipped);
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed()));
+        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.availableCells));
     }
 
     // updates notAvailableCells and availableCells sets

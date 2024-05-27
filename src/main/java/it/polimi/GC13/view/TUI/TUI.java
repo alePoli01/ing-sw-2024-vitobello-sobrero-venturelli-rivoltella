@@ -13,16 +13,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TUI implements View {
+    /* todo
+         change public to private
+     */
     private ServerInterface virtualServer;
-    private String nickname;
+    public String nickname;
     private String gameName;
     private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
-    private int turnPlayed = 0;
+    public int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new HashMap<>();
-    private final Map<String, Position> playerPositions = new HashMap<>();
+    public final Map<String, Position> playerPositions = new HashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
@@ -217,7 +220,7 @@ public class TUI implements View {
         OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
-    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
+    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
         String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
 
         if (!this.playersBoard.containsKey(playerNickname)) {

@@ -1,8 +1,5 @@
 package it.polimi.GC13.view.TUI;
 
-import it.polimi.GC13.model.Deck;
-import it.polimi.GC13.model.ObjectObjective;
-import it.polimi.GC13.model.ObjectiveCard;
 import junit.framework.TestCase;
 
 import java.util.HashMap;

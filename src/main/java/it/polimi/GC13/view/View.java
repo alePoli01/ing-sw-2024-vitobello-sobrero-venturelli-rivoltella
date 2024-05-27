@@ -38,7 +38,7 @@ public interface View {
 
     void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws InterruptedException;
 
-    void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn);
+    void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells);
 
     void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 

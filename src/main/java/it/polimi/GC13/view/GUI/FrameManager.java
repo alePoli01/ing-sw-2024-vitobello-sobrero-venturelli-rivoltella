@@ -199,7 +199,7 @@ public class FrameManager extends JFrame implements View {
      OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
-    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
+    public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
         if (!this.playersBoard.containsKey(playerNickname)) {
             this.playersBoard.put(playerNickname, new BoardView());
         }
