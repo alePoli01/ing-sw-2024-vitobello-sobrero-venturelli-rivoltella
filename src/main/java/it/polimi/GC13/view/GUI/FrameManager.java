@@ -37,6 +37,7 @@ public class FrameManager extends JFrame implements View {
     private int choice = -1;
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
+    public List<Coordinates> availablesCells=new LinkedList<>();
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
@@ -205,6 +206,10 @@ public class FrameManager extends JFrame implements View {
         }
         this.gamesLog.add(playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
+        if(Objects.equals(playerNickname, this.nickname)){
+            availablesCells = availableCells;
+        }
+
     }
 
     /**
@@ -332,7 +337,8 @@ public class FrameManager extends JFrame implements View {
             this.myTurn = turn;
             if (this.turnPlayed == 0) {
                 gamePage.getPanelContainer().removeAll();
-                gamePage.createGamePanel();
+
+            gamePage.createGamePanel();
                 gamePage.getContentPane().revalidate();
                 gamePage.getContentPane().repaint();
             }

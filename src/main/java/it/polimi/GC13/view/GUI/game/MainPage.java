@@ -1,6 +1,7 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.messages.fromclient.ChoosePrivateObjectiveCardMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.messages.fromclient.PlaceStartCardMessage;
@@ -584,12 +585,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         //System.out.println("debug  "+frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber);
         for (int i = 10; i < 80; i++) {
             for (int j = 10; j < 80; j++) {
-                if (i % 2 == 0 && j % 2 == 0 || i % 2 == 1 && j % 2 == 1) {
+                if ((i+j)%2 ==0) {
                     System.out.println("i=" + i + ",j=" + j);
                     if (frameManager.playersBoard.get(nickname).Board[i][j] != null) {
-                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), frameManager.playersBoard.get(nickname).Board[i][j].weight);
+                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[i][j].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), frameManager.playersBoard.get(nickname).Board[i][j].weight);
                     }else{
-                        //bisogna controllare se le coordinate sono appartenenti alla lista delle available cells
+                        for(Coordinates coordinates : frameManager.availablesCells){
+                            if(i==coordinates.getX()&&j==coordinates.getY()){
+                                addButtonToLayeredPane(board,boardwidth / 2 + ((i - 50) * 152),boardheight / 2 + ((j - 50) * 78),-1);
+                            }
+
+                        }
                     }
                 }
             }
@@ -760,6 +766,16 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         tokenManager.moveDiagonal(tokenManager.getTokenInGame().get(0));
         */
 
+    }
+
+    private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y,int weight) {
+        JButton button=new JButton();
+        button.addActionListener(this);
+        setBoxComponentSize(button, 192, 132);
+        button.setVisible(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK,4));
+        button.setBounds(x,y,198,132);//card sizes
+        layeredPane.add(button,weight);
     }
 
     public static void addImageToLayeredPane(JLayeredPane layeredPane, String imagePath, int x, int y, int layer) {
