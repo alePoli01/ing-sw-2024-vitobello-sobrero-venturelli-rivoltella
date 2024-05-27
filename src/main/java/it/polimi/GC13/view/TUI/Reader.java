@@ -15,8 +15,10 @@ public class Reader extends Thread {
         return this.input;
     }
 
-    public void wakeUpMainThread() {
-        this.interrupt();
+    public synchronized void wakeUpMainThread() {
+        this.input = "error";
+        this.inputReady = true;
+        this.notifyAll();
     }
 
     @Override
