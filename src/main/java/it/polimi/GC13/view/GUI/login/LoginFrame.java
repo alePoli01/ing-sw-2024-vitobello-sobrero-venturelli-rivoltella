@@ -21,14 +21,14 @@ import java.util.Map;
 public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private JTextField nicknameField;
     private JTextField gameNameField;
-    private JList<String> existingGameList;
-    //private JComboBox<String> comboBox;
+    //private JList<String> existingGameList;
+    private JComboBox<String> comboBox;
     private JButton loginButton;
     int progress;
     int colorIndex = 0;
     ArrayList<JRadioButton> radiobuttons;
     private FrameManager frameManager;
-    private JPanel backgroundPanel;
+    private JPanel panelContainer;
     Object source;
     boolean flag;
     String nickname;
@@ -50,40 +50,77 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
-        backgroundPanel.setLayout(null);
+        this.frameManager = frameManager;
+
+        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
         getContentPane().add(backgroundPanel);
+        panelContainer = new JPanel();
+        panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
+        panelContainer.setOpaque(false);
+        panelContainer.setPreferredSize(new Dimension(340, 710));
+        backgroundPanel.add(panelContainer);
+
+
+        JPanel credentialPanel = new JPanel(new GridBagLayout());
+        credentialPanel.setOpaque(false);
+        GridBagConstraints gbcElements = createGridBagConstraints(0,0);
+        gbcElements.anchor = GridBagConstraints.LINE_START;
+        gbcElements.insets =  new Insets(5, 0, 0, 0);
 
         JLabel nicknameLabel = createTextLabelFont("Insert your nickname: ", 20);
-        setBoundsComponent(nicknameLabel, 345, 25, 5, -70);
-        backgroundPanel.add(nicknameLabel);
+        credentialPanel.add(nicknameLabel, gbcElements);
 
+        gbcElements.gridy = 1;
         nicknameField = new JTextField();
-        setBoundsComponent(nicknameField, 200, 25, -65, -40);
-        backgroundPanel.add(nicknameField);
+        nicknameField.setPreferredSize(new Dimension(200, 25));
+        credentialPanel.add(nicknameField, gbcElements);
 
 
-        //Insertion of the game name
+        gbcElements.gridy = 2;
+        gbcElements.insets =  new Insets(20, 0, 0, 0);
         JLabel gameNameLabel = createTextLabelFont("Insert game name: ", 20);
-        setBoundsComponent(gameNameLabel, 345, 25, 5, 5);
-        backgroundPanel.add(gameNameLabel);
-
+        credentialPanel.add(gameNameLabel, gbcElements);
+        gbcElements.gridy = 3;
+        gbcElements.insets =  new Insets(5, 0, 0, 0);
         gameNameField = new JTextField();
-        setBoundsComponent(gameNameField, 180, 25, -75, +35);
-        backgroundPanel.add(gameNameField);
+        gameNameField.setPreferredSize(new Dimension(200, 25));
+        credentialPanel.add(gameNameField, gbcElements);
 
-        //Definition of the number of players
+        panelContainer.add(credentialPanel);
+
+
+        JPanel playersNumPanel = new JPanel(new GridBagLayout());
+        playersNumPanel.setOpaque(false);
+        GridBagConstraints gbcPlayersNumElements = createGridBagConstraints(0,0);
+        gbcPlayersNumElements.insets =  new Insets(0, 0, 10, 0);
+        gbcElements.anchor = GridBagConstraints.LINE_START;
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setOpaque(false);
+        playersNumPanel.add(emptyPanel, gbcPlayersNumElements);
+
+        gbcPlayersNumElements.gridy = 1;
+        gbcPlayersNumElements.insets =  new Insets(0, 0, 0, 0);
         JLabel numPlayerLabel = createTextLabelFont("Players: ", 20);
-        setBoundsComponent(numPlayerLabel, 345, 25, 230, -40);
-        backgroundPanel.add(numPlayerLabel);
+        playersNumPanel.add(numPlayerLabel, gbcPlayersNumElements);
 
-
-        this.frameManager = frameManager;
+        gbcPlayersNumElements.gridy = 2;
         ButtonGroup buttonGroup = new ButtonGroup();
         JPanel radioButtonPanel = new JPanel(new FlowLayout());
+        setBorderInsets(radioButtonPanel,0, 20, 0, 0);
         radioButtonPanel.setOpaque(false);
-        backgroundPanel.add(radioButtonPanel);
+        playersNumPanel.add(radioButtonPanel, gbcPlayersNumElements);
         radiobuttons = new ArrayList<>();
+
+
+        gbcPlayersNumElements.gridy = 3;
+        gbcPlayersNumElements.insets =  new Insets(10, 0, 0, 0);
+        loginButton = createButton("Start", 20);
+        loginButton.setEnabled(false);
+        loginButton.setBackground(new Color(177,163,28));
+        loginButton.addActionListener(this);
+        playersNumPanel.add(loginButton, gbcPlayersNumElements);
+
+        panelContainer.add(playersNumPanel);
 
         ActionListener textRadioListener = e -> enableLoginButton();
 
@@ -107,23 +144,11 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         nicknameField.getDocument().addDocumentListener(documentListener);
         gameNameField.getDocument().addDocumentListener(documentListener);
 
-
         for(int i=0; i<3; i++){
             setRadioButton(radiobuttons, radioButtonPanel, buttonGroup, String.valueOf(i+2), textRadioListener);
         }
 
-        setBoundsComponent(radioButtonPanel, 200, 30, 100, -10);
-
-        loginButton = createButton("Start", 20);
-        loginButton.setEnabled(false);
-        setBoundsComponent(loginButton, 85, 33, 100, 40);
-        loginButton.setBackground(new Color(177,163,28));
-
-        loginButton.addActionListener(this);
-
-        backgroundPanel.add(loginButton);
         setVisible(true);
-
     }
 
 
@@ -135,25 +160,40 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
+        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
         getContentPane().add(backgroundPanel);
-        backgroundPanel.setLayout(null);
+        panelContainer = new JPanel();
+        panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
+        panelContainer.setOpaque(false);
+        panelContainer.setPreferredSize(new Dimension(340, 710));
+        backgroundPanel.add(panelContainer);
 
-        //insertion of the player nickname
+
+        JPanel credentialPanel = new JPanel(new GridBagLayout());
+        credentialPanel.setOpaque(false);
+        GridBagConstraints gbcElements = createGridBagConstraints(0,0);
+        gbcElements.anchor = GridBagConstraints.LINE_START;
+        gbcElements.insets =  new Insets(5, 0, 0, 0);
+
         JLabel nicknameLabel = createTextLabelFont("Insert your nickname: ", 20);
-        setBoundsComponent(nicknameLabel, 345, 25, 5, -70);
-        backgroundPanel.add(nicknameLabel);
-
+        credentialPanel.add(nicknameLabel, gbcElements);
+        gbcElements.gridy = 1;
         nicknameField = new JTextField();
-        setBoundsComponent(nicknameField, 200, 25, -65, -40);
-        backgroundPanel.add(nicknameField);
+        nicknameField.setPreferredSize(new Dimension(200, 25));
+        credentialPanel.add(nicknameField, gbcElements);
 
-        //Selection of the existing game
+
+
+        gbcElements.gridy = 2;
+        gbcElements.insets =  new Insets(15, 0, 0, 0);
         JLabel gameNameLabel = createTextLabelFont("Choose an existing game: ", 20);
-        setBoundsComponent(gameNameLabel, 345, 25, 5, -5);
-        backgroundPanel.add(gameNameLabel);
+        credentialPanel.add(gameNameLabel, gbcElements);
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+        gbcElements.gridy = 3;
+        gbcElements.insets =  new Insets(5, 0, 0, 0);
+
+
+        /*DefaultListModel<String> listModel = new DefaultListModel<>();
         existingGameList = new JList<>(listModel);
         Map<String, String> map = new HashMap<>();
 
@@ -166,20 +206,24 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         existingGameList.setBorder(BorderFactory.createEtchedBorder());
 
-        //JScrollPane scrollPane = addScrollPane(existingGameList);
-        //setBoundsComponent(scrollPane, 100, 25, -115, +30);
-        setBoundsComponent(existingGameList, 100, 25, -115, +30);
 
-        backgroundPanel.add(existingGameList);
+        credentialPanel.add(existingGameList, gbcElements);
 
-        /*comboBox = new JComboBox<>();
+        panelContainer.add(credentialPanel);*/
+
+
+
+        comboBox = new JComboBox<>();
 
         Map<String, String> map = new HashMap<>();
         for(String s : gameNameWaitingPlayersMap.keySet()){
             String concat = s + " (" + gameNameWaitingPlayersMap.get(s).toString() + " players waiting)";
             map.put(concat, s);
             comboBox.addItem(concat);
-        }*/
+        }
+
+        credentialPanel.add(comboBox, gbcElements);
+        panelContainer.add(credentialPanel);
 
 
         DocumentListener documentListener = new DocumentListener() {
@@ -202,16 +246,22 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         nicknameField.getDocument().addDocumentListener(documentListener);
 
 
-
+        JPanel playersNumPanel = new JPanel(new GridBagLayout());
+        playersNumPanel.setOpaque(false);
+        GridBagConstraints gbcPlayersNumElements = createGridBagConstraints(0,0);
+        gbcPlayersNumElements.insets =  new Insets(10, 0, 0, 0);
         loginButton = createButton("Start", 20);
-        setBoundsComponent(loginButton, 85, 33, 100, 40);
-        loginButton.setBackground(new Color(177, 163, 28));
+        loginButton.setEnabled(false);
+        loginButton.setBackground(new Color(177,163,28));
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nickname = nicknameField.getText();
-                String gameName = map.get(existingGameList.getSelectedValue());
-                //String gameName = map.get((String) comboBox.getSelectedItem());
+                //String gameName = map.get(existingGameList.getSelectedValue());
+
+                String gameName = map.get((String) comboBox.getSelectedItem());
+
+
                 frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
                 frameManager.setNickname(nickname);
                 if (e.getActionCommand().equals("Start")) {
@@ -221,35 +271,21 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
                 }
             }
         });
-        backgroundPanel.add(loginButton);
+
+        playersNumPanel.add(loginButton, gbcPlayersNumElements);
+        panelContainer.add(playersNumPanel);
+
         setVisible(true);
     }
 
 
-
-
-  /*  private static JScrollPane addScrollPane(JComponent component){
-        JScrollPane scrollPane = new JScrollPane(component);
-        //scrollPane.setOpaque(false);
-        scrollPane.setPreferredSize(new Dimension(600, 600));
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        return scrollPane;
-    }*/
-
-
     private void enableLoginButton() {
         boolean fieldsFilled = !nicknameField.getText().isEmpty() && !gameNameField.getText().isEmpty();
-        //boolean radioButtonSelected = radioButton1.isSelected() || radioButton2.isSelected() || radioButton3.isSelected();
-
-        //PARTE NUOVA
         boolean radioButtonSelected = radiobuttons.stream().anyMatch(AbstractButton::isSelected);
-
         loginButton.setEnabled(fieldsFilled && radioButtonSelected);
     }
 
 
-    //TODO: DA SISTEMARE: bisogna disattivare il bottone se non si seleziona nessun game nella lista
     private void enableLoginButton2() {
         boolean fieldsFilled = !nicknameField.getText().isEmpty();
         loginButton.setEnabled(fieldsFilled);
@@ -257,11 +293,11 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
     @Override
     public void createLobby(){
-        backgroundPanel.removeAll();
+        panelContainer.removeAll();
         ArrayList<Color> colors = new ArrayList<>();
 
-        backgroundPanel.setLayout(new GridBagLayout());
-        backgroundPanel.setBackground(new Color(237,230,188,255));
+        panelContainer.setLayout(new GridBagLayout());
+        panelContainer.setBackground(new Color(237,230,188,255));
 
         for(int i=0; i<4; i++) {
             colors.add(new Color(107, 189, 192));
@@ -272,13 +308,13 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         JLabel label2 = createTextLabelFont("Waiting for the players: ", 30);
         setBorderInsets(label2,30,0,30,0);
-        backgroundPanel.add(label2, createGridBagConstraints(0,0));
+        panelContainer.add(label2, createGridBagConstraints(0,0));
 
         JProgressBar progressBar = new JProgressBar(0, 100);
         progressBar.setPreferredSize(new Dimension(300,30));
         progressBar.setForeground(colors.get(colorIndex));
         colorIndex++;
-        backgroundPanel.add(progressBar, createGridBagConstraints(0,1));
+        panelContainer.add(progressBar, createGridBagConstraints(0,1));
 
         Timer timer = new Timer(100, new ActionListener() {
             @Override
@@ -300,10 +336,6 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         JLabel jLabel = new JLabel(content);
         jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
         return jLabel;
-    }
-
-    private void setBoundsComponent(JComponent component, int width, int heigth, int translationX, int translationY){
-        component.setBounds((getWidth() - width) / 2 + translationX, (getHeight() - heigth) / 2 + translationY, width, heigth);
     }
 
     private JButton createButton(String text, int dim){

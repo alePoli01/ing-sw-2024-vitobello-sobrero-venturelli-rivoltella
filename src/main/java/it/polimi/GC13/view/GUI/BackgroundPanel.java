@@ -11,8 +11,7 @@ import java.io.IOException;
 public class BackgroundPanel extends JPanel {
     private BufferedImage backgroundImage;
     private boolean bool;
-    private double newWidth;
-    private double newHeight;
+
 
     public BackgroundPanel(String backgroundImage, boolean bool) {
         try {
@@ -37,18 +36,11 @@ public class BackgroundPanel extends JPanel {
         } else {
             //Resize the image and set it in the center of the screen
 
-            //da verificare se serve o no
-            /*Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setColor(new Color(237, 230, 188, 255));
-            g2d.fillRect(0, 0, getWidth(), getHeight());*/
-
-
             // Calcola l'altezza dello schermo in pixel
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration());
-            int screenHeight = screenSize.height - screenInsets.bottom; //- screenInsets.top;
+            int screenHeight = screenSize.height - screenInsets.bottom - 50;
             int screenWidth = screenSize.width;
-
 
 
             if (backgroundImage != null) {
@@ -56,24 +48,16 @@ public class BackgroundPanel extends JPanel {
                 double scaleFactor = (double) screenHeight / backgroundImage.getHeight();
 
                 // Ridimensiona l'immagine in base al fattore di ridimensionamento
-                newWidth = backgroundImage.getWidth() * scaleFactor;
-                newHeight = backgroundImage.getHeight() * scaleFactor;
+                double newWidth = backgroundImage.getWidth() * scaleFactor;
+                double newHeight = backgroundImage.getHeight() * scaleFactor;
 
                 // Calcola le coordinate per centrare l'immagine
                 int x = (int)(screenWidth - newWidth) / 2;
-                int y = (int)(screenHeight - newHeight) / 2;
+                int y = (int)(screenHeight - newHeight) / 2 + 20;
 
                 //g2d.drawImage(backgroundImage, x, y, (int)newWidth, (int)newHeight, this);
                 g.drawImage(backgroundImage, x, y, (int)newWidth, (int)newHeight, this);
             }
         }
-    }
-
-    public double getNewWidth() {
-        return newWidth;
-    }
-
-    public double getNewHeight() {
-        return newHeight;
     }
 }

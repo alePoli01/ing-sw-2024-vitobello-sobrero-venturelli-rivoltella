@@ -66,5 +66,5 @@ public interface View {
 
     void gameOver(Set<String> winner);
 
-    void interruptReader();
+    void interruptReader(); //TODO: non lo uso nella GUI
 }

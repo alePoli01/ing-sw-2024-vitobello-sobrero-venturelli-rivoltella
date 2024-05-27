@@ -5,8 +5,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromclient.DrawCardFromDeckMessage;
-import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
+import it.polimi.GC13.network.messages.fromclient.ReconnectPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.game.WinningFrame;
@@ -15,13 +14,12 @@ import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 
 public class FrameManager extends JFrame implements View {
-    protected ServerInterface virtualServer;
+    private ServerInterface virtualServer;
     private String nickname;
     private String gameName;
     private final List<Integer> hand = new ArrayList<>();
@@ -36,9 +34,9 @@ public class FrameManager extends JFrame implements View {
     public final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
+    private int choice = -1;
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
-    private int choice = -1;
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
@@ -47,6 +45,24 @@ public class FrameManager extends JFrame implements View {
 
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
     public FrameManager() {
+    }
+
+    @Override
+    public String getGameName() {
+        return this.gameName;
+    }
+
+    @Override
+    public String getNickname() {
+        return this.nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public ServerInterface getVirtualServer() {
+        return this.virtualServer;
     }
 
     @Override
@@ -65,8 +81,6 @@ public class FrameManager extends JFrame implements View {
             synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
-                /*if(gamePage!=null)
-                    gamePage.setHand(this.hand);*/
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
@@ -85,13 +99,6 @@ public class FrameManager extends JFrame implements View {
         this.resourceCardsAvailable.putAll(resourceFacedUpSerial);
     }
 
-    public ServerInterface getVirtualServer() {
-        return this.virtualServer;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
 
     @Override
@@ -141,16 +148,6 @@ public class FrameManager extends JFrame implements View {
     }
 
     @Override
-    public String getGameName() {
-        return this.gameName;
-    }
-
-    @Override
-    public String getNickname() {
-        return this.nickname;
-    }
-
-    @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         if (readyPlayers == neededPlayers) {
             this.gameName = gameName;
@@ -164,8 +161,6 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getChoosePanel().removeAll();
                 gamePage.showTokenChoose(tokenColorList);
                 refreshFrame(gamePage);
-                //gamePage.getChoosePanel().revalidate();
-                //gamePage.getChoosePanel().repaint();
             }
         }
     }
@@ -174,8 +169,6 @@ public class FrameManager extends JFrame implements View {
      * SETUP PHASE methods to the player
      * startCardSetupPhase to chose which side to place your start card
      */
-
-
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.nickname)) {
@@ -183,9 +176,9 @@ public class FrameManager extends JFrame implements View {
             gamePage.getPanelContainer().removeAll();
             gamePage.startCardSetup();
 
-            //da rivedere refreshFrame
-            gamePage.getContentPane().revalidate();
-            gamePage.getContentPane().repaint();
+            refreshFrame(gamePage);//da rivedere refreshFrame
+            //gamePage.getContentPane().revalidate();
+            //gamePage.getContentPane().repaint();
         }
         this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
@@ -200,30 +193,11 @@ public class FrameManager extends JFrame implements View {
         gamePage.setToken(tokenColor);
     }
 
-    @Override
-    public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
-        if (playerNickname.equals(this.nickname)) {
-            JOptionPane.showMessageDialog(this, onInputExceptionMessage.getErrorMessage());
-            onInputExceptionMessage.methodToRecall(this);
-        }
-        this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
-    }
 
-
-    @Override
-    public void setPlayersOrder(Map<String, Position> playerPositions) {
-        this.playerPositions.putAll(playerPositions);
-        //gamePage.setPlayerPositions(playerPositions);
-    }
-
-
-    @Override
-    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
-        this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
-        this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
-    }
-
-
+    /**
+     NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
+     OTHERS -> ADDS TO LOG OPERATION
+     */
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn) {
         if (!this.playersBoard.containsKey(playerNickname)) {
@@ -233,24 +207,33 @@ public class FrameManager extends JFrame implements View {
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
     }
 
+    /**
+     NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
+     */
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
 
-
+    /**
+     METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
+     */
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
             gamePage.getPanelContainer().removeAll();
-            //gamePage.setupObjectiveCard(serialCommonObjectiveCard, privateObjectiveCards);
+            gamePage.getTimer().stop();
             gamePage.setupObjectiveCard(privateObjectiveCards);
-            gamePage.getContentPane().revalidate();
-            gamePage.getContentPane().repaint();
+
+            refreshFrame(gamePage);
+            //gamePage.getContentPane().revalidate();
+            //gamePage.getContentPane().repaint();
         }
     }
 
-
+    /**
+     NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
+     */
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
         if (playerNickname.equals(this.nickname)) {
@@ -265,6 +248,84 @@ public class FrameManager extends JFrame implements View {
     }
 
 
+    //drawcard + showHomeMenu (se ci sono)
+
+
+
+    @Override
+    public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
+        if (playerNickname.equals(this.nickname)) {
+            JOptionPane.showMessageDialog(this, onInputExceptionMessage.getErrorMessage());
+            onInputExceptionMessage.methodToRecall(this);
+        }
+        this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
+    }
+
+
+    //displayAvailableCells
+
+
+    /**
+     METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
+     */
+    @Override
+    public void setPlayersOrder(Map<String, Position> playerPositions) {
+        this.playerPositions.putAll(playerPositions);
+    }
+
+
+    //onSetLastTurn + placeCard
+
+
+    @Override
+    public void updatePlayerScore(String playerNickname, int newPlayerScore) {
+        this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
+        this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
+    }
+
+
+    @Override
+    public void onNewMessage(String sender, String recipient, String message) {
+        if (recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        // CASE B -> BROADCAST MESSAGE
+        else if (recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        // CASE C -> I AM THE SENDER
+        else if (sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
+        }
+    }
+
+
+    @Override
+    public void gameOver(Set<String> winner) {
+        SwingUtilities.invokeLater(()-> {
+            winningFrame = new WinningFrame();
+            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
+                winningFrame.setWin(true);
+                winningFrame.getWinnerLabel().setText("You win!");
+            } else {
+                winningFrame.setWin(false);
+                winningFrame.getWinnerLabel().setText("You lose!");
+            }
+        });
+    }
+
+    //sendMessage
+
+
+    @Override
+    public void reconnectToGame() {
+        this.virtualServer.sendMessageFromClient(new ReconnectPlayerToGameMessage(this.gameName, this.nickname));
+    }
+
+    /**
+     NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
+     OTHERS -> ADDS TO LOG OPERATION
+     */
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
@@ -289,21 +350,12 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    @Override
-    public void onNewMessage(String sender, String recipient, String message) {
-        if (recipient.equals(this.nickname)) {
-            this.registerChatMessage(sender, message);
-        }
-        // CASE B -> BROADCAST MESSAGE
-        else if (recipient.equals("global")) {
-            this.registerChatMessage("global", message);
-        }
-        // CASE C -> I AM THE SENDER
-        else if (sender.equals(this.nickname)) {
-            this.registerChatMessage(recipient, message);
-        }
-    }
 
+    /**
+     *
+     * @param key can be [global] or a player [nickname], it is used to map the chat
+     * @param message message sent in chat by the player
+     */
     private void registerChatMessage(String key, String message) {
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
@@ -318,7 +370,7 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    //METODO DA INVOCARE IN MAINPAGE
+
     public void receiveActionFromGame(int action) {
         choice = action;
         showHomeMenu();
@@ -418,19 +470,7 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    @Override
-    public void gameOver(Set<String> winner) {
-        SwingUtilities.invokeLater(()-> {
-            winningFrame = new WinningFrame();
-            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
-                winningFrame.setWin(true);
-                winningFrame.getWinnerLabel().setText("You win!");
-            } else {
-                winningFrame.setWin(false);
-                winningFrame.getWinnerLabel().setText("You lose!");
-            }
-        });
-    }
+
 
     @Override
     public void interruptReader() {
@@ -467,8 +507,5 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    @Override
-    public void reconnectToGame() {
 
-    }
 }
