@@ -22,10 +22,10 @@ public class FrameManager extends JFrame implements View {
     private ServerInterface virtualServer;
     private String nickname;
     private String gameName;
-    private final List<Integer> hand = new ArrayList<>();
+    public final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
-    private boolean myTurn = false;
+    public boolean myTurn = false;
     private int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new HashMap<>();
     private final Map<String, Position> playerPositions = new HashMap<>();
@@ -42,7 +42,7 @@ public class FrameManager extends JFrame implements View {
     private LoginFrame loginFrame;
     private MainPage gamePage;
     private WinningFrame winningFrame;
-
+    int countofHandUpdate =0;
 
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
     public FrameManager() {
@@ -82,10 +82,18 @@ public class FrameManager extends JFrame implements View {
             synchronized (this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
+
+                if(gamePage.flag>0){
+                    gamePage.getChoosePanel().removeAll();
+                    gamePage.printHandGUI(false);
+                    gamePage.flag++;
+                }
+                System.out.println("flag "+gamePage.flag);
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
         }
+
     }
 
     @Override
@@ -209,7 +217,7 @@ public class FrameManager extends JFrame implements View {
         if(Objects.equals(playerNickname, this.nickname)){
             availablesCells = availableCells;
         }
-
+        this.gamePage.refreshboard();
     }
 
     /**
