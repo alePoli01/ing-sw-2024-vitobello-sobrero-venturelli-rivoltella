@@ -122,8 +122,8 @@ public class Board implements Serializable {
                     this.availableCells.add(coordinatesToCheck);
                 } else if (resource.equals(Resource.NULL)) {
                     notAvailableCells.add(coordinatesToCheck);
-                    // else it is added to availableCells
                 } else {
+                    // else it is added to availableCells
                     this.availableCells.add(coordinatesToCheck);
                 }
             }

@@ -2,6 +2,7 @@ package it.polimi.GC13.view.GUI;
 
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
@@ -179,7 +180,7 @@ public class FrameManager extends JFrame implements View {
      * startCardSetupPhase to chose which side to place your start card
      */
     @Override
-    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
         if (playerNickname.equals(this.nickname)) {
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
@@ -402,7 +403,7 @@ public class FrameManager extends JFrame implements View {
     public void showHomeMenu() {}
 
     @Override
-    public void placeCard() {
+    public void placeCard() throws GenericException {
 
 
 
@@ -444,7 +445,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void drawCard() {
+    public void drawCard() throws GenericException {
         /*if (this.myTurn && this.hand.size() == 2) {
             try {
                 do {
@@ -487,7 +488,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void interruptReader() {
+    public void onReconnectToGame() {
 
     }
 

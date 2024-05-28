@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.messages.fromserver;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
@@ -17,7 +18,7 @@ public record OnTokenChoiceMessage(String playerNickname, TokenColor tokenColor)
     public void methodToCall(View view) {
         try {
             view.placeStartCardSetupPhase(this.playerNickname, this.tokenColor);
-        } catch (InterruptedException e) {
+        } catch (GenericException e) {
             throw new RuntimeException(e);
         }
     }

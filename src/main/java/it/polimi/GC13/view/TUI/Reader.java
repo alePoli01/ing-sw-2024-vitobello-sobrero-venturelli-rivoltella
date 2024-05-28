@@ -1,24 +1,31 @@
 package it.polimi.GC13.view.TUI;
 
-import java.io.*;
+import it.polimi.GC13.exception.GenericException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Reader extends Thread {
     private String input;
     private boolean inputReady = false;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private final TUI owner;
 
-    public synchronized String readInput() throws InterruptedException {
+    public Reader(TUI owner) {
+        this.owner = owner;
+    }
+
+    public synchronized String readInput() throws InterruptedException, GenericException {
         while (!this.inputReady) {
             this.wait();
         }
         this.inputReady = false;
-        return this.input;
-    }
-
-    public synchronized void wakeUpMainThread() {
-        this.input = "error";
-        this.inputReady = true;
-        this.notifyAll();
+        if (!this.owner.getStatus()) {
+            return this.input;
+        } else {
+            throw new GenericException(this.input);
+        }
     }
 
     @Override

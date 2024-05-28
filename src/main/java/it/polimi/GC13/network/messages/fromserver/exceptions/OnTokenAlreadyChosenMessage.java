@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.messages.fromserver.exceptions;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
@@ -34,7 +35,7 @@ public class OnTokenAlreadyChosenMessage implements OnInputExceptionMessage {
     public void methodToRecall(View TUI) {
         try {
             TUI.chooseTokenSetupPhase(0, 0, availableTokenColors, this.gameName);
-        } catch (InterruptedException e) {
+        } catch (GenericException e) {
             throw new RuntimeException(e);
         }
     }

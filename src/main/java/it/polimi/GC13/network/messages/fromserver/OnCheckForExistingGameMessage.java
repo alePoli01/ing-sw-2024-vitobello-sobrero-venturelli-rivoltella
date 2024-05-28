@@ -1,5 +1,6 @@
 package it.polimi.GC13.network.messages.fromserver;
 
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
@@ -17,7 +18,7 @@ public record OnCheckForExistingGameMessage(Map<String, Integer> gameNameWaiting
     public void methodToCall(View view) {
         try {
             view.joiningPhase(this.gameNameWaitingPlayersMap);
-        } catch (InterruptedException e) {
+        } catch (GenericException e) {
             throw new RuntimeException(e);
         }
     }

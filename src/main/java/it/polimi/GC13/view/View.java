@@ -2,6 +2,7 @@ package it.polimi.GC13.view;
 
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
@@ -16,7 +17,7 @@ public interface View {
 
     String getNickname();
 
-    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) throws InterruptedException;
+    void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) throws GenericException;
 
     void startView();
 
@@ -32,17 +33,17 @@ public interface View {
 
     void checkForExistingGame(); //TODO: non lo uso nella GUI
 
-    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws InterruptedException;
+    void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException;
 
-    void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws InterruptedException;
+    void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException;
 
-    void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws InterruptedException;
+    void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws GenericException;
 
     void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells);
 
     void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
-    void drawCard() throws InterruptedException;
+    void drawCard() throws GenericException;
 
     void showHomeMenu();
 
@@ -58,7 +59,7 @@ public interface View {
 
     void onSetLastTurn(String playerNickname, Position position);
 
-    void placeCard() throws InterruptedException; //TODO: non lo uso nella GUI
+    void placeCard() throws GenericException;
 
     void updatePlayerScore(String playerNickname, int newPlayerScore);
 
@@ -66,5 +67,5 @@ public interface View {
 
     void gameOver(Set<String> winner);
 
-    void interruptReader(); //TODO: non lo uso nella GUI
+    void onReconnectToGame();
 }

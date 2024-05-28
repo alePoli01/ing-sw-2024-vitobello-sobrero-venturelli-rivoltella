@@ -14,6 +14,6 @@ public record OnReconnectPlayerToGameMessage() implements MessagesFromServer {
 
     @Override
     public void methodToCall(View view) {
-        view.interruptReader();
+        view.onReconnectToGame();
     }
 }

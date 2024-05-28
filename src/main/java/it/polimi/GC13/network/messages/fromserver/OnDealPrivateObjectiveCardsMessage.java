@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.messages.fromserver;
 
 
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 import java.rmi.RemoteException;
@@ -17,7 +18,7 @@ public record OnDealPrivateObjectiveCardsMessage(String playerNickname, List<Int
     public void methodToCall(View view) {
         try {
             view.choosePrivateObjectiveCard(this.playerNickname,this.privateObjectiveCards());
-        } catch (InterruptedException e) {
+        } catch (GenericException e) {
             throw new RuntimeException(e);
         }
     }

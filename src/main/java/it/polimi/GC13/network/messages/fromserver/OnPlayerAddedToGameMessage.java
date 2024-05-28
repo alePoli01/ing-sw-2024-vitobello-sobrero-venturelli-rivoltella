@@ -1,6 +1,7 @@
 package it.polimi.GC13.network.messages.fromserver;
 
 import it.polimi.GC13.enums.TokenColor;
+import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.view.View;
 
@@ -20,7 +21,7 @@ public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNee
         List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
         try {
             view.chooseTokenSetupPhase(this.connectedPlayers, this.numPlayersNeeded, tokenColorList, this.gameName());
-        } catch (InterruptedException e) {
+        } catch (GenericException e) {
             throw new RuntimeException(e);
         }
     }

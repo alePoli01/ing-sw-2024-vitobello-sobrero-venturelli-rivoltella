@@ -29,8 +29,6 @@ public class MidPhase implements GamePhase {
         Board board = player.getBoard();
 
         try {
-            // increase players turn
-            player.increaseTurnPlayed();
             // gets the playable card from the player's hand
             PlayableCard cardToPlace = player.getHand()
                     .stream()
@@ -45,6 +43,8 @@ public class MidPhase implements GamePhase {
             }
             // check if it is possible to place the selected card
             Coordinates xy = board.isPossibleToPlace(X, Y);
+            // increase players turn
+            player.increaseTurnPlayed();
             // add card to the board
             board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
