@@ -3,7 +3,7 @@ package it.polimi.GC13.model;
 import java.io.Serializable;
 
 public class Coordinates implements Serializable {
-    private int x,y;
+    private int x, y;
 
     public Coordinates(int x, int y) {
         this.x = x;
