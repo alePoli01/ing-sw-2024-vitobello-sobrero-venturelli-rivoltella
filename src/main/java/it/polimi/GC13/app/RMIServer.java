@@ -5,21 +5,20 @@ import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.rmi.RMIServerInterface;
+import it.polimi.GC13.network.socket.ServerImpulse;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
-    private ControllerDispatcher controllerDispatcher;
+    private final ControllerDispatcher controllerDispatcher;
     private final LobbyController lobbyController;
-
     protected RMIServer(ControllerDispatcher controllerDispatcher, LobbyController lobbyController) throws RemoteException {
         this.controllerDispatcher = controllerDispatcher;
         this.lobbyController = lobbyController;
+
     }
 
     public void startServer(int port) throws RemoteException {
@@ -33,10 +32,16 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         }
         System.out.println("RMI Server is ready");
     }
-
+    @Override
+    public void createConnection(ClientInterface client) throws RemoteException {
+        //setup Impulse
+        System.out.println("\t\tCreating an Impulse generator");
+        ServerImpulse serverImpulse = new ServerImpulse(client);
+        System.out.println("\t\tStarting the Impulse generator Thread");
+        new Thread(serverImpulse).start();
+    }
     @Override
     public void registerMessageFromClient(MessagesFromClient message, ClientInterface client) throws RemoteException {
-        System.out.println("received a message from client: "+client);
         message.methodToCall(this.lobbyController, this.controllerDispatcher.getClientControllerMap().get(client), client, this.controllerDispatcher.getClientPlayerMap().get(client));
     }
 }

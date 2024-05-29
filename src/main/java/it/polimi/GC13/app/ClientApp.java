@@ -13,7 +13,7 @@ public class ClientApp {
     // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
-        int RMIport = 0;
+        int rmiPort = 0;
         int socketPort = 0;
         int connectionChoice = 0;
         ServerInterface virtualServer;
@@ -22,12 +22,12 @@ public class ClientApp {
         String rmiHostname = null;
 
         if (args.length < 2) {
-            System.err.println("Missing Parameters, killing this server.");
-            System.err.println("HINT: metti | 'nome-server'(a cui ti vuoi collegare in RMI) 1099 456 | come parametri nella run configuration di ClientApp");
+            System.err.println("Missing Arguments, killing this server.");
+            System.err.println("HINT: use <server-name> <rmiPort> <socketPort> as Arguments");
             System.exit(-1);
         } else if (args.length == 2) {
             try {
-                RMIport = Integer.parseInt(args[0]);
+                rmiPort = Integer.parseInt(args[0]);
                 socketPort = Integer.parseInt(args[1]);
                 System.out.println("Insert address of the Server:");
                 rmiHostname = reader.readLine();
@@ -37,7 +37,7 @@ public class ClientApp {
             }
         } else {
             try {
-                RMIport = Integer.parseInt(args[1]);
+                rmiPort = Integer.parseInt(args[1]);
                 socketPort = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
                 System.err.println("Illegal Argument Format, killing this client.");
@@ -47,13 +47,9 @@ public class ClientApp {
         }
         System.setProperty("java.server.hostname", rmiHostname);
 
-        /*
-            quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
-        */
         System.out.println("\u001B[35mHello from Client\u001B[0m");
-        System.out.println("RMI port: " + RMIport);
+        System.out.println("RMI port: " + rmiPort);
         System.out.println("Socket port: " + socketPort + "\n");
-
 
         // INTERNET PROTOCOL CHOICE
         do {
@@ -76,15 +72,21 @@ public class ClientApp {
             }
         } while (viewChoice != 1 && viewChoice != 2);
 
-        ConnectionBuilder connectionBuilder = new ConnectionBuilder(viewChoice, connectionChoice, socketPort, RMIport);
+        ConnectionBuilder connectionBuilder = new ConnectionBuilder(viewChoice, connectionChoice, socketPort, rmiPort);
 
         System.out.println("\u001B[33mStarting " + (viewChoice == 1 ? "TUI" : "GUI") + " with connection type " + (connectionChoice == 1 ? "RMI" : "SOCKET") + "\u001B[0m");
         clientDispatcher = new ClientDispatcher();
 
         view = connectionBuilder.createView();
         clientDispatcher.setView(view);
-        virtualServer = connectionBuilder.createServerConnection(clientDispatcher);
-        view.setVirtualServer(virtualServer);
-        view.startView();
+        try {
+            virtualServer = connectionBuilder.createServerConnection(clientDispatcher);
+            view.setVirtualServer(virtualServer);
+            view.startView();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
     }
 }

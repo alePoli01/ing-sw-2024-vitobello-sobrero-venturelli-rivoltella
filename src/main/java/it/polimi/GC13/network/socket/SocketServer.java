@@ -7,6 +7,8 @@ import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 
 /**
@@ -22,10 +24,7 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ClientDispatcher clientDispatcher;
     private boolean connectionOpen = true;
     private final ConnectionBuilder connectionBuilder;
-
-    public ClientDispatcher getClientDispatcher() {
-        return this.clientDispatcher;
-    }
+    private Timer timer;
 
     public SocketServer(Socket socket, ClientDispatcher clientDispatcher, ConnectionBuilder connectionBuilder) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -33,8 +32,27 @@ public class SocketServer implements ServerInterface, Runnable {
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
         this.connectionBuilder = connectionBuilder;
+        this.startTimer();
     }
-
+    public ClientDispatcher getClientDispatcher() {
+        return this.clientDispatcher;
+    }
+    private void startTimer() {
+        this.timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            public void run() {
+                System.err.println("\ntimer's run out");
+                SocketServer.this.connectionBuilder.connectionLost(SocketServer.this, false);
+            }
+        };
+        timer.schedule(timerTask, 6000);
+    }
+    private void stopTimer() {
+        if (this.timer != null) {
+            this.timer.cancel();
+        }
+    }
+    
 
     @Override
     public void sendMessageFromClient(MessagesFromClient messages) {
@@ -45,13 +63,8 @@ public class SocketServer implements ServerInterface, Runnable {
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage() + " errore nel mandare messaggio al server");
+            System.out.println(e.getMessage() + " \n error while sending message to server");
         }
-    }
-
-    @Override
-    public boolean isConnectionOpen() {
-        return this.connectionOpen;
     }
 
     // LISTEN CALLS FROM SERVER
@@ -61,15 +74,15 @@ public class SocketServer implements ServerInterface, Runnable {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
+                stopTimer();
+                startTimer();
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {
-                    this.connectionOpen = false;
-                    System.out.println("\nError registering message from Server, trying to remap...");
-                    this.connectionBuilder.connectionLost(this, false);
+                    connectionOpen = false;
+                    System.out.println("\nError while registering message from Server");
                 }
             }
         }
-        this.connectionOpen = true;
         executorService.shutdown();
     }
 }
