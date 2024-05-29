@@ -118,10 +118,10 @@ public class Board implements Serializable {
 
             // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
             if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
-                if (isFlipped) {
+                if (isFlipped && cardPlaced.serialNumber < 81) {
                     this.availableCells.add(coordinatesToCheck);
                 } else if (resource.equals(Resource.NULL)) {
-                    notAvailableCells.add(coordinatesToCheck);
+                    this.notAvailableCells.add(coordinatesToCheck);
                 } else {
                     // else it is added to availableCells
                     this.availableCells.add(coordinatesToCheck);
