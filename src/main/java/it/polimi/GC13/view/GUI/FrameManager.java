@@ -15,6 +15,7 @@ import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class FrameManager extends JFrame implements View {
     private MainPage gamePage;
     private WinningFrame winningFrame;
     int countofHandUpdate =0;
+
+    private Map<String, TokenColor> tokenInGame = new HashMap<>();
+
 
     //NOTA BENE: property() per gestire il movimento dei token --> binding con i punteggi dei giocatori
     public FrameManager() {
@@ -84,12 +88,17 @@ public class FrameManager extends JFrame implements View {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
 
-                if(gamePage.flag>0){
-                    gamePage.getChoosePanel().removeAll();
+                if(gamePage.getFlag()>0){
+                    gamePage.getFlipButton().setText("Show Back");
+                    gamePage.refresh();
+                    gamePage.setFlipToSend(false);
+                    gamePage.getSerialNumerCheckBoxMap().clear();
+
                     gamePage.printHandGUI(false);
-                    gamePage.flag++;
+                    gamePage.setFlag(gamePage.getFlag()+1);
+                    refreshFrame(gamePage);
                 }
-                System.out.println("flag "+gamePage.flag);
+                System.out.println("flag "+gamePage.getFlag());
             }
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
@@ -181,14 +190,13 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
-        if (playerNickname.equals(this.nickname)) {
+        if(playerNickname.equals(this.nickname)) {
+            //tokenInGame.put(playerNickname, tokenColor);
+
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
             gamePage.startCardSetup();
-
-            refreshFrame(gamePage);//da rivedere refreshFrame
-            //gamePage.getContentPane().revalidate();
-            //gamePage.getContentPane().repaint();
+            refreshFrame(gamePage);
         }
         this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
@@ -218,7 +226,7 @@ public class FrameManager extends JFrame implements View {
         if(Objects.equals(playerNickname, this.nickname)){
             availablesCells = availableCells;
         }
-        this.gamePage.refreshboard();
+        this.gamePage.refreshBoard();
     }
 
     /**
@@ -346,15 +354,23 @@ public class FrameManager extends JFrame implements View {
             this.myTurn = turn;
             if (this.turnPlayed == 0) {
                 gamePage.getPanelContainer().removeAll();
+                gamePage.getNamePanel().removeAll();
+                gamePage.refresh();
+                gamePage.setFlag(1);
 
-            gamePage.createGamePanel();
-                gamePage.getContentPane().revalidate();
-                gamePage.getContentPane().repaint();
+                gamePage.createGamePanel();
+                refreshFrame(gamePage);
             }
             if (this.myTurn) {
                 gamePage.getTurnLable().setText("It's my turn!");
+                gamePage.getTurnLable().setForeground(new Color(45, 114, 27));
+                gamePage.getTurnLable2().setText("It's my turn!");
+                gamePage.getTurnLable2().setForeground(new Color(45, 114, 27));
             } else {
                 gamePage.getTurnLable().setText("waiting for my turn...");
+                gamePage.getTurnLable().setForeground(new Color(175, 31, 31));
+                gamePage.getTurnLable2().setText("waiting for my turn...");
+                gamePage.getTurnLable2().setForeground(new Color(175, 31, 31));
             }
         }
         if (turn) {
@@ -384,19 +400,6 @@ public class FrameManager extends JFrame implements View {
         this.newMessage = true;
     }
 
-
-
-    public void receiveActionFromGame(int action) {
-        choice = action;
-        showHomeMenu();
-    }
-
-    public void receiveActionFromGame(int action, String playerChosen) {
-        //viewPlayerBoard = playerChosen;
-        choice = action;
-        showHomeMenu();
-        //viewPlayerBoard = "";
-    }
 
 
     @Override
@@ -521,6 +524,7 @@ public class FrameManager extends JFrame implements View {
         return resourceCardsAvailable;
     }
 
-
-
+    public Map<String, TokenColor> getTokenInGame() {
+        return tokenInGame;
+    }
 }

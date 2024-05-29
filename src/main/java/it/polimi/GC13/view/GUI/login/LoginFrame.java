@@ -52,7 +52,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         this.frameManager = frameManager;
 
-        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
+        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg", true);
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
@@ -160,7 +160,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogo.jpg", true);
+        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg", true);
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));

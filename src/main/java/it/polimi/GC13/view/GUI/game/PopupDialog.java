@@ -115,55 +115,6 @@ public class PopupDialog extends JDialog implements ActionListener, CardManager{
     }
 
     public void showStartCard(Integer numberCard) {
-     /*   Path startDir = identifyPathCard(numberCard);
 
-        if(startDir != null){
-            try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString()))) {
-                paths.forEach(path -> {
-                    Image img = new ImageIcon(String.valueOf(path)).getImage();
-                    JLabel cardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
-                    setCompoundBorderInsets(cardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
-                    iconPanel.add(cardLabelImage);
-
-                    JLabel startCardLabelText;
-                    JCheckBox jCheckBox;
-                    if(frameManager.getResourceCardsAvailable().get(numberCard)){
-                        startCardLabelText = createTextLabelFont("Deck", 32);
-                        jCheckBox = new JCheckBox("false");
-                    } else {
-                        startCardLabelText = createTextLabelFont("Back", 32);
-                        jCheckBox = new JCheckBox("true");
-                    }
-
-                    setBorderInsets(startCardLabelText, 30, 230, 80, 230);
-                    namePanel.add(startCardLabelText);
-
-                    jCheckBox.setFocusPainted(false);
-                    jCheckBox.setBorderPainted(false);
-                    jCheckBox.setForeground(panelContainer.getBackground());
-                    buttonGroup.add(jCheckBox);
-                    setBorderInsets(jCheckBox, 0, 140, 70, 125);
-                    jCheckBox.setOpaque(false);
-                    jCheckBox.addActionListener(e -> {
-                        confirmButton.setEnabled(labelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
-
-                        labelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-                        labelCheckBoxMap.entrySet()
-                                .stream()
-                                .filter(en -> en.getValue().equals(e.getSource()))
-                                .findFirst()
-                                .orElseThrow()
-                                .getKey()
-                                .setForeground(Color.RED);
-                    });
-                    checkBoxPanel.add(jCheckBox);
-                    labelCheckBoxMap.put(startCardLabelText, jCheckBox);
-                });
-
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
-            }
-        }*/
     }
 }
