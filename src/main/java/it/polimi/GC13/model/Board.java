@@ -130,7 +130,7 @@ public class Board implements Serializable {
                     if (resourceToCheck[i].equals(Resource.NULL)) {
                         this.notAvailableCells.add(coordinatesToCheck);
                         // if the coordinates are in the availableCells, they are removed
-                        if (checkAvailableCellsContainsCoordinate(coordinatesToCheck.getX(), coordinatesToCheck.getY())) {
+                        if (checkListContainsCoordinates(this.availableCells, coordinatesToCheck)) {
                             this.availableCells.remove(getCoordinateFromBoardMap(coordinatesToCheck.getX(), coordinatesToCheck.getY()));
                         }
                     } else {
@@ -169,7 +169,7 @@ public class Board implements Serializable {
                     // determine if a new covered edge has reign or object and in case remove it from availableResources
                     if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].isNullOrEmpty())) {
                         for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
-                            if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.getAndIncrement()].equals(resource)) {
+                            if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].equals(resource)) {
                                 if (resource.isReign() || resource.isObject()) {
                                     collectedResources.put(resource, collectedResources.get(resource) - 1);
                                 }
@@ -206,13 +206,9 @@ public class Board implements Serializable {
         }
     }
 
-    public boolean boardMapContainsKeyOfValue(int x, int y) {
-        for(Coordinates xy : this.boardMap.keySet()) {
-            if (xy.getX() == x && xy.getY() == y){
-                return true;
-            }
-        }
-        return false;
+    public boolean checkListContainsCoordinates(List<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
+        return coordinatesList.stream()
+                .anyMatch(coordinate -> coordinate.equals(coordinatesToCheck));
     }
 
     public Coordinates getCoordinateFromBoardMap(int x, int y) {
@@ -224,12 +220,4 @@ public class Board implements Serializable {
         return null;
     }
 
-    public boolean checkAvailableCellsContainsCoordinate(int x, int y) {
-        for (Coordinates xy : this.availableCells) {
-            if (xy.getX() == x && xy.getY() == y){
-                return true;
-            }
-        }
-        return false;
-    }
 }

@@ -23,4 +23,8 @@ public class Coordinates implements Serializable {
     public void setY(int y) {
         this.y = y;
     }
+
+    public boolean equals(Coordinates coordinatesToCheck) {
+        return this.x == coordinatesToCheck.getX() && this.y == coordinatesToCheck.getY();
+    }
 }

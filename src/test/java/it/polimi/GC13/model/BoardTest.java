@@ -27,7 +27,7 @@ public class BoardTest extends TestCase {
             placeCard(hand, 2, isFlipped, board, player, 51, 49);
             placeCard(hand, 1, isFlipped, board, player, 50, 48);
         } catch (GenericException e) {
-            assert (true);
+            assert (e.getMessage().equals("Forbidden cell 50, 48"));
         }
     }
 

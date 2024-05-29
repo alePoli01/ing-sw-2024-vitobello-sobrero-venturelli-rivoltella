@@ -47,7 +47,7 @@ public class SetupPhase implements GamePhase {
     private synchronized boolean playersPlacedStartCard(Player player) {
         System.out.println("checking place cards...");
         for (Player p : player.getGame().getPlayerList()) {
-            if (!p.getBoard().boardMapContainsKeyOfValue(50, 50)) {
+            if (!p.getBoard().checkListContainsCoordinates(p.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(50, 50))) {
                 System.err.println(p.getNickname() + " didn't place start card");
                 return false;
             }
