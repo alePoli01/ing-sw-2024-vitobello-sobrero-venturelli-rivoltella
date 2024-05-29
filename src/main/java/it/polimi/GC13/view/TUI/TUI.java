@@ -38,7 +38,7 @@ public class TUI implements View {
 
     public TUI() {
         new Thread(this.newReader, "READER").start();
-        this.printer.intro();
+
     }
 
     @Override
@@ -58,6 +58,7 @@ public class TUI implements View {
 
     @Override
     public void startView() {
+        this.printer.intro();
         this.checkForExistingGame();
     }
 

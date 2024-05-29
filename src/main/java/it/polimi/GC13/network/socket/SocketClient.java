@@ -6,7 +6,6 @@ import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.io.*;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,24 +23,30 @@ public class SocketClient implements ClientInterface, Runnable {
     private boolean connectionOpen = true;
 
     public SocketClient(Socket socket, ServerDispatcher serverDispatcher) throws IOException {
+        this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
         this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         this.outputStream.flush();
-        this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+
         this.serverDispatcher = serverDispatcher;
     }
 
     @Override
     public synchronized void sendMessageFromServer(MessagesFromServer message) {
         try {
-            /*if (!connectionOpen) {
+            if (!connectionOpen) {
                 return;
-            }*/
+            }
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (IOException e) {
-            //connectionOpen = false;
+            this.connectionOpen = false;
             System.out.println("Error sending message: " + e.getMessage());
         }
+    }
+
+    @Override
+    public boolean isConnectionOpen() {
+        return connectionOpen;
     }
 
     /**
@@ -57,17 +62,14 @@ public class SocketClient implements ClientInterface, Runnable {
         while (connectionOpen) {
             try {
                 MessagesFromClient message = (MessagesFromClient) inputStream.readObject();
-                executorService.submit(() -> {
-                    try {
-                        serverDispatcher.sendToControllerDispatcher(message, this);
-                    } catch (RemoteException e) {
-                        System.err.println("Client disconnected\n " + e.getMessage());
-                    }
-                });
-            } catch (IOException | ClassNotFoundException e) {
+                executorService.submit(() ->
+                        serverDispatcher.sendToControllerDispatcher(message, this)
+                );
+            } catch (IOException | ClassNotFoundException   e) {
                 this.connectionOpen = false;
-                System.out.println("Client disconnected...");
+                System.out.println("Client disconnected..."+e.getMessage());
             }
         }
+        executorService.shutdown();
     }
 }

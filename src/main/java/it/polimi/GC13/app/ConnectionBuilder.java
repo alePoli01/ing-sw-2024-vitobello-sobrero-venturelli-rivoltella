@@ -46,22 +46,35 @@ public class ConnectionBuilder {
     public ServerInterface createServerConnection(ClientDispatcher clientDispatcher) throws IOException {
         if (connectionChoice == 1) {
             // RMI SETUP
-            RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
-            this.virtualServer = rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), this.RMIPort);
-            //System.out.println("Connection completed");
+            this.virtualServer = rmiSetup(this.RMIPort, clientDispatcher);
+            if (virtualServer == null) System.exit(-1);
         } else {
             // SOCKET SETUP
             this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
             if (virtualServer == null) System.exit(-1);
+            //thread to read incoming messages
             new Thread((SocketServer) this.virtualServer).start();
         }
+
         return this.virtualServer;
     }
+    public ServerInterface rmiSetup(int RMIPort, ClientDispatcher clientDispatcher) throws IOException {
+        //setup rmiAdapter
+        RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher,this);
 
+        return rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), RMIPort);
+    }
     public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
         // creating socket that represents the server
-        Socket socket = new Socket(System.getProperty("java.server.hostname"), socketPort);
-        socket.setSoTimeout(8000);
+        Socket socket;
+        try {
+            socket = new Socket(System.getProperty("java.server.hostname"), socketPort);
+        } catch (IOException e) {
+            System.err.println("Connection to server's socket failed");
+            throw new IOException();
+        }
+        //socket.setSoTimeout(8000);
+
         // the connection is socket so the virtual server is a SocketServer object
         return new SocketServer(socket, clientDispatcher, this);
     }
@@ -76,7 +89,7 @@ public class ConnectionBuilder {
             int sleepTime = 1000;       // initial delay
             int maxTime = 20000;        // caps the sleepTime
             int totalElapsedTime = 0;   // to be deleted
-            double backOffBase = 1.05;  // changes the exponential growth of th time
+            double backOffBase = 1.05;  // changes the exponential growth of the time
 
             System.out.println("Internet Connection Lost, trying to reconnect...");
             while (!connectionOpen) {
@@ -94,13 +107,14 @@ public class ConnectionBuilder {
                     this.virtualServer = this.createServerConnection(virtualServer.getClientDispatcher());
                     this.view.setVirtualServer(this.virtualServer);
                     connectionOpen = true;
+                    System.out.println("\u001B[33mConnection restored, you an keep playing\u001B[0m");
                     this.view.reconnectToGame();
                 } catch (IOException e) {
                     // exponential backoff algorithm
                     attemptCount++;
                     totalElapsedTime += sleepTime;
                     sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
-                    System.out.println("Attempt " + attemptCount + " of " + sleepTime + "ms" + " totalElapsedTime=" + totalElapsedTime / 1000 + "s");
+                    System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
                     if (attemptCount > 10) {
                         //after some attempts wait for user input
                         String answer;
