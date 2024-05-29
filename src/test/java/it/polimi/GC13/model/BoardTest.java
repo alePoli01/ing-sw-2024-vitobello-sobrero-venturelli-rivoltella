@@ -22,11 +22,16 @@ public class BoardTest extends TestCase {
 
         try {
             game.addPlayerToGame(player);
-            board.placeStartCardOnTheBoard(deck.getStartDeck().getFirst(), true);
+            System.out.println("Start card");
+            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getStartDeck().getFirst(), true);
+            System.out.println("First card");
             placeCard(hand, 0, isFlipped, board, player, 49, 49);
+            System.out.println("Second card");
             placeCard(hand, 2, isFlipped, board, player, 51, 49);
+            System.out.println("Third card");
             placeCard(hand, 1, isFlipped, board, player, 50, 48);
         } catch (GenericException e) {
+            System.out.println("Test passed");
             assert (e.getMessage().equals("Forbidden cell 50, 48"));
         }
     }

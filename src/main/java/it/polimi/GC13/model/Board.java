@@ -9,6 +9,7 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnNotEnoughResource
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -71,23 +72,6 @@ public class Board implements Serializable {
                 });
     }
 
-    /** place start card to the board
-     *
-     * @param cardToPlace card to place on the board
-     * @param isFlipped side of the card to place: true for back side and false for front side
-     * @throws GenericException if the card isn't added correctly it throws an exception
-     */
-    public void placeStartCardOnTheBoard(StartCard cardToPlace, boolean isFlipped) throws GenericException {
-        Coordinates xy = new Coordinates(50, 50);
-        Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
-        boardMap.put(xy, newCell);
-        if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
-            throw new GenericException("Sever didn't update the Board");
-        }
-
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, this.owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, isFlipped ? cardToPlace.reignBackPointEdge : cardToPlace.edgeResource)));
-    }
-
     /** place the card to the board
      *
      * @param xy coordinate to place card
@@ -113,25 +97,26 @@ public class Board implements Serializable {
         int i = 0;
         // if the card is gold / resource and is placed on back it's not important to check the edges
         // same things for starter card on front
-        if (cardPlaced.serialNumber < 81 && isFlipped || (cardPlaced.serialNumber > 80 && cardPlaced.serialNumber < 87 && !isFlipped)) {
+        if (cardPlaced.serialNumber < 81 && isFlipped || (cardPlaced.cardType.equals(CardType.STARTER) && !isFlipped)) {
             this.offset
                     .forEach(offset -> {
-                        Coordinates coordinateToCheck = new Coordinates(xy.getX() + offset.getX(), xy.getY() + offset.getY());
-                        if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.getX(), xy.getY() + offset.getY()))) {
-                            this.availableCells.add(coordinateToCheck);
+                        Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.getX(), xy.getY() + offset.getY());
+                        if (!checkListContainsCoordinates(new HashSet<>(this.notAvailableCells), coordinatesToCheck)) {
+                            this.availableCells.add(coordinatesToCheck);
                         }
                     });
         } else {
             while (i < resourceToCheck.length) {
                 Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
-                // if the card has "NULL" on the edge and the coordinates are not already forbidden, these coordinates are added to the forbidden
-                if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
+                // check if the coordinates are in the notAvailableCells or not
+                if (!checkListContainsCoordinates(new HashSet<>(this.notAvailableCells), coordinatesToCheck)) {
+                    // if the card has "NULL" on the edge and the coordinates are not already forbidden, these coordinates are added to the forbidden
                     if (resourceToCheck[i].equals(Resource.NULL)) {
                         this.notAvailableCells.add(coordinatesToCheck);
                         // if the coordinates are in the availableCells, they are removed
-                        if (checkListContainsCoordinates(this.availableCells, coordinatesToCheck)) {
-                            this.availableCells.remove(getCoordinateFromBoardMap(coordinatesToCheck.getX(), coordinatesToCheck.getY()));
+                        if (checkListContainsCoordinates(new HashSet<>(this.availableCells), coordinatesToCheck)) {
+                            this.availableCells.remove(getCoordinateFromList(new HashSet<>(this.availableCells), coordinatesToCheck));
                         }
                     } else {
                         // else they are added to the availableCells
@@ -140,6 +125,15 @@ public class Board implements Serializable {
                 }
                 i++;
             }
+            String cellCoordinates = availableCells.stream()
+                    .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
+                    .collect(Collectors.joining("\n"));
+            System.out.println("Available cells are:\n" + cellCoordinates + ".");
+            String c = notAvailableCells.stream()
+                    .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
+                    .collect(Collectors.joining("\n"));
+            System.out.println("Not available cells are:\n" + c + ".");
+            System.out.println();
         }
         return new LinkedList<>(this.availableCells);
     }
@@ -150,8 +144,7 @@ public class Board implements Serializable {
 
         this.offset
             .forEach(offset -> {
-                Coordinates coordinateToCheck = this.getCoordinateFromBoardMap(x + offset.getX(), y + offset.getY());
-                if (this.boardMap.containsKey(coordinateToCheck)) {
+                if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x, y))) {
                     counter.incrementAndGet();
                 }
             });
@@ -164,18 +157,20 @@ public class Board implements Serializable {
 
         this.offset
             .forEach(offset -> {
-                Coordinates coordinateToCheck = this.getCoordinateFromBoardMap(x + offset.getX(), y + offset.getY());
-                if (this.boardMap.containsKey(coordinateToCheck) && ((!this.boardMap.get(coordinateToCheck).isFlipped) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER))) {
-                    // determine if a new covered edge has reign or object and in case remove it from availableResources
-                    if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].isNullOrEmpty())) {
-                        for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
-                            if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].equals(resource)) {
-                                if (resource.isReign() || resource.isObject()) {
-                                    collectedResources.put(resource, collectedResources.get(resource) - 1);
+                if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()))) {
+                    Coordinates coordinateToCheck = getCoordinateFromList(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()));
+                    if (this.boardMap.get(coordinateToCheck).isFlipped || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
+                        // determine if a new covered edge has reign or object and in case remove it from availableResources
+                        if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].isNullOrEmpty())) {
+                            for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
+                                if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].equals(resource)) {
+                                    if (resource.isReign() || resource.isObject()) {
+                                        collectedResources.put(resource, collectedResources.get(resource) - 1);
+                                    }
                                 }
                             }
+                            edge.incrementAndGet();
                         }
-                        edge.incrementAndGet();
                     }
                 }
             });
@@ -184,7 +179,7 @@ public class Board implements Serializable {
     // simplified for cycles to update reigns and objects
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
         // if statement for start card, else for gold / resources
-        if (cardToPlace.serialNumber >= 81 && cardToPlace.serialNumber <= 86) {
+        if (cardToPlace.cardType.equals(CardType.STARTER)) {
             if (isFlipped) {
                 Arrays.stream(((StartCard) cardToPlace).reignBackPointEdge)
                         .filter(Resource::isReign)
@@ -206,18 +201,15 @@ public class Board implements Serializable {
         }
     }
 
-    public boolean checkListContainsCoordinates(List<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
+    public boolean checkListContainsCoordinates(Set<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
         return coordinatesList.stream()
                 .anyMatch(coordinate -> coordinate.equals(coordinatesToCheck));
     }
 
-    public Coordinates getCoordinateFromBoardMap(int x, int y) {
-        for (Coordinates xy : this.boardMap.keySet()) {
-            if (xy.getX() == x && xy.getY() == y){
-                return xy;
-            }
-        }
-        return null;
+    public Coordinates getCoordinateFromList(Set<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
+        return coordinatesList.stream()
+                .filter(coordinate -> coordinate.equals(coordinatesToCheck))
+                .findFirst()
+                .orElse(null);
     }
-
 }

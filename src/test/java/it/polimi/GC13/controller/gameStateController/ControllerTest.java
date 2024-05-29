@@ -36,8 +36,8 @@ public class ControllerTest extends TestCase {
 
         this.setupPhase.placeStartCard(player1, true);
         this.setupPhase.placeStartCard(player2, true);
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(50, 50)));
-        assert (this.player2.getBoard().checkListContainsCoordinates(this.player2.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(50, 50)));
+        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(50, 50)));
+        assert (this.player2.getBoard().checkListContainsCoordinates(this.player2.getBoard().getBoardMap().keySet(), new Coordinates(50, 50)));
         assert (this.player1.getHand().size() == 3);
         assert (this.player2.getHand().size() == 3);
     }
@@ -66,12 +66,12 @@ public class ControllerTest extends TestCase {
         // player 1 start card and first resource card
         this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X, Y);
         this.boardView.insertCard(Y, X, this.player1.getHand().getFirst().serialNumber, 1, true);
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(X, Y)));
+        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
         assert (this.player1.getHand().size() == 2);
         this.boardView.printBoard();
 
         this.midPhase.placeCard(this.player2, this.player2.getHand().getFirst().serialNumber, true, X, Y);
-        assert (this.player2.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(X, Y)));
+        assert (this.player2.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
         assert (this.player2.getHand().size() == 2);
 
         X += 5;
@@ -79,7 +79,7 @@ public class ControllerTest extends TestCase {
         // player 1 second resource card
         this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X, Y);
         //this.boardView.insertCard(Y, X, this.player1.getHand().getFirst().serialNumber, 2, true);
-        assert (!this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(X, Y)));
+        assert (!this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
         assert (this.player1.getBoard().getBoardMap().size() == 2);
 
         this.boardView.printBoard();
@@ -114,7 +114,7 @@ public class ControllerTest extends TestCase {
         this.boardView.insertCard(49, 49, this.player1.getHand().getFirst().serialNumber, 1, true);
 
         // check that the card has been placed and the player doesn't have in his hand
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(49, 49)));
+        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(49, 49)));
         assert (this.player1.getHand().size() == 2);
         assert (!this.player1.getHand().contains(cardToPlace));
 

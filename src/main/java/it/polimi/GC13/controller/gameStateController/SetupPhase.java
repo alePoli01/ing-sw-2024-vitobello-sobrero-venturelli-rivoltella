@@ -29,7 +29,7 @@ public class SetupPhase implements GamePhase {
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
             StartCard cardToPlace = (StartCard) player.getHand().getFirst();
-            player.getBoard().placeStartCardOnTheBoard(cardToPlace, isFlipped);
+            player.getBoard().placeCardToTheBoard(new Coordinates(50, 50), cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
             // pop card played from hand
             player.removeFromHand(cardToPlace);
@@ -47,7 +47,7 @@ public class SetupPhase implements GamePhase {
     private synchronized boolean playersPlacedStartCard(Player player) {
         System.out.println("checking place cards...");
         for (Player p : player.getGame().getPlayerList()) {
-            if (!p.getBoard().checkListContainsCoordinates(p.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(50, 50))) {
+            if (!p.getBoard().checkListContainsCoordinates(p.getBoard().getBoardMap().keySet(), new Coordinates(50, 50))) {
                 System.err.println(p.getNickname() + " didn't place start card");
                 return false;
             }

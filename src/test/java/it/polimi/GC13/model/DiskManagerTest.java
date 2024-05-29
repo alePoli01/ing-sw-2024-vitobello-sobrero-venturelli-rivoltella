@@ -38,7 +38,7 @@ public class DiskManagerTest extends TestCase {
         assert (p1.isMyTurn());
         assert (!p2.isMyTurn());
 
-        assert (p1.getBoard().checkListContainsCoordinates(p1.getBoard().getBoardMap().keySet().stream().toList(), new Coordinates(50, 50)));
+        assert (p1.getBoard().checkListContainsCoordinates(p1.getBoard().getBoardMap().keySet(), new Coordinates(50, 50)));
         assert (game.getPlayerList().size() == 2);
     }
 
