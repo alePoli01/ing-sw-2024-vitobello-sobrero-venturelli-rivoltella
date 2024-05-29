@@ -25,38 +25,6 @@ public class ControllerTest extends TestCase {
     /*
         PASSED -> SETUP PHASE
      */
-    public void testPrepareTable() {
-        try {
-            this.game.addPlayerToGame(this.player1);
-            this.game.addPlayerToGame(this.player2);
-            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
-        } catch (Exception e) {
-            System.out.println("Error creating");
-        }
-
-        this.game.getPlayerList()
-                .forEach(player -> player.getHand()
-                        .forEach(card -> {
-                            card.cardPrinter(false);
-                            System.out.println("         " + card.serialNumber);
-                        }));
-        System.out.println("fine start card");
-
-        this.game.getTable().getGoldCardMap().keySet()
-                .forEach(card -> {
-                    card.cardPrinter(false);
-                    System.out.println("         " + card.serialNumber);
-                });
-        this.game.getTable().getResourceCardMap().keySet()
-                .forEach(card -> {
-                    card.cardPrinter(false);
-                    System.out.println("         " + card.serialNumber);
-                });
-    }
-
-    /*
-        PASSED -> SETUP PHASE
-     */
     public void testPlaceStartCard() {
         try {
             this.game.addPlayerToGame(this.player1);

@@ -97,31 +97,6 @@ public class DeckTest extends TestCase {
 
     }
 
-    public void testCardPrinter(){
-        Deck deck = new Deck();
-
-        deck.parseJSON();
-
-        for(PlayableCard card: deck.getResourceDeck()){
-            System.out.println("CARD "+card.serialNumber);
-            card.cardPrinter(true);
-            card.cardPrinter(false);
-            System.out.println("_______________");
-        }
-        for(PlayableCard card: deck.getGoldDeck()){
-            System.out.println("CARD "+card.serialNumber);
-            card.cardPrinter(true);
-            card.cardPrinter(false);
-            System.out.println("_______________");
-        }
-        for(PlayableCard card: deck.getStartDeck()){
-            System.out.println("CARD "+card.serialNumber);
-            card.cardPrinter(true);
-            card.cardPrinter(false);
-            System.out.println("_______________");
-        }
-    }
-
     public void testPrintObjectiveCard() {
         Deck deck = new Deck();
         for(ObjectiveCard card: deck.getObjectiveDeck()){
