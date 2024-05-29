@@ -9,7 +9,6 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnNotEnoughResource
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -86,8 +85,7 @@ public class Board implements Serializable {
             throw new GenericException("Sever didn't update the Board");
         }
 
-        this.updateAvailableCells(cardToPlace, xy, isFlipped, isFlipped ? cardToPlace.reignBackPointEdge : cardToPlace.edgeResource);
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, this.owner.getTurnPlayed(), this.availableCells));
+        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, this.owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, isFlipped ? cardToPlace.reignBackPointEdge : cardToPlace.edgeResource)));
     }
 
     /** place the card to the board
@@ -103,12 +101,12 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-        this.updateAvailableCells(cardToPlace, xy, isFlipped, cardToPlace.edgeResource);
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.availableCells));
+
+        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, cardToPlace.edgeResource)));
     }
 
     // updates notAvailableCells and availableCells sets
-    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] resourceToCheck) {
+    private List<Coordinates> updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] resourceToCheck) {
         this.availableCells.remove(xy);
         this.notAvailableCells.add(xy);
 
@@ -127,22 +125,23 @@ public class Board implements Serializable {
             while (i < resourceToCheck.length) {
                 Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
-                // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
+                // if the card has "NULL" on the edge and the coordinates are not already forbidden, these coordinates are added to the forbidden
                 if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
                     if (resourceToCheck[i].equals(Resource.NULL)) {
                         this.notAvailableCells.add(coordinatesToCheck);
+                        // if the coordinates are in the availableCells, they are removed
+                        if (checkAvailableCellsContainsCoordinate(coordinatesToCheck.getX(), coordinatesToCheck.getY())) {
+                            this.availableCells.remove(getCoordinateFromBoardMap(coordinatesToCheck.getX(), coordinatesToCheck.getY()));
+                        }
                     } else {
-                        // else it is added to availableCells
+                        // else they are added to the availableCells
                         this.availableCells.add(coordinatesToCheck);
                     }
                 }
                 i++;
             }
         }
-        String cellCoordinates = notAvailableCells.stream()
-                .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
-                .collect(Collectors.joining("\n"));
-        System.out.println("Not available cells are:\n" + cellCoordinates + ".");
+        return new LinkedList<>(this.availableCells);
     }
 
     // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
@@ -223,5 +222,14 @@ public class Board implements Serializable {
             }
         }
         return null;
+    }
+
+    public boolean checkAvailableCellsContainsCoordinate(int x, int y) {
+        for (Coordinates xy : this.availableCells) {
+            if (xy.getX() == x && xy.getY() == y){
+                return true;
+            }
+        }
+        return false;
     }
 }

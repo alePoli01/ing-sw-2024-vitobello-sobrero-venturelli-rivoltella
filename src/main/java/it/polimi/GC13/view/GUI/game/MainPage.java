@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -237,6 +238,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     isFlipped = !checkBox.getText().equals("Front");
                     if (e.getActionCommand().equals("Confirm")) {
                         //JOptionPane.showMessageDialog(this, "isFlipped: "+ isFlipped);
+                        System.out.println("la carta è stata inviata "+isFlipped);
                         frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
                         createLobby();
                         getContentPane().revalidate();
@@ -297,10 +299,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     JCheckBox jCheckBox;
                     if(String.valueOf(path).contains("front")){
                         startCardLabelText = createTextLabelFont("Front", 32);
-                        jCheckBox = new JCheckBox("false");
+                        jCheckBox = new JCheckBox("Front");
                     } else {
                         startCardLabelText = createTextLabelFont("Back", 32);
-                        jCheckBox = new JCheckBox("true");
+                        jCheckBox = new JCheckBox("Back");
                     }
 
                     setBorderInsets(startCardLabelText, 30, 230, 80, 230);
@@ -462,7 +464,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public void setupObjectiveCard(List<Integer> privateObjectiveCards){
         getContentPane().remove(panelContainer);
         JScrollPane scrollPane = new JScrollPane(panelContainer);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setOpaque(false);
         getContentPane().add(scrollPane);
@@ -504,9 +506,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         confirmButton.setText("Let's Roll");
         JPanel panelButton = new JPanel();
         panelButton.setOpaque(false);
-        panelButton.add(confirmButton, createGridBagConstraints(0, 6));
-        setBorderInsets(panelButton, 0,0,30, 0);
-        panelContainer.add(panelButton, createGridBagConstraints(0, 6));
+        panelButton.add(confirmButton, createGridBagConstraints(0, 5));
+        setBorderInsets(panelButton, 0,0,26, 0);
+        panelContainer.add(panelButton, createGridBagConstraints(0, 5));
         confirmButton.addActionListener (e -> {
             int choice;
             for (JCheckBox checkBox : labelCheckBoxMap.values()) {
@@ -746,15 +748,23 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         int boardheight = 11220;
         int boardwidth = 16830;
 
+        String available = frameManager.availablesCells.stream()
+                .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
+                .collect(Collectors.joining("\n"));
+        System.out.println("Available cells in main page are:\n" + available + ".");
+        //scorri le y
         for (int i = 10; i < 80; i++) {
+            //scorri le x
             for (int j = 10; j < 80; j++) {
                 if ((i + j) % 2 == 0) {
                     if (frameManager.playersBoard.get(nickname).Board[i][j] != null) {
-                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[i][j].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), frameManager.playersBoard.get(nickname).Board[i][j].weight);
+                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[i][j].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((j - 50) * 152),boardheight / 2 + ((i - 50) * 78) , frameManager.playersBoard.get(nickname).Board[i][j].weight);
                     } else {
                         for (Coordinates coordinates : frameManager.availablesCells) {
-                            if (i == coordinates.getX() && j == coordinates.getY()) {
-                                addButtonToLayeredPane(board, boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), -1);
+
+                            if (i == coordinates.getY() && j == coordinates.getX()) {
+
+                                addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78),10000);
                             }
 
                         }
@@ -776,10 +786,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             String flippedIcon;
             JCheckBox jCheckBox;
             if(!b){
-                flippedIcon = entry.getValue().getFirst();
+                flippedIcon = entry.getValue().getLast();
                 jCheckBox = new JCheckBox("false");
             } else {
-                flippedIcon = entry.getValue().getLast();
+                flippedIcon = entry.getValue().getFirst();
                 jCheckBox = new JCheckBox("true");
             }
             Image img = new ImageIcon(flippedIcon).getImage();
@@ -1014,8 +1024,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             if(cordToSend==null || serialTosend == -1 ){
                 System.out.println("errore seleziona la carta da inserire nella board");
             }else{
-                System.out.println("INVIO CARTA    "+serialTosend+" "+flipToSend+" X:"+cordToSend.getY()+" y:"+cordToSend.getX());
-                frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialTosend,flipToSend, cordToSend.getY(), cordToSend.getX()));
+                System.out.println("INVIO CARTA    "+serialTosend+" "+flipToSend+" X:"+cordToSend.getX()+" y:"+cordToSend.getY());
+                frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialTosend,flipToSend, cordToSend.getX(), cordToSend.getY()));
             }
         }
 
@@ -1133,6 +1143,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 }*/
 
                 ArrayList<String> cardIconList = new ArrayList<>(firstFilesInSubfolders.values());
+                System.out.println("lista dei path della carta "+serialCard+": "+cardIconList);
                 handIconsPaths.put(serialCard, cardIconList);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);

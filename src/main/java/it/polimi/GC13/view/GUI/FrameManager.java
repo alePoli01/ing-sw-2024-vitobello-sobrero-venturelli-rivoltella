@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class FrameManager extends JFrame implements View {
@@ -223,8 +224,10 @@ public class FrameManager extends JFrame implements View {
         }
         this.gamesLog.add(playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn);
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
-        if(Objects.equals(playerNickname, this.nickname)){
-            availablesCells = availableCells;
+
+        if (this.nickname.equals(playerNickname)) {
+            this.availablesCells.clear();
+            this.availablesCells.addAll(availableCells);
         }
         this.gamePage.refreshBoard();
     }

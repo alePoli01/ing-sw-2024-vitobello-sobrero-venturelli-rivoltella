@@ -68,4 +68,5 @@ public interface View {
     void gameOver(Set<String> winner);
 
     void onReconnectToGame();
+
 }

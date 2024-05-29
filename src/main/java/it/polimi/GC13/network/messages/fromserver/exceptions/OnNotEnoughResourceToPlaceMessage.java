@@ -17,7 +17,7 @@ public class OnNotEnoughResourceToPlaceMessage implements OnInputExceptionMessag
 
     @Override
     public void methodToRecall(View view) {
-        view.exceptionHandler(this.playerNickname, this);
+        view.showHomeMenu();
     }
 
     @Override
