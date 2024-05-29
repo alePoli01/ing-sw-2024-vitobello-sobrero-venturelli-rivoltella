@@ -59,7 +59,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private Timer timer;
     int progress = 0;
     int colorIndex = 0;
-
+    int buttonplaced = 200;
     final static String PANEL1 = "Game";
     final static String PANEL2 = "Scoreboard";
     private int flag = -1;
@@ -763,8 +763,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         for (Coordinates coordinates : frameManager.availablesCells) {
 
                             if (i == coordinates.getY() && j == coordinates.getX()) {
-
-                                addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78),10000);
+                                buttonplaced++;
+                                addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78),buttonplaced);
                             }
 
                         }
@@ -772,6 +772,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 }
             }
         }
+        buttonplaced=200;
         board.revalidate();
         board.repaint();
     }
@@ -853,7 +854,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         button.setVisible(false);
         button.setOpaque(false);
         button.setContentAreaFilled(false);
-        button.setBorder(BorderFactory.createLineBorder(Color.yellow,4));
+        button.setBorder(BorderFactory.createLineBorder(new Color(253, 204, 65, 255),4));
         button.setBounds(x,y,198,132);//card sizes
 
         layeredPane.add(button,weight);
@@ -1045,7 +1046,25 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             }*/
          else {
             for (JButton button : buttonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
                 if (e.getSource().equals(button)) {
+                    try{
+                        serialTosend = serialNumerCheckBoxMap.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().checkBox.isSelected())
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey();
+                    }catch(NoSuchElementException ex){
+                        System.out.println("il serial to send non è stato aggiornato");}
+
+                    ImageIcon originalIcon = new ImageIcon(getDirectory(serialTosend,flipToSend));
+                    Image scaledImage = originalIcon.getImage().getScaledInstance(originalIcon.getIconWidth() / 5, originalIcon.getIconHeight() / 5, Image.SCALE_SMOOTH); // Scala l'immagine
+                    ImageIcon imageIcon = new ImageIcon(scaledImage);
+                    button.setIcon(imageIcon);
+                    button.setBorderPainted(false);
+                    //button.setBorder(BorderFactory.createLineBorder(new Color(230, 64, 50, 255),4));
                     try {
                         cordToSend = buttonMap.entrySet()
                                 .stream()
