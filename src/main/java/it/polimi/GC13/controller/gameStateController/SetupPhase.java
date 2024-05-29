@@ -28,7 +28,7 @@ public class SetupPhase implements GamePhase {
 
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
-            PlayableCard cardToPlace = player.getHand().getFirst();
+            StartCard cardToPlace = (StartCard) player.getHand().getFirst();
             player.getBoard().placeStartCardOnTheBoard(cardToPlace, isFlipped);
             player.getBoard().addResource(cardToPlace, isFlipped);
             // pop card played from hand

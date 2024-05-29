@@ -9,6 +9,7 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnNotEnoughResource
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -77,7 +78,7 @@ public class Board implements Serializable {
      * @param isFlipped side of the card to place: true for back side and false for front side
      * @throws GenericException if the card isn't added correctly it throws an exception
      */
-    public void placeStartCardOnTheBoard(PlayableCard cardToPlace, boolean isFlipped) throws GenericException {
+    public void placeStartCardOnTheBoard(StartCard cardToPlace, boolean isFlipped) throws GenericException {
         Coordinates xy = new Coordinates(50, 50);
         Cell newCell = new Cell(cardToPlace, owner.getTurnPlayed(), isFlipped);
         boardMap.put(xy, newCell);
@@ -85,7 +86,7 @@ public class Board implements Serializable {
             throw new GenericException("Sever didn't update the Board");
         }
 
-        this.updateAvailableCells(cardToPlace, xy, isFlipped);
+        this.updateAvailableCells(cardToPlace, xy, isFlipped, isFlipped ? cardToPlace.reignBackPointEdge : cardToPlace.edgeResource);
         this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, 50, 50, this.owner.getTurnPlayed(), this.availableCells));
     }
 
@@ -102,33 +103,46 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-        this.updateAvailableCells(cardToPlace, xy, isFlipped);
+        this.updateAvailableCells(cardToPlace, xy, isFlipped, cardToPlace.edgeResource);
         this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.availableCells));
     }
 
     // updates notAvailableCells and availableCells sets
-    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped) {
+    private void updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] resourceToCheck) {
         this.availableCells.remove(xy);
         this.notAvailableCells.add(xy);
 
         int i = 0;
-        while (i < cardPlaced.edgeResource.length) {
-            Resource resource = cardPlaced.edgeResource[i];
-            Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
+        // if the card is gold / resource and is placed on back it's not important to check the edges
+        // same things for starter card on front
+        if (cardPlaced.serialNumber < 81 && isFlipped || (cardPlaced.serialNumber > 80 && cardPlaced.serialNumber < 87 && !isFlipped)) {
+            this.offset
+                    .forEach(offset -> {
+                        Coordinates coordinateToCheck = new Coordinates(xy.getX() + offset.getX(), xy.getY() + offset.getY());
+                        if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.getX(), xy.getY() + offset.getY()))) {
+                            this.availableCells.add(coordinateToCheck);
+                        }
+                    });
+        } else {
+            while (i < resourceToCheck.length) {
+                Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
-            // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
-            if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
-                if (isFlipped && cardPlaced.serialNumber < 81) {
-                    this.availableCells.add(coordinatesToCheck);
-                } else if (resource.equals(Resource.NULL)) {
-                    this.notAvailableCells.add(coordinatesToCheck);
-                } else {
-                    // else it is added to availableCells
-                    this.availableCells.add(coordinatesToCheck);
+                // if the coordinates has X on the edge, and it is not already forbidden it is added to the forbidden
+                if (!this.notAvailableCells.contains(getCoordinateFromBoardMap(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY()))) {
+                    if (resourceToCheck[i].equals(Resource.NULL)) {
+                        this.notAvailableCells.add(coordinatesToCheck);
+                    } else {
+                        // else it is added to availableCells
+                        this.availableCells.add(coordinatesToCheck);
+                    }
                 }
+                i++;
             }
-            i++;
         }
+        String cellCoordinates = notAvailableCells.stream()
+                .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
+                .collect(Collectors.joining("\n"));
+        System.out.println("Not available cells are:\n" + cellCoordinates + ".");
     }
 
     // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
