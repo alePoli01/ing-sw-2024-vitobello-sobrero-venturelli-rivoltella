@@ -50,9 +50,12 @@ public class BoardView {
         if (x < y_min) {
             y_min = x;
         }
-        if(y_min%2!=0&&x_min%2==0){
+        if((y_min%2!=0&&x_min%2==0)){
             y_min--;
             y_max=y_max+2;
+        } else if (x_min%2!=0&&y_min%2==0) {
+            x_min--;
+            x_max=x_max+2;
         }
     }
 
@@ -578,7 +581,7 @@ public class BoardView {
                                             Board[i + 1][j + 1].getCardPointer().linePrinter(3, line - 3, Board[i + 1][j + 1].isFlipped);
                                         }
                                     } else {
-                                        Board[i + 1][j + 1].getCardPointer().linePrinter(0, line - 3, Board[i + 1][j + 1].isFlipped);
+                                        Board[i + 1][j + 1].getCardPointer().linePrinter(4, line - 3, Board[i + 1][j + 1].isFlipped);
                                     }
                                 } else if (Board[i][j].weight < Board[i + 1][j - 1].weight && Board[i][j].weight < Board[i + 1][j + 1].weight) {
                                     Board[i][j].getCardPointer().linePrinter(7, line, Board[i][j].isFlipped);

@@ -73,7 +73,7 @@ public class BoardViewTest extends TestCase {
         board.InsertCard(52,58,80,2, false);
         */
         
-        board.insertCard(50,50,83,0, true);
+        /*board.insertCard(50,50,83,0, true);
         board.insertCard(51,51,34,1, false);
         board.insertCard(52,52,41,2, false);
         board.insertCard(50,52,12,3, false);
@@ -88,6 +88,17 @@ public class BoardViewTest extends TestCase {
             board.InsertCard(i,i,57,i*2, false);
         }*/
         //board.InsertCard(53,,41,0, false);
+        board.insertCard(50,50,83,0,true);
+        board.insertCard(49,49,1,1,true);
+        board.insertCard(50,48,17,2,true);
+        board.insertCard(49,47,25,4,true);
+        board.insertCard(51,51,17,5,true);
+        board.insertCard(52,52,35,6,true);
+        board.insertCard(53,53,35,7,true);
+        board.insertCard(48,46,35,8,true);
+        board.insertCard(47,45,35,9,true);
+        board.insertCard(46,44,35,10,true);
+        board.insertCard(45,43,35,11,true);
         board.printBoard();
 
     }
