@@ -106,6 +106,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         showTokenChoose(tokenColorList);
 
         confirmButton = createButton("Select", 32);
+        confirmButton.setBackground(new Color(232, 221, 183, 255));
         panelContainer.add(confirmButton, createGridBagConstraints(0, 3));
 
         confirmButton.addActionListener (e -> {
@@ -230,6 +231,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         confirmButton.setText("Confirm");
+        confirmButton.setBackground(new Color(232, 221, 183, 255));
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
         confirmButton.addActionListener (e -> {
             boolean isFlipped;
@@ -504,6 +506,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
 
         confirmButton.setText("Let's Roll");
+        confirmButton.setBackground(new Color(232, 221, 183, 255));
         JPanel panelButton = new JPanel();
         panelButton.setOpaque(false);
         panelButton.add(confirmButton, createGridBagConstraints(0, 5));
@@ -553,6 +556,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setBorderInsets(northPanel, 15, 0, 15, 0);
 
         JButton buttonToScoreBoard = createButton("Go to scoreboard", 20);
+        buttonToScoreBoard.setBackground(new Color(232, 221, 183, 255));
         buttonToScoreBoard.addActionListener(this);
         setBoxComponentSize(buttonToScoreBoard, 180, 50);
         northPanel.add(buttonToScoreBoard);
@@ -631,10 +635,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
 
         confirmButton = createButton("Confirm", 32);
+        confirmButton.setBackground(new Color(232, 221, 183, 255));
         confirmButton.addActionListener(this);
         JPanel emptyPanel = new JPanel();
         emptyPanel.setPreferredSize(new Dimension(200,5));
         flipButton = createButton("Show Back", 32);
+        flipButton.setBackground(new Color(232, 221, 183, 255));
         flipButton.addActionListener(this);
 
         namePanel.add(confirmButton);
@@ -854,10 +860,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         button.setVisible(false);
         button.setOpaque(false);
         button.setContentAreaFilled(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(253, 204, 65, 255),4));
+        button.setBorder(BorderFactory.createLineBorder(new Color(135, 142, 150, 255),4));
         button.setBounds(x,y,198,132);//card sizes
 
-        layeredPane.add(button,weight);
+        layeredPane.add(button,JLayeredPane.PALETTE_LAYER);
     }
 
     public static void addImageToLayeredPane(JLayeredPane layeredPane, String imagePath, int x, int y, int layer) {
