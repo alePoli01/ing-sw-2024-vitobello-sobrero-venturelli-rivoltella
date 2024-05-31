@@ -7,4 +7,5 @@ public interface ServerInterface {
     // Methods that can be called by the client
     void sendMessageFromClient(MessagesFromClient messages);;
     ClientDispatcher getClientDispatcher();
+    void setConnectionOpen(boolean b);
 }

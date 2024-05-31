@@ -114,13 +114,6 @@ public class Player implements Serializable {
         return handSerialNumber;
     }
 
-    public LinkedList<Integer> getPrivateObjectiveCardSerialNumber() {
-        LinkedList<Integer> privateObjectiveCardSerialNumber = new LinkedList<>();
-        this.privateObjectiveCard
-                .forEach(objectiveCard -> privateObjectiveCardSerialNumber.add(objectiveCard.serialNumber));
-        return privateObjectiveCardSerialNumber;
-    }
-
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
         System.out.println(this.nickname + " turn updated to " + this.myTurn);
@@ -161,8 +154,15 @@ public class Player implements Serializable {
             this.privateObjectiveCard.removeIf(objectiveCard -> objectiveCard.serialNumber != serialPrivateObjectiveCard);
             this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, serialPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
         } else {
-            throw new GenericException("Private objective already chose");
+            throw new GenericException("Private objective already chosen");
         }
+    }
+
+    public LinkedList<Integer> getPrivateObjectiveCardSerialNumber() {
+        LinkedList<Integer> privateObjectiveCardSerialNumber = new LinkedList<>();
+        this.privateObjectiveCard
+                .forEach(objectiveCard -> privateObjectiveCardSerialNumber.add(objectiveCard.serialNumber));
+        return privateObjectiveCardSerialNumber;
     }
 
     /**

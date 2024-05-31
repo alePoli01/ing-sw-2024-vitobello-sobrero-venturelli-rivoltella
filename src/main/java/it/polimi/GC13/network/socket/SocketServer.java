@@ -1,14 +1,13 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.app.ConnectionBuilder;
+import it.polimi.GC13.network.ConnectionTimer;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.*;
 
 /**
@@ -23,47 +22,38 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ObjectOutputStream outputStream;
     private final ClientDispatcher clientDispatcher;
     private boolean connectionOpen = true;
-    private final ConnectionBuilder connectionBuilder;
-    private Timer timer;
+
+    private final ConnectionTimer connectionTimer;
+
+    @Override
+    public void setConnectionOpen(boolean connectionOpen) {
+        this.connectionOpen = connectionOpen;
+    }
 
     public SocketServer(Socket socket, ClientDispatcher clientDispatcher, ConnectionBuilder connectionBuilder) throws IOException {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.outputStream.flush();
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
-        this.connectionBuilder = connectionBuilder;
-        this.startTimer();
+        this.connectionTimer = new ConnectionTimer(this,connectionBuilder);
     }
     public ClientDispatcher getClientDispatcher() {
         return this.clientDispatcher;
     }
-    private void startTimer() {
-        this.timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            public void run() {
-                System.err.println("\ntimer's run out");
-                SocketServer.this.connectionBuilder.connectionLost(SocketServer.this, false);
-            }
-        };
-        timer.schedule(timerTask, 6000);
-    }
-    private void stopTimer() {
-        if (this.timer != null) {
-            this.timer.cancel();
-        }
-    }
-    
 
     @Override
     public void sendMessageFromClient(MessagesFromClient messages) {
         try {
-            if (!this.connectionOpen) {
+            if (!connectionOpen) {
                 return;
             }
             outputStream.writeObject(messages);
             outputStream.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage() + " \n error while sending message to server");
+            if (connectionOpen) {
+                connectionOpen = false;
+                System.out.println("\nError while sending message to server\n"+e.getMessage());
+            }
         }
     }
 
@@ -74,8 +64,8 @@ public class SocketServer implements ServerInterface, Runnable {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
                 executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
-                stopTimer();
-                startTimer();
+                connectionTimer.stopTimer();
+                connectionTimer.startTimer();
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {
                     connectionOpen = false;

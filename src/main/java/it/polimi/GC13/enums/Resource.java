@@ -4,11 +4,6 @@ public enum Resource {
 
     NULL, EMPTY, ANIMAL, FUNGI, INSECT, PLANT, INKWELL, MANUSCRIPT, QUILL;
 
-        // returns true if the edge equals NULL or EMPTY
-    public boolean isNullOrEmpty() {
-        return (this.equals(NULL) || this.equals(EMPTY));
-    }
-
     public boolean isReign() {
         return (this.equals(ANIMAL) || this.equals(FUNGI) || this.equals(INSECT) || this.equals(PLANT));
     }
@@ -64,12 +59,11 @@ public enum Resource {
                 return gold+"I"+reset;
             }
             case QUILL -> {
-                return gold+"F"+reset;
+                return gold+"Q"+reset;
             }
             case MANUSCRIPT -> {
                 return gold+"M"+reset;
             }
-
         }
         return null;
     }

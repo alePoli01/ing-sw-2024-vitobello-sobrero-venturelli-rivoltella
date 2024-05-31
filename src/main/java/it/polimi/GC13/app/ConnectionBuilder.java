@@ -60,9 +60,9 @@ public class ConnectionBuilder {
     }
     public ServerInterface rmiSetup(int RMIPort, ClientDispatcher clientDispatcher) throws IOException {
         //setup rmiAdapter
-        RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher,this);
+        RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
 
-        return rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), RMIPort);
+        return rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), RMIPort,this);
     }
     public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
         // creating socket that represents the server

@@ -2,6 +2,7 @@ package it.polimi.GC13.network.rmi;
 
 import it.polimi.GC13.app.ConnectionBuilder;
 import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.ConnectionTimer;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
@@ -23,23 +24,22 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
     private final ExecutorService executorService;
     public RMIServerInterface serverStub;
     private final ClientDispatcher clientDispatcher;
-    private final ConnectionBuilder connectionBuilder;
     private boolean connectionOpen = true;
-    private Timer timer;
+    private ConnectionTimer connectionTimer;
 
-    public RMIConnectionAdapter(ClientDispatcher clientDispatcher, ConnectionBuilder connectionBuilder) throws RemoteException {
+    public RMIConnectionAdapter(ClientDispatcher clientDispatcher) throws RemoteException {
         super();
-        this.connectionBuilder = connectionBuilder;
         this.clientDispatcher = clientDispatcher;
         this.executorService = Executors.newCachedThreadPool();
-        this.startTimer();
+
     }
 
-    public ServerInterface startRMIConnection(String hostName, int port) throws IOException {
+    public ServerInterface startRMIConnection(String hostName, int port,ConnectionBuilder connectionBuilder) throws IOException {
         Registry registry = LocateRegistry.getRegistry(hostName, port);
         try {
             this.serverStub = (RMIServerInterface) registry.lookup("server");
             this.serverStub.createConnection(this);
+            this.connectionTimer=new ConnectionTimer(this,connectionBuilder);
         } catch (RemoteException | NotBoundException e) {
             System.err.println("Registry Lookup for server stub failed.");
             throw new IOException();
@@ -57,7 +57,6 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
             if (connectionOpen) {
                 connectionOpen = false;
                 System.out.println("\nError while sending message, starting auto-remapping...");
-                this.connectionBuilder.connectionLost(this, false);
             }
         }
     }
@@ -77,25 +76,16 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void sendMessageFromServer(MessagesFromServer message) throws RemoteException {
-        executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
-        this.stopTimer();
-        this.startTimer();
+    public void setConnectionOpen(boolean connectionOpen) {
+        this.connectionOpen = connectionOpen;
     }
 
-    private void startTimer() {
-        this.timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            public void run() {
-                System.err.println("\ntimer's run out");
-                RMIConnectionAdapter.this.connectionBuilder.connectionLost(RMIConnectionAdapter.this, false);
+    @Override
+    public void sendMessageFromServer(MessagesFromServer message) throws RemoteException {
+            if(connectionOpen) {
+                executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
+                connectionTimer.stopTimer();
+                connectionTimer.startTimer();
             }
-        };
-        timer.schedule(timerTask, 6000);
-    }
-    private void stopTimer() {
-        if (this.timer != null) {
-            this.timer.cancel();
-        }
     }
 }
