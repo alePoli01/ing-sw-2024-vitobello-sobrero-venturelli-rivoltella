@@ -25,7 +25,7 @@ public class DeckTest extends TestCase {
 
             System.out.println("-RESOURCE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.edgeResource[i]);
+                System.out.println(i+": "+card.edgeFrontResource[i]);
             }
 
             System.out.println("-----------------------");
@@ -47,7 +47,7 @@ public class DeckTest extends TestCase {
 
             System.out.println("-RESOURCE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.edgeResource[i]);
+                System.out.println(i+": "+card.edgeFrontResource[i]);
             }
 
             System.out.println("-----------------------");
@@ -63,7 +63,7 @@ public class DeckTest extends TestCase {
 
             System.out.println("-RESOURCE AVAILABLE-");
             for(int i=0; i<4; i++){
-                System.out.println(i+": "+card.edgeResource[i]);
+                System.out.println(i+": "+card.edgeFrontResource[i]);
             }
 
             System.out.println("-BACK REIGN-");

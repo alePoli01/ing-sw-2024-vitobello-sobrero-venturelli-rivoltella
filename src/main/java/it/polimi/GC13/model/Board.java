@@ -85,12 +85,15 @@ public class Board implements Serializable {
         if (!boardMap.get(xy).getCardPointer().equals(cardToPlace)) {
             throw new GenericException("Sever didn't update the Board");
         }
-
-        this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, cardToPlace.edgeResource)));
+        if (cardToPlace.cardType.equals(CardType.STARTER)) {
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, isFlipped ? ((StartCard) cardToPlace).edgeBackResource : cardToPlace.edgeFrontResource)));
+        } else {
+            this.owner.getGame().getObserver().notifyClients(new OnPlaceCardMessage(this.owner.getNickname(), cardToPlace.serialNumber, isFlipped, xy.getX(), xy.getY(), owner.getTurnPlayed(), this.updateAvailableCells(cardToPlace, xy, isFlipped, cardToPlace.edgeFrontResource)));
+        }
     }
 
     // updates notAvailableCells and availableCells sets
-    private List<Coordinates> updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] resourceToCheck) {
+    private List<Coordinates> updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] edgeResource) {
         this.availableCells.remove(xy);
         this.notAvailableCells.add(xy);
 
@@ -106,13 +109,13 @@ public class Board implements Serializable {
                         }
                     });
         } else {
-            while (i < resourceToCheck.length) {
+            while (i < edgeResource.length) {
                 Coordinates coordinatesToCheck = new Coordinates(xy.getX() + offset.get(i).getX(), xy.getY() + offset.get(i).getY());
 
                 // check if the coordinates are in the notAvailableCells or not
                 if (!checkListContainsCoordinates(new HashSet<>(this.notAvailableCells), coordinatesToCheck)) {
                     // if the card has "NULL" on the edge and the coordinates are not already forbidden, these coordinates are added to the forbidden
-                    if (resourceToCheck[i].equals(Resource.NULL)) {
+                    if (edgeResource[i].equals(Resource.NULL)) {
                         this.notAvailableCells.add(coordinatesToCheck);
                         // if the coordinates are in the availableCells, they are removed
                         if (checkListContainsCoordinates(new HashSet<>(this.availableCells), coordinatesToCheck)) {
@@ -159,43 +162,36 @@ public class Board implements Serializable {
             .forEach(offset -> {
                 if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()))) {
                     Coordinates coordinateToCheck = getCoordinateFromList(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()));
-                    if (this.boardMap.get(coordinateToCheck).isFlipped || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
+                    // if the covered edge is of a card that is on the back side and it is not a starter card
+                    if ((!this.boardMap.get(coordinateToCheck).isFlipped && !this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
                         // determine if a new covered edge has reign or object and in case remove it from availableResources
-                        if (!(this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].isNullOrEmpty())) {
-                            for (Resource resource : this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource) {
-                                if (this.boardMap.get(coordinateToCheck).getCardPointer().edgeResource[edge.get()].equals(resource)) {
-                                    if (resource.isReign() || resource.isObject()) {
-                                        collectedResources.put(resource, collectedResources.get(resource) - 1);
-                                    }
-                                }
-                            }
-                            edge.incrementAndGet();
-                        }
+                        this.collectedResources.entrySet().stream()
+                                .filter(entry -> entry.getKey().equals(this.boardMap.get(coordinateToCheck).getCardPointer().getEdgeResource(edge.get())))
+                                .forEach(entry -> entry.setValue(entry.getValue() - 1));
                     }
                 }
+                edge.incrementAndGet();
             });
     }
 
     // simplified for cycles to update reigns and objects
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
-        // if statement for start card, else for gold / resources
-        if (cardToPlace.cardType.equals(CardType.STARTER)) {
-            if (isFlipped) {
-                Arrays.stream(((StartCard) cardToPlace).reignBackPointEdge)
+        // if card is on the back side
+        if (isFlipped) {
+            if (cardToPlace.cardType.equals(CardType.STARTER)) {
+                Arrays.stream(((StartCard) cardToPlace).edgeBackResource)
                         .filter(Resource::isReign)
                         .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
 
                 Arrays.stream(((StartCard) cardToPlace).backReigns)
                         .filter(Resource::isReign)
                         .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
+            } else {
+                // if the card isn't starter, it will be added the played card reign to the board
+                collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
             }
-        } else if (isFlipped) {
-            collectedResources.put(cardToPlace.reign, collectedResources.get(cardToPlace.reign) + 1);
-        }
-
-        if (!isFlipped) {
-            // add card played resource to the board
-            Arrays.stream(cardToPlace.edgeResource)
+        } else {
+            Arrays.stream(cardToPlace.edgeFrontResource)
                     .filter(resource -> resource.isObject() || resource.isReign())
                     .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
         }

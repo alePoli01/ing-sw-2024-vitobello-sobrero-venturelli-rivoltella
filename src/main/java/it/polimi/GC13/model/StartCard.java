@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class StartCard extends PlayableCard {
     public final Resource[] backReigns;
-    public final Resource[] reignBackPointEdge;
+    public final Resource[] edgeBackResource;
 
 
-    public StartCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, Resource[] backReigns, Resource[] reignBackPointEdge) {
+    public StartCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, Resource[] backReigns, Resource[] edgeBackResource) {
         super(serialNumber, reign, cardType, edgeResource, resourceNeeded, pointsGiven, condition);
         this.backReigns = backReigns;
-        this.reignBackPointEdge = reignBackPointEdge;
+        this.edgeBackResource = edgeBackResource;
     }
 
     @Override
@@ -30,9 +30,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -56,9 +56,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }
@@ -85,9 +85,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -111,9 +111,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }
@@ -141,9 +141,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -167,9 +167,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ");
                         }
                         break;
                     }
@@ -197,9 +197,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ");
                         }
                         break;
                     }
@@ -223,9 +223,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }
@@ -253,9 +253,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -279,9 +279,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }
@@ -310,9 +310,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -336,9 +336,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }
@@ -366,9 +366,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ");
                         }
                         break;
                     }
@@ -392,9 +392,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ");
                         }
                         break;
                     }
@@ -423,9 +423,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (1): {//second line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[3].toString() + " ║         ║ " + this.reignBackPointEdge[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[3].toString() + " ║         ║ " + this.edgeBackResource[2].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[3].toString() + " ║         ║ " + this.edgeResource[2].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[3].toString() + " ║         ║ " + this.edgeFrontResource[2].toString() + " ║");
                         }
                         break;
                     }
@@ -505,9 +505,9 @@ public class StartCard extends PlayableCard {
                     }
                     case (4): {//fifth line printed
                         if (back) {
-                            System.out.print("║ " + this.reignBackPointEdge[0].toString() + " ║         ║ " + this.reignBackPointEdge[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeBackResource[0].toString() + " ║         ║ " + this.edgeBackResource[1].toString() + " ║");
                         } else {
-                            System.out.print("║ " + this.edgeResource[0].toString() + " ║         ║ " + this.edgeResource[1].toString() + " ║");
+                            System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║         ║ " + this.edgeFrontResource[1].toString() + " ║");
                         }
                         break;
                     }

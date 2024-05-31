@@ -23,7 +23,11 @@ public class BoardTest extends TestCase {
         try {
             game.addPlayerToGame(player);
             System.out.println("Start card");
-            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getStartDeck().getFirst(), true);
+            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getStartDeck().get(4), true);
+            for (int i = 0; i < 6; i++) {
+                deck.getStartDeck().get(4).linePrinter(0, i, true);
+                System.out.println();
+            }
             System.out.println("First card");
             placeCard(hand, 0, isFlipped, board, player, 49, 49);
             System.out.println("Second card");

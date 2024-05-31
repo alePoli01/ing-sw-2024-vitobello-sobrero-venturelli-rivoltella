@@ -9,16 +9,16 @@ public class PlayableCard implements Serializable {
     public final int serialNumber;
     public final Resource reign;
     public final CardType cardType;
-    public final Resource[] edgeResource;
+    public final Resource[] edgeFrontResource;
     public final Map<Resource, Integer> resourceNeeded;
     public final int pointsGiven;
     public final PointsCondition condition;
 
-    public PlayableCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
+    public PlayableCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeFrontResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
         this.serialNumber = serialNumber;
         this.reign = reign;
         this.cardType = cardType;
-        this.edgeResource = edgeResource;
+        this.edgeFrontResource = edgeFrontResource;
         this.resourceNeeded = resourceNeeded;
         this.pointsGiven = pointsGiven;
         this.condition = condition;
@@ -76,7 +76,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + reset + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + reset + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -102,7 +102,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -131,7 +131,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -157,7 +157,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -187,7 +187,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -213,7 +213,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -243,7 +243,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -269,7 +269,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -299,7 +299,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -325,7 +325,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -356,7 +356,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -382,7 +382,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -412,7 +412,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + "   ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -438,7 +438,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -469,7 +469,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeResource[2].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition.toString() + reset + color + "   ║ " + this.edgeFrontResource[2].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -551,7 +551,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeResource[1].toString() + color + " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1].toString() + color + " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -642,7 +642,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -668,7 +668,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -698,7 +698,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -724,7 +724,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -753,7 +753,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -779,7 +779,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -808,7 +808,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -834,7 +834,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -863,7 +863,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -889,7 +889,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -918,7 +918,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -944,7 +944,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("         ║   ║");
                             }
@@ -973,7 +973,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -999,7 +999,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ");
                             } else {
                                 System.out.print("║   ║         ");
                             }
@@ -1028,7 +1028,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (1): {//second line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeResource[2].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[3].toString() +color+ " ║    " + gold + this.pointsGiven + reset +color+ "    ║ " + this.edgeFrontResource[2].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -1109,7 +1109,7 @@ public class PlayableCard implements Serializable {
                         }
                         case (4): {//fifth line printed
                             if (!isFlipped) {
-                                System.out.print("║ " + this.edgeResource[0].toString() +color+ " ║         ║ " + this.edgeResource[1].toString() +color+ " ║");
+                                System.out.print("║ " + this.edgeFrontResource[0].toString() +color+ " ║         ║ " + this.edgeFrontResource[1].toString() +color+ " ║");
                             } else {
                                 System.out.print("║   ║         ║   ║");
                             }
@@ -1132,5 +1132,8 @@ public class PlayableCard implements Serializable {
         }
     }
 
+    public Resource getEdgeResource(int edge) {
+        return this.edgeFrontResource[edge];
+    }
 }
 
