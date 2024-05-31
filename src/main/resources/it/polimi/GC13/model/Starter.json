@@ -4,7 +4,7 @@
       "serialNumber": 81,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "INSECT",
         "EMPTY",
         "PLANT",
@@ -18,7 +18,7 @@
         "INSECT",
         "EMPTY"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "INSECT",
         "ANIMAL",
         "PLANT",
@@ -29,7 +29,7 @@
       "serialNumber": 82,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "EMPTY",
         "FUNGI",
         "EMPTY",
@@ -43,7 +43,7 @@
         "FUNGI",
         "EMPTY"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "FUNGI",
         "INSECT",
         "ANIMAL",
@@ -54,7 +54,7 @@
       "serialNumber": 83,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "EMPTY",
         "EMPTY",
         "EMPTY",
@@ -68,7 +68,7 @@
         "EMPTY",
         "FUNGI"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "FUNGI",
         "PLANT",
         "ANIMAL",
@@ -79,7 +79,7 @@
       "serialNumber": 84,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "EMPTY",
         "EMPTY",
         "EMPTY",
@@ -93,7 +93,7 @@
         "EMPTY",
         "INSECT"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "ANIMAL",
         "FUNGI",
         "INSECT",
@@ -104,7 +104,7 @@
       "serialNumber": 85,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "NULL",
         "NULL",
         "EMPTY",
@@ -118,7 +118,7 @@
         "INSECT",
         "PLANT"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "PLANT",
         "ANIMAL",
         "FUNGI",
@@ -129,7 +129,7 @@
       "serialNumber": 86,
       "reign": "NULL",
       "cardType": "STARTER",
-      "reignBackPointEdge": [
+      "edgeBackResource": [
         "NULL",
         "NULL",
         "EMPTY",
@@ -143,7 +143,7 @@
         "ANIMAL",
         "FUNGI"
       ],
-      "edgeResource": [
+      "edgeFrontResource": [
         "PLANT",
         "INSECT",
         "ANIMAL",
