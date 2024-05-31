@@ -128,15 +128,6 @@ public class Board implements Serializable {
                 }
                 i++;
             }
-            String cellCoordinates = availableCells.stream()
-                    .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
-                    .collect(Collectors.joining("\n"));
-            System.out.println("Available cells are:\n" + cellCoordinates + ".");
-            String c = notAvailableCells.stream()
-                    .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
-                    .collect(Collectors.joining("\n"));
-            System.out.println("Not available cells are:\n" + c + ".");
-            System.out.println();
         }
         return new LinkedList<>(this.availableCells);
     }
@@ -155,7 +146,7 @@ public class Board implements Serializable {
     }
 
     // update surrounding cards edges
-    public void removeResources(int x, int y) {
+    public void removeResources(int x, int y, Resource[] resourcesToCheck) {
         AtomicInteger edge = new AtomicInteger(0);
 
         this.offset
@@ -166,7 +157,7 @@ public class Board implements Serializable {
                     if ((!this.boardMap.get(coordinateToCheck).isFlipped && !this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
                         // determine if a new covered edge has reign or object and in case remove it from availableResources
                         this.collectedResources.entrySet().stream()
-                                .filter(entry -> entry.getKey().equals(this.boardMap.get(coordinateToCheck).getCardPointer().getEdgeResource(edge.get())))
+                                .filter(entry -> entry.getKey().equals(resourcesToCheck[edge.get()]))
                                 .forEach(entry -> entry.setValue(entry.getValue() - 1));
                     }
                 }

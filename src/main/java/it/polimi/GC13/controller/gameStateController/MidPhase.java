@@ -48,7 +48,11 @@ public class MidPhase implements GamePhase {
             // add card to the board
             board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
             // removes covered reigns / objects from board map
-            board.removeResources(X, Y);
+            if (cardToPlace.cardType.equals(CardType.STARTER) && isFlipped) {
+                board.removeResources(X, Y, ((StartCard)cardToPlace).edgeBackResource);
+            } else if (!isFlipped) {
+                board.removeResources(X, Y, cardToPlace.edgeFrontResource);
+            }
             // pop card played from hand
             player.removeFromHand(cardToPlace);
             // sum reigns / objects

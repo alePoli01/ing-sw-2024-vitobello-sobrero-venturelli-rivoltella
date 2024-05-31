@@ -16,28 +16,27 @@ public class BoardTest extends TestCase {
         Board board = new Board(player);
         boolean isFlipped = false;
 
-        hand.add(deck.getCard(28));
-        hand.add(deck.getCard(31));
-        hand.add(deck.getCard(20));
+        hand.add(deck.getCard(18));
+        hand.add(deck.getCard(36));
+        hand.add(deck.getCard(51));
 
         try {
             game.addPlayerToGame(player);
             System.out.println("Start card");
-            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getStartDeck().get(4), true);
-            for (int i = 0; i < 6; i++) {
-                deck.getStartDeck().get(4).linePrinter(0, i, true);
-                System.out.println();
-            }
+            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getCard(83), true);
+            board.addResource(deck.getCard(83), true);
             System.out.println("First card");
-            placeCard(hand, 0, isFlipped, board, player, 49, 49);
+            placeCard(hand, 0, isFlipped, board, player, 49, 51);
             System.out.println("Second card");
-            placeCard(hand, 2, isFlipped, board, player, 51, 49);
+            placeCard(hand, 1, isFlipped, board, player, 48, 50);
             System.out.println("Third card");
-            placeCard(hand, 1, isFlipped, board, player, 50, 48);
+            placeCard(hand, 2, isFlipped, board, player, 49, 49);
         } catch (GenericException e) {
-            System.out.println("Test passed");
-            assert (e.getMessage().equals("Forbidden cell 50, 48"));
+            System.out.println("Test failed");
+            assert (false);
+            System.exit(-1);
         }
+        assert (true);
     }
 
     private void placeCard(LinkedList<PlayableCard> hand, int position, boolean isFlipped, Board board, Player player, int x, int y) throws GenericException {
@@ -52,7 +51,11 @@ public class BoardTest extends TestCase {
         // add card to the board
         board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
         // removes covered reigns / objects from board map
-        board.removeResources(x, y);
+        if (cardToPlace.cardType.equals(CardType.STARTER) && isFlipped) {
+            board.removeResources(x, y, ((StartCard)cardToPlace).edgeBackResource);
+        } else if (!isFlipped) {
+            board.removeResources(x, y, cardToPlace.edgeFrontResource);
+        }
         // sum reigns / objects
         board.addResource(cardToPlace, isFlipped);
         // card gives point only if it is not flipped
