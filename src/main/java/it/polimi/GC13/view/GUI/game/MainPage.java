@@ -69,6 +69,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     /*private JLabel scoreLabel;
     private JLabel scoreLabel2;*/
 
+
+
+
     private TokenManager tokenManager;
 
 
@@ -106,7 +109,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         showTokenChoose(tokenColorList);
 
         confirmButton = createButton("Select", 32);
-        confirmButton.setBackground(new Color(232, 221, 183, 255));
+        //confirmButton.setBackground(new Color(232, 221, 183, 255));
         panelContainer.add(confirmButton, createGridBagConstraints(0, 3));
 
         confirmButton.addActionListener (e -> {
@@ -793,10 +796,26 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             String flippedIcon;
             JCheckBox jCheckBox;
             if(!b){
-                flippedIcon = entry.getValue().getLast();
+                try{
+                    flippedIcon = entry.getValue()
+                            .stream()
+                            .filter(path -> path.contains("front"))
+                            .findFirst()
+                            .orElseThrow();
+                }catch(NoSuchElementException noSuchElementException){
+                    flippedIcon = CardManager.ERROR_IMAGE;
+                }
                 jCheckBox = new JCheckBox("false");
             } else {
-                flippedIcon = entry.getValue().getFirst();
+                try{
+                    flippedIcon = entry.getValue()
+                            .stream()
+                            .filter(path -> path.contains("back"))
+                            .findFirst()
+                            .orElseThrow();
+                }catch(NoSuchElementException noSuchElementException){
+                    flippedIcon = CardManager.ERROR_IMAGE;
+                }
                 jCheckBox = new JCheckBox("true");
             }
             Image img = new ImageIcon(flippedIcon).getImage();

@@ -45,7 +45,7 @@ public class FrameManager extends JFrame implements View {
     private LoginFrame loginFrame;
     private MainPage gamePage;
     private WinningFrame winningFrame;
-    int countofHandUpdate =0;
+    //int countofHandUpdate =0;
 
     private Map<String, TokenColor> tokenInGame = new HashMap<>();
 

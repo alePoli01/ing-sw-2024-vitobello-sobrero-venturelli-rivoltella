@@ -27,6 +27,7 @@ public interface CardManager {
      final static String INSECT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/insect_judge.png";
 
 
+     final static String ERROR_IMAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
 
     void showStartCard(Integer hand) throws IOException; //permette di associare alla carta con tale serialNumber i corrispettivi front e back
 

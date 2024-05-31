@@ -16,7 +16,6 @@ public class TokenManager extends JPanel {
     final static String TOKEN_FILE_SUFFIX = "_token.png";
     final static String GREY_TOKEN_FILE_NAME = "grey";
 
-    //private List<TokenColor> availableToken = List.of((TokenColor.values())); //per lavorare staticamente
 
     private record UserData(String playerNickname, TokenColor token){}
     private record GridData(JPanel grid, ArrayList<JLabel> emptyLabels){}
@@ -36,10 +35,34 @@ public class TokenManager extends JPanel {
         UserData player3 = new UserData("Nico3", TokenColor.YELLOW);
         UserData player4 = new UserData("Nico4", TokenColor.RED);
 
-        int scorePlayer1 = 3; //in FrameManager, quando si aggiornano i punteggi, aggiorno anche il punteggio della mappa e chiamo il metodo per spostare il token
-        int scorePlayer2 = 8;
-        int scorePlayer3 = 15;
-        int scorePlayer4 = 18;
+        /*int scorePlayer1 = 19; //in FrameManager, quando si aggiornano i punteggi, aggiorno anche il punteggio della mappa e chiamo il metodo per spostare il token
+        int scorePlayer2 = 19;
+        int scorePlayer3 = 19;
+        int scorePlayer4 = 19;*/
+
+
+        /*int scorePlayer1 = 37;
+        int scorePlayer2 = 37;
+        int scorePlayer3 = 37;
+        int scorePlayer4 = 37;*/
+
+
+        /*int scorePlayer1 = 35;
+        int scorePlayer2 = 35;
+        int scorePlayer3 = 35;
+        int scorePlayer4 = 35;*/
+
+        /*int scorePlayer1 = 31;
+        int scorePlayer2 = 31;
+        int scorePlayer3 = 31;
+        int scorePlayer4 = 31;*/
+
+
+
+        int scorePlayer1 = 21;
+        int scorePlayer2 = 23;
+        int scorePlayer3 = 25;
+        int scorePlayer4 = 26;
 
         tokenToGridMap.put(player1, scorePlayer1);
         tokenToGridMap.put(player2, scorePlayer2);
@@ -55,8 +78,8 @@ public class TokenManager extends JPanel {
         startPanel.setOpaque(false);
         startPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(10,10,20,10)));
 
-        JPanel middlePanel = new JPanel(new GridLayout(4,4, 30, 20));
-        middlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(25,10,15,10)));
+        JPanel middlePanel = new JPanel(new GridLayout(4,4, 35, 25));
+        middlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(25,15,15,15)));
         middlePanel.setOpaque(false);
 
         JPanel endPanel = new JPanel(new GridLayout(4,5, 10, 20));
@@ -64,19 +87,35 @@ public class TokenManager extends JPanel {
         endPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(30,30,10,25)));
 
 
-        int k1=18;
-        int k2=38;
+        int k1 = 15;
+        int k2=14;
+        int k3 = 7;
+        int k4=6;
+        int k5 = 38;
         for(int i = 0; i<39; i++){
             if(i<3){
                 startPanel.add(initializeTokenGrid(i));
-            } else if(i<19){
-                middlePanel.add(initializeTokenGrid(k1));
-                k1--;
+            } else if(i<19) {
+                if (i < 7){
+                    middlePanel.add(initializeTokenGrid(k1));
+                    k1++;
+                }else if(i<11){
+                    middlePanel.add(initializeTokenGrid(k2));
+                    k2--;
+                }else if(i<15){
+                    middlePanel.add(initializeTokenGrid(k3));
+                    k3++;
+                }else{
+                    middlePanel.add(initializeTokenGrid(k4));
+                    k4--;
+                }
             } else {
-                endPanel.add(initializeTokenGrid(k2));
-                k2--;
+                endPanel.add(initializeTokenGrid(k5));
+                k5--;
             }
         }
+
+
 
         initializeTokenOnScoreboard();
 
@@ -97,46 +136,42 @@ public class TokenManager extends JPanel {
     }
 
 
-    public JPanel initializeTokenGrid(int k1){
+    public JPanel initializeTokenGrid(int k){
         JPanel tokenGrid = new JPanel(new GridLayout(2,2,1, 1));
         ArrayList<JLabel> labelInTokenGrid = new ArrayList<>();
         tokenGrid.setOpaque(false);
 
         for(int i=0; i<2; i++){
             for(int j=0; j<2; j++){
-                JLabel label = new JLabel(Integer.toString(k1));
+                JLabel label = new JLabel(Integer.toString(k));
                 label.setPreferredSize(new Dimension(30,30));
-                //label.setVisible(false);
+                label.setForeground(new Color(0,0,0,0));
                 labelInTokenGrid.add(label);
                 tokenGrid.add(label);
+
+                if(k>19) {
+                    switch (k) {
+                        case 20, 22, 25, 27, 30, 32, 34, 38:
+                            label.setText("X");
+                            break;
+                        case 21:
+                            if((i==1))
+                                label.setText("X");
+                            break;
+                        case 26:
+                            if((i==0))
+                                label.setText("X");
+                            break;
+                    }
+                }
             }
         }
 
         GridData gridData = new GridData(tokenGrid,labelInTokenGrid);
-        scoreGrid.put(k1, gridData);
+        scoreGrid.put(k, gridData);
 
         return tokenGrid;
     }
-
-
-    /*public JPanel initializeTokenGrid(int k1){
-        JPanel tokenGrid = new JPanel(new GridLayout(2,2,1, 1));
-        tokenGrid.setOpaque(false);
-
-        for(int i=0; i<2; i++){
-            for(int j=0; j<2; j++){
-                JPanel panel = new JPanel();
-                //panel.setOpaque(false);
-                panel.setPreferredSize(new Dimension(30,30));
-                JLabel label = new JLabel(Integer.toString(k1));
-                label.setVisible(false);
-                panel.add(label);
-                tokenGrid.add(panel);
-            }
-        }
-        scoreGrid.put(k1, tokenGrid);
-        return tokenGrid;
-    }*/
 
 
     private void initializeTokenOnScoreboard(){
@@ -147,37 +182,133 @@ public class TokenManager extends JPanel {
                 scoreGrid.get(0).emptyLabels.get(i-1).setIcon(createPlayableTokenImageIcon(data.token, 30));
                 i--;
             }
+            break;
         }
     }
 
 
-
-    public void moveToken(String player){
-        for(UserData data : tokenToGridMap.keySet()){
-            if(data.playerNickname.equals(player)){
-                for(int i=0; i<scoreGrid.size(); i++){
-                    if(scoreGrid.get(i).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(data.playerNickname))){
-                        int finalI = i;
-                        scoreGrid.get(i).emptyLabels.stream().filter(l->l.getText().equals(data.playerNickname)).findFirst().ifPresent(l-> {
+    public void moveToken(String player) {
+        for (UserData data : tokenToGridMap.keySet()) {
+            if (data.playerNickname.equals(player)) {
+                for (int i = 0; i < scoreGrid.size(); i++) {
+                    if (scoreGrid.get(i).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(data.playerNickname))) {
+                        scoreGrid.get(i).emptyLabels.stream().filter(l -> l.getText().equals(data.playerNickname)).findFirst().ifPresent(l -> {
                             l.setIcon(null);
-                            l.setText(Integer.toString(finalI));
+                            l.setText("X");
                         });
                     }
                 }
 
-                if(scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(tokenToGridMap.get(data))))){
-                    scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().filter(l->l.getText().equals(Integer.toString(tokenToGridMap.get(data)))).findFirst().ifPresent(l->{
-                        l.setIcon(createPlayableTokenImageIcon(data.token,30));
-                        l.setText(Integer.toString(tokenToGridMap.get(data)));
+                if (tokenToGridMap.get(data)<20 && scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(tokenToGridMap.get(data))))) {
+                    scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(tokenToGridMap.get(data)))).findFirst().ifPresent(l -> {
+                        l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                        l.setText("X");
                     });
-                }else{
+                } else if(tokenToGridMap.get(data)<30) {
+
+                    switch (tokenToGridMap.get(data)) {
+                        case 20:
+                            if(scoreGrid.get(21).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(21)))){
+                                scoreGrid.get(21).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(21))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            } else if(scoreGrid.get(26).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(26)))){
+                                scoreGrid.get(26).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(26))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 21:
+                            if(scoreGrid.get(23).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(23)))) {
+                                scoreGrid.get(23).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(23))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 22:
+                            if(scoreGrid.get(28).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(28)))) {
+                                scoreGrid.get(28).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(28))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 23:
+                            if(scoreGrid.get(33).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(33)))) {
+                                scoreGrid.get(33).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(33))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 24:
+                            if(scoreGrid.get(37).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(37)))) {
+                                scoreGrid.get(37).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(37))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 25:
+                            if(scoreGrid.get(36).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(36)))) {
+                                scoreGrid.get(36).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(36))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 26:
+                            if(scoreGrid.get(35).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(35)))) {
+                                scoreGrid.get(35).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(35))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 27:
+                            if(scoreGrid.get(29).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(29)))) {
+                                scoreGrid.get(29).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(29))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 28:
+                            if(scoreGrid.get(24).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(24)))) {
+                                scoreGrid.get(24).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(24))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+
+                        case 29:
+                            if(scoreGrid.get(31).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(31)))) {
+                                scoreGrid.get(31).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(31))).findFirst().ifPresent(l -> {
+                                    l.setIcon(createPlayableTokenImageIcon(data.token, 30));
+                                    l.setText("X");
+                                });
+                            }
+                            break;
+                    }
+                }else {
                     JOptionPane.showMessageDialog(this, "ErrorMsg: too much players", "Invalid position", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
-
-
     }
+
 
 
 
