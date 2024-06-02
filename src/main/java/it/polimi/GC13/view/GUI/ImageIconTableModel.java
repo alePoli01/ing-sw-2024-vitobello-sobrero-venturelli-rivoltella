@@ -38,11 +38,6 @@ public class ImageIconTableModel extends AbstractTableModel {
         return getValueAt(0, columnIndex).getClass();
     }
 
-    /*@Override
-    public boolean isCellEditable(int row, int column) {
-        return false;
-    }*/
-
 
 
 }

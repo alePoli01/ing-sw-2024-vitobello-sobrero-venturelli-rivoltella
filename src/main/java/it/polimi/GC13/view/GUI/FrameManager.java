@@ -36,6 +36,7 @@ public class FrameManager extends JFrame implements View {
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
     private final Map<String, List<String>> chat = new HashMap<>();
@@ -137,17 +138,19 @@ public class FrameManager extends JFrame implements View {
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         int choice;
         if (gameNameWaitingPlayersMap.isEmpty()) {
-            if (loginFrame == null) {
-                SwingUtilities.invokeLater(() -> {
-                    loginFrame = new LoginFrame(this);
-                    loginFrame.setAlwaysOnTop(true);
-                    loginFrame.repaint();
-                    loginFrame.setAlwaysOnTop(false);
-                });
-            } else { // da testare
-                refreshFrame(loginFrame);
+            if (loginFrame != null) {
+                loginFrame.dispose();
             }
+            SwingUtilities.invokeLater(() -> {
+                loginFrame = new LoginFrame(this);
+                loginFrame.setAlwaysOnTop(true);
+                loginFrame.repaint();
+                loginFrame.setAlwaysOnTop(false);
+            });
         } else {
+            if (loginFrame!=null)
+                loginFrame.dispose();
+
             Object[] options = {"Create Game", "Join Game"};
 
             JFrame jFrame = new JFrame();
@@ -192,8 +195,8 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
+        tokenInGame.put(playerNickname, tokenColor);
         if(playerNickname.equals(this.nickname)) {
-            //tokenInGame.put(playerNickname, tokenColor);
 
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
@@ -275,7 +278,8 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
-            JOptionPane.showMessageDialog(this, "\u001B[31mLaunching an exception\u001B[0m" + "\n" + onInputExceptionMessage.getErrorMessage());
+            String titleString = "Launching an exception\n";
+            JOptionPane.showMessageDialog(this, titleString + onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
         }
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
@@ -312,6 +316,8 @@ public class FrameManager extends JFrame implements View {
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
         gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
         gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
+
+        gamePage.getTokenManager().updatePlayerScore(playerNickname, playersScore.get(playerNickname));
     }
 
 
@@ -364,7 +370,23 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources) {
+        if (!this.playersCollectedResources.containsKey(playerNickname)) {
+            this.playersCollectedResources.put(playerNickname, collectedResources);
+            if (playerNickname.equals(this.nickname)) {
+                gamePage.createResourceTable(new String[]{"Resource/Objects", "Amount"}, collectedResources);
+            }
+        } else {
+            this.playersCollectedResources.entrySet()
+                    .stream()
+                    .filter(playersMap -> playersMap.getKey().equals(playerNickname))
+                    .forEach(playersMap -> playersMap.getValue().entrySet().forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
 
+            if (playerNickname.equals(this.nickname)){
+                gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources);  //non funziona il metodo
+                System.out.println("tette");
+            }
+
+        }
     }
 
     private void sendMessage() {
@@ -488,6 +510,10 @@ public class FrameManager extends JFrame implements View {
         return serialCommonObjectiveCard;
     }
 
+    public int getSerialPrivateObjectiveCard() {
+        return serialPrivateObjectiveCard;
+    }
+
     public Map<Integer, Boolean> getGoldCardsAvailable() {
         return goldCardsAvailable;
     }
@@ -506,6 +532,10 @@ public class FrameManager extends JFrame implements View {
 
     public boolean isMyTurn() {
         return myTurn;
+    }
+
+    public Map<String, EnumMap<Resource, Integer>> getPlayersCollectedResources() {
+        return playersCollectedResources;
     }
 
     public Map<String, TokenColor> getTokenInGame() {

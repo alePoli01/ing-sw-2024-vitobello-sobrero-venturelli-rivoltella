@@ -17,59 +17,17 @@ public class TokenManager extends JPanel {
     final static String GREY_TOKEN_FILE_NAME = "grey";
 
 
-    private record UserData(String playerNickname, TokenColor token){}
     private record GridData(JPanel grid, ArrayList<JLabel> emptyLabels){}
+    private record UserData(String playerNickname, TokenColor token){}
 
-
-    private Map<UserData, Integer> tokenToGridMap = new HashMap<>();
 
     private final Map<Integer, GridData> scoreGrid = new HashMap<>();
+    private Map<String, TokenColor> tokenInGame;
+    private Map<UserData, Integer> tokenToGridMap = new HashMap<>();
 
-    //private Map<String, TokenColor> tokenInGame;
-    //private Map<String, JLabel> labelToken = new HashMap<>();
 
 
     public TokenManager(){
-        UserData player1 = new UserData("Nico", TokenColor.BLUE); //in FrameManager, quando viene invocato StartCardSetupPhase, passo nicjìkname e token di tutti i giocatori
-        UserData player2 = new UserData("Nico2", TokenColor.GREEN);
-        UserData player3 = new UserData("Nico3", TokenColor.YELLOW);
-        UserData player4 = new UserData("Nico4", TokenColor.RED);
-
-        /*int scorePlayer1 = 19; //in FrameManager, quando si aggiornano i punteggi, aggiorno anche il punteggio della mappa e chiamo il metodo per spostare il token
-        int scorePlayer2 = 19;
-        int scorePlayer3 = 19;
-        int scorePlayer4 = 19;*/
-
-
-        /*int scorePlayer1 = 37;
-        int scorePlayer2 = 37;
-        int scorePlayer3 = 37;
-        int scorePlayer4 = 37;*/
-
-
-        /*int scorePlayer1 = 35;
-        int scorePlayer2 = 35;
-        int scorePlayer3 = 35;
-        int scorePlayer4 = 35;*/
-
-        /*int scorePlayer1 = 31;
-        int scorePlayer2 = 31;
-        int scorePlayer3 = 31;
-        int scorePlayer4 = 31;*/
-
-
-
-        int scorePlayer1 = 21;
-        int scorePlayer2 = 23;
-        int scorePlayer3 = 25;
-        int scorePlayer4 = 26;
-
-        tokenToGridMap.put(player1, scorePlayer1);
-        tokenToGridMap.put(player2, scorePlayer2);
-        tokenToGridMap.put(player3, scorePlayer3);
-        tokenToGridMap.put(player4, scorePlayer4);
-
-
         BackgroundPanel scoreboard = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png", true);
         scoreboard.setOpaque(false);
         scoreboard.setLayout(new GridBagLayout());
@@ -116,16 +74,10 @@ public class TokenManager extends JPanel {
         }
 
 
-
-        initializeTokenOnScoreboard();
-
-
-        moveToken(player1.playerNickname);
+        /*moveToken(player1.playerNickname);
         moveToken(player2.playerNickname);
         moveToken(player3.playerNickname);
-        moveToken(player4.playerNickname);
-
-
+        moveToken(player4.playerNickname);*/
 
         scoreboard.add(endPanel, createGridBagConstraints(0,0));
         scoreboard.add(middlePanel, createGridBagConstraints(0,1));
@@ -173,6 +125,15 @@ public class TokenManager extends JPanel {
         return tokenGrid;
     }
 
+    public void initializeDataPlayer(){
+        for(String player : tokenInGame.keySet()){
+            UserData dataPlayer = new UserData(player, tokenInGame.get(player));
+            tokenToGridMap.put(dataPlayer, 0);
+        }
+        initializeTokenOnScoreboard();
+    }
+
+
 
     private void initializeTokenOnScoreboard(){
         int i = tokenToGridMap.size();
@@ -182,7 +143,6 @@ public class TokenManager extends JPanel {
                 scoreGrid.get(0).emptyLabels.get(i-1).setIcon(createPlayableTokenImageIcon(data.token, 30));
                 i--;
             }
-            break;
         }
     }
 
@@ -310,6 +270,21 @@ public class TokenManager extends JPanel {
     }
 
 
+    public void updatePlayerScore(String player, int score){
+        if(tokenToGridMap.keySet().stream().anyMatch(data -> data.playerNickname.equals(player))){
+            tokenToGridMap.put(tokenToGridMap.keySet()
+                    .stream()
+                    .filter(data -> data.playerNickname.equals(player))
+                    .findFirst()
+                    .orElseThrow(), score);
+
+            moveToken(player);
+        } else JOptionPane.showMessageDialog(this, "Not found such player, retry.", "Invalid player", JOptionPane.ERROR_MESSAGE);
+
+
+    }
+
+
 
 
 
@@ -368,6 +343,11 @@ public class TokenManager extends JPanel {
 
 
 
+    public Map<String, TokenColor> getTokenInGame() {
+        return tokenInGame;
+    }
 
-
+    public void setTokenInGame(Map<String, TokenColor> tokenInGame) {
+        this.tokenInGame = tokenInGame;
+    }
 }
