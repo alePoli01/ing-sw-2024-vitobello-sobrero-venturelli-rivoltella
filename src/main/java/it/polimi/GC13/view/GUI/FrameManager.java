@@ -1,6 +1,7 @@
 package it.polimi.GC13.view.GUI;
 
 import it.polimi.GC13.enums.Position;
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
@@ -358,6 +359,11 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onReconnectToGame() {
+
+    }
+
+    @Override
+    public void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources) {
 
     }
 

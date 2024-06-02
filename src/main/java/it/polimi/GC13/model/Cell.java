@@ -14,6 +14,6 @@ public class Cell implements Serializable {
     }
 
     public PlayableCard getCardPointer() {
-        return card;
+        return this.card;
     }
 }

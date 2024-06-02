@@ -20,7 +20,7 @@ public record OnPlayerAddedToGameMessage(int connectedPlayers, int numPlayersNee
     public void methodToCall(View view) {
         List<TokenColor> tokenColorList = Arrays.asList(TokenColor.values());
         try {
-            view.chooseTokenSetupPhase(this.connectedPlayers, this.numPlayersNeeded, tokenColorList, this.gameName());
+            view.chooseTokenSetupPhase(this.connectedPlayers(), this.numPlayersNeeded(), tokenColorList, this.gameName());
         } catch (GenericException e) {
             throw new RuntimeException(e);
         }

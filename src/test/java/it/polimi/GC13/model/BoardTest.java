@@ -52,9 +52,9 @@ public class BoardTest extends TestCase {
         board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
         // removes covered reigns / objects from board map
         if (cardToPlace.cardType.equals(CardType.STARTER) && isFlipped) {
-            board.removeResources(x, y, ((StartCard)cardToPlace).edgeBackResource);
+            board.removeResources(x, y);
         } else if (!isFlipped) {
-            board.removeResources(x, y, cardToPlace.edgeFrontResource);
+            board.removeResources(x, y);
         }
         // sum reigns / objects
         board.addResource(cardToPlace, isFlipped);

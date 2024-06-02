@@ -1,6 +1,7 @@
 package it.polimi.GC13.view.TUI;
 
 import it.polimi.GC13.enums.Position;
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
@@ -27,6 +28,7 @@ public class TUI implements View {
     private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
     private int choice = 0;
@@ -341,11 +343,12 @@ public class TUI implements View {
             boolean isFlipped;
             this.playersBoard.get(this.nickname).printBoard();
             System.out.println();
+            this.printer.collectedResource(this.playersCollectedResources.get(this.nickname));
             this.printer.showHand(this.hand);
             serialCardToPlace = userIntegerInput("Enter serial card");
             while (!this.hand.contains(serialCardToPlace)) {
                 System.out.print("You don't have the selected card. Available cards are:");
-                this.hand.forEach(card -> System.out.print(Collectors.joining(" " + card," ", "\n")));
+                this.hand.forEach(card -> System.out.print(" " + card));
                 serialCardToPlace = userIntegerInput("Enter serial card");
             }
             X = userIntegerInput("Enter X coordinate");
@@ -410,6 +413,18 @@ public class TUI implements View {
         this.newStatus = true;
         this.menuOptions();
         System.out.print("Your choice: ");
+    }
+
+    @Override
+    public void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources) {
+        if (!this.playersCollectedResources.containsKey(playerNickname)) {
+            this.playersCollectedResources.put(playerNickname, collectedResources);
+        } else {
+            this.playersCollectedResources.entrySet()
+                    .stream()
+                    .filter(playersMap -> playersMap.getKey().equals(playerNickname))
+                    .forEach(playersMap -> playersMap.getValue().entrySet().forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
+        }
     }
 
     /**
@@ -524,6 +539,8 @@ public class TUI implements View {
                     } while (!this.playersBoard.containsKey(playerChosen));
                     System.out.println("Player chosen: " + playerChosen);
                     this.playersBoard.get(playerChosen).printBoard();
+                    System.out.println();
+                    this.printer.collectedResource(this.playersCollectedResources.get(playerChosen));
                     this.cooking = false;
                     this.showHomeMenu();
                     break;

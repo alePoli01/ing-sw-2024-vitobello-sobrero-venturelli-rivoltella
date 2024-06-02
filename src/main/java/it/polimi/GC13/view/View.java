@@ -1,12 +1,14 @@
 package it.polimi.GC13.view;
 
 import it.polimi.GC13.enums.Position;
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,4 +71,5 @@ public interface View {
 
     void onReconnectToGame();
 
+    void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources);
 }

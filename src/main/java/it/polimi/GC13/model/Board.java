@@ -3,13 +3,13 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.*;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.messages.fromserver.OnPlaceCardMessage;
+import it.polimi.GC13.network.messages.fromserver.OnUpdateResourceMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnForbiddenCellMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnNotEnoughResourceToPlaceMessage;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -146,22 +146,30 @@ public class Board implements Serializable {
     }
 
     // update surrounding cards edges
-    public void removeResources(int x, int y, Resource[] resourcesToCheck) {
-        AtomicInteger edge = new AtomicInteger(0);
+    public void removeResources(int x, int y) {
+        AtomicInteger edge = new AtomicInteger(2);
 
         this.offset
             .forEach(offset -> {
                 if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()))) {
                     Coordinates coordinateToCheck = getCoordinateFromList(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()));
-                    // if the covered edge is of a card that is on the back side and it is not a starter card
-                    if ((!this.boardMap.get(coordinateToCheck).isFlipped && !this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) || this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
+                    // if the covered edge is of a starter card
+                    if (this.boardMap.get(coordinateToCheck).getCardPointer().cardType.equals(CardType.STARTER)) {
+                        StartCard cardToRemoveResource = (StartCard) this.boardMap.get(coordinateToCheck).getCardPointer();
+                        this.collectedResources.entrySet().stream()
+                                .filter(entry -> entry.getKey().equals(this.boardMap.get(coordinateToCheck).isFlipped ? cardToRemoveResource.edgeBackResource[edge.get()] : cardToRemoveResource.edgeFrontResource[edge.get()]))
+                                .forEach(entry -> entry.setValue(entry.getValue() - 1));
+                    } else if (!this.boardMap.get(coordinateToCheck).isFlipped) {
+                        PlayableCard cardToRemoveResource = this.boardMap.get(coordinateToCheck).getCardPointer();
                         // determine if a new covered edge has reign or object and in case remove it from availableResources
                         this.collectedResources.entrySet().stream()
-                                .filter(entry -> entry.getKey().equals(resourcesToCheck[edge.get()]))
+                                .filter(entry -> entry.getKey().equals(cardToRemoveResource.edgeFrontResource[edge.get()]))
                                 .forEach(entry -> entry.setValue(entry.getValue() - 1));
                     }
                 }
                 edge.incrementAndGet();
+                // reset the edge to check -> edge covered are different from the card placed that covers that edge. The order is 2 -> 3 -> 0 -> 1
+                edge.compareAndSet(4, 0);
             });
     }
 
@@ -186,6 +194,8 @@ public class Board implements Serializable {
                     .filter(resource -> resource.isObject() || resource.isReign())
                     .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
         }
+        collectedResources.forEach((key, value) -> System.out.println(key + " : " + value));
+        this.owner.getGame().getObserver().notifyClients(new OnUpdateResourceMessage(this.owner.getNickname(), new EnumMap<>(this.collectedResources)));
     }
 
     public boolean checkListContainsCoordinates(Set<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {

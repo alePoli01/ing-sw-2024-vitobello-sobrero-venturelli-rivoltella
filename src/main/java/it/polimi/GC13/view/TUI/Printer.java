@@ -1,5 +1,6 @@
 package it.polimi.GC13.view.TUI;
 
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.ObjectiveCard;
 import it.polimi.GC13.model.PlayableCard;
@@ -137,5 +138,11 @@ public class Printer {
                 ╚██████╗╚██████╔╝██████╔╝███████╗██╔╝ ██╗    ██║ ╚████║██║  ██║   ██║   ╚██████╔╝██║  ██║██║  ██║███████╗██║███████║
                  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═══╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝╚══════╝
                 """);
+    }
+
+    public void collectedResource(EnumMap<Resource, Integer> collectedResource) {
+        System.out.println("Collected resource are: ");
+        collectedResource.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println();
     }
 }
