@@ -35,6 +35,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private String nickname;
     private TokenColor token;
     private final ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+    public String boardToDisplay;
 
     private final JPanel panelContainer;
     private JPanel choosePanel;
@@ -55,10 +56,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private JPanel commonPanel;
     private JLabel labelPrivateObjectiveCards;
     private ButtonGroup buttonGroup = new ButtonGroup();
+    private ButtonGroup avatarButtonGroup = new ButtonGroup();
+
 
     //per le carte nella mano
     private Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();;
     private Map<Integer, CardData> handSerialNumberCheckBoxMap = new HashMap<>();
+    private Map<JLabel, JCheckBox> playerCheckBoxMap = new HashMap<>();
 
     //per le carte da pescare
     private JPanel decksPanel;
@@ -733,34 +737,33 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public void refreshBoard(){
         board.removeAll();
+        boardButtonMap.clear();
+
         int boardheight = 11220;
         int boardwidth = 16830;
 
-        String available = frameManager.availablesCells.stream()
-                .map(cell -> "(" + cell.getX() + ", " + cell.getY() + ")")
-                .collect(Collectors.joining("\n"));
-        System.out.println("Available cells in main page are:\n" + available + ".");
         //scorri le y
         for (int i = 10; i < 80; i++) {
             //scorri le x
             for (int j = 10; j < 80; j++) {
                 if ((i + j) % 2 == 0) {
-                    if (frameManager.getPlayersBoard().get(nickname).Board[i][j] != null) {
-                        addImageToLayeredPane(board, getDirectory(frameManager.getPlayersBoard().get(nickname).Board[i][j].getCardPointer().serialNumber, frameManager.getPlayersBoard().get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((j - 50) * 152),boardheight / 2 + ((i - 50) * 78) , frameManager.getPlayersBoard().get(nickname).Board[i][j].weight);
+                    if (frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j] != null) {
+                        addImageToLayeredPane(board, getDirectory(frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].getCardPointer().serialNumber, frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].isFlipped), boardwidth / 2 + ((j - 50) * 152),boardheight / 2 + ((i - 50) * 78) , frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].weight);
                     } else {
-                        for (Coordinates coordinates : frameManager.availablesCells) {
+                        if (boardToDisplay.equals(nickname)) {
+                            for (Coordinates coordinates : frameManager.availablesCells) {
 
-                            if (i == coordinates.getY() && j == coordinates.getX()) {
-                                buttonplaced++;
-                                addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78),buttonplaced);
+                                if (i == coordinates.getY() && j == coordinates.getX()) {
+                                    buttonplaced++;
+                                    addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78),buttonplaced);
+                                }
+
                             }
-
                         }
                     }
                 }
             }
         }
-        buttonplaced=200;
         board.revalidate();
         board.repaint();
     }
@@ -1079,6 +1082,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             setButtonNOTVisible();
         } else if (e.getActionCommand().equals("Show Back")) {
             setButtonNOTVisible();
+
+            for (JButton button : boardButtonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
+            }
             confirmButton.setEnabled(false);
             flipButton.setText("Show Front");
             refresh();
@@ -1094,6 +1102,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         }  else if (e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
             setButtonNOTVisible();
+
+            for (JButton button : boardButtonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
+            }
+
             confirmButton.setEnabled(false);
             flipButton.setText("Show Back");
             decksButton.setEnabled(true);
@@ -1294,7 +1308,42 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             setBorderInsets(playerAvatarPanel, 15, 0, 15, 0);
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
+
+            JCheckBox jCheckBox = new JCheckBox(player);
+            jCheckBox.setFocusPainted(false);
+            jCheckBox.setBorderPainted(false);
+            jCheckBox.setVisible(false);
+            avatarButtonGroup.add(jCheckBox);
+            setBorderInsets(jCheckBox, 30, 0, 30, 0);
+            jCheckBox.setOpaque(false);
+            playerCheckBoxMap.put(playerNameLabel, jCheckBox);
+
+            playerAvatarPanel.add(jCheckBox, gbc);
             gbc.gridy++;
+
+            jCheckBox.addActionListener(e -> {
+                playerCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                playerCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().equals(e.getSource()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey()
+                        .setForeground(Color.RED);
+
+                boardToDisplay = playerCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().equals(e.getSource()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey()
+                        .getText();
+
+
+                refreshBoard();
+            });
+
             lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
             y2++;
         }
@@ -1338,6 +1387,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+        boardToDisplay=nickname;
     }
 
     public void setToken(TokenColor token) {
