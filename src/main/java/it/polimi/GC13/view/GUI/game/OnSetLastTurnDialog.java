@@ -35,10 +35,10 @@ public class OnSetLastTurnDialog extends JDialog {
 
 
 
-        JTable table = createTable(columnNames, data);
+        /*JTable table = createTable(columnNames, data);
         addScrollPane(table, tablePanel, 200, 285);
 
-        add(tablePanel, createGridBagConstraints(0,1));
+        add(tablePanel, createGridBagConstraints(0,1));*/
 
 
         JButton closeButton = new JButton("OK");
@@ -80,7 +80,7 @@ public class OnSetLastTurnDialog extends JDialog {
         }
     }
 
-    private static JTable createTable(String[] columnNames, Object[][] data) {
+    /*private static JTable createTable(String[] columnNames, Object[][] data) {
         ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
         JTable table = new JTable(model);
         table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
@@ -95,7 +95,7 @@ public class OnSetLastTurnDialog extends JDialog {
         table.setRowHeight(35);
 
         return table;
-    }
+    }*/
 
 
 }

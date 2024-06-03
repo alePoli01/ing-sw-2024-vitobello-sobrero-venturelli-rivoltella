@@ -12,6 +12,7 @@ import it.polimi.GC13.view.GUI.ImageIconTableModel;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,6 +42,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     private JPanel choosePanel;
     private boolean flipToSend= false;
     private int serialTosend=-1;
+    private JTable resourceTable = new JTable();
     private List<TokenColor> tokenColorList;
     private JLayeredPane board;
     private JPanel tokenPanel;
@@ -682,13 +684,28 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         JPanel tabelPanel = new JPanel();
-        JTable resourceTable = createResourceTable(new String[]{"Resource/Objects", "Amount"}, Resource.values().length - 2);
         addScrollPane(resourceTable, tabelPanel, 200, 245);
         lateralPanelDX.add(tabelPanel);
 
 
+        EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
 
 
+        for(Resource r: Resource.values()) {
+            collectedResources.put(r, 0);
+        }
+
+        createResourceTable(new String[]{"Resource/Objects", "Amount"}, collectedResources);
+
+        Random random2 = new Random();
+
+        for(Resource r: Resource.values()) {
+            int randomIndex = random2.nextInt(30);
+            System.out.println("Resource: " + r + " amount: "+ randomIndex);
+            collectedResources.put(r, randomIndex);
+        }
+
+        updateResourceTable(resourceTable, collectedResources);
 
 
         handButton = createButton("Show Hand", 28);
@@ -799,12 +816,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         Random random = new Random();
 
-        for(int i=0; i<4; i++){
+        /*for(int i=0; i<4; i++){
             tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
             int randomIndex = random.nextInt(30);
             playersScore.put("Player" + (i + 1), randomIndex);
             System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
-        }
+        }*/
 
         tokenManager.setTokenInGame(tokenInGame);
         tokenManager.initializeDataPlayer();
@@ -822,9 +839,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 {2, "Nico2", 0},
         };
 
-        JTable table2 = createTable(columnNames2, data2);
+       /* JTable table2 = createTable(columnNames2, data2);
         addScrollPane(table2, lateralPanelDX2, 250, 110);
-        panel2.add(lateralPanelDX2, BorderLayout.EAST);
+        panel2.add(lateralPanelDX2, BorderLayout.EAST);*/
 
 
         panel2.add(tokenManager);
@@ -931,9 +948,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                         firstFilesInSubfolders.put(parentDir, path.toString());
                     }
                 }
-                /*for(String x: firstFilesInSubfolders.values()){
-                    System.out.println(x);
-                }*/
 
                 ArrayList<String> cardIconList = new ArrayList<>(firstFilesInSubfolders.values());
                 handIconsPaths.put(serialCard, cardIconList);
@@ -956,8 +970,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
     private static JTable createTable(String[] columnNames, Object[][] data) {
-        ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
-        JTable table = new JTable(model);
+        //ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
+        JTable table = new JTable(new DefaultTableModel());
         table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
 
         JTableHeader header = table.getTableHeader();
@@ -972,55 +986,54 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         return table;
     }
 
-    public int remappingResources(Resource resource){
-        int index;
+    public String remappingResources(Resource resource){
         switch (resource){
-            case FUNGI -> index = 0;
-            case ANIMAL -> index = 1;
-            case PLANT -> index = 2;
-            case INSECT -> index = 3;
-            case QUILL -> index = 4;
-            case MANUSCRIPT -> index = 5;
-            case INKWELL -> index = 6;
-            default -> index = -1;
+            case FUNGI -> {
+                return FUNGI_LOGO_DIR;
+            }
+            case ANIMAL -> {
+                return ANIMAL_LOGO_DIR;
+            }
+            case PLANT -> {
+                return PLANT_LOGO_DIR;
+            }
+            case INSECT -> {
+                return INSECT_LOGO_DIR;
+            }
+            case QUILL -> {
+                return QUILL_LOGO_DIR;
+            }
+            case MANUSCRIPT -> {
+                return MANUSCRIPT_LOGO_DIR;
+            }
+            case INKWELL -> {
+                return INKWELL_LOGO_DIR;
+            }
+            default -> {
+                return ERROR_IMAGE;
+            }
         }
-        return index;
     }
 
+    public void createResourceTable(String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
+        ImageIconTableModel<Resource> model = new ImageIconTableModel<>(columnsNames, collectedResources);
 
-    private static JTable createResourceTable(String[] columnsNames, int rows) {
-        ArrayList<String> logos = new ArrayList<>(Arrays.asList(FUNGI_LOGO_DIR, ANIMAL_LOGO_DIR, PLANT_LOGO_DIR, INSECT_LOGO_DIR, QUILL_LOGO_DIR, MANUSCRIPT_LOGO_DIR, INKWELL_LOGO_DIR));
-        Object[][] data = new Object[rows][2];
+        resourceTable.setModel(model);
+        resourceTable.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
 
-        for(int i = 0; i < rows; i++){
-            data[i][0] = createResizedTokenImageIcon(logos.get(i), 27);
-            data[i][1] = 0;
-        }
-
-        ImageIconTableModel model = new ImageIconTableModel(data, columnsNames);
-
-        JTable table = new JTable(model);
-        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
-
-        JTableHeader header = table.getTableHeader();
+        JTableHeader header = resourceTable.getTableHeader();
         header.setPreferredSize(new Dimension(header.getWidth(), 30));
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        resourceTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-        table.setRowHeight(30);
-
-        return table;
+        resourceTable.setRowHeight(30);
     }
-
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources){
-        for (Resource resource : collectedResources.keySet()){
-            if (remappingResources(resource)!=-1) {
-                table.getModel().setValueAt(collectedResources.get(resource), remappingResources(resource), 1);
-            } else
-                JOptionPane.showMessageDialog(this, "Invalid resource","ErrorMsg ", JOptionPane.ERROR_MESSAGE);
+        for (Resource resource : collectedResources.keySet()) {
+            table.setValueAt(collectedResources.get(resource), CardManager.logos.indexOf(remappingResources(resource)), 1);
         }
     }
 

@@ -162,7 +162,7 @@ public class TokenManager extends JPanel {
                 if (tokenToGridMap.get(data)<20 && scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(tokenToGridMap.get(data))))) {
                     scoreGrid.get(tokenToGridMap.get(data)).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(tokenToGridMap.get(data)))).findFirst().ifPresent(l -> {
                         l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                        l.setText("X");
+                        l.setText(data.playerNickname);
                     });
                 } else if(tokenToGridMap.get(data)<30) {
 
@@ -171,12 +171,12 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(21).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(21)))){
                                 scoreGrid.get(21).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(21))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             } else if(scoreGrid.get(26).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(26)))){
                                 scoreGrid.get(26).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(26))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -185,7 +185,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(23).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(23)))) {
                                 scoreGrid.get(23).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(23))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -194,7 +194,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(28).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(28)))) {
                                 scoreGrid.get(28).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(28))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -203,7 +203,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(33).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(33)))) {
                                 scoreGrid.get(33).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(33))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -212,7 +212,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(37).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(37)))) {
                                 scoreGrid.get(37).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(37))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -221,7 +221,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(36).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(36)))) {
                                 scoreGrid.get(36).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(36))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -230,7 +230,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(35).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(35)))) {
                                 scoreGrid.get(35).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(35))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -239,7 +239,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(29).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(29)))) {
                                 scoreGrid.get(29).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(29))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -248,7 +248,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(24).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(24)))) {
                                 scoreGrid.get(24).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(24))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;
@@ -257,7 +257,7 @@ public class TokenManager extends JPanel {
                             if(scoreGrid.get(31).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(31)))) {
                                 scoreGrid.get(31).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(31))).findFirst().ifPresent(l -> {
                                     l.setIcon(createPlayableTokenImageIcon(data.token, 30));
-                                    l.setText("X");
+                                    l.setText(data.playerNickname);
                                 });
                             }
                             break;

@@ -594,23 +594,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         lateralPanelDX.add(commonPanel);
 
 
-//        JPanel tabelPanel = new JPanel();
-//        String[] columnNames = {"Reigns/Objects", "counter"};
-//        Object[][] data = {
-//                {createResizedTokenImageIcon(FUNGI_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(ANIMAL_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(PLANT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(INSECT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(QUILL_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(MANUSCRIPT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(INKWELL_LOGO_DIR, 27), 0}
-//        };
-//
-//        JTable table = createResourceTable(columnNames, data);
-//        addScrollPane(table, tabelPanel, 200, 245);
-//        lateralPanelDX.add(tabelPanel);
-
-
         JPanel tabelPanel = new JPanel();
         addScrollPane(resourceTable, tabelPanel, 200, 245);
         lateralPanelDX.add(tabelPanel);
@@ -724,9 +707,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 {2, "Nico2", 0},
         };
 
-        JTable table2 = createTable(columnNames2, data2);
+        /*JTable table2 = createTable(columnNames2, data2);
         addScrollPane(table2, lateralPanelDX2, 250, 110);
-        panel2.add(lateralPanelDX2, BorderLayout.EAST);
+        panel2.add(lateralPanelDX2, BorderLayout.EAST);*/
 
         panel2.add(tokenManager);
 
@@ -921,22 +904,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         } else return null;
     }
 
-    private static JTable createTable(String[] columnNames, Object[][] data) {
-        ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
-        JTable table = new JTable(model);
-        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
-
-        JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 35));
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-
-        table.setRowHeight(35);
-
-        return table;
-    }
+//    private static JTable createTable(String[] columnNames, Object[][] data) {
+//        //ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
+//        JTable table = new JTable(/*model*/);
+//        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
+//
+//        JTableHeader header = table.getTableHeader();
+//        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+//
+//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+//        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+//
+//        table.setRowHeight(35);
+//
+//        return table;
+//    }
 
     public String remappingResources(Resource resource){
         switch (resource){
@@ -968,23 +951,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
     public void createResourceTable(String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
-        Object[][] data = new Object[collectedResources.size()][2];
+        ImageIconTableModel<Resource> model = new ImageIconTableModel<>(columnsNames, collectedResources);
 
-        int i = 0;
-        try {
-            for(Resource resource : collectedResources.keySet()){
-                data[i][0] = createResizedTokenImageIcon(remappingResources(resource), 27);
-                data[i][1] = collectedResources.get(resource);
-                i++;
-            }
-        } catch (NoSuchElementException e) {
-            JOptionPane.showMessageDialog(this, "No such resource found", "invalid resource", JOptionPane.ERROR_MESSAGE);
-        }
-
-
-        ImageIconTableModel model = new ImageIconTableModel(data, columnsNames);
-
-        resourceTable = new JTable(model);
+        resourceTable.setModel(model);
         resourceTable.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
 
         JTableHeader header = resourceTable.getTableHeader();
@@ -1218,6 +1187,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             flipButton.setEnabled(true);
             flipButton.setText("Show Back");
             decksButton.setEnabled(true);
+            handButton.setEnabled(false);
 
             refresh();
             refreshDecksPanels();
@@ -1312,9 +1282,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             JCheckBox jCheckBox = new JCheckBox(player);
             jCheckBox.setFocusPainted(false);
             jCheckBox.setBorderPainted(false);
-            jCheckBox.setVisible(false);
+            jCheckBox.setForeground(new Color(0,0,0,0));
             avatarButtonGroup.add(jCheckBox);
-            setBorderInsets(jCheckBox, 30, 0, 30, 0);
+            setBorderInsets(jCheckBox, 30, 35, 30, 30);
             jCheckBox.setOpaque(false);
             playerCheckBoxMap.put(playerNameLabel, jCheckBox);
 

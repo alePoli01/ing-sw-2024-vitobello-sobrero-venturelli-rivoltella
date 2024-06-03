@@ -314,10 +314,14 @@ public class FrameManager extends JFrame implements View {
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
         this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
-        gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
-        gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
 
         gamePage.getTokenManager().updatePlayerScore(playerNickname, playersScore.get(playerNickname));
+
+        if (this.nickname.equals(playerNickname)) {
+            gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
+            gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
+        }
+
     }
 
 
@@ -372,8 +376,8 @@ public class FrameManager extends JFrame implements View {
     public void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources) {
         if (!this.playersCollectedResources.containsKey(playerNickname)) {
             this.playersCollectedResources.put(playerNickname, collectedResources);
-            if (playerNickname.equals(this.nickname)) {
-                gamePage.createResourceTable(new String[]{"Resource/Objects", "Amount"}, collectedResources);
+            if (this.nickname.equals(playerNickname)) {
+                gamePage.createResourceTable(new String[]{"Resources", "Amount"}, collectedResources);
             }
         } else {
             this.playersCollectedResources.entrySet()
@@ -382,10 +386,8 @@ public class FrameManager extends JFrame implements View {
                     .forEach(playersMap -> playersMap.getValue().entrySet().forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
 
             if (playerNickname.equals(this.nickname)){
-                gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources);  //non funziona il metodo
-                System.out.println("tette");
+                gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources);
             }
-
         }
     }
 
