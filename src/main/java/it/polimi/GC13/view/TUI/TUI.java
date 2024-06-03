@@ -12,6 +12,7 @@ import it.polimi.GC13.view.View;
 
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class TUI implements View {
@@ -23,12 +24,12 @@ public class TUI implements View {
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
     private boolean myTurn = false;
     private int turnPlayed = 0;
-    private final Map<String, Integer> playersScore = new HashMap<>();
-    private final Map<String, Position> playerPositions = new HashMap<>();
-    private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
-    private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
-    private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
-    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
+    private final Map<String, Integer> playersScore = new ConcurrentHashMap<>();
+    private final Map<String, Position> playerPositions = new ConcurrentHashMap<>();
+    private final Map<Integer, Boolean> goldCardsAvailable = new ConcurrentHashMap<>();
+    private final Map<Integer, Boolean> resourceCardsAvailable = new ConcurrentHashMap<>();
+    private final Map<String, BoardView> playersBoard = new ConcurrentHashMap<>();
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new ConcurrentHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
     private int choice = 0;
@@ -423,7 +424,10 @@ public class TUI implements View {
             this.playersCollectedResources.entrySet()
                     .stream()
                     .filter(playersMap -> playersMap.getKey().equals(playerNickname))
-                    .forEach(playersMap -> playersMap.getValue().entrySet().forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
+                    .forEach(playersMap -> playersMap.getValue().entrySet()
+                            .stream()
+                            .filter(entry -> !entry.getValue().equals(collectedResources.get(entry.getKey())))
+                            .forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
         }
     }
 
