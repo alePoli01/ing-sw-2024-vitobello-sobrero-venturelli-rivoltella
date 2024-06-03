@@ -1,6 +1,7 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.Resource;
+import it.polimi.GC13.exception.GenericException;
 import junit.framework.TestCase;
 
 import java.util.LinkedList;
@@ -32,8 +33,14 @@ public class ReignObjectiveTest extends TestCase {
     public void testComboCondition() {
         //create board
         Player player=new Player("giocatore1") ;
+        Game game = new Game(2,"gameName");
         Board board=new Board(player);
 
+        try {
+            game.addPlayerToGame(player);
+        } catch (GenericException e) {
+            fail("AddPlayerToGame exception");
+        }
         deck.parseJSON();
         //add 5 Fungi resources to the board (not actually playing the card)
         for(int i=0;i<7;i++){

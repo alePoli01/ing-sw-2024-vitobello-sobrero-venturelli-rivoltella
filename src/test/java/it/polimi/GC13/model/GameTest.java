@@ -16,8 +16,12 @@ public class GameTest extends TestCase {
     public void testDealStartCard() {
 
         Player player1 = new Player("giocatore1");
-        Board board = new Board(player1);
         Game game = new Game(1, "test1");
+        try {
+            game.addPlayerToGame(player1);
+        } catch (GenericException e) {
+            fail("AddPlayerToGame exception");
+        }
         try {
             game.dealStartCard();
             assertNotNull(player1.getHand().getFirst());

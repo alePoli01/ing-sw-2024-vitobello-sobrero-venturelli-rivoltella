@@ -1,6 +1,7 @@
 package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.*;
+import it.polimi.GC13.exception.GenericException;
 import junit.framework.TestCase;
 
 import java.util.*;
@@ -33,7 +34,12 @@ public class ObjectObjectiveTest extends TestCase {
 
         Player player =new Player("giocatore1");
         Board board=new Board(player);
-
+        Game game = new Game(2,"gameName");
+        try {
+            game.addPlayerToGame(player);
+        } catch (GenericException e) {
+            fail("AddPlayerToGame exception");
+        }
         int inkCode =6;
         int manuscriptCode =7;
         int quillCode =5;
@@ -60,6 +66,12 @@ public class ObjectObjectiveTest extends TestCase {
 
         Player player =new Player("giocatore1");
         Board board=new Board(player);
+        Game game = new Game(2,"gameName");
+        try {
+            game.addPlayerToGame(player);
+        } catch (GenericException e) {
+            fail("AddPlayerToGame exception");
+        }
 
         int inkCode =6;
         //place cards on the board

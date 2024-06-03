@@ -11,6 +11,12 @@ public class PatternObjectiveTest extends TestCase {
         Player player= new Player("marco");
         Board board=new Board(player);
         Deck deck=new Deck();
+        Game game = new Game(2,"gameName");
+        try {
+            game.addPlayerToGame(player);
+        } catch (GenericException e) {
+            fail("AddPlayerToGame exception");
+        }
         //starter
         addCardForTest(board,deck,86,50,50,true);
         //diagonal FUNGI

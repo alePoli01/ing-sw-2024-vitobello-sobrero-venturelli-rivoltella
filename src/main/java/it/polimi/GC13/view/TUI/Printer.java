@@ -142,7 +142,6 @@ public class Printer {
 
     public void collectedResource(EnumMap<Resource, Integer> collectedResource) {
         System.out.println("Collected resource are: ");
-        collectedResource.forEach((key, value) -> System.out.println(key + " : " + value));
-        System.out.println();
+        System.out.println( collectedResource.entrySet().stream().toList()+"\n");
     }
 }

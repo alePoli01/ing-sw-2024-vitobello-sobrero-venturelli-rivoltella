@@ -138,7 +138,7 @@ public class Board implements Serializable {
 
         this.offset
             .forEach(offset -> {
-                if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x, y))) {
+                if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x+ offset.getX(), y+ offset.getY()))) {
                     counter.incrementAndGet();
                 }
             });
@@ -194,7 +194,7 @@ public class Board implements Serializable {
                     .filter(resource -> resource.isObject() || resource.isReign())
                     .forEach(resource -> collectedResources.put(resource, collectedResources.get(resource) + 1));
         }
-        collectedResources.forEach((key, value) -> System.out.println(key + " : " + value));
+        System.out.println( collectedResources.entrySet().stream().toList()+"\n");
         this.owner.getGame().getObserver().notifyClients(new OnUpdateResourceMessage(this.owner.getNickname(), new EnumMap<>(this.collectedResources)));
     }
 
