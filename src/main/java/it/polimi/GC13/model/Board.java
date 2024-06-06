@@ -140,7 +140,6 @@ public class Board implements Serializable {
             .forEach(offset -> {
                 if (checkListContainsCoordinates(this.boardMap.keySet(), new Coordinates(x + offset.getX(), y + offset.getY()))) {
                     counter.incrementAndGet();
-                    System.out.print("Counter increased to " + counter.get() + " on offset: " + offset.getX() + ", " + offset.getY());
                 }
             });
         return counter.get();
