@@ -1,6 +1,7 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.Position;
+import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
@@ -8,37 +9,58 @@ import it.polimi.GC13.view.GUI.ImageIconTableModel;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OnSetLastTurnDialog extends JDialog {
     private FrameManager frameManager;
+    private MainPage gamePage;
 
-    public OnSetLastTurnDialog(FrameManager frameManager, String nickname, Position playerPosition) {
-        super(frameManager, "Last Round", true);
-        setSize(400, 300);
+    //poi sarà framemanager il parent
+    public OnSetLastTurnDialog(FrameManager parent, MainPage gamePage, String nickname, Position playerPosition) {
+        super(parent, "Last Round", true);
+        setSize(600, 300);
         setResizable(false);
-        this.frameManager = frameManager;
+        setLocationRelativeTo(null);
+        this.frameManager = parent;
+        this.gamePage = gamePage;
 
         setLayout(new GridBagLayout());
 
-        JLabel messageLabel = createTextLabelFont(nickname + " has reached 20 points. The will be another turn for players in position: ", 25);
+        JLabel messageLabel = createTextLabelFont(nickname + " has reached 20 points. There will be another turn for players in position: ", 25);
         add(messageLabel, createGridBagConstraints(0,0));
 
+        int i=1;
+        for (; playerPosition.ordinal() < frameManager.getPlayerPositions().size(); playerPosition.next(frameManager.getPlayerPositions().size())) {
+            JLabel label = createTextLabelFont(playerPosition + " and another one bonus.", 27);
+            add(messageLabel, createGridBagConstraints(0,i));
+            i++;
+        }
+
+
+
         JPanel tablePanel = new JPanel();
-        String[] columnNames = {" ", "Position", "Player"};
-        Object[][] data = {
+        tablePanel.setOpaque(false);
+        String[] columnNames = {"Player", "Score" };
 
-        };
+        EnumMap<Position, Integer> positionPlayerMap = new EnumMap<>(Position.class);
 
+        for(Map.Entry<String, Position> entry : frameManager.getPlayerPositions().entrySet()){
+            positionPlayerMap.put(entry.getValue(), frameManager.getPlayersScore().get(entry.getKey()));
+        }
 
-
-        /*JTable table = createTable(columnNames, data);
+        JTable table = new JTable();
+        createResourceTable(table, columnNames, positionPlayerMap);
         addScrollPane(table, tablePanel, 200, 285);
 
-        add(tablePanel, createGridBagConstraints(0,1));*/
+        //add(tablePanel, createGridBagConstraints(0,5));
 
 
         JButton closeButton = new JButton("OK");
@@ -49,7 +71,57 @@ public class OnSetLastTurnDialog extends JDialog {
     }
 
 
-    private void addScrollPane(JComponent component, JPanel panel, int dimW, int dimH){
+    /*public OnSetLastTurnDialog(JFrame parent, String nickname, Position playerPosition) {
+        super(parent, "Last Round", true);
+        setSize(600, 300);
+        setResizable(false);
+        setLocationRelativeTo(parent);
+
+        setLayout(new GridBagLayout());
+
+        JLabel messageLabel = createTextLabelFont(nickname + " has reached 20 points. There will be another turn for players in position: ", 25);
+        add(messageLabel, createGridBagConstraints(0,0));
+
+        Map<String, Position> playerPositions = new HashMap<>();
+
+        playerPositions.put("Nico", Position.FIRST);
+        playerPositions.put("Nico2", Position.SECOND);
+        playerPositions.put("Nico3", Position.THIRD);
+        playerPositions.put("Nico4", Position.FOURTH);
+
+        // Esempio di nickname fornito
+            String nickname = "Nico2";
+
+            // Ottieni la posizione iniziale
+            Position playerPosition = playerPositions.get(nickname);
+
+
+
+        int i=1;
+        for (playerPositions.get(nickname); playerPosition.ordinal() < playerPositions.size(); playerPosition.next(playerPositions.size())) {
+            JLabel label = createTextLabelFont(playerPosition + " and another one bonus.", 27);
+            add(label, createGridBagConstraints(0,i));
+            i++;
+        }
+
+
+        JButton closeButton = new JButton("OK");
+        closeButton.addActionListener(e -> {
+            dispose();
+        });
+
+        add(closeButton, createGridBagConstraints(0,8));
+
+
+    }*/
+
+
+
+
+
+
+
+        private void addScrollPane(JComponent component, JPanel panel, int dimW, int dimH){
         JScrollPane scrollPane = new JScrollPane(component);
         scrollPane.setPreferredSize(new Dimension(dimW, dimH));
         panel.add(scrollPane);
@@ -78,6 +150,24 @@ public class OnSetLastTurnDialog extends JDialog {
             case "BOTTOM" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black)));
             case "ALL" -> jComponent.setBorder(BorderFactory.createCompoundBorder(b, BorderFactory.createLineBorder(color, thickness)));
         }
+    }
+
+
+    public void createResourceTable(JTable table, String[] columnsNames, EnumMap<Position, Integer> positionMap) {
+        ImageIconTableModel<Position, Integer> model = new ImageIconTableModel<>(columnsNames, positionMap);
+
+
+        table.setModel(model);
+        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
+
+        JTableHeader header = table.getTableHeader();
+        header.setPreferredSize(new Dimension(header.getWidth(), 30));
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+
+        table.setRowHeight(30);
     }
 
     /*private static JTable createTable(String[] columnNames, Object[][] data) {
