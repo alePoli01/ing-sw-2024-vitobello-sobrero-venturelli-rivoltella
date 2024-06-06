@@ -318,7 +318,7 @@ public class FrameManager extends JFrame implements View {
 
 
 
-        /*   System.out.print(nickname + " has reached 20 points. The will be another turn for players in position: ");
+        /*   System.out.print(nickname + " has reached 20 points. There will be another turn for players in position: ");
         for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
             System.out.print(playerPosition + " ");
             System.out.println(" and another one bonus.");
@@ -331,9 +331,10 @@ public class FrameManager extends JFrame implements View {
         this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
 
-        gamePage.getTokenManager().updatePlayerScore(playerNickname, playersScore.get(playerNickname));
-        System.out.println("Ciaoooo");
-        
+        for(String player : playersScore.keySet()){
+            gamePage.getTokenManager().updatePlayerScore(player, playersScore.get(player));
+        }
+
         if (this.nickname.equals(playerNickname)) {
             gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
             gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
