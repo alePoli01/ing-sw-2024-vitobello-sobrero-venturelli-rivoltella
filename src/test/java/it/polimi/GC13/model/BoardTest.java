@@ -25,9 +25,9 @@ public class BoardTest extends TestCase {
             if (i == -1) {
                 System.out.println(hand.get(0).serialNumber + "\t\t\t\t\t" + hand.get(1).serialNumber + "\t\t\t\t\t" + hand.get(2).serialNumber);
             } else {
-                hand.get(0).linePrinter(0, i, false);
-                hand.get(1).linePrinter(0, i, false);
-                hand.get(2).linePrinter(0, i, false);
+                hand.get(0).linePrinter(0, i, isFlipped);
+                hand.get(1).linePrinter(0, i, isFlipped);
+                hand.get(2).linePrinter(0, i, isFlipped);
                 System.out.println();
             }
 
@@ -51,7 +51,7 @@ public class BoardTest extends TestCase {
             board.placeCardToTheBoard(new Coordinates(50, 50), deck.getCard(83), true);
             board.addResource(deck.getCard(83), true);
 
-            System.out.println("Trying to place Card: " + hand.get(2).serialNumber);
+            System.out.println("Trying to place Card: " + hand.get(2).serialNumber+" in ("+coordinatesList.get(2).getX()+","+ coordinatesList.get(2).getY()+")");
             try {
                 placeCard(hand, 2, isFlipped, board, player, coordinatesList.get(2).getX(), coordinatesList.get(2).getY());
                 fail("Exception not thrown");
@@ -61,7 +61,7 @@ public class BoardTest extends TestCase {
 
             int i = 0;
             for (PlayableCard card : hand) {
-                System.out.println("Card: " + card.serialNumber);
+                System.out.println("Card: " + card.serialNumber+" in ("+coordinatesList.get(i).getX()+","+ coordinatesList.get(i).getY()+")");
                 placeCard(hand, i, isFlipped, board, player, coordinatesList.get(i).getX(), coordinatesList.get(i).getY());
                 i++;
             }
@@ -94,11 +94,11 @@ public class BoardTest extends TestCase {
         // add card to the board
         board.placeCardToTheBoard(xy, cardToPlace, isFlipped);
         // removes covered reigns / objects from board map
-        if (cardToPlace.cardType.equals(CardType.STARTER) && isFlipped) {
+//        if (cardToPlace.cardType.equals(CardType.STARTER) && isFlipped) {
             board.removeResources(x, y);
-        } else if (!isFlipped) {
-            board.removeResources(x, y);
-        }
+//        } else if (!isFlipped) {
+//            board.removeResources(x, y);
+//        }
         // sum reigns / objects
         board.addResource(cardToPlace, isFlipped);
         // card gives point only if it is not flipped
@@ -116,5 +116,62 @@ public class BoardTest extends TestCase {
         testInsertCards();
         assertEquals(2, board.surroundingCardsNumber(50, 50));
         assertEquals(2, board.surroundingCardsNumber(49, 51));
+    }
+
+    public void testGetPointsGivenOnEdge(){
+        boolean isFlipped = true;
+
+        hand.add(deck.getCard(44));//cardA
+        hand.add(deck.getCard(44));//cardB
+        hand.add(deck.getCard(44));//cardC
+        //Print cards
+
+        for (int i = -1; i < 6; i++) {
+            if (i == -1) {
+                System.out.println(hand.get(0).serialNumber + "\t\t\t\t\t" + hand.get(1).serialNumber + "\t\t\t\t\t" + hand.get(2).serialNumber);
+            } else {
+                hand.get(0).linePrinter(0, i, isFlipped);
+                hand.get(1).linePrinter(0, i, isFlipped);
+                hand.get(2).linePrinter(0, i, isFlipped);
+                System.out.println();
+            }
+        }
+
+        for (int i = 0; i < 6; i++) {
+            //print starter card
+            deck.getCard(83).linePrinter(0, i, false);
+            System.out.println();
+        }
+        //choose coordinates
+        LinkedList<Coordinates> coordinatesList = new LinkedList<>();
+        coordinatesList.add(new Coordinates(49, 51));
+        coordinatesList.add(new Coordinates(51, 51));
+        coordinatesList.add(new Coordinates(49, 49));
+
+        try {
+            //place cards on the board
+            game.addPlayerToGame(player);
+            player.getTable().setPlayerScore(player,0);
+            System.out.println("Start card");
+            board.placeCardToTheBoard(new Coordinates(50, 50), deck.getCard(83), false);
+            board.addResource(deck.getCard(83), false);
+
+            int i = 0;
+            for (PlayableCard card : hand) {
+                System.out.println("Card: " + card.serialNumber+" in ("+coordinatesList.get(i).getX()+","+ coordinatesList.get(i).getY()+")");
+                placeCard(hand, i, isFlipped, board, player, coordinatesList.get(i).getX(), coordinatesList.get(i).getY());
+                i++;
+            }
+            board.placeCardToTheBoard(new Coordinates(49, 53), deck.getCard(44), true);
+            System.out.println("player score before gold card:"+ player.getScore());
+
+            board.placeCardToTheBoard(new Coordinates(50, 52), deck.getCard(44), false);
+            board.addResource(deck.getCard(44), false);
+            player.getTable().setPlayerScore(player,deck.getCard(44).getPointsGiven(board, 50, 52));
+            System.out.println("player score after gold card:"+ player.getScore());
+        } catch (GenericException e) {
+            fail("Exception thrown " + e.getMessage());
+        }
+
     }
 }

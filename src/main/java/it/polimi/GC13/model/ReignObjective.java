@@ -15,21 +15,6 @@ public class ReignObjective extends ObjectiveCard {
         return combo * getComboPoints();
     }
 
-    @Override
-    public void printObjectiveCard() {
-
-        //colors of the background
-        String gold = "\033[38;2;255;215;0m";  // gold
-        String reset = "\u001b[0m";  // reset color of the characters
-
-
-        System.out.println("╔═════════════════╗");
-        System.out.println("║       ║"+gold+"2"+reset+"║       ║");
-        System.out.println("║                 ║");
-        System.out.println("║    ["+this.type+", "+this.type+", "+this.type+"]    ║");
-        System.out.println("║                 ║");
-        System.out.println("╚═════════════════╝");
-    }
 
     public void printLineObjectiveCard(int line) {
         String gold = "\u001b[93m";  // gold

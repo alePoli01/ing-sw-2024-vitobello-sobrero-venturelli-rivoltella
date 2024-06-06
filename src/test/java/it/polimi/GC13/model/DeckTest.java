@@ -97,10 +97,14 @@ public class DeckTest extends TestCase {
 
     }
 
-    public void testPrintObjectiveCard() {
+    public void testLinePrintObjectiveCard() {
         Deck deck = new Deck();
         for(ObjectiveCard card: deck.getObjectiveDeck()){
-            card.printObjectiveCard();
+            for(int i=0;i<6;i++){
+                card.printLineObjectiveCard(i);
+                System.out.println();
+            }
+
         }
     }
 }

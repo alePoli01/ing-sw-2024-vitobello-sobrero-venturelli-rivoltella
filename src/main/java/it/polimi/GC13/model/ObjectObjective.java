@@ -37,39 +37,6 @@ public class ObjectObjective extends ObjectiveCard {
     }
 
     @Override
-    public void printObjectiveCard() {
-        //colors of the background
-        String backgroundRed = "\u001b[41m";   // red background
-        String backgroundGreen = "\u001b[42m"; // Green Background
-        String backgroundBlue = "\u001b[46m";  // Blue background
-        String backgroundmagenta = "\u001b[45m";  // Blue
-        String resetbackground = "\u001b[0m";  // Reset color of the background
-        String gold = "\033[38;2;255;215;0m";  // gold
-        String reset = "\u001b[0m";  // reset color of the characters
-        switch(this.object.size()){
-            case(3):{
-                System.out.println("╔═════════════════╗");
-                System.out.println("║       ║"+gold+this.object.size()+reset+"║       ║");
-                System.out.println("║                 ║");
-                System.out.println("║    "+this.object.toString()+"    ║");
-                System.out.println("║                 ║");
-                System.out.println("╚═════════════════╝");
-                break;
-
-            }
-            case(1):{
-                System.out.println("╔═════════════════╗");
-                System.out.println("║       ║"+gold+(this.object.size()+1)+reset+"║       ║");
-                System.out.println("║                 ║");
-                System.out.println("║     "+this.object.toString()+" "+this.object.toString()+"     ║");
-                System.out.println("║                 ║");
-                System.out.println("╚═════════════════╝");
-                break;
-            }
-        }
-    }
-
-    @Override
     public void printLineObjectiveCard(int line) {
         String gold = "\033[38;2;255;215;0m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters
@@ -84,16 +51,12 @@ public class ObjectObjective extends ObjectiveCard {
                         System.out.print("║       ║" + gold + this.object.size() + reset + "║       ║");
                         break;
                     }
-                    case 2: {
+                    case 2, 4: {
                         System.out.print("║                 ║");
                         break;
                     }
                     case 3: {
-                        System.out.print("║    " + this.object.toString() + "    ║");
-                        break;
-                    }
-                    case 4: {
-                        System.out.print("║                 ║");
+                        System.out.print("║    " + this.object + "    ║");
                         break;
                     }
                     case 5: {
@@ -113,16 +76,12 @@ public class ObjectObjective extends ObjectiveCard {
                         System.out.print("║       ║" + gold + (this.object.size() + 1) + reset + "║       ║");
                         break;
                     }
-                    case 2: {
+                    case 2, 4: {
                         System.out.print("║                 ║");
                         break;
                     }
                     case 3: {
-                        System.out.print("║     " + this.object.toString() + " " + this.object.toString() + "     ║");
-                        break;
-                    }
-                    case 4: {
-                        System.out.print("║                 ║");
+                        System.out.print("║     " + this.object + " " + this.object + "     ║");
                         break;
                     }
                     case 5: {

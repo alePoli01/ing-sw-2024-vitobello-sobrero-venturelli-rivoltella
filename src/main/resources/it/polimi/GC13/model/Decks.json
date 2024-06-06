@@ -628,7 +628,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 45,
@@ -647,7 +647,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 46,
@@ -666,7 +666,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 47,

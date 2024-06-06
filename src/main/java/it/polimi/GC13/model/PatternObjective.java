@@ -291,7 +291,6 @@ public int getObjectivePoints(Board board) {
                     }
                 }
                 else{
-                    //System.out.println("ciao");
                     if (mover.getX() % 2 == 0){
                     mover.setY(iterable.getY() + y_offset+1);
                     }else{
@@ -308,102 +307,8 @@ public int getObjectivePoints(Board board) {
         return points * getComboPoints();
 
     }
-
-
 }
 
-    public void printObjectiveCard() {
-
-    //colors of the background
-        String backgroundRed = "\033[48;2;223;73;23m";   // red background
-        String backgroundGreen = "\033[48;2;113;192;124m"; // Green Background
-        String backgroundBlue = "\033[48;2;107;189;192m";  // Blue background
-        String backgroundmagenta = "\033[48;2;171;63;148m";  // magenta background
-        String resetbackground = "\u001b[0m";  // Reset color of the background
-        String gold = "\033[38;2;255;215;0m";  // gold
-        String reset = "\u001b[0m";  // reset color of the characters
-        String black = "\033[0;30m";
-
-        if (this.diagonal) {
-            switch (this.orientation) {
-                case (0): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║  ║"+gold+"2"+reset+"║            ║");
-                    System.out.println("║          "+black+backgroundRed+"  F  "+resetbackground+reset+"  ║");
-                    System.out.println("║      "+black+backgroundRed+"  F  "+resetbackground+reset+"      ║");
-                    System.out.println("║  "+black+backgroundRed+"  F  "+resetbackground+reset+"          ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (2): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║  ║"+gold+"2"+reset+"║            ║");
-                    System.out.println("║          "+black+backgroundBlue+"  A  "+resetbackground+reset+"  ║");
-                    System.out.println("║      "+black+backgroundBlue+"  A  "+resetbackground+reset+"      ║");
-                    System.out.println("║  "+black+backgroundBlue+"  A  "+resetbackground+reset+"          ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (1): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║            ║"+gold+"2"+reset+"║  ║");
-                    System.out.println("║  "+black+backgroundmagenta+"  I  "+resetbackground+reset+"          ║");
-                    System.out.println("║      "+black+backgroundmagenta+"  I  "+resetbackground+reset+"      ║");
-                    System.out.println("║          "+black+backgroundmagenta+"  I  "+resetbackground+reset+"  ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (3): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║            ║"+gold+"2"+reset+"║  ║");
-                    System.out.println("║  "+black+backgroundGreen+"  P  "+resetbackground+reset+"          ║");
-                    System.out.println("║      "+black+backgroundGreen+"  P  "+resetbackground+reset+"      ║");
-                    System.out.println("║          "+black+backgroundGreen+"  P  "+resetbackground+reset+"  ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-            }
-        }else{
-            switch (this.orientation) {
-                case (0): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║  ║"+gold+"3"+reset+"║            ║");
-                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
-                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
-                    System.out.println("║    "+black+backgroundmagenta+"  I  "+resetbackground+reset+"        ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (2): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║  ║"+gold+"3"+reset+"║            ║");
-                    System.out.println("║         "+black+backgroundRed+"  F  "+resetbackground+reset+"   ║");
-                    System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
-                    System.out.println("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (1): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║            ║"+gold+"3"+reset+"║  ║");
-                    System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
-                    System.out.println("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");
-                    System.out.println("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-                case (3): {
-                    System.out.println("╔═════════════════╗");
-                    System.out.println("║            ║"+gold+"3"+reset+"║  ║");
-                    System.out.println("║   "+black+backgroundBlue+"  A  "+resetbackground+reset+"         ║");
-                    System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
-                    System.out.println("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");
-                    System.out.println("╚═════════════════╝");
-                    break;
-                }
-            }
-        }
-    }
     public void printLineObjectiveCard(int line) {
         String backgroundRed = "\033[48;2;223;73;23m";   // red background
         String backgroundGreen = "\033[48;2;113;192;124m"; // Green Background

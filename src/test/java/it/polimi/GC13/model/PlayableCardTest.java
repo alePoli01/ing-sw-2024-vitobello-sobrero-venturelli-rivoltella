@@ -13,14 +13,14 @@ public class PlayableCardTest extends TestCase {
         //fetching cards
         Deck deck = new Deck();
         List<Integer> serialNumbers = new ArrayList<>();
-//        serialNumbers.add(1);
-//        serialNumbers.add(13);
+        serialNumbers.add(1);
+        serialNumbers.add(13);
         serialNumbers.add(27);
-//        serialNumbers.add(34);
-//        serialNumbers.add(41);
-//        serialNumbers.add(51);
-//        serialNumbers.add(65);
-//        serialNumbers.add(78);
+        serialNumbers.add(34);
+        serialNumbers.add(41);
+        serialNumbers.add(51);
+        serialNumbers.add(65);
+        serialNumbers.add(78);
         Optional<PlayableCard> card;
         try {
             for (int k=0; k<serialNumbers.size(); k++) {
@@ -32,8 +32,8 @@ public class PlayableCardTest extends TestCase {
                     for (int i = 0; i < 9; i++) {
                         for (int j = 0; j < 8; j++) {
                             if (card.isPresent()) {
-                                //card.get().linePrinter(i, j, true);
-                                //System.out.print("\n");
+                                card.get().linePrinter(i, j, true);
+                                System.out.println();
                             }
                         }
                     }
@@ -42,7 +42,7 @@ public class PlayableCardTest extends TestCase {
                         for (int j = 0; j < 8; j++) {
                             if (card.isPresent()) {
                                 card.get().linePrinter(i, j, false);
-                                System.out.print("\n");
+                                System.out.println();
                             }
                         }
                     }
@@ -54,8 +54,8 @@ public class PlayableCardTest extends TestCase {
                     for (int i = 0; i < 9; i++) {
                         for (int j = 0; j < 8; j++) {
                             if (card.isPresent()) {
-                                //card.get().linePrinter(i, j, true);
-                                //System.out.print("\n");
+                                card.get().linePrinter(i, j, true);
+                                System.out.println();
                             }
                         }
                     }
@@ -64,7 +64,7 @@ public class PlayableCardTest extends TestCase {
                         for (int j = 0; j < 8; j++) {
                             if (card.isPresent()) {
                                 card.get().linePrinter(i, j, false);
-                                System.out.print("\n");
+                                System.out.println();
                             }
                         }
                     }
@@ -75,6 +75,5 @@ public class PlayableCardTest extends TestCase {
         }catch (Exception e) {
             fail(e.getMessage());
         }
-        assertTrue(true);
     }
 }
