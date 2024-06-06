@@ -2,15 +2,15 @@ package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcher;
+import it.polimi.GC13.view.GUI.game.MainFrameProva;
 import it.polimi.GC13.view.View;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.management.ThreadInfo;
 
 public class ClientApp {
-    // SwingUtilities.invokeLater(LoginFrame::new);
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader((System.in)));
         int rmiPort = 0;
@@ -46,6 +46,9 @@ public class ClientApp {
             rmiHostname = args[0];
         }
         System.setProperty("java.server.hostname", rmiHostname);
+
+
+           //quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
 
         System.out.println("\u001B[35mHello from Client\u001B[0m");
         System.out.println("RMI port: " + rmiPort);
@@ -87,6 +90,5 @@ public class ClientApp {
             e.printStackTrace();
             System.exit(-1);
         }
-
     }
 }

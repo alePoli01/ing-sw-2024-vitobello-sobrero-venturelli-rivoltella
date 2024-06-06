@@ -42,6 +42,8 @@ public class FrameManager extends JFrame implements View {
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
     public List<Coordinates> availablesCells = new LinkedList<>();
+    private boolean newStatus = false;
+
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
@@ -93,11 +95,13 @@ public class FrameManager extends JFrame implements View {
                     gamePage.setFlipToSend(false);
                     gamePage.getHandSerialNumberCheckBoxMap().clear();
 
-                    ArrayList<Boolean> b = new ArrayList<>();
-                    for(int i=0; i< this.hand.size(); i++)
-                        b.add(false);
+                    if (!gamePage.isCheckingHandWhileDrawing()) {
+                        ArrayList<Boolean> b = new ArrayList<>();
+                        for(int i=0; i< this.hand.size(); i++)
+                            b.add(false);
 
-                    gamePage.printHandOrDecksOnGUI(this.hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+                        gamePage.printHandOrDecksOnGUI(this.hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+                    }
 
                     gamePage.setFlag(gamePage.getFlag()+1);
                     refreshFrame(gamePage);
@@ -232,6 +236,10 @@ public class FrameManager extends JFrame implements View {
         if (this.nickname.equals(playerNickname)) {
             this.availablesCells.clear();
             this.availablesCells.addAll(availableCells);
+
+            if(gamePage.isUnableExceptionFlag()){
+                gamePage.afterCardPlaced();
+            }
         }
         this.gamePage.refreshBoard();
     }
@@ -281,6 +289,11 @@ public class FrameManager extends JFrame implements View {
             String titleString = "Launching an exception\n";
             JOptionPane.showMessageDialog(this, titleString + onInputExceptionMessage.getErrorMessage());
             onInputExceptionMessage.methodToRecall(this);
+
+            if(gamePage.isUnableExceptionFlag()){
+                gamePage.setCheckingHandWhileDrawing(false);
+                gamePage.exceptionDetected();
+            }
         }
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
@@ -300,7 +313,10 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onSetLastTurn(String nickname, Position position) {
-        SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, nickname, position));
+        SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
+
+
+
 
         /*   System.out.print(nickname + " has reached 20 points. The will be another turn for players in position: ");
         for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
@@ -316,7 +332,8 @@ public class FrameManager extends JFrame implements View {
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
 
         gamePage.getTokenManager().updatePlayerScore(playerNickname, playersScore.get(playerNickname));
-
+        System.out.println("Ciaoooo");
+        
         if (this.nickname.equals(playerNickname)) {
             gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
             gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
@@ -369,6 +386,9 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onReconnectToGame() {
+        this.newStatus = true;
+//        this.menuOptions();
+//        System.out.print("Your choice: ");
 
     }
 
@@ -377,13 +397,16 @@ public class FrameManager extends JFrame implements View {
         if (!this.playersCollectedResources.containsKey(playerNickname)) {
             this.playersCollectedResources.put(playerNickname, collectedResources);
             if (this.nickname.equals(playerNickname)) {
-                gamePage.createResourceTable(new String[]{"Resources", "Amount"}, collectedResources);
+                gamePage.createResourceTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources);
             }
         } else {
             this.playersCollectedResources.entrySet()
                     .stream()
                     .filter(playersMap -> playersMap.getKey().equals(playerNickname))
-                    .forEach(playersMap -> playersMap.getValue().entrySet().forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
+                    .forEach(playersMap -> playersMap.getValue().entrySet()
+                            .stream()
+                            .filter(entry -> !entry.getValue().equals(collectedResources.get(entry.getKey())))
+                            .forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
 
             if (playerNickname.equals(this.nickname)){
                 gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources);
@@ -418,10 +441,19 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getNamePanel().removeAll();
                 gamePage.refresh();
                 gamePage.setFlag(1);
+                gamePage.setUnableExceptionFlag(true);
 
                 gamePage.createGamePanel();
                 gamePage.getScoreLabel().setText("Score: " + 0);
                 gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
+
+                ArrayList<Boolean> b = new ArrayList<>();
+                for(int i=0; i<hand.size(); i++)
+                    b.add(false);
+
+                gamePage.printHandOrDecksOnGUI(hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+
+
                 refreshFrame(gamePage);
             }
             if (this.myTurn) {
@@ -453,7 +485,7 @@ public class FrameManager extends JFrame implements View {
      * @param key can be [global] or a player [nickname], it is used to map the chat
      * @param message message sent in chat by the player
      */
-    private void registerChatMessage(String key, String message) {
+    private void registerChatMessage(String key, String message) { // uguale + update gui
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
                 this.chat.get(key).add(message);
@@ -463,7 +495,7 @@ public class FrameManager extends JFrame implements View {
                 this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
             }
         }
-        this.newMessage = true;
+        this.newMessage = true; //update gui trigger
     }
 
 

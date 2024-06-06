@@ -1,5 +1,6 @@
 package it.polimi.GC13.view.GUI.game;
 
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
@@ -22,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -34,13 +34,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     private String nickname;
     private TokenColor token;
-    private final ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+    private final ArrayList<String> avatarsImagePaths = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
     public String boardToDisplay;
 
     private final JPanel panelContainer;
     private JPanel choosePanel;
     private boolean flipToSend = false;
-    private int serialTosend=-1;
+    private int serialTosend = -1;
     private List<TokenColor> tokenColorList;
 
     private JLayeredPane board;
@@ -89,6 +89,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private int flag = -1;
     private boolean checkingHandWhileDrawing = false;
     private boolean boardButtonFlag = true;
+    private boolean unableExceptionFlag = false;
 
     private JLabel turnLable;
     private JLabel turnLable2;
@@ -102,7 +103,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setSize(1700, 900); //for debugging
-        setResizable(false);
+        setResizable(true);
 
         panelContainer = new JPanel(new GridBagLayout());
         panelContainer.setBackground(new Color(237,230,188,255));
@@ -252,9 +253,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             boolean isFlipped;
             for (JCheckBox checkBox : handLabelCheckBoxMap.values()) {
                 if (checkBox.isSelected()) {
-                    isFlipped = !checkBox.getText().equals("Front");
+                    isFlipped = checkBox.getText().equals("true");
                     if (e.getActionCommand().equals("Confirm")) {
-                        System.out.println("la carta è stata inviata "+isFlipped);
                         frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
                         createLobby();
                         getContentPane().revalidate();
@@ -615,11 +615,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         southPanel = new JPanel(new GridBagLayout());
         setBorderInsets(southPanel, 1, 0, 1, 0);
 
-        ArrayList<Boolean> b = new ArrayList<>();
-        for(int i=0; i<frameManager.getHand().size(); i++)
-            b.add(false);
-
-        printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel,choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap,0,0);
+//        ArrayList<Boolean> b = new ArrayList<>();
+//        for(int i=0; i<frameManager.getHand().size(); i++)
+//            b.add(false);
+//
+//        printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel,choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap,0,0);
 
 
         namePanel = new JPanel();
@@ -950,20 +950,20 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-    public void createResourceTable(String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
-        ImageIconTableModel<Resource> model = new ImageIconTableModel<>(columnsNames, collectedResources);
+    public void createResourceTable(JTable table, String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
+        ImageIconTableModel<Resource, Integer> model = new ImageIconTableModel<>(columnsNames, collectedResources);
 
-        resourceTable.setModel(model);
-        resourceTable.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
+        table.setModel(model);
+        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
 
-        JTableHeader header = resourceTable.getTableHeader();
+        JTableHeader header = table.getTableHeader();
         header.setPreferredSize(new Dimension(header.getWidth(), 30));
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        resourceTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-        resourceTable.setRowHeight(30);
+        table.setRowHeight(30);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources){
@@ -1099,10 +1099,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 flipToSend = false;
             }
 
-            southPanel.remove(decksPanel);
-            southPanel.add(choosePanel, createGridBagConstraints(1,0));
+//            southPanel.remove(decksPanel);
+//            southPanel.add(choosePanel, createGridBagConstraints(1,0));
 
-        } else if (e.getActionCommand().equals("Confirm") || e.getActionCommand().equals("Show Decks")) {
+        } else if (e.getActionCommand().equals("Show Decks")) {
             setButtonNOTVisible();
             confirmButton.setEnabled(false);
             flipButton.setEnabled(false);
@@ -1113,56 +1113,50 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refreshDecksPanels();
             drawableSerialNumberCheckBoxMap.clear();
 
-            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(),frameManager.getResourceCardsAvailable().values().stream().toList(), resourceImagePanel, resourceCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
-            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(),frameManager.getGoldCardsAvailable().values().stream().toList(), goldImagePanel, goldCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
+//            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), resourceImagePanel, resourceCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+//            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), goldImagePanel, goldCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
-            southPanel.remove(choosePanel);
-            southPanel.add(decksPanel, createGridBagConstraints(1,0));
+//            southPanel.remove(choosePanel);
+//            southPanel.add(decksPanel, createGridBagConstraints(1, 0));
+
+            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
 
-            //show decks
-            if (e.getActionCommand().equals("Show Decks")) {
-                if (checkingHandWhileDrawing) {
-                    decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
-                } else {
-                    decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
-                }
+            if (checkingHandWhileDrawing) {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+            } else {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
             }
 
-            else if (e.getActionCommand().equals("Confirm")) {
-                boardButtonFlag = false;
-                confirmButton.setText("Draw");
-
-                try {
-                    serialTosend = handSerialNumberCheckBoxMap.entrySet()
-                            .stream()
-                            .filter(en -> en.getValue().checkBox.isSelected())
-                            .findFirst()
-                            .orElseThrow()
-                            .getKey();
+        } else if (e.getActionCommand().equals("Confirm")) {
+            try {
+                serialTosend = handSerialNumberCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().checkBox.isSelected())
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey();
 
 
-                    flipToSend = handSerialNumberCheckBoxMap.entrySet()
-                            .stream()
-                            .filter(en -> en.getValue().checkBox.isSelected())
-                            .findFirst()
-                            .orElseThrow()
-                            .getValue()
-                            .checkBox()
-                            .getText().equals("true");
+                flipToSend = handSerialNumberCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().checkBox.isSelected())
+                        .findFirst()
+                        .orElseThrow()
+                        .getValue()
+                        .checkBox()
+                        .getText().equals("true");
 
-                    if(cordToSend==null || serialTosend == -1 ){
-                        JOptionPane.showMessageDialog(this, "Error: select the card to play ","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
-                    } else{
-                        frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialTosend,flipToSend, cordToSend.getX(), cordToSend.getY()));
-                    }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid card","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                if(cordToSend==null || serialTosend == -1 ){
+                    JOptionPane.showMessageDialog(this, "Error: select the card to play ","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                } else{
+                    frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialTosend,flipToSend, cordToSend.getX(), cordToSend.getY()));
+                    checkingHandWhileDrawing = true;
                 }
-
-                checkingHandWhileDrawing = true;
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Invalid card","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
             }
-
         } else if (e.getActionCommand().equals("Draw")){
             setButtonNOTVisible();
             boardButtonFlag = true;
@@ -1193,8 +1187,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refreshDecksPanels();
             handSerialNumberCheckBoxMap.clear();
 
-            southPanel.remove(decksPanel);
-            southPanel.add(choosePanel, createGridBagConstraints(1,0));
+//            southPanel.remove(decksPanel);
+//            southPanel.add(choosePanel, createGridBagConstraints(1,0));
 
         } else {
             for (JButton button : boardButtonMap.values()) {
@@ -1231,8 +1225,83 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 }
             }
         }
-
     }
+
+
+    public void afterCardPlaced(){
+        setButtonNOTVisible();
+        confirmButton.setEnabled(false);
+        flipButton.setEnabled(false);
+        decksButton.setEnabled(false);
+        handButton.setEnabled(true);
+        confirmButton.setText("Draw");
+        boardButtonFlag = false;
+
+
+
+        refresh();
+        refreshDecksPanels();
+        drawableSerialNumberCheckBoxMap.clear();
+        handLabelCheckBoxMap.clear();
+
+//        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), resourceImagePanel, resourceCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+//        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), goldImagePanel, goldCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+
+        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+
+
+        decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+
+//        southPanel.remove(choosePanel);
+//        southPanel.add(decksPanel, createGridBagConstraints(1, 0));
+
+
+        if (checkingHandWhileDrawing) {
+            decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+        } else {
+            decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
+        }
+
+        southPanel.revalidate();
+        southPanel.repaint();
+    }
+
+
+    public void exceptionDetected(){
+        setButtonNOTVisible();
+
+        for (JButton button : boardButtonMap.values()) {
+            button.setIcon(null);
+            button.setBorderPainted(true);
+        }
+
+        confirmButton.setEnabled(false);
+        flipButton.setText("Show Back");
+        decksButton.setEnabled(true);
+        handButton.setEnabled(false);
+
+        refresh();
+        refreshDecksPanels();
+        handSerialNumberCheckBoxMap.clear();
+
+        ArrayList<Boolean> b = new ArrayList<>();
+        for(int i=0; i<frameManager.getHand().size(); i++)
+            b.add(false);
+
+        printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+
+        if(checkingHandWhileDrawing) {
+            handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
+        } else {
+            flipButton.setEnabled(true);
+            flipToSend = false;
+        }
+
+//        southPanel.remove(decksPanel);
+//        southPanel.add(choosePanel, createGridBagConstraints(1,0));
+    }
+
 
     private void refreshDecksPanels(){
         resourceImagePanel.removeAll();
@@ -1258,9 +1327,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         int y2 = 0;
 
         for (String player: frameManager.getPlayerPositions().keySet()) {
-            int randomIndex = random.nextInt(avatars.size());
-            String selectedAvatar = avatars.get(randomIndex);
-            avatars.remove(randomIndex);
+            int randomIndex = random.nextInt(avatarsImagePaths.size());
+            String selectedAvatar = avatarsImagePaths.get(randomIndex);
+            avatarsImagePaths.remove(randomIndex);
             int y1 = 0;
 
             JPanel playerAvatarPanel = new JPanel(new GridBagLayout());
@@ -1491,4 +1560,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public TokenManager getTokenManager() {
         return tokenManager;
     }
+
+    public boolean isUnableExceptionFlag() {
+        return unableExceptionFlag;
+    }
+
+    public void setUnableExceptionFlag(boolean unableExceptionFlag) {
+        this.unableExceptionFlag = unableExceptionFlag;
+    }
+
+    public boolean isCheckingHandWhileDrawing() {
+        return checkingHandWhileDrawing;
+    }
+
+    public void setCheckingHandWhileDrawing(boolean checkingHandWhileDrawing) {
+        this.checkingHandWhileDrawing = checkingHandWhileDrawing;
+    }
+
+
 }

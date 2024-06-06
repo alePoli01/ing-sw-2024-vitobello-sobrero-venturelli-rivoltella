@@ -30,6 +30,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     public record CardData(JLabel label, JCheckBox checkBox) {}
 
+    public record AvatarData(String playerName, String avatarPath) {}
+    Map<Position, AvatarData> positionToPlayerData = new HashMap<>();
+
+
     private FrameManager frameManager;
 
     private String nickname = "Niccolo";
@@ -580,6 +584,19 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         northPanel.add(buttonToScoreBoard);
 
         northPanel.add(Box.createHorizontalGlue());
+
+        JButton popup = createButton("popup", 27);
+        northPanel.add(popup);
+
+//        popup.addActionListener(e -> {
+//            System.out.println("tette");
+//
+//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico", Position.FIRST);
+//           // ProvaDialog dialog = new ProvaDialog(this);
+//            dialog.setVisible(true);
+//        });
+
+
         northPanel.add(Box.createHorizontalGlue());
 
         JPanel turnNamePanel = new JPanel();
@@ -695,6 +712,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             collectedResources.put(r, 0);
         }
 
+        collectedResources.remove(Resource.NULL);
+        collectedResources.remove(Resource.EMPTY);
+
         createResourceTable(new String[]{"Resource/Objects", "Amount"}, collectedResources);
 
         Random random2 = new Random();
@@ -704,6 +724,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             System.out.println("Resource: " + r + " amount: "+ randomIndex);
             collectedResources.put(r, randomIndex);
         }
+
+        collectedResources.remove(Resource.NULL);
+        collectedResources.remove(Resource.EMPTY);
 
         updateResourceTable(resourceTable, collectedResources);
 
@@ -749,6 +772,17 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         namePanel.add(confirmButton);
         namePanel.add(emptyPanel);
         namePanel.add(flipButton);
+
+
+//        JButton popup = createButton("popup", 27);
+//        namePanel.add(popup);
+//
+//        popup.addActionListener(e -> {
+//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico");
+//            dialog.setVisible(true);
+//        });
+
+
 
 
         GridBagConstraints gbc = createGridBagConstraints(0,0);
@@ -816,12 +850,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         Random random = new Random();
 
-        /*for(int i=0; i<4; i++){
+        for(int i=0; i<4; i++){
             tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
-            int randomIndex = random.nextInt(30);
+            int randomIndex = random.nextInt(16);
             playersScore.put("Player" + (i + 1), randomIndex);
             System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
-        }*/
+        }
 
         tokenManager.setTokenInGame(tokenInGame);
         tokenManager.initializeDataPlayer();
@@ -1016,7 +1050,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
     public void createResourceTable(String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
-        ImageIconTableModel<Resource> model = new ImageIconTableModel<>(columnsNames, collectedResources);
+        ImageIconTableModel<Resource, Integer> model = new ImageIconTableModel<>(columnsNames, collectedResources);
 
         resourceTable.setModel(model);
         resourceTable.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
@@ -1163,11 +1197,11 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             refreshDecksPanels();
             drawableSerialNumberCheckBoxMap.clear();
 
-            printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), resourceImagePanel, resourceCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
-            printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), goldImagePanel, goldCheckBoxPanel, decksPanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
+            printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
 
-            southPanel.remove(choosePanel);
-            southPanel.add(decksPanel, createGridBagConstraints(1,0));
+//            southPanel.remove(choosePanel);
+//            southPanel.add(decksPanel, createGridBagConstraints(1,0));
 
             if (e.getActionCommand().equals("Show Decks")) {
                 if (checkingHandWhileDrawing) {
@@ -1179,32 +1213,30 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 boardButtonFlag = false;
                 confirmButton.setText("Draw");
 
-                try {
-                    serialTosend = handSerialNumberCheckBoxMap.entrySet()
-                            .stream()
-                            .filter(en -> en.getValue().checkBox.isSelected())
-                            .findFirst()
-                            .orElseThrow()
-                            .getKey();
+
+                serialTosend = handSerialNumberCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().checkBox.isSelected())
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey();
 
 
-                    flipToSend = handSerialNumberCheckBoxMap.entrySet()
-                            .stream()
-                            .filter(en -> en.getValue().checkBox.isSelected())
-                            .findFirst()
-                            .orElseThrow()
-                            .getValue()
-                            .checkBox()
-                            .getText().equals("true");
+                flipToSend = handSerialNumberCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().checkBox.isSelected())
+                        .findFirst()
+                        .orElseThrow()
+                        .getValue()
+                        .checkBox()
+                        .getText().equals("true");
 
 
-                        System.out.println(serialTosend);
-                        System.out.println(flipToSend);
-                        hand.remove(serialTosend);
+                System.out.println(serialTosend);
+                System.out.println(flipToSend);
 
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid card","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
-                }
+                hand = hand.stream().filter(c -> c!=serialTosend).toList();
+
 
                 checkingHandWhileDrawing = true;
             }
@@ -1221,7 +1253,11 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
                 //invio al server della carta da pescare
                 System.out.println(serialTosend);
-                hand.add(serialTosend);
+                List<Integer> temp = new ArrayList<>(hand);
+                temp.add(serialTosend);
+
+                hand = temp;
+
 
                 confirmButton.setText("Confirm");
                 confirmButton.setEnabled(false);
@@ -1335,6 +1371,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
             gbc.gridy++;
+
+            //AvatarData avatarData = new AvatarData(player, selectedAvatar);
+            //positionToPlayerData.put(frameManager.getPlayerPositions().get(player), avatarData);
+
             lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
             y2++;
         }
@@ -1423,5 +1463,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             container.revalidate();
             container.repaint();
         }
+    }
+
+    public Map<Position, AvatarData> getPositionToPlayerData() {
+        return positionToPlayerData;
     }
 }
