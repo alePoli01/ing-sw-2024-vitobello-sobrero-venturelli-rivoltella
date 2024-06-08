@@ -1068,9 +1068,7 @@ public class PlayableCard implements Serializable {
 
         }
     }
-    public Resource getEdgeResource(int edge) {
-        return this.edgeFrontResource[edge];
-    }
+
     private void printGoldCardRequirementsWithEdgeL(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[0]  + color + " ║ "+reset + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
