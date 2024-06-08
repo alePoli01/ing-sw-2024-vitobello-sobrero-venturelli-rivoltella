@@ -25,7 +25,7 @@ public class TUI implements View {
     private boolean myTurn = false;
     private int turnPlayed = 0;
     private final Map<String, Integer> playersScore = new ConcurrentHashMap<>();
-    private final Map<String, Position> playerPositions = new ConcurrentHashMap<>();
+    private final Map<String, Position> playersPosition = new ConcurrentHashMap<>();
     private final Map<Integer, Boolean> goldCardsAvailable = new ConcurrentHashMap<>();
     private final Map<Integer, Boolean> resourceCardsAvailable = new ConcurrentHashMap<>();
     private final Map<String, BoardView> playersBoard = new ConcurrentHashMap<>();
@@ -52,6 +52,10 @@ public class TUI implements View {
     @Override
     public String getNickname() {
         return this.nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
@@ -322,16 +326,19 @@ public class TUI implements View {
      */
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
-        this.playerPositions.putAll(playerPositions);
+        this.playersPosition.putAll(playerPositions);
     }
 
     @Override
-    public void onSetLastTurn(String playerNickname, Position playerPosition) {
-        System.out.print(nickname + " has reached 20 points. The will be another turn for players in position: ");
-        for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
-            System.out.print(playerPosition + " ");
-            System.out.println(" and another one bonus.");
+    public void onSetLastTurn(String playerNickname) {
+        int lastTurnSetterPosition = this.playersPosition.get(playerNickname).getIntPosition();
+        System.out.println(nickname + " has reached 20 points. The will be another turn for all players after the current turn ends.");
+        if (lastTurnSetterPosition < this.playersPosition.size()) {
+            System.out.println("Players to finish the turn: " + this.playersPosition.entrySet().stream().filter(entry -> entry.getValue().getIntPosition() > lastTurnSetterPosition).map(Map.Entry::getKey).collect(Collectors.joining(" ")));
         }
+        this.newStatus = true;
+        this.menuOptions();
+        System.out.print("Your choice: ");
     }
 
     /**
@@ -455,7 +462,7 @@ public class TUI implements View {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
             // prints for the first time the main menu for the first player
-            if (this.myTurn && this.turnPlayed == 0 && this.playerPositions.get(this.nickname).equals(Position.FIRST)) {
+            if (this.myTurn && this.turnPlayed == 0 && this.playersPosition.get(this.nickname).equals(Position.FIRST)) {
                 this.showHomeMenu();
             } else if (!this.myTurn && this.turnPlayed == 0) {
                 // prints for the first time the main menu for all other players
@@ -563,7 +570,7 @@ public class TUI implements View {
                 }
                 case 9: {
                     System.out.println("Player's position are: ");
-                    this.playerPositions.forEach((key, value) -> System.out.println(key + ": " + value));
+                    this.playersPosition.forEach((key, value) -> System.out.println(key + ": " + value));
                     // test -> this.playerPositions.forEach((key, value) -> System.out.print(String.join("\n", key + ": " + value)));
                     this.showHomeMenu();
                     break;

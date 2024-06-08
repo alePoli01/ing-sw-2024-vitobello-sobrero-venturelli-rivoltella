@@ -3,11 +3,18 @@ package it.polimi.GC13.enums;
 public enum Position {
     FIRST, SECOND, THIRD, FOURTH;
 
-    public Position next(int numPlayer) {
+    public Position next(int playersInGame) {
         if (this == FOURTH) return FIRST;
         if (this == FIRST) return SECOND;
-        if (this == SECOND && (numPlayer - 1) == this.ordinal()) return FIRST;
-        if (this == THIRD && (numPlayer - 1) == this.ordinal()) return FIRST;
+        if (this == SECOND && (playersInGame - 1) == this.ordinal()) return FIRST;
+        if (this == THIRD && (playersInGame - 1) == this.ordinal()) return FIRST;
         return values()[this.ordinal() + 1];
+    }
+
+    public int getIntPosition() {
+        if (this == FOURTH) return 4;
+        if (this == FIRST) return 1;
+        if (this == SECOND) return 2;
+        return 3;
     }
 }

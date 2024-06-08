@@ -59,7 +59,7 @@ public interface View {
 
     void displayAvailableCells(List<Coordinates> availableCells);
 
-    void onSetLastTurn(String playerNickname, Position position);
+    void onSetLastTurn(String playerNickname);
 
     void placeCard() throws GenericException;
 

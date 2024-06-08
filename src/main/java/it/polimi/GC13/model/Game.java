@@ -130,7 +130,7 @@ public class Game implements Serializable {
     // sets game's last round
     public void setLastRound(Player player) {
         this.lastRound = player.getTurnPlayed() + 1;
-        this.observer.notifyClients(new OnSetLastTurnMessage(player.getNickname(), player.getPosition()));
+        this.observer.notifyClients(new OnSetLastTurnMessage(player.getNickname()));
     }
 
     public int getLastRound() {

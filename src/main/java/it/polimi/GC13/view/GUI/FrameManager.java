@@ -320,7 +320,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void onSetLastTurn(String nickname, Position position) {
+    public void onSetLastTurn(String nickname) {
         //SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
 
         /*   System.out.print(nickname + " has reached 20 points. There will be another turn for players in position: ");
