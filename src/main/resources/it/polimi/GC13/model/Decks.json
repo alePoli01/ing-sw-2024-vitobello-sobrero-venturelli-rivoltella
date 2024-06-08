@@ -249,7 +249,7 @@
         "EMPTY"
       ],
       "resourceNeeded": {},
-      "pointsGiven": 0,
+      "pointsGiven": 1,
       "condition": "NULL"
     },
     {
@@ -818,7 +818,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 55,
@@ -837,7 +837,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 56,
@@ -856,7 +856,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 57,
@@ -1008,7 +1008,7 @@
         "INSECT": 1
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 65,
@@ -1027,7 +1027,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 66,
@@ -1046,7 +1046,7 @@
         "INSECT": 0
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 67,
@@ -1198,7 +1198,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 75,
@@ -1217,7 +1217,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 76,
@@ -1236,7 +1236,7 @@
         "INSECT": 3
       },
       "pointsGiven": 2,
-      "condition": "NULL"
+      "condition": "EDGE"
     },
     {
       "serialNumber": 77,
