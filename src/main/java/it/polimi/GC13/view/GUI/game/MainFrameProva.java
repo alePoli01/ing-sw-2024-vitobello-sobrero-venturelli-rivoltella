@@ -4,8 +4,6 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
-import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
 
@@ -30,16 +28,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     public record CardData(JLabel label, JCheckBox checkBox) {}
 
-    public record AvatarData(String playerName, String avatarPath) {}
-    Map<Position, AvatarData> positionToPlayerData = new HashMap<>();
+//    public record AvatarData(String playerName, String avatarPath) {}
+//    private final EnumMap<Position, AvatarData> positionToPlayerData = new EnumMap<>(Position.class);
+
+    //ArrayList<String> avatarsImagePaths = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
 
 
-    private FrameManager frameManager;
+    //private FrameManager frameManager;
 
     private String nickname = "Niccolo";
     private TokenColor token = TokenColor.BLUE;
     private List<Integer> hand = List.of(1, 2, 3); //DA NON METTERE
-    private final ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+    //private final ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
     private boolean myTurn = true;
 
     private JPanel panelContainer;
@@ -91,20 +91,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     private boolean boardButtonFlag = false;
     private boolean checkingHandWhileDrawing = false;
 
-
-
-
     private JLabel turnLable;
     private JLabel turnLable2;
     private JLabel scoreLabel;
     private JLabel scoreLabel2;
 
-    private String firstPlayer = "Niccolo"; //DA NON METTERE
-    private String secondtPlayer = "Piero"; //DA NON METTERE
-    private String  thirdPlayer = "Gino"; //DA NON METTERE
-    private String  fourthPlayer = "Pino"; //DA NON METTERE
 
     private Map<String, Position> playerPosition = new HashMap<>(); //DA NON METTERE
+    Map<String, TokenColor> tokenInGame = new HashMap<>();
 
     private TokenManager tokenManager;
 
@@ -561,6 +555,26 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 goldCardsAvailable.put(i, true);
         }
 
+        EnumMap<Position, String> positionPlayerMap = new EnumMap<>(Position.class);
+        ArrayList<String> listTokenInGame = new ArrayList<>();
+
+        Random random = new Random();
+
+        for(int i=0; i<4; i++){
+            playerPosition.put("Player" + (i + 1), Arrays.stream(Position.values()).toList().get(i));
+            tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
+            int randomIndex = random.nextInt(16);
+            playersScore.put("Player" + (i + 1), randomIndex);
+            //System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
+        }
+
+
+        for(String player : playerPosition.keySet()){
+            positionPlayerMap.put(playerPosition.get(player), player);
+            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(tokenInGame.get(player)));
+        }
+
+
 
         panelContainer = new JPanel(new CardLayout());
         add(panelContainer);
@@ -588,13 +602,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         JButton popup = createButton("popup", 27);
         northPanel.add(popup);
 
-//        popup.addActionListener(e -> {
-//            System.out.println("tette");
-//
-//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico", Position.FIRST);
-//           // ProvaDialog dialog = new ProvaDialog(this);
-//            dialog.setVisible(true);
-//        });
+        popup.addActionListener(e -> {
+            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico2", Position.FIRST);
+            dialog.setVisible(true);
+        });
 
 
         northPanel.add(Box.createHorizontalGlue());
@@ -646,12 +657,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         lateralPanelSX.setPreferredSize(new Dimension(150, lateralPanelSX.getHeight()));
 
 
-        playerPosition.put(firstPlayer, Position.FIRST);
-        playerPosition.put(secondtPlayer, Position.SECOND);
-        playerPosition.put(thirdPlayer, Position.THIRD);
-        playerPosition.put(fourthPlayer, Position.FOURTH);
-
-
         setPlayerAvatar(lateralPanelSX);
         panel1.add(lateralPanelSX, BorderLayout.WEST);
 
@@ -682,24 +687,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         lateralPanelDX.add(commonPanel);
 
-
-//        JPanel tabelPanel = new JPanel();
-//        String[] columnNames = {"Reigns/Objects", "counter"};
-//        Object[][] data = {
-//                {createResizedTokenImageIcon(FUNGI_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(ANIMAL_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(PLANT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(INSECT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(QUILL_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(MANUSCRIPT_LOGO_DIR, 27), 0},
-//                {createResizedTokenImageIcon(INKWELL_LOGO_DIR, 27), 0}
-//        };
-//
-//        JTable table = createTable(columnNames, data);
-//        addScrollPane(table, tabelPanel, 200, 245);
-//        lateralPanelDX.add(tabelPanel);
-
-
         JPanel tabelPanel = new JPanel();
         addScrollPane(resourceTable, tabelPanel, 200, 245);
         lateralPanelDX.add(tabelPanel);
@@ -715,7 +702,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         collectedResources.remove(Resource.NULL);
         collectedResources.remove(Resource.EMPTY);
 
-        createResourceTable(new String[]{"Resource/Objects", "Amount"}, collectedResources);
+        createTable(resourceTable, new String[]{"Resources", "Amount"}, collectedResources, logos, null, false);
 
         Random random2 = new Random();
 
@@ -728,7 +715,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         collectedResources.remove(Resource.NULL);
         collectedResources.remove(Resource.EMPTY);
 
-        updateResourceTable(resourceTable, collectedResources);
+        updateResourceTable(resourceTable, collectedResources, logos);
 
 
         handButton = createButton("Show Hand", 28);
@@ -772,16 +759,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         namePanel.add(confirmButton);
         namePanel.add(emptyPanel);
         namePanel.add(flipButton);
-
-
-//        JButton popup = createButton("popup", 27);
-//        namePanel.add(popup);
-//
-//        popup.addActionListener(e -> {
-//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico");
-//            dialog.setVisible(true);
-//        });
-
 
 
 
@@ -845,18 +822,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         tokenManager = new TokenManager();
         tokenManager.setOpaque(false);
 
-
-        Map<String, TokenColor> tokenInGame = new HashMap<>();
-
-        Random random = new Random();
-
-        for(int i=0; i<4; i++){
-            tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
-            int randomIndex = random.nextInt(16);
-            playersScore.put("Player" + (i + 1), randomIndex);
-            System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
-        }
-
         tokenManager.setTokenInGame(tokenInGame);
         tokenManager.initializeDataPlayer();
 
@@ -866,16 +831,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
 
-        JPanel lateralPanelDX2 = new JPanel();
-        String[] columnNames2 = {"Position", "Player", "Score"};
-        Object[][] data2 = {
-                {1, "Nico", 0},
-                {2, "Nico2", 0},
-        };
 
-       /* JTable table2 = createTable(columnNames2, data2);
-        addScrollPane(table2, lateralPanelDX2, 250, 110);
-        panel2.add(lateralPanelDX2, BorderLayout.EAST);*/
+
+
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setOpaque(false);
+
+        JTable table = new JTable();
+        createTable(table, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true);
+        addScrollPane(table, tablePanel, 200, 180);
+        panel2.add(tablePanel, BorderLayout.EAST);
+
 
 
         panel2.add(tokenManager);
@@ -1049,27 +1016,59 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-    public void createResourceTable(String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
-        ImageIconTableModel<Resource, Integer> model = new ImageIconTableModel<>(columnsNames, collectedResources);
+    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b) {
+        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap);
 
-        resourceTable.setModel(model);
-        resourceTable.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
+        int k = 0;
+        if(b){
+            ArrayList<Object> newColumnDataLeft = new ArrayList<>();
+            //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
+            String maxScorePlayer = playersScore.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
-        JTableHeader header = resourceTable.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 30));
+            for(String player : playersScore.keySet()){
+                if(player.equals(maxScorePlayer)){
+                    newColumnDataLeft.add(true);
+                } else{
+                    newColumnDataLeft.add(false);
+                }
+            }
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        resourceTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+            model.addColumnOnLeft(" ", newColumnDataLeft);
+            k = 1;
+        }
 
-        resourceTable.setRowHeight(30);
+        table.setModel(model);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if (i == 0 || i == k) {
+                table.getColumnModel().getColumn(i).setCellRenderer(new ImageIconRenderer());
+            } else {
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
+        }
+
+        JTableHeader header = table.getTableHeader();
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+
+
+        table.setRowHeight(35);
     }
 
-    public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources){
+    public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
         for (Resource resource : collectedResources.keySet()) {
-            table.setValueAt(collectedResources.get(resource), CardManager.logos.indexOf(remappingResources(resource)), 1);
+            table.setValueAt(collectedResources.get(resource), logosPath.indexOf(remappingResources(resource)), 1);
         }
     }
+
+
+    //Da cambiare la posizione della corona quando cambia il giocatore con più punti
+//    public void updateCrownImageInTable(JTable table, Map<String, Integer> playerScore, ArrayList<String> logosPath){
+//        for (Resource resource : collectedResources.keySet()) {
+//            table.setValueAt(collectedResources.get(resource), logosPath.indexOf(remappingResources(resource)), 1);
+//        }
+//    }
 
 
     private void addScrollPane(JComponent component, JPanel panel, int dimW, int dimH){
@@ -1350,9 +1349,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         int y2 = 0;
 
         for (String player: playerPosition.keySet()) {
-            int randomIndex = random.nextInt(avatars.size());
-            String selectedAvatar = avatars.get(randomIndex);
-            avatars.remove(randomIndex);
+            int randomIndex = random.nextInt(avatarsLogo.size());
+            String selectedAvatar = avatarsLogo.get(randomIndex);
+            avatarsLogo.remove(randomIndex);
             int y1 = 0;
 
             JPanel playerAvatarPanel = new JPanel(new GridBagLayout());
@@ -1372,8 +1371,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             playerAvatarPanel.add(avatar, gbc);
             gbc.gridy++;
 
-            //AvatarData avatarData = new AvatarData(player, selectedAvatar);
-            //positionToPlayerData.put(frameManager.getPlayerPositions().get(player), avatarData);
+
+//            AvatarData avatarData = new AvatarData(player, selectedAvatar);
+//            positionToPlayerData.put(playerPosition.get(player), avatarData);
+
 
             lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
             y2++;
@@ -1463,9 +1464,5 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             container.revalidate();
             container.repaint();
         }
-    }
-
-    public Map<Position, AvatarData> getPositionToPlayerData() {
-        return positionToPlayerData;
     }
 }

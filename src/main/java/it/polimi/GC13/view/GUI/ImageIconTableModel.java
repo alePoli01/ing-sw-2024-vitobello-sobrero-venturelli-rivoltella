@@ -2,8 +2,8 @@ package it.polimi.GC13.view.GUI;
 
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
+import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.view.GUI.game.CardManager;
-import it.polimi.GC13.view.GUI.game.MainPage;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -15,21 +15,28 @@ import java.util.List;
 public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableModel implements CardManager {
     private String[] columnNames;
     private Object[][] data;
+    private final ArrayList<String> logosPath;
+    private final EnumMap<K, V> mapInInput;
+    private final Map<V, TokenColor> conversionMap;
 
-    public ImageIconTableModel(String[] columnNames, EnumMap<K, V> mapInInput) {
+
+    public ImageIconTableModel(String[] columnNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap) {
         this.columnNames = columnNames;
+        this.logosPath = logosPath;
+        this.mapInInput = mapInInput;
         this.data = new Object[mapInInput.size()][columnNames.length];
+        this.conversionMap = conversionMap;
         createTable(mapInInput);
     }
 
-
+    //creo una tabella con solo 2 colonne
     public void createTable(EnumMap<K, V> mapInInput){
         try {
             for(Map.Entry<K, V> entry : mapInInput.entrySet()){
                 K key = entry.getKey();
                 V value = entry.getValue();
-                data[CardManager.logos.indexOf(remappingResources(key))][0] = createResizedTokenImageIcon(remappingResources(key), 27);
-                data[CardManager.logos.indexOf(remappingResources(key))][1] = value;
+                data[logosPath.indexOf(remappingEnums(key))][0] = createResizedTokenImageIcon(remappingEnums(key), 30);
+                data[logosPath.indexOf(remappingEnums(key))][1] = value;
             }
         } catch (NoSuchElementException e) {
             JOptionPane.showMessageDialog(null, "No such resource found", "invalid resource", JOptionPane.ERROR_MESSAGE);
@@ -62,7 +69,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
-    public void addColumnOnLeft(String newColumnName, Object[] elements) {
+    public void addColumnOnLeft(String newColumnName, ArrayList<Object> elements) {
         String[] newColumnNames = new String[columnNames.length + 1];
         newColumnNames[0] = newColumnName;
         System.arraycopy(columnNames, 0, newColumnNames, 1, columnNames.length);
@@ -77,8 +84,8 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         }
 
         for (int i = 0; i < newRowCount; i++) {
-            if (i < elements.length && elements[i] != null) {
-                newData[i][0] = checkIfIconInsertionOnColumn(elements[i]);
+            if (i < elements.size() && elements.get(i) != null) {
+                newData[i][0] = checkIfIconInsertionOnColumn(elements.get(i));
             } else {
                 newData[i][0] = null;
             }
@@ -89,54 +96,92 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         fireTableStructureChanged();
     }
 
+    public void addColumnOnRight(String newColumnName, ArrayList<Object> elements) {
+        String[] newColumnNames = new String[columnNames.length + 1];
+        System.arraycopy(columnNames, 0, newColumnNames, 0, columnNames.length);
+        newColumnNames[columnNames.length] = newColumnName;
+        columnNames = newColumnNames;
+
+        int newRowCount = data.length;
+        int newColumnCount = data[0].length + 1;
+
+        Object[][] newData = new Object[newRowCount][newColumnCount];
+        for (int i = 0; i < newRowCount; i++) {
+            System.arraycopy(data[i], 0, newData[i], 0, data[i].length);
+        }
+
+        for (int i = 0; i < newRowCount; i++) {
+            if (i < elements.size() && elements.get(i) != null) {
+                newData[i][newColumnCount - 1] = checkIfIconInsertionOnColumn(elements.get(i));
+            } else {
+                newData[i][newColumnCount - 1] = null;
+            }
+        }
+
+        data = newData;
+
+        fireTableStructureChanged();
+    }
+
     public Object checkIfIconInsertionOnColumn(Object element){
         if(element instanceof Boolean){
-            return createResizedTokenImageIcon(remappingResources(element), 27);
+            return createResizedTokenImageIcon(remappingEnums(element), 27);
         }
         return element;
     }
 
+    public String remappingEnums(Object key){
+        switch (key) {
+            case Resource resource -> {
+                switch (resource) {
+                    case FUNGI -> {
+                        return FUNGI_LOGO_DIR;
+                    }
+                    case ANIMAL -> {
+                        return ANIMAL_LOGO_DIR;
+                    }
+                    case PLANT -> {
+                        return PLANT_LOGO_DIR;
+                    }
+                    case INSECT -> {
+                        return INSECT_LOGO_DIR;
+                    }
+                    case QUILL -> {
+                        return QUILL_LOGO_DIR;
+                    }
+                    case MANUSCRIPT -> {
+                        return MANUSCRIPT_LOGO_DIR;
+                    }
+                    case INKWELL -> {
+                        return INKWELL_LOGO_DIR;
+                    }
+                    default -> {
+                        return ERROR_IMAGE;
+                    }
+                }
+            }
+            case Boolean b -> {
+                if (b) {
+                    return CROWN;
+                } else {
+                    return " ";
+                }
+            }
+            case Position position -> {
+                return P_TOKEN_DIR + getTokenFileName(conversionMap.get(mapInInput.get(position)));
+            }
+            case null, default -> {
+                return ERROR_IMAGE;
+            }
+        }
+    }
+
+    private String getTokenFileName(TokenColor tokenColor) {
+        return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
+    }
 
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
-    }
-
-    public String remappingResources(Object key){
-        if (key instanceof Resource) {
-            switch ((Resource) key) {
-                case FUNGI -> {
-                    return FUNGI_LOGO_DIR;
-                }
-                case ANIMAL -> {
-                    return ANIMAL_LOGO_DIR;
-                }
-                case PLANT -> {
-                    return PLANT_LOGO_DIR;
-                }
-                case INSECT -> {
-                    return INSECT_LOGO_DIR;
-                }
-                case QUILL -> {
-                    return QUILL_LOGO_DIR;
-                }
-                case MANUSCRIPT -> {
-                    return MANUSCRIPT_LOGO_DIR;
-                }
-                case INKWELL -> {
-                    return INKWELL_LOGO_DIR;
-                }
-                default -> {
-                    return ERROR_IMAGE;
-                }
-            }
-        } else if (key instanceof Boolean) {
-            if((Boolean) key){
-                return CROWN;
-            }else{
-                return " ";
-            }
-        } else
-            return ERROR_IMAGE;
     }
 
     @Override

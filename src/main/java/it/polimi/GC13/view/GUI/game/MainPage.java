@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,7 +35,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     private String nickname;
     private TokenColor token;
-    private final ArrayList<String> avatarsImagePaths = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+    //private final ArrayList<String> avatarsImagePaths = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
     public String boardToDisplay;
 
     private final JPanel panelContainer;
@@ -65,14 +66,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private Map<JLabel, JCheckBox> playerCheckBoxMap = new HashMap<>();
 
     //per le carte da pescare
-    private JPanel decksPanel;
     private final ButtonGroup buttonGroupDecks = new ButtonGroup();
     private Map<JLabel, JCheckBox> decksLabelCheckBoxMap = new HashMap<>();
     private Map<Integer, CardData> drawableSerialNumberCheckBoxMap = new HashMap<>();
-    private JPanel resourceImagePanel;
-    private JPanel resourceCheckBoxPanel;
-    private JPanel goldImagePanel;
-    private JPanel goldCheckBoxPanel;
 
     private JButton confirmButton;
     private JButton flipButton;
@@ -645,16 +641,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         southPanel.add(namePanel, gbc);
         southPanel.add(choosePanel, createGridBagConstraints(1,0));
 
-        decksPanel = new JPanel(new GridBagLayout());
-
-        decksPanel = new JPanel();
-        resourceImagePanel = new JPanel(new FlowLayout());
-        resourceCheckBoxPanel = new JPanel(new FlowLayout());
-
-        decksPanel = new JPanel(new GridBagLayout());
-        goldImagePanel = new JPanel(new FlowLayout());
-        goldCheckBoxPanel = new JPanel(new FlowLayout());
-
         panel1.add(southPanel, BorderLayout.SOUTH);
 
 
@@ -700,16 +686,26 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         tokenManager.setTokenInGame(frameManager.getTokenInGame());
         tokenManager.initializeDataPlayer();
 
-        JPanel lateralPanelDX2 = new JPanel();
-        String[] columnNames2 = {"Position", "Player", "Score"};
-        Object[][] data2 = {
-                {1, "Nico", 0},
-                {2, "Nico2", 0},
-        };
 
-        /*JTable table2 = createTable(columnNames2, data2);
-        addScrollPane(table2, lateralPanelDX2, 250, 110);
-        panel2.add(lateralPanelDX2, BorderLayout.EAST);*/
+        EnumMap<Position, String> positionPlayerMap = new EnumMap<>(Position.class);
+        ArrayList<String> listTokenInGame = new ArrayList<>();
+
+
+        for(Map.Entry<String, Position> entry : frameManager.getPlayerPositions().entrySet()){
+            positionPlayerMap.put(entry.getValue(), entry.getKey());
+            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(frameManager.getTokenInGame().get(entry.getKey())));
+        }
+
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setOpaque(false);
+
+        JTable table = new JTable();
+        createTable(table, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true);
+        addScrollPane(table, tablePanel, 200, 180);
+        panel2.add(tablePanel, BorderLayout.EAST);
+
+
 
         panel2.add(tokenManager);
 
@@ -853,7 +849,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
     private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y,int weight) {
-        JButton button=new JButton();
+        JButton button = new JButton();
         button.addActionListener(this);
 
         Coordinates corner = new Coordinates(((x-(16830/2))/152)+50,((y-(11220/2))/78)+50);
@@ -904,23 +900,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         } else return null;
     }
 
-//    private static JTable createTable(String[] columnNames, Object[][] data) {
-//        //ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
-//        JTable table = new JTable(/*model*/);
-//        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
-//
-//        JTableHeader header = table.getTableHeader();
-//        header.setPreferredSize(new Dimension(header.getWidth(), 35));
-//
-//        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-//        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-//        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-//
-//        table.setRowHeight(35);
-//
-//        return table;
-//    }
-
     public String remappingResources(Resource resource){
         switch (resource){
             case FUNGI -> {
@@ -950,20 +929,44 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-    public void createResourceTable(JTable table, String[] columnsNames, EnumMap<Resource, Integer> collectedResources) {
-        ImageIconTableModel<Resource, Integer> model = new ImageIconTableModel<>(columnsNames, collectedResources);
+    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b) {
+        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap);
+
+        int k = 0;
+        if(b){
+            ArrayList<Object> newColumnDataLeft = new ArrayList<>();
+            //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
+            String maxScorePlayer = frameManager.getPlayersScore().entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
+
+            for(String player :  frameManager.getPlayersScore().keySet()){
+                if(player.equals(maxScorePlayer)){
+                    newColumnDataLeft.add(true);
+                } else{
+                    newColumnDataLeft.add(false);
+                }
+            }
+
+            model.addColumnOnLeft(" ", newColumnDataLeft);
+            k = 1;
+        }
 
         table.setModel(model);
-        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if (i == 0 || i == k) {
+                table.getColumnModel().getColumn(i).setCellRenderer(new ImageIconRenderer());
+            } else {
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
+        }
 
         JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 30));
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
 
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
 
-        table.setRowHeight(30);
+        table.setRowHeight(35);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources){
@@ -1304,10 +1307,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
     private void refreshDecksPanels(){
-        resourceImagePanel.removeAll();
-        goldImagePanel.removeAll();
-        resourceCheckBoxPanel.removeAll();
-        goldCheckBoxPanel.removeAll();
         decksLabelCheckBoxMap.clear();
 
         Enumeration<AbstractButton> checkBoxes = buttonGroupDecks.getElements();
@@ -1327,9 +1326,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         int y2 = 0;
 
         for (String player: frameManager.getPlayerPositions().keySet()) {
-            int randomIndex = random.nextInt(avatarsImagePaths.size());
-            String selectedAvatar = avatarsImagePaths.get(randomIndex);
-            avatarsImagePaths.remove(randomIndex);
+            int randomIndex = random.nextInt(avatarsLogo.size());
+            String selectedAvatar = avatarsLogo.get(randomIndex);
+            avatarsLogo.remove(randomIndex);
             int y1 = 0;
 
             JPanel playerAvatarPanel = new JPanel(new GridBagLayout());
@@ -1445,10 +1444,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return panelContainer;
     }
 
-    public JPanel getSouthPanel() {
-        return southPanel;
-    }
-
     public JPanel getChoosePanel() {
         return choosePanel;
     }
@@ -1471,38 +1466,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public Map<JLabel, JCheckBox> getHandLabelCheckBoxMap() {
         return handLabelCheckBoxMap;
-    }
-
-    public ButtonGroup getButtonGroupDecks() {
-        return buttonGroupDecks;
-    }
-
-    public JPanel getResourceImagePanel() {
-        return resourceImagePanel;
-    }
-
-    public JPanel getResourceCheckBoxPanel() {
-        return resourceCheckBoxPanel;
-    }
-
-    public JPanel getGoldImagePanel() {
-        return goldImagePanel;
-    }
-
-    public JPanel getGoldCheckBoxPanel() {
-        return goldCheckBoxPanel;
-    }
-
-    public Map<Integer, CardData> getDrawableSerialNumberCheckBoxMap() {
-        return drawableSerialNumberCheckBoxMap;
-    }
-
-    public JPanel getDecksPanel() {
-        return decksPanel;
-    }
-
-    public Map<JLabel, JCheckBox> getDecksLabelCheckBoxMap() {
-        return decksLabelCheckBoxMap;
     }
 
     public void setFrameManager(FrameManager frameManager) {
@@ -1535,10 +1498,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public JButton getFlipButton() {
         return flipButton;
-    }
-
-    public boolean isFlipToSend() {
-        return flipToSend;
     }
 
     public void setFlipToSend(boolean flipToSend) {

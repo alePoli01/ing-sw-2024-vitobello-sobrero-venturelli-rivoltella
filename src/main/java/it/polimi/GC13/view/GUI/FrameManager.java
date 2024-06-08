@@ -9,6 +9,7 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
 import it.polimi.GC13.network.messages.fromclient.ReconnectPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
+import it.polimi.GC13.view.GUI.game.CardManager;
 import it.polimi.GC13.view.GUI.game.MainPage;
 import it.polimi.GC13.view.GUI.game.OnSetLastTurnDialog;
 import it.polimi.GC13.view.GUI.game.WinningFrame;
@@ -50,6 +51,19 @@ public class FrameManager extends JFrame implements View {
     private WinningFrame winningFrame;
 
     private Map<String, TokenColor> tokenInGame = new HashMap<>();
+
+
+    //TODO: DA ADATTARE LA DIMENSIONE DELLO SCROLLPANE DELLA TABELLA NELLA SCOREBOARD
+    // + FARE UN MERGE DEI TASTI SHOWHAND E SHOWDECKS
+    // + DA RIDIMENSIONARE TUTTO IN BASE ALLA RISOLUZIONE DELLO SCHERMO (1920X1080)
+    // + DA IMPOSTARE LA MODIFICA DELA PRIMA COLONNA DELLA TABELLA NELLA SCOREBOARD (DA CREARE IL METODO)
+    // + DA FARE LA CHAT (TEXTAREA + JCOMBOBOX LA SELEZIONE DEL GIOCATORE CON CUI CHATTARE)
+    // + DA TESTARE NELLE VARE COMBINAZIONI TUI-GUI E RMI-SOCKET (RICERCA ERRORI)
+    // + DA GESTIRE CHIUSURA DEI FRAME ALLA DISCONNESSIONE DEL SERVER (IN FRAMEMANAGER)
+    // + DA MIGLIORARE VISIVAMENTE IL POPUP DI onSetLastTurn (PROVA VISIBILE IN MAINFRAMEPROVA AL CLICK DEL TASTO POPUP)
+    // + DA IMPOSTARE SFONDI
+
+
 
 
     public FrameManager() {}
@@ -110,7 +124,6 @@ public class FrameManager extends JFrame implements View {
         } else {
             this.gamesLog.add(playerNickname + " has drawn a card");
         }
-
     }
 
     @Override
@@ -124,8 +137,6 @@ public class FrameManager extends JFrame implements View {
         this.resourceCardsAvailable.clear();
         this.resourceCardsAvailable.putAll(resourceFacedUpSerial);
     }
-
-
 
     @Override
     public void checkForExistingGame() {
@@ -298,8 +309,6 @@ public class FrameManager extends JFrame implements View {
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
-    //displayAvailableCells
-
     /**
      METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
      */
@@ -309,14 +318,10 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    //onSetLastTurn + placeCard
 
     @Override
     public void onSetLastTurn(String nickname, Position position) {
-        SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
-
-
-
+        //SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
 
         /*   System.out.print(nickname + " has reached 20 points. There will be another turn for players in position: ");
         for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
@@ -333,6 +338,9 @@ public class FrameManager extends JFrame implements View {
 
         for(String player : playersScore.keySet()){
             gamePage.getTokenManager().updatePlayerScore(player, playersScore.get(player));
+
+            //QUI ANDRÀ INSERITO IL METODO PER CAMBIARE LA PRIMA COLONNA DELLA TABELLA NELLA SCOREBOARD
+
         }
 
         if (this.nickname.equals(playerNickname)) {
@@ -388,9 +396,6 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void onReconnectToGame() {
         this.newStatus = true;
-//        this.menuOptions();
-//        System.out.print("Your choice: ");
-
     }
 
     @Override
@@ -398,7 +403,7 @@ public class FrameManager extends JFrame implements View {
         if (!this.playersCollectedResources.containsKey(playerNickname)) {
             this.playersCollectedResources.put(playerNickname, collectedResources);
             if (this.nickname.equals(playerNickname)) {
-                gamePage.createResourceTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources);
+                gamePage.createTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources, CardManager.logos, null, false);
             }
         } else {
             this.playersCollectedResources.entrySet()
