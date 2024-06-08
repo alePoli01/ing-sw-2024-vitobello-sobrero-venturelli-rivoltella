@@ -50,20 +50,16 @@ public class FrameManager extends JFrame implements View {
     private MainPage gamePage;
     private WinningFrame winningFrame;
 
-    private Map<String, TokenColor> tokenInGame = new HashMap<>();
+    private final Map<String, TokenColor> tokenInGame = new HashMap<>();
 
 
     //TODO: DA ADATTARE LA DIMENSIONE DELLO SCROLLPANE DELLA TABELLA NELLA SCOREBOARD
-    // + FARE UN MERGE DEI TASTI SHOWHAND E SHOWDECKS
     // + DA RIDIMENSIONARE TUTTO IN BASE ALLA RISOLUZIONE DELLO SCHERMO (1920X1080)
-    // + DA IMPOSTARE LA MODIFICA DELA PRIMA COLONNA DELLA TABELLA NELLA SCOREBOARD (DA CREARE IL METODO)
     // + DA FARE LA CHAT (TEXTAREA + JCOMBOBOX LA SELEZIONE DEL GIOCATORE CON CUI CHATTARE)
     // + DA TESTARE NELLE VARE COMBINAZIONI TUI-GUI E RMI-SOCKET (RICERCA ERRORI)
-    // + DA GESTIRE CHIUSURA DEI FRAME ALLA DISCONNESSIONE DEL SERVER (IN FRAMEMANAGER)
+    // + DA GESTIRE LA DISCONNESSIONE DEL SERVER (IN FRAMEMANAGER)
     // + DA MIGLIORARE VISIVAMENTE IL POPUP DI onSetLastTurn (PROVA VISIBILE IN MAINFRAMEPROVA AL CLICK DEL TASTO POPUP)
-    // + DA IMPOSTARE SFONDI
-
-
+    // + DA IMPOSTARE SFONDI + DA SINCRONIZZARE BENE PUNTEGGIO -> LABEL E SCOREBOARD (CERTE VOLTE NON ASSEGNA IL PUNTO)
 
 
     public FrameManager() {}
@@ -322,12 +318,7 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void onSetLastTurn(String nickname) {
         //SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
-
-        /*   System.out.print(nickname + " has reached 20 points. There will be another turn for players in position: ");
-        for (; playerPosition.ordinal() < this.playerPositions.size(); playerPosition.next(this.playerPositions.size())) {
-            System.out.print(playerPosition + " ");
-            System.out.println(" and another one bonus.");
-        }*/
+        this.newStatus = true;
     }
 
 
@@ -338,16 +329,15 @@ public class FrameManager extends JFrame implements View {
 
         for(String player : playersScore.keySet()){
             gamePage.getTokenManager().updatePlayerScore(player, playersScore.get(player));
-
-            //QUI ANDRÀ INSERITO IL METODO PER CAMBIARE LA PRIMA COLONNA DELLA TABELLA NELLA SCOREBOARD
-
         }
+
+        gamePage.updateCrownImageInTable(gamePage.getPositionTable());
 
         if (this.nickname.equals(playerNickname)) {
             gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
             gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
+            System.out.println(playersScore.get(playerNickname));
         }
-
     }
 
 
@@ -463,18 +453,18 @@ public class FrameManager extends JFrame implements View {
                 refreshFrame(gamePage);
             }
             if (this.myTurn) {
-                gamePage.getTurnLable().setText("It's my turn!");
-                gamePage.getTurnLable().setForeground(new Color(45, 114, 27));
-                gamePage.getTurnLable2().setText("It's my turn!");
-                gamePage.getTurnLable2().setForeground(new Color(45, 114, 27));
+                gamePage.getTurnLabel().setText("It's my turn!");
+                gamePage.getTurnLabel().setForeground(new Color(45, 114, 27));
+                gamePage.getTurnLabel2().setText("It's my turn!");
+                gamePage.getTurnLabel2().setForeground(new Color(45, 114, 27));
 
                 gamePage.getHandLabelCheckBoxMap().values().forEach(checkBox -> checkBox.setEnabled(true));
 
             } else {
-                gamePage.getTurnLable().setText("waiting for my turn...");
-                gamePage.getTurnLable().setForeground(new Color(175, 31, 31));
-                gamePage.getTurnLable2().setText("waiting for my turn...");
-                gamePage.getTurnLable2().setForeground(new Color(175, 31, 31));
+                gamePage.getTurnLabel().setText("waiting for my turn...");
+                gamePage.getTurnLabel().setForeground(new Color(175, 31, 31));
+                gamePage.getTurnLabel2().setText("waiting for my turn...");
+                gamePage.getTurnLabel2().setForeground(new Color(175, 31, 31));
             }
         }
         if (turn) {

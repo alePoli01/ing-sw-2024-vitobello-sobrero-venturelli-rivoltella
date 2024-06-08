@@ -39,7 +39,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     private String nickname = "Niccolo";
     private TokenColor token = TokenColor.BLUE;
     private List<Integer> hand = List.of(1, 2, 3); //DA NON METTERE
-    //private final ArrayList<String> avatars = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+    private ArrayList<String> listTokenInGame;
     private boolean myTurn = true;
 
     private JPanel panelContainer;
@@ -109,6 +109,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     private List<Integer> serialCommonObjectiveCard  = List.of(88, 99);; //DA NON METTERE
     private int serialPrivateObjectiveCard = 89; //DA NON METTERE
+
+    private JTable positionTable;
 
 
     //TOKEN SETUP
@@ -556,15 +558,13 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
 
         EnumMap<Position, String> positionPlayerMap = new EnumMap<>(Position.class);
-        ArrayList<String> listTokenInGame = new ArrayList<>();
+        listTokenInGame = new ArrayList<>();
 
-        Random random = new Random();
 
         for(int i=0; i<4; i++){
             playerPosition.put("Player" + (i + 1), Arrays.stream(Position.values()).toList().get(i));
             tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
-            int randomIndex = random.nextInt(16);
-            playersScore.put("Player" + (i + 1), randomIndex);
+            playersScore.put("Player" + (i + 1), 0);
             //System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
         }
 
@@ -831,17 +831,34 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
 
-
-
-
-
         JPanel tablePanel = new JPanel();
         tablePanel.setOpaque(false);
 
-        JTable table = new JTable();
-        createTable(table, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true);
-        addScrollPane(table, tablePanel, 200, 180);
+        positionTable = new JTable();
+        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true);
+        addScrollPane(positionTable, tablePanel, 200, 180);
         panel2.add(tablePanel, BorderLayout.EAST);
+
+
+
+        Random random = new Random();
+
+        for(String player : playersScore.keySet()){
+            int randomIndex = random.nextInt(16);
+            playersScore.put(player, randomIndex);
+            tokenManager.updatePlayerScore(player, playersScore.get(player));
+        }
+
+        playersScore.put("Player1", 13);
+        playersScore.put("Player2", 15);
+        playersScore.put("Player3", 28);
+        playersScore.put("Player4", 29);
+
+        for(String player : playersScore.keySet()){
+            tokenManager.updatePlayerScore(player, playersScore.get(player));
+        }
+
+        updateCrownImageInTable(positionTable);
 
 
 
@@ -1022,15 +1039,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         int k = 0;
         if(b){
             ArrayList<Object> newColumnDataLeft = new ArrayList<>();
-            //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
-            String maxScorePlayer = playersScore.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
-            for(String player : playersScore.keySet()){
-                if(player.equals(maxScorePlayer)){
-                    newColumnDataLeft.add(true);
-                } else{
-                    newColumnDataLeft.add(false);
-                }
+            for(int i = 0; i< playersScore.size(); i++){
+                newColumnDataLeft.add(false);
             }
 
             model.addColumnOnLeft(" ", newColumnDataLeft);
@@ -1062,13 +1073,20 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
+    public void updateCrownImageInTable(JTable table){
+        //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
-    //Da cambiare la posizione della corona quando cambia il giocatore con più punti
-//    public void updateCrownImageInTable(JTable table, Map<String, Integer> playerScore, ArrayList<String> logosPath){
-//        for (Resource resource : collectedResources.keySet()) {
-//            table.setValueAt(collectedResources.get(resource), logosPath.indexOf(remappingResources(resource)), 1);
-//        }
-//    }
+        String maxScorePlayer = playersScore.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
+
+        for (int row = 0; row < table.getModel().getRowCount(); row++) {
+            String cellValue = (String) table.getModel().getValueAt(row, 2);
+            if (maxScorePlayer.equals(cellValue)) {
+                table.setValueAt(true, row , 0);
+            } else {
+                table.setValueAt(false, row , 0);
+            }
+        }
+    }
 
 
     private void addScrollPane(JComponent component, JPanel panel, int dimW, int dimH){

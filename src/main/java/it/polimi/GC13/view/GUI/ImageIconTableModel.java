@@ -65,7 +65,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        data[rowIndex][columnIndex] = aValue;
+        data[rowIndex][columnIndex] = checkIfIconInsertionOnColumn(aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
