@@ -375,8 +375,11 @@ public class TUI implements View {
 
     @Override
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
-        this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
-        this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
+        if (!this.playersScore.containsKey(playerNickname)) {
+            this.playersScore.put(playerNickname, newPlayerScore);
+        } else {
+            this.playersScore.replace(playerNickname, newPlayerScore);
+        }
     }
 
     /**
