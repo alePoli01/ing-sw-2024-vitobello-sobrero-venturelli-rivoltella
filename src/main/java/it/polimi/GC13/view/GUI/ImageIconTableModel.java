@@ -35,7 +35,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
             for(Map.Entry<K, V> entry : mapInInput.entrySet()){
                 K key = entry.getKey();
                 V value = entry.getValue();
-                data[logosPath.indexOf(remappingEnums(key))][0] = createResizedTokenImageIcon(remappingEnums(key), 30);
+                data[logosPath.indexOf(remappingEnums(key))][0] = createResizedTokenImageIcon(remappingEnums(key), 29);
                 data[logosPath.indexOf(remappingEnums(key))][1] = value;
             }
         } catch (NoSuchElementException e) {

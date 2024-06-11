@@ -96,7 +96,7 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
 
     public OnSetLastTurnDialog(JFrame parent, String nickname, Position playerPosition) {
         super(parent, "Last Round", true);
-        setSize(500, 200);
+        setSize(500, 250);
         setResizable(false);
         setLocationRelativeTo(parent);
 

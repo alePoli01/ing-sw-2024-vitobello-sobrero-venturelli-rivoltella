@@ -437,15 +437,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         getContentPane().add(scrollPane);
 
 
-        JLabel setupLabel = createTextLabelFont("setup phase [3/3] ", 28); //20
+        JLabel setupLabel = createTextLabelFont("setup phase [3/3] ", 28);
         setBorderInsets(setupLabel, 20, 0, 40, 0);
         panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
 
-        JLabel titleLabel1 = createTextLabelFont("Setup Objective Card: ", 64); //50
+        JLabel titleLabel1 = createTextLabelFont("Setup Objective Card: ", 64);
         setBorderInsets(titleLabel1, 0, 0, 60, 0);
         panelContainer.add(titleLabel1, createGridBagConstraints(0, 1));
 
-        JLabel startCardLabel = createTextLabelFont("These are the Common Objective Cards: ", 32); //25
+        JLabel startCardLabel = createTextLabelFont("These are the Common Objective Cards: ", 32);
         setBorderInsets(startCardLabel, 0, 0, 40, 0);
         panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
 
@@ -471,7 +471,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         JPanel panelButton = new JPanel();
         panelButton.setOpaque(false);
         panelButton.add(confirmButton, createGridBagConstraints(0, 5));
-        setBorderInsets(panelButton, 0,0,26, 0);
+        setBorderInsets(panelButton, 0,0,26, 0); // <---
         panelContainer.add(panelButton, createGridBagConstraints(0, 5));
         confirmButton.addActionListener (e -> {
             int choice;
@@ -685,7 +685,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         positionTable = new JTable();
         createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true);
-        addScrollPane(positionTable, tablePanel, 200, 180);
+        addScrollPane(positionTable, tablePanel, 200, ((positionTable.getRowCount() + 1) * positionTable.getRowHeight()) + 5);
         panel2.add(tablePanel, BorderLayout.EAST);
 
 
