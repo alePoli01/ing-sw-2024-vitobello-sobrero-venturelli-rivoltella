@@ -245,7 +245,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
     //START CARD SETUP
-    public MainFrameProva() {
+    /*public MainFrameProva() {
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -288,9 +288,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         namePanel.setOpaque(false);
         choosePanel.add(namePanel, createGridBagConstraints(0, 1));
 
-        //showStarterCardAndPrivateObjectiveCard(hand2);
-        showStarterCardAndPrivateObjectiveCard2(hand2, 7);
-
+        showStarterCardAndPrivateObjectiveCard(hand2);
 
         confirmButton = createButton("Confirm", 32);
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
@@ -308,7 +306,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         });
 
         setVisible(true);
-    }
+    }*/
 
     private void refresh(){
         tokenPanel.removeAll();
@@ -416,86 +414,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         });
     }
 
-
-
-
-    public void showStarterCardAndPrivateObjectiveCard2(List<Integer> numberCards, int divider) {
-        AtomicBoolean b = new AtomicBoolean(true);
-        numberCards.forEach( numberCard -> {
-            Path startDir = identifyPathCard(numberCard);
-            if(startDir != null){
-                try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString())).filter(numberCard > 86 ? f -> f.getFileName().toString().contains("front") : Path::isAbsolute)) {
-                    paths.forEach(path -> {
-                        ImageIcon originalIcon = new ImageIcon(String.valueOf(path));
-
-                        JLabel startCardLabelImage = new JLabel(new ImageIcon(originalIcon.getImage().getScaledInstance(getNewWidth(originalIcon)/divider , getNewHeight(originalIcon)/divider, Image.SCALE_SMOOTH)));
-                        setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
-                        tokenPanel.add(startCardLabelImage);
-
-                        JLabel startCardLabelText;
-                        JCheckBox jCheckBox;
-
-                        if (numberCard > 86) { //objective
-                            if(numberCard<=94){
-                                startCardLabelText = createTextLabelFont("Pattern", 32);
-                            }else if(numberCard<=98){
-                                startCardLabelText = createTextLabelFont("Tris Reign", 32);
-                            }else {
-                                startCardLabelText = createTextLabelFont("Objects", 32);
-                            }
-                            jCheckBox = new JCheckBox(numberCard.toString());
-                        } else { //starter
-                            if(String.valueOf(path).contains("front")){
-                                startCardLabelText = createTextLabelFont("Front", 32);
-                                jCheckBox = new JCheckBox("false");
-                            } else {
-                                startCardLabelText = createTextLabelFont("Back", 32);
-                                jCheckBox = new JCheckBox("true");
-                            }
-                        }
-
-                        setBorderInsets(startCardLabelText, 15, 230, 40, 230);
-                        namePanel.add(startCardLabelText);
-
-                        jCheckBox.setFocusPainted(false);
-                        jCheckBox.setBorderPainted(false);
-                        buttonGroup.add(jCheckBox);
-                        setBorderInsets(jCheckBox, 100, 150, 100, 150);
-                        jCheckBox.setOpaque(false);
-                        jCheckBox.addActionListener(e -> {
-                            confirmButton.setEnabled(handLabelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
-
-                            handLabelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
-
-                            handLabelCheckBoxMap.entrySet()
-                                    .stream()
-                                    .filter(en -> en.getValue().equals(e.getSource()))
-                                    .findFirst()
-                                    .orElseThrow()
-                                    .getKey()
-                                    .setForeground(Color.RED);
-                        });
-                        checkBoxPanel.add(jCheckBox);
-
-                        if(jCheckBox.getText().equals("true") || b.get()){
-                            JPanel emptyPanel = new JPanel();
-                            emptyPanel.setOpaque(false);
-                            setBorderInsets(emptyPanel, 1, 85, 1, 85);
-                            checkBoxPanel.add(emptyPanel);
-                            b.set(false);
-                        }
-                        handLabelCheckBoxMap.put(startCardLabelText, jCheckBox);
-                    });
-
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-    }
-
-
-
     //OBJECTIVE CARD
     /*public MainFrameProva() {
         setTitle("Codex Naturalis");
@@ -537,9 +455,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         List<Integer> serialCommonObjectiveCards = List.of(99, 92);
 
-        //showCommonObjectiveCard( serialCommonObjectiveCards, commonPanel, 3);
-        showCommonObjectiveCard2( serialCommonObjectiveCards, commonPanel, 7);
-
+        showCommonObjectiveCard( serialCommonObjectiveCards, commonPanel, 3);
 
         JLabel titleLabel2 = createTextLabelFont("Choose your private objective card: ", 32);
         setBorderInsets(titleLabel2, 0, 0, 30, 0);
@@ -567,13 +483,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         panelContainer.add(choosePanel, createGridBagConstraints(0,5));
 
 
-        //showStarterCardAndPrivateObjectiveCard( privateObjectiveCards);
-        showStarterCardAndPrivateObjectiveCard2(privateObjectiveCards, 7);
+        showStarterCardAndPrivateObjectiveCard( privateObjectiveCards);
 
         confirmButton = createButton("Play", 32);
         JPanel panelButton = new JPanel();
         panelButton.setOpaque(false);
-        panelButton.add(confirmButton /*, createGridBagConstraints(0, 6) *);
+        panelButton.add(confirmButton);
         setBorderInsets(panelButton, 210,10,0, 10);
         panelContainer.add(panelButton, createGridBagConstraints(0, 5));
         confirmButton.addActionListener (e -> {
@@ -592,26 +507,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         //ratio();
 
         setVisible(true);
-    } */
-
-    private double getScaleFactor(){
-        int screenResolution = Toolkit.getDefaultToolkit().getScreenResolution();
-        return screenResolution / 96.0;
-    }
-
-    private int getNewWidth(ImageIcon imageIcon){
-        double scaleFactor = getScaleFactor();
-        int originalWidth = imageIcon.getIconWidth();
-
-        return (int) (originalWidth * scaleFactor);
-    }
-
-    private int getNewHeight(ImageIcon imageIcon){
-        double scaleFactor = getScaleFactor();
-        int originalHeight = imageIcon.getIconHeight();
-
-        return (int) (originalHeight * scaleFactor);
-    }
+    }*/
 
 
     public void showCommonObjectiveCard(List<Integer> commonObjectiveCards, JPanel panel, int divider) {
@@ -633,31 +529,11 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
 
-    public void showCommonObjectiveCard2(List<Integer> commonObjectiveCards, JPanel panel, int divider) {
-        commonObjectiveCards.forEach( numberCard -> {
-            Path startDir = identifyPathCard(numberCard);
-            if(startDir != null){
-                try (Stream<Path> paths = Files.walk(Paths.get(startDir.toUri())).filter(Files::isRegularFile).filter(f -> f.getFileName().toString().contains(numberCard.toString())).filter(f -> f.getFileName().toString().contains("front"))) {
-                    paths.forEach(path -> {
-                        ImageIcon originalIcon = new ImageIcon(String.valueOf(path));
-                        JLabel startCardLabelImage = new JLabel(new ImageIcon(originalIcon.getImage().getScaledInstance(getNewWidth(originalIcon) / divider, getNewHeight(originalIcon) / divider, Image.SCALE_SMOOTH)));
-                        setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL", Color.BLACK, 1);
-                        panel.add(startCardLabelImage);
-                    });
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-    }
-
-
-
 
 //TODO: ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     //GAME
-    /*public MainFrameProva() {
+    public MainFrameProva() {
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -799,8 +675,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         setBorderInsets(labelCommonObjectiveCards, 0,0,10,0);
         commonPanel.add(labelCommonObjectiveCards);
 
-        //showCommonObjectiveCard(serialCommonObjectiveCard, commonPanel, 10);
-        showCommonObjectiveCard2(serialCommonObjectiveCard, commonPanel, 24);
+        showCommonObjectiveCard(serialCommonObjectiveCard, commonPanel, 10);
 
         labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
         setBorderInsets(labelPrivateObjectiveCards, 0,0,10,0);
@@ -808,8 +683,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         List<Integer> privateObjectiveCard = List.of(serialPrivateObjectiveCard);
 
-        //showCommonObjectiveCard(privateObjectiveCard, commonPanel, 10);
-        showCommonObjectiveCard2(privateObjectiveCard, commonPanel, 24);
+        showCommonObjectiveCard(privateObjectiveCard, commonPanel, 10);
 
         lateralPanelDX.add(commonPanel);
 
@@ -1012,7 +886,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         
 
         setVisible(true);
-    }*/
+    }
 
 
 
