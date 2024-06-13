@@ -20,22 +20,21 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
     private final Map<V, TokenColor> conversionMap;
 
 
-    public ImageIconTableModel(String[] columnNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap) {
+    public ImageIconTableModel(String[] columnNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, int dim) {
         this.columnNames = columnNames;
         this.logosPath = logosPath;
         this.mapInInput = mapInInput;
         this.data = new Object[mapInInput.size()][columnNames.length];
         this.conversionMap = conversionMap;
-        createTable(mapInInput);
+        createTable(mapInInput, dim);
     }
 
-    //creo una tabella con solo 2 colonne
-    public void createTable(EnumMap<K, V> mapInInput){
+    public void createTable(EnumMap<K, V> mapInInput, int dim){
         try {
             for(Map.Entry<K, V> entry : mapInInput.entrySet()){
                 K key = entry.getKey();
                 V value = entry.getValue();
-                data[logosPath.indexOf(remappingEnums(key))][0] = createResizedTokenImageIcon(remappingEnums(key), 29);
+                data[logosPath.indexOf(remappingEnums(key))][0] = createResizedTokenImageIcon(remappingEnums(key), dim);
                 data[logosPath.indexOf(remappingEnums(key))][1] = value;
             }
         } catch (NoSuchElementException e) {

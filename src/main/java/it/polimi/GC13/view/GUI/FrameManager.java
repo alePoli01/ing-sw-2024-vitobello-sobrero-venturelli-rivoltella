@@ -317,7 +317,7 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onSetLastTurn(String nickname) {
-        //SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, this.gamePage, nickname, position));
+        SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, nickname));
         this.newStatus = true;
     }
 
@@ -393,7 +393,7 @@ public class FrameManager extends JFrame implements View {
         if (!this.playersCollectedResources.containsKey(playerNickname)) {
             this.playersCollectedResources.put(playerNickname, collectedResources);
             if (this.nickname.equals(playerNickname)) {
-                gamePage.createTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources, CardManager.logos, null, false);
+                gamePage.createTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources, CardManager.logos, null, false, 25);
             }
         } else {
             this.playersCollectedResources.entrySet()
@@ -405,7 +405,7 @@ public class FrameManager extends JFrame implements View {
                             .forEach(entry -> entry.setValue(collectedResources.get(entry.getKey()))));
 
             if (playerNickname.equals(this.nickname)){
-                gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources);
+                gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources, CardManager.logos);
             }
         }
     }

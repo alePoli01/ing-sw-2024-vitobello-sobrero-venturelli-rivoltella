@@ -18,79 +18,99 @@ import java.awt.event.ActionListener;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
 
+    //record(s)
     public record CardData(JLabel label, JCheckBox checkBox) {}
 
+    //Manager of interaction between server and game
     private FrameManager frameManager;
 
+    //setting user parameters
     private String nickname;
     private TokenColor token;
-    public String boardToDisplay;
-
-    private final JPanel panelContainer;
-    private final JPanel choosePanel;
-    private boolean flipToSend = false;
-    private int serialTosend = -1;
     private List<TokenColor> tokenColorList;
 
-    private JLayeredPane board;
-    private final Map<Coordinates, JButton> boardButtonMap = new HashMap<>();
-    int buttonPlaced = 200;
-
+    //panels and tables in the game
+    private final JPanel panelContainer;
+    private final JPanel choosePanel;
     private JPanel southPanel;
-    private JPanel lateralPanelDX;
-    private final JTable resourceTable = new JTable();
     private JPanel tokenPanel;
     private JPanel namePanel;
     private JPanel checkBoxPanel;
     private JPanel commonPanel;
-    private JLabel labelPrivateObjectiveCards;
+    private final JTable resourceTable = new JTable(); //table in the Game page
+    private JTable positionTable; //table in the ScoreBoard page
+
+    //Game board attributes
+    private JLayeredPane board;
+    private final Map<Coordinates, JButton> boardButtonMap = new HashMap<>();
+    public String boardToDisplay;
+
+    //parameters to send to the server
+    private boolean flipToSend = false;
+    private int serialToSend = -1;
+    private Coordinates cordToSend = null;
+
+
+    //HashMap and ButtonGroup
     private final ButtonGroup buttonGroup = new ButtonGroup();
-    private final ButtonGroup avatarButtonGroup = new ButtonGroup();
+    private final ButtonGroup avatarButtonGroup = new ButtonGroup(); //for the users' avatar
 
-
-    //per le carte nella mano
+    //hand attributes
     private final Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();;
     private final Map<Integer, CardData> handSerialNumberCheckBoxMap = new HashMap<>();
     private final Map<JLabel, JCheckBox> playerCheckBoxMap = new HashMap<>();
 
-    //per le carte da pescare
+    //decks attributes
     private final ButtonGroup buttonGroupDecks = new ButtonGroup();
     private final Map<JLabel, JCheckBox> decksLabelCheckBoxMap = new HashMap<>();
     private final Map<Integer, CardData> drawableSerialNumberCheckBoxMap = new HashMap<>();
 
+    //buttons
     private JButton confirmButton;
     private JButton flipButton;
     private JButton decksButton;
-    private Coordinates cordToSend = null;
 
+    //attributes for the waiting Lobby
     private Timer timer;
     int progress = 0;
     int colorIndex = 0;
 
+    //GamePanel and ScoreBoardPanel
     final static String PANEL1 = "Game";
     final static String PANEL2 = "Scoreboard";
+
+    //Flags
     private int flag = -1;
     private boolean checkingHandWhileDrawing = false;
     private boolean boardButtonFlag = true;
     private boolean unableExceptionFlag = false;
 
+    //Labels
     private JLabel turnLabel;
     private JLabel turnLabel2;
     private JLabel scoreLabel;
     private JLabel scoreLabel2;
 
+    //management of the movements of tokens on the ScoreBoard
     private TokenManager tokenManager;
-    private JTable positionTable;
+
+    //chat
+    private JComboBox<String> combobox;
+    private JTextArea chatArea;
+    private JTextField messageField;
+
 
     public MainPage(List<TokenColor> tokenColorList) {
         setTitle("Codex Naturalis");
@@ -228,7 +248,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panelContainer.add(titleLabel, createGridBagConstraints(0, 1));
 
         JLabel startCardLabel = createTextLabelFont("Choose which side you would like to place your start card: ", 32);
-        setBorderInsets(startCardLabel, 0, 0, 90, 0);
+        setBorderInsets(startCardLabel, 0, 0, 50, 0);
         panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
 
 
@@ -238,23 +258,27 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         showStarterCardAndPrivateObjectiveCard(frameManager.getHand());
 
-
         confirmButton.setText("Confirm");
-        confirmButton.setBackground(new Color(232, 221, 183, 255));
+        //confirmButton.setBackground(new Color(232, 221, 183, 255));
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
         confirmButton.addActionListener (e -> {
             boolean isFlipped;
-            for (JCheckBox checkBox : handLabelCheckBoxMap.values()) {
-                if (checkBox.isSelected()) {
-                    isFlipped = checkBox.getText().equals("true");
-                    if (e.getActionCommand().equals("Confirm")) {
-                        frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
-                        createLobby();
-                        getContentPane().revalidate();
-                        getContentPane().repaint();
+            if(handLabelCheckBoxMap.values().stream().noneMatch(c->c.getText().equals("error"))) {
+                for(JCheckBox checkBox : handLabelCheckBoxMap.values()) {
+                    if(checkBox.isSelected()) {
+                        isFlipped = checkBox.getText().equals("true");
+                        if(e.getActionCommand().equals("Confirm")) {
+                            frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
+                            createLobby();
+                            getContentPane().revalidate();
+                            getContentPane().repaint();
+                        }
+                        break;
                     }
-                    break;
                 }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                //TODO: da capire cosa fare per gestire l'errore
             }
         });
     }
@@ -277,15 +301,25 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public Path identifyPathCard(int numberCard){
         Path startDir;
-        if (numberCard > 0 && numberCard <= 40)
-            startDir = Paths.get(RESOURCE_DIR);
-        else if (numberCard <= 80)
-            startDir = Paths.get(GOLD_DIR);
-        else if (numberCard <= 86)
-            startDir = Paths.get(STARTER_DIR);
-        else if (numberCard <= 102)
-            startDir = Paths.get(OBJECTIVE_DIR);
-        else {
+        try {
+            if (numberCard > 0) {
+                if (numberCard <= 40)
+                    startDir = Paths.get(RESOURCE_DIR);
+                else if (numberCard <= 80)
+                    startDir = Paths.get(GOLD_DIR);
+                else if (numberCard <= 86)
+                    startDir = Paths.get(STARTER_DIR);
+                else if((numberCard <= 102))
+                    startDir = Paths.get(OBJECTIVE_DIR);
+                else {
+                    JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+        } catch (InvalidPathException e) {
             JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
             return null;
         }
@@ -363,6 +397,48 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
                 }
+            } else { //gestione errore path
+                for(int i = 0; i < 2; i++){
+                    Image img = new ImageIcon(ERROR_CARD).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/15, img.getHeight(null)/15, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
+                    tokenPanel.add(startCardLabelImage);
+
+                    JLabel startCardLabelText = createTextLabelFont("Error", 32);
+                    JCheckBox jCheckBox = new JCheckBox("error");
+
+                    setBorderInsets(startCardLabelText, 15, 230, 40, 230);
+                    namePanel.add(startCardLabelText);
+
+                    jCheckBox.setFocusPainted(false);
+                    jCheckBox.setBorderPainted(false);
+                    buttonGroup.add(jCheckBox);
+                    setBorderInsets(jCheckBox, 100, 150, 100, 150);
+                    jCheckBox.setOpaque(false);
+                    jCheckBox.addActionListener(e -> {
+                        confirmButton.setEnabled(handLabelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
+
+                        handLabelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                        handLabelCheckBoxMap.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().equals(e.getSource()))
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey()
+                                .setForeground(Color.RED);
+                    });
+                    checkBoxPanel.add(jCheckBox);
+
+                    if(jCheckBox.getText().equals("error") || b.get()){
+                        JPanel emptyPanel = new JPanel();
+                        emptyPanel.setOpaque(false);
+                        setBorderInsets(emptyPanel, 1, 85, 1, 85);
+                        checkBoxPanel.add(emptyPanel);
+                        b.set(false);
+                    }
+                    handLabelCheckBoxMap.put(startCardLabelText, jCheckBox);
+                }
             }
         });
     }
@@ -382,6 +458,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     });
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                for(int i = 0; i<2; i++){
+                    Image img = new ImageIcon(ERROR_CARD).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null) / divider, img.getHeight(null) / divider, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL", Color.BLACK, 1);
+                    panel.add(startCardLabelImage);
                 }
             }
         });
@@ -410,7 +494,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panelContainer.add(label2, createGridBagConstraints(0,1));
 
         JProgressBar progressBar = new JProgressBar(0, 100);
-        progressBar.setPreferredSize(new Dimension(300,30));
+        setBoxComponentSize(progressBar,300,30);
         progressBar.setForeground(colors.get(colorIndex));
         colorIndex++;
         panelContainer.add(progressBar, createGridBagConstraints(0,2));
@@ -429,20 +513,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
     public void setupObjectiveCard(List<Integer> privateObjectiveCards){
-        getContentPane().remove(panelContainer);
-        JScrollPane scrollPane = new JScrollPane(panelContainer);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setOpaque(false);
-        getContentPane().add(scrollPane);
-
-
         JLabel setupLabel = createTextLabelFont("setup phase [3/3] ", 28);
-        setBorderInsets(setupLabel, 20, 0, 40, 0);
+        setBorderInsets(setupLabel, 20, 0, 20, 0);
         panelContainer.add(setupLabel, createGridBagConstraints(0, 0));
 
         JLabel titleLabel1 = createTextLabelFont("Setup Objective Card: ", 64);
-        setBorderInsets(titleLabel1, 0, 0, 60, 0);
+        setBorderInsets(titleLabel1, 0, 0, 30, 0);
         panelContainer.add(titleLabel1, createGridBagConstraints(0, 1));
 
         JLabel startCardLabel = createTextLabelFont("These are the Common Objective Cards: ", 32);
@@ -453,11 +529,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         commonPanel.setOpaque(false);
         panelContainer.add(commonPanel, createGridBagConstraints(0, 3));
 
-
         showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonPanel, 3);
 
         JLabel titleLabel2 = createTextLabelFont("Choose your private objective card: ", 32);
-        setBorderInsets(titleLabel2, 40, 0, 40, 0);
+        setBorderInsets(titleLabel2, 0, 0, 30, 0);
         panelContainer.add(titleLabel2, createGridBagConstraints(0, 4));
 
         panelContainer.add(choosePanel, createGridBagConstraints(0,5));
@@ -466,27 +541,29 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         showStarterCardAndPrivateObjectiveCard(privateObjectiveCards);
 
-        confirmButton.setText("Let's Roll");
-        confirmButton.setBackground(new Color(232, 221, 183, 255));
+        confirmButton.setText("Play");
+        //confirmButton.setBackground(new Color(232, 221, 183, 255));
         JPanel panelButton = new JPanel();
         panelButton.setOpaque(false);
-        panelButton.add(confirmButton, createGridBagConstraints(0, 5));
-        setBorderInsets(panelButton, 0,0,26, 0); // <---
+        panelButton.add(confirmButton);
+        setBorderInsets(panelButton, 210,10,0, 10); // <---
         panelContainer.add(panelButton, createGridBagConstraints(0, 5));
         confirmButton.addActionListener (e -> {
             int choice;
-            for (JCheckBox checkBox : handLabelCheckBoxMap.values()) {
-                if (checkBox.isSelected()) {
-                    choice = Integer.parseInt(checkBox.getText());
-                    if (e.getActionCommand().equals("Let's Roll")) {
-                        frameManager.getVirtualServer().sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
-                        createLobby();
-                        getContentPane().revalidate();
-                        getContentPane().repaint();
+            if(handLabelCheckBoxMap.values().stream().noneMatch(c->c.getText().equals("error"))) {
+                for(JCheckBox checkBox : handLabelCheckBoxMap.values()) {
+                    if(checkBox.isSelected()) {
+                        choice = Integer.parseInt(checkBox.getText());
+                        if(e.getActionCommand().equals("Play")) {
+                            frameManager.getVirtualServer().sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
+                            createLobby();
+                            getContentPane().revalidate();
+                            getContentPane().repaint();
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
+            } //TODO: da gestire il caso di errore
         });
     }
 
@@ -542,9 +619,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         board = new JLayeredPane();
-        int boardheight = 11220;
-        int boardwidth = 16830;
-        board.setPreferredSize(new Dimension(boardwidth, boardheight));
+        int boardHeight = 11220;
+        int boardWidth = 16830;
+        board.setPreferredSize(new Dimension(boardWidth, boardHeight));
 
         addScrollPane(board, panel1, 250, 285);
 
@@ -555,16 +632,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         JPanel lateralPanelSX = new JPanel(new GridBagLayout());
-        lateralPanelSX.setMaximumSize(new Dimension(150, lateralPanelSX.getHeight()));
-        lateralPanelSX.setPreferredSize(new Dimension(150, lateralPanelSX.getHeight()));
+        setBoxComponentSize(lateralPanelSX, 150, lateralPanelSX.getHeight());
 
         setPlayerAvatar(lateralPanelSX);
         panel1.add(lateralPanelSX, BorderLayout.WEST);
 
 
-        lateralPanelDX = new JPanel();
+        JPanel lateralPanelDX = new JPanel();
         lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
-        lateralPanelDX.setPreferredSize(new Dimension(200, lateralPanelDX.getHeight()));
+        setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
 
         commonPanel.removeAll();
         commonPanel.setLayout(new BoxLayout(commonPanel, BoxLayout.Y_AXIS));
@@ -574,7 +650,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonPanel, 10);
 
-        labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
+        JLabel labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
         setBorderInsets(labelPrivateObjectiveCards, 0,0,10,0);
         commonPanel.add(labelPrivateObjectiveCards);
 
@@ -586,7 +662,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         JPanel tableResourcePanel = new JPanel();
-        addScrollPane(resourceTable, tableResourcePanel, 200, 245);
+        addScrollPane(resourceTable, tableResourcePanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
         lateralPanelDX.add(tableResourcePanel);
 
 
@@ -627,8 +703,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panel1.add(southPanel, BorderLayout.SOUTH);
 
 
-
-
         //PAGINA 2: SCOREBOARD
         JPanel northPanel2 = new JPanel();
         northPanel2.setLayout(new BoxLayout(northPanel2, BoxLayout.LINE_AXIS));
@@ -657,7 +731,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         northPanel2.add(Box.createHorizontalGlue());
         northPanel2.add(Box.createHorizontalGlue());
 
-        scoreLabel2 = createTextLabelFont("Score: ", 30);
+        scoreLabel2 = createTextLabelFont("", 30);
         setBorderInsets(scoreLabel2, 0,0,0,30);
         northPanel2.add(scoreLabel2);
 
@@ -669,28 +743,46 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         tokenManager.setTokenInGame(frameManager.getTokenInGame());
         tokenManager.initializeDataPlayer();
 
+        panel2.add(tokenManager);
 
-        EnumMap<Position, String> positionPlayerMap = new EnumMap<>(Position.class);
+
+
         ArrayList<String> listTokenInGame = new ArrayList<>();
+        EnumMap<Position, String> positionPlayerMap = frameManager.getPlayerPositions().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
 
 
-        for(Map.Entry<String, Position> entry : frameManager.getPlayerPositions().entrySet()){
-            positionPlayerMap.put(entry.getValue(), entry.getKey());
-            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(frameManager.getTokenInGame().get(entry.getKey())));
+        for(Map.Entry<Position, String> entry : positionPlayerMap.entrySet()){
+            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(frameManager.getTokenInGame().get(entry.getValue())));
         }
 
 
-        JPanel tablePanel = new JPanel();
-        tablePanel.setOpaque(false);
+        JPanel lateralPanelDX2 = new JPanel();
+        setBoxComponentSize(lateralPanelDX2, 350, 14);
+        //lateralPanelDX2.setOpaque(false);
 
         positionTable = new JTable();
-        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true);
-        addScrollPane(positionTable, tablePanel, 200, ((positionTable.getRowCount() + 1) * positionTable.getRowHeight()) + 5);
-        panel2.add(tablePanel, BorderLayout.EAST);
+        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true, 35);
+
+
+        int rowCount = positionTable.getRowCount();
+        int rowHeight = positionTable.getRowHeight();
+        int tableHeight = (rowCount + 1) * rowHeight + 5;
+
+
+        addScrollPane(positionTable, lateralPanelDX2, 200, tableHeight);
+        panel2.add(lateralPanelDX2, BorderLayout.EAST);
+
+
+        //chat
 
 
 
-        panel2.add(tokenManager);
+
+
 
 
         setVisible(true);
@@ -701,8 +793,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         board.removeAll();
         boardButtonMap.clear();
 
-        int boardheight = 11220;
-        int boardwidth = 16830;
+        int boardHeight = 11220;
+        int boardWidth = 16830;
 
         //scorri le y
         for (int i = 10; i < 80; i++) {
@@ -710,14 +802,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             for (int j = 10; j < 80; j++) {
                 if ((i + j) % 2 == 0) {
                     if (frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j] != null) {
-                        addImageToLayeredPane(board, getDirectory(frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].getCardPointer().serialNumber, frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].isFlipped), boardwidth / 2 + ((j - 50) * 152),boardheight / 2 + ((i - 50) * 78) , frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].weight);
+                        addImageToLayeredPane(board, getDirectory(frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].getCardPointer().serialNumber, frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].isFlipped), boardWidth / 2 + ((j - 50) * 152),boardHeight / 2 + ((i - 50) * 78) , frameManager.getPlayersBoard().get(boardToDisplay).Board[i][j].weight);
                     } else {
                         if (boardToDisplay.equals(nickname)) {
                             for (Coordinates coordinates : frameManager.availablesCells) {
 
                                 if (i == coordinates.getY() && j == coordinates.getX()) {
-                                    buttonPlaced++;
-                                    addButtonToLayeredPane(board,boardwidth / 2 + ((j - 50) * 152) , boardheight / 2 + ((i - 50) * 78), buttonPlaced);
+                                    addButtonToLayeredPane(board,boardWidth / 2 + ((j - 50) * 152) , boardHeight / 2 + ((i - 50) * 78));
                                 }
 
                             }
@@ -790,6 +881,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 setButtonVisible();
                 labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
+                setButtonVisible();
                 setCompoundBorderInsets(labelCheckBoxMap.entrySet()
                         .stream()
                         .filter(en -> en.getValue().equals(e.getSource()))
@@ -831,7 +923,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-    private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y, int weight) {
+    private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y) {
         JButton button = new JButton();
         button.addActionListener(this);
 
@@ -912,8 +1004,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b) {
-        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap);
+    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b, int dim) {
+        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap, dim);
 
         int k = 0;
         if(b){
@@ -940,22 +1032,20 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
 
         JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+        header.setPreferredSize(new Dimension(header.getWidth(), dim+5));
 
-
-        table.setRowHeight(35);
+        table.setRowHeight(dim+5);
     }
 
-    public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources){
+    public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
         for (Resource resource : collectedResources.keySet()) {
-            table.setValueAt(collectedResources.get(resource), CardManager.logos.indexOf(remappingResources(resource)), 1);
+            table.setValueAt(collectedResources.get(resource), logosPath.indexOf(remappingResources(resource)), 1);
         }
     }
 
     public void updateCrownImageInTable(JTable table){
         //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
-        //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
         String maxScorePlayer = frameManager.getPlayersScore().entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
         for (int row = 0; row < table.getModel().getRowCount(); row++) {
@@ -1052,11 +1142,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 button.setIcon(null);
                 button.setBorderPainted(true);
             }
+
             confirmButton.setEnabled(false);
             flipButton.setText("Show Front");
             refresh();
             handSerialNumberCheckBoxMap.clear();
-
             flipToSend = true;
 
             ArrayList<Boolean> b = new ArrayList<>();
@@ -1118,7 +1208,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         } else if (e.getActionCommand().equals("Confirm")) {
             try {
-                serialTosend = handSerialNumberCheckBoxMap.entrySet()
+                serialToSend = handSerialNumberCheckBoxMap.entrySet()
                         .stream()
                         .filter(en -> en.getValue().checkBox.isSelected())
                         .findFirst()
@@ -1135,10 +1225,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         .checkBox()
                         .getText().equals("true");
 
-                if(cordToSend==null || serialTosend == -1 ){
+                if(cordToSend==null || serialToSend == -1 ){
                     JOptionPane.showMessageDialog(this, "Error: select the card to play ","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
                 } else{
-                    frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialTosend,flipToSend, cordToSend.getX(), cordToSend.getY()));
+                    frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialToSend,flipToSend, cordToSend.getX(), cordToSend.getY()));
                     checkingHandWhileDrawing = true;
                 }
             } catch (Exception ex) {
@@ -1149,14 +1239,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             boardButtonFlag = true;
             checkingHandWhileDrawing = false;
             try {
-                serialTosend = drawableSerialNumberCheckBoxMap.entrySet()
+                serialToSend = drawableSerialNumberCheckBoxMap.entrySet()
                         .stream()
                         .filter(en -> en.getValue().checkBox.isSelected())
                         .findFirst()
                         .orElseThrow()
                         .getKey();
 
-                frameManager.getVirtualServer().sendMessageFromClient(new DrawCardFromDeckMessage(serialTosend));
+                frameManager.getVirtualServer().sendMessageFromClient(new DrawCardFromDeckMessage(serialToSend));
                 frameManager.setTurnPlayed(frameManager.getTurnPlayed()+1);
 
             } catch (Exception ex) {
@@ -1172,13 +1262,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refresh();
             refreshDecksPanels();
             handSerialNumberCheckBoxMap.clear();
+
         } else {
             for (JButton button : boardButtonMap.values()) {
                 button.setIcon(null);
                 button.setBorderPainted(true);
                 if (e.getSource().equals(button)) {
                     try{
-                        serialTosend = handSerialNumberCheckBoxMap.entrySet()
+                        serialToSend = handSerialNumberCheckBoxMap.entrySet()
                                 .stream()
                                 .filter(en -> en.getValue().checkBox.isSelected())
                                 .findFirst()
@@ -1188,7 +1279,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         System.out.println("il serial to send non è stato aggiornato");
                     }
 
-                    ImageIcon originalIcon = new ImageIcon(getDirectory(serialTosend,flipToSend));
+                    ImageIcon originalIcon = new ImageIcon(getDirectory(serialToSend,flipToSend));
                     Image scaledImage = originalIcon.getImage().getScaledInstance(originalIcon.getIconWidth() / 5, originalIcon.getIconHeight() / 5, Image.SCALE_SMOOTH); // Scala l'immagine
                     ImageIcon imageIcon = new ImageIcon(scaledImage);
                     button.setIcon(imageIcon);
@@ -1290,7 +1381,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         Random random = new Random();
         int y2 = 0;
 
-        for (String player: frameManager.getPlayerPositions().keySet()) {
+        Map<Position, String> positionPlayerMap = frameManager.getPlayerPositions().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
+
+        for (Map.Entry<Position, String> entry : positionPlayerMap.entrySet()) {
             int randomIndex = random.nextInt(avatarsLogo.size());
             String selectedAvatar = avatarsLogo.get(randomIndex);
             avatarsLogo.remove(randomIndex);
@@ -1298,12 +1395,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
             JPanel playerAvatarPanel = new JPanel(new GridBagLayout());
             playerAvatarPanel.setOpaque(false);
-            JLabel playerNameLabel = createTextLabelFont(player, 16);
+            JLabel playerNameLabel = createTextLabelFont(entry.getValue(), 16);
             GridBagConstraints gbc = createGridBagConstraints(0,y1);
             gbc.anchor = GridBagConstraints.CENTER;
             playerAvatarPanel.add(playerNameLabel, gbc);
             gbc.gridy++;
-            JLabel playerPositionLabel = createTextLabelFont(frameManager.getPlayerPositions().get(player).toString().toLowerCase(), 12);
+            JLabel playerPositionLabel = createTextLabelFont(entry.getKey().toString().toLowerCase(), 12);
             setBorderInsets(playerPositionLabel, 2, 0,5, 0);
             playerPositionLabel.setForeground(Color.GRAY);
             playerAvatarPanel.add(playerPositionLabel, gbc);
@@ -1312,12 +1409,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
 
-            JCheckBox jCheckBox = new JCheckBox(player);
+            JCheckBox jCheckBox = new JCheckBox(entry.getValue());
             jCheckBox.setFocusPainted(false);
             jCheckBox.setBorderPainted(false);
             jCheckBox.setForeground(new Color(0,0,0,0));
             avatarButtonGroup.add(jCheckBox);
-            setBorderInsets(jCheckBox, 30, 35, 30, 30);
+            setBorderInsets(jCheckBox, 30, 40, 30, 30);
             jCheckBox.setOpaque(false);
             playerCheckBoxMap.put(playerNameLabel, jCheckBox);
 

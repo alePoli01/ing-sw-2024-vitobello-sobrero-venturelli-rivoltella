@@ -1,11 +1,10 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.view.GUI.BackgroundPanel;
+import it.polimi.GC13.view.GUI.BackgroundImageSetter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 
@@ -24,7 +23,7 @@ public class TokenManager extends JPanel {
 
 
     public TokenManager(){
-        BackgroundPanel scoreboard = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png", true);
+        BackgroundImageSetter scoreboard = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png");
         scoreboard.setOpaque(false);
         scoreboard.setLayout(new GridBagLayout());
 
@@ -89,7 +88,7 @@ public class TokenManager extends JPanel {
             for(int j=0; j<2; j++){
                 JLabel label = new JLabel(Integer.toString(k));
                 label.setPreferredSize(new Dimension(30,30));
-                label.setForeground(new Color(0,0,0));
+                label.setForeground(new Color(0,0,0,0));
                 labelInTokenGrid.add(label);
                 tokenGrid.add(label);
 

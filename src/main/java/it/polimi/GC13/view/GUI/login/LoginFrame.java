@@ -2,7 +2,7 @@ package it.polimi.GC13.view.GUI.login;
 
 import it.polimi.GC13.network.messages.fromclient.AddPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromclient.CreateNewGameMessage;
-import it.polimi.GC13.view.GUI.BackgroundPanel;
+import it.polimi.GC13.view.GUI.BackgroundImageSetter;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.WaitingLobby;
 
@@ -52,7 +52,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
 
         this.frameManager = frameManager;
 
-        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg", true);
+        JPanel backgroundPanel = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg");
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
@@ -160,7 +160,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        JPanel backgroundPanel = new BackgroundPanel("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg", true);
+        JPanel backgroundPanel = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexBackgroundTitle.jpg");
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));

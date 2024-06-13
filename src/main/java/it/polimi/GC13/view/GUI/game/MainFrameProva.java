@@ -6,22 +6,24 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
+import it.polimi.GC13.view.TUI.BoardView;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MainFrameProva extends JFrame implements ActionListener, CardManager {
@@ -31,58 +33,51 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 //    public record AvatarData(String playerName, String avatarPath) {}
 //    private final EnumMap<Position, AvatarData> positionToPlayerData = new EnumMap<>(Position.class);
 
-    //ArrayList<String> avatarsImagePaths = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
-
-
-    //private FrameManager frameManager;
-
-    private String nickname = "Niccolo";
+    private String nickname = "Player0";
     private TokenColor token = TokenColor.BLUE;
     private List<Integer> hand = List.of(1, 2, 3); //DA NON METTERE
-    private List<Integer> hand2 = List.of(85); //DA NON METTERE
+    private final List<Integer> hand2 = List.of(85); //DA NON METTERE
 
-    private ArrayList<String> listTokenInGame;
-    private boolean myTurn = true;
+    private final boolean myTurn = true;
 
     private JPanel panelContainer;
     private JPanel choosePanel;
-    private boolean flipToSend= false;
-    private int serialTosend=-1;
-    private JTable resourceTable = new JTable();
-    private List<TokenColor> tokenColorList;
+    private boolean flipToSend = false;
+    private int serialToSend = -1;
+    private final JTable resourceTable = new JTable();
+    private List<TokenColor> tokenColorList = List.of(TokenColor.values());
+    private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
+    public String boardToDisplay = nickname;
+    int buttonPlaced = 200;
+    private final Map<Coordinates, JButton> boardButtonMap = new HashMap<>();
+
+
     private JLayeredPane board;
     private JPanel tokenPanel;
     private JPanel namePanel;
     private JPanel checkBoxPanel;
     private JPanel commonPanel;
-    private JLabel labelPrivateObjectiveCards;
     private JPanel southPanel;
 
     private ButtonGroup buttonGroup = new ButtonGroup();
+    private final ButtonGroup avatarButtonGroup = new ButtonGroup();
 
     //per le carte nella mano
-    private Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();
-    private Map<Integer, CardData> handSerialNumberCheckBoxMap = new HashMap<>();
+    private final Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();
+    private final Map<Integer, CardData> handSerialNumberCheckBoxMap = new HashMap<>();
+    private final Map<JLabel, JCheckBox> playerCheckBoxMap = new HashMap<>();
 
     //per le carte da pescare
-    private JPanel decksPanel;
     private final ButtonGroup buttonGroupDecks = new ButtonGroup();
-    private Map<JLabel, JCheckBox> decksLabelCheckBoxMap = new HashMap<>();
-    private Map<Integer, CardData> drawableSerialNumberCheckBoxMap = new HashMap<>();
+    private final Map<JLabel, JCheckBox> decksLabelCheckBoxMap = new HashMap<>();
+    private final Map<Integer, CardData> drawableSerialNumberCheckBoxMap = new HashMap<>();
 
-    private JPanel resourceImagePanel;
-    private JPanel resourceCheckBoxPanel;
 
-    private JPanel goldImagePanel;
-    private JPanel goldCheckBoxPanel;
-
-    private Map<Coordinates,JButton> buttonMap = new HashMap<>();
-
-    private  JButton confirmButton;
-    private  JButton flipButton;
+    private JButton confirmButton;
+    private JButton flipButton;
     private JButton decksButton;
 
-    private Coordinates cordToSend = null;
+    private Coordinates cordToSend = new Coordinates(51,51);
 
     //attributi waitingLobby
 
@@ -92,26 +87,41 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     private boolean boardButtonFlag = false;
     private boolean checkingHandWhileDrawing = false;
 
-    private JLabel turnLable;
-    private JLabel turnLable2;
-    private JLabel scoreLabel;
-    private JLabel scoreLabel2;
+    private  JLabel turnLabel;
+    private  JLabel turnLabel2;
+    private  JLabel scoreLabel;
+    private  JLabel scoreLabel2;
 
 
     private Map<String, Position> playerPosition = new HashMap<>(); //DA NON METTERE
-    Map<String, TokenColor> tokenInGame = new HashMap<>();
+    Map<String, TokenColor> tokenInGame = new HashMap<>(); //DA NON METTERE
 
     private TokenManager tokenManager;
 
 
-    private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>(); //DA NON METTERE
-    private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>(); //DA NON METTERE
+    private Map<Integer, Boolean> goldCardsAvailable = new HashMap<>(); //DA NON METTERE
+    private Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>(); //DA NON METTERE
     private final Map<String, Integer> playersScore = new HashMap<>(); //DA NON METTERE
 
     private List<Integer> serialCommonObjectiveCard  = List.of(88, 99);; //DA NON METTERE
     private int serialPrivateObjectiveCard = 89; //DA NON METTERE
 
     private JTable positionTable;
+    int nextCardResource = 1;//DA NON METTERE
+    int nextCardGold = 1;//DA NON METTERE
+    int turn = 1;//DA NON METTERE
+
+    public List<Coordinates> availablesCells = List.of(new Coordinates(49,49), new Coordinates(49,51), new Coordinates(51,51),new Coordinates(51,49));//DA NON METTERE
+
+
+    private final Map<String, List<String>> chat = new LinkedHashMap<>();//DA NON METTERE
+    private boolean newMessage = false;//DA NON METTERE
+
+    JComboBox<String> combobox;
+    JTextArea chatArea;
+    JTextField messageField;
+
+
 
 
     //TOKEN SETUP
@@ -122,7 +132,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         //setSize(1700, 900); //for debugging
         setResizable(false);
 
-        List<TokenColor> tokenColorList = List.of(TokenColor.values());
 
         panelContainer = new JPanel(new GridBagLayout());
         panelContainer.setBackground(new Color(237,230,188,255));
@@ -265,7 +274,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         panelContainer.add(titleLabel, createGridBagConstraints(0, 1));
 
         JLabel startCardLabel = createTextLabelFont("Choose which side you would like to place your start card: ", 32);
-        setBorderInsets(startCardLabel, 0, 0, 50, 0); //TODO: <--- modifica fatta
+        setBorderInsets(startCardLabel, 0, 0, 50, 0);
         panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
 
 
@@ -294,14 +303,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         panelContainer.add(confirmButton, createGridBagConstraints(0, 4));
         confirmButton.addActionListener (e -> {
             boolean isFlipped;
-            for (JCheckBox checkBox : handLabelCheckBoxMap.values()) {
-                if (checkBox.isSelected()) {
-                    isFlipped = checkBox.getText().equals("true");
-                    if (e.getActionCommand().equals("Confirm")) {
-                        JOptionPane.showMessageDialog(this, "isFlipped: "+ isFlipped);
+            if(handLabelCheckBoxMap.values().stream().noneMatch(c->c.getText().equals("error"))) {
+                for(JCheckBox checkBox : handLabelCheckBoxMap.values()) {
+                    if (checkBox.isSelected()) {
+                        isFlipped = checkBox.getText().equals("true");
+                        if (e.getActionCommand().equals("Confirm")) {
+                            JOptionPane.showMessageDialog(this, "isFlipped: "+ isFlipped);
+                        }
+                        break;
                     }
-                    break;
                 }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -325,16 +338,26 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     public Path identifyPathCard(int numberCard){
         Path startDir;
-        if (numberCard > 0 && numberCard <= 40)
-            startDir = Paths.get(RESOURCE_DIR);
-        else if (numberCard <= 80)
-            startDir = Paths.get(GOLD_DIR);
-        else if (numberCard <= 86)
-            startDir = Paths.get(STARTER_DIR);
-        else if (numberCard <= 102)
-            startDir = Paths.get(OBJECTIVE_DIR);
-        else {
-            JOptionPane.showMessageDialog(this, "ErrorMsg: ", "Invalid card", JOptionPane.ERROR_MESSAGE);
+        try {
+            if (numberCard > 0) {
+                if (numberCard <= 40)
+                    startDir = Paths.get(RESOURCE_DIR);
+                else if (numberCard <= 80)
+                    startDir = Paths.get(GOLD_DIR);
+                else if (numberCard <= 86)
+                    startDir = Paths.get(STARTER_DIR);
+                else if((numberCard <= 102))
+                    startDir = Paths.get(OBJECTIVE_DIR);
+                else {
+                    JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+        } catch (InvalidPathException e) {
+            JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
             return null;
         }
         return startDir;
@@ -410,6 +433,48 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
                 }
+            } else {
+                for(int i = 0; i < 2; i++){
+                    Image img = new ImageIcon(ERROR_CARD).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/15, img.getHeight(null)/15, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
+                    tokenPanel.add(startCardLabelImage);
+
+                    JLabel startCardLabelText = createTextLabelFont("Error", 32);
+                    JCheckBox jCheckBox = new JCheckBox("error");
+
+                    setBorderInsets(startCardLabelText, 15, 230, 40, 230);
+                    namePanel.add(startCardLabelText);
+
+                    jCheckBox.setFocusPainted(false);
+                    jCheckBox.setBorderPainted(false);
+                    buttonGroup.add(jCheckBox);
+                    setBorderInsets(jCheckBox, 100, 150, 100, 150);
+                    jCheckBox.setOpaque(false);
+                    jCheckBox.addActionListener(e -> {
+                        confirmButton.setEnabled(handLabelCheckBoxMap.values().stream().anyMatch(AbstractButton::isSelected));
+
+                        handLabelCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                        handLabelCheckBoxMap.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().equals(e.getSource()))
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey()
+                                .setForeground(Color.RED);
+                    });
+                    checkBoxPanel.add(jCheckBox);
+
+                    if(jCheckBox.getText().equals("error") || b.get()){
+                        JPanel emptyPanel = new JPanel();
+                        emptyPanel.setOpaque(false);
+                        setBorderInsets(emptyPanel, 1, 85, 1, 85);
+                        checkBoxPanel.add(emptyPanel);
+                        b.set(false);
+                    }
+                    handLabelCheckBoxMap.put(startCardLabelText, jCheckBox);
+                }
             }
         });
     }
@@ -452,7 +517,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         commonPanel.setOpaque(false);
         panelContainer.add(commonPanel, createGridBagConstraints(0, 3));
 
-
         List<Integer> serialCommonObjectiveCards = List.of(99, 92);
 
         showCommonObjectiveCard( serialCommonObjectiveCards, commonPanel, 3);
@@ -482,7 +546,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         panelContainer.add(choosePanel, createGridBagConstraints(0,5));
 
-
         showStarterCardAndPrivateObjectiveCard( privateObjectiveCards);
 
         confirmButton = createButton("Play", 32);
@@ -493,18 +556,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         panelContainer.add(panelButton, createGridBagConstraints(0, 5));
         confirmButton.addActionListener (e -> {
             int choice;
-            for (JCheckBox checkBox : handLabelCheckBoxMap.values()) {
-                if (checkBox.isSelected()) {
-                    choice = Integer.parseInt(checkBox.getText());
-                    if (e.getActionCommand().equals("Let's Roll")) {
-                        JOptionPane.showMessageDialog(this, "choice: "+ choice);
+            if(handLabelCheckBoxMap.values().stream().noneMatch(c->c.getText().equals("error"))) {
+                for(JCheckBox checkBox : handLabelCheckBoxMap.values()) {
+                    if(checkBox.isSelected()) {
+                        choice = Integer.parseInt(checkBox.getText());
+                        if(e.getActionCommand().equals("Play")) {
+                            JOptionPane.showMessageDialog(this, "choice: "+ choice);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         });
-
-        //ratio();
 
         setVisible(true);
     }*/
@@ -523,6 +586,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                     });
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "ErrorMsg: " + e.getMessage(), "Invalid card", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                for(int i = 0; i<2; i++){
+                    Image img = new ImageIcon(ERROR_CARD).getImage();
+                    JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null) / divider, img.getHeight(null) / divider, Image.SCALE_SMOOTH)));
+                    setCompoundBorderInsets(startCardLabelImage, 0, 100, 30, 100, "ALL", Color.BLACK, 1);
+                    panel.add(startCardLabelImage);
                 }
             }
         });
@@ -549,7 +620,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 resourceCardsAvailable.put(i, true);
         }
 
-
         for (int i = 41; i < 44; i++) {
             if (i != 43)
                 goldCardsAvailable.put(i, false);
@@ -557,22 +627,49 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 goldCardsAvailable.put(i, true);
         }
 
-        EnumMap<Position, String> positionPlayerMap = new EnumMap<>(Position.class);
-        listTokenInGame = new ArrayList<>();
+
+        EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
+
+        for(Resource r: Resource.values()) {
+            collectedResources.put(r, 0);
+        }
+
+        collectedResources.remove(Resource.NULL);
+        collectedResources.remove(Resource.EMPTY);
 
 
-        for(int i=0; i<2; i++){
-            playerPosition.put("Player" + (i + 1), Arrays.stream(Position.values()).toList().get(i));
-            tokenInGame.put("Player" + (i + 1), Arrays.stream(TokenColor.values()).toList().get(i));
-            playersScore.put("Player" + (i + 1), 0);
-            //System.out.println("Player" + (i + 1) + " : " + tokenInGame.get("Player" + (i + 1)) + " score: " + playersScore.get("Player" + (i + 1)));
+
+        EnumMap<Position, String> positionPlayerMap;
+        ArrayList<String> listTokenInGame = new ArrayList<>();
+
+        chat.put("global", new ArrayList<>());
+
+        //inizializzazione
+        for(int i=0; i<4; i++){
+            playerPosition.put("Player" + i, Arrays.stream(Position.values()).toList().get(i));
+            tokenInGame.put("Player" + i, Arrays.stream(TokenColor.values()).toList().get(i));
+            playersScore.put("Player" + i, 0);
+            playersBoard.put("Player" + i, new BoardView());
+            playersBoard.get("Player" + i).insertCard(50, 50, 86 + i, 0, false);
+            chat.put("Player" + i, new ArrayList<>());
+            //System.out.println("Player" + i + " : " + tokenInGame.get("Player" + i) + " score: " + playersScore.get("Player" + i) + " position: " + playerPosition.get("Player" + i));
         }
 
 
-        for(String player : playerPosition.keySet()){
-            positionPlayerMap.put(playerPosition.get(player), player);
-            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(tokenInGame.get(player)));
+
+        positionPlayerMap = playerPosition.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
+
+
+        for(Map.Entry<Position, String> entry : positionPlayerMap.entrySet()){
+            listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(tokenInGame.get(entry.getValue())));
         }
+
+
+
 
 
 
@@ -599,13 +696,13 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         northPanel.add(Box.createHorizontalGlue());
 
-        JButton popup = createButton("popup", 27);
-        northPanel.add(popup);
-
-        popup.addActionListener(e -> {
-            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico2", Position.FIRST);
-            dialog.setVisible(true);
-        });
+//        JButton popup = createButton("popup", 27); //DA NON AGGIUNGERE
+//        northPanel.add(popup);
+//
+//        popup.addActionListener(e -> {
+//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico4");
+//            dialog.setVisible(true);
+//        });
 
 
         northPanel.add(Box.createHorizontalGlue());
@@ -617,13 +714,13 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         turnNamePanel.add(labelNickname);
 
         if(myTurn) {
-            turnLable = createTextLabelFont("It's your turn", 20);
-            turnLable.setForeground(new Color(45, 114, 27)); //DA NON AGGIUNGERE
+            turnLabel = createTextLabelFont("It's your turn", 20);
+            turnLabel.setForeground(new Color(45, 114, 27)); //DA NON AGGIUNGERE
         }else{
-            turnLable = createTextLabelFont("It's not your turn", 20);
-            turnLable.setForeground(new Color(152, 31, 31)); //DA NON AGGIUNGERE
+            turnLabel = createTextLabelFont("It's not your turn", 20);
+            turnLabel.setForeground(new Color(152, 31, 31)); //DA NON AGGIUNGERE
         }
-        turnNamePanel.add(turnLable);
+        turnNamePanel.add(turnLabel);
         northPanel.add(turnNamePanel);
 
         JLabel tokenLabel = new JLabel(createPlayableTokenImageIcon(token, 50));
@@ -640,21 +737,23 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         board = new JLayeredPane();
-        int boardheight = 11220;
-        int boardwidth = 16830;
-        board.setPreferredSize(new Dimension(boardwidth, boardheight)); //sarà la board di gioco, da capire con che Layout implementarla
+        int boardHeight = 11220;
+        int boardWidth = 16830;
+        board.setPreferredSize(new Dimension(boardWidth, boardHeight)); //sarà la board di gioco, da capire con che Layout implementarla
 
         addScrollPane(board, panel1, 250, 285);
 
         //System.out.println("debug  "+frameManager.playersBoard.get(nickname).Board[50][50].getCardPointer().serialNumber);
-        refreshboard();
+        refreshBoard();
 
 
         panel1.setVisible(true);
 
         JPanel lateralPanelSX = new JPanel(new GridBagLayout());
-        lateralPanelSX.setMaximumSize(new Dimension(150, lateralPanelSX.getHeight()));
-        lateralPanelSX.setPreferredSize(new Dimension(150, lateralPanelSX.getHeight()));
+        setBoxComponentSize(lateralPanelSX, 150, lateralPanelSX.getHeight());
+
+//        lateralPanelSX.setMaximumSize(new Dimension(150, lateralPanelSX.getHeight()));
+//        lateralPanelSX.setPreferredSize(new Dimension(150, lateralPanelSX.getHeight()));
 
 
         setPlayerAvatar(lateralPanelSX);
@@ -663,7 +762,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         JPanel lateralPanelDX = new JPanel();
         lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
-        lateralPanelDX.setPreferredSize(new Dimension(200, lateralPanelDX.getHeight()));
+        setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
+        //lateralPanelDX.setPreferredSize(new Dimension(200, lateralPanelDX.getHeight()));
 
 
         //stampa delle carte obiettivo comuni
@@ -677,7 +777,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         showCommonObjectiveCard(serialCommonObjectiveCard, commonPanel, 10);
 
-        labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
+        JLabel labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
         setBorderInsets(labelPrivateObjectiveCards, 0,0,10,0);
         commonPanel.add(labelPrivateObjectiveCards);
 
@@ -687,28 +787,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         lateralPanelDX.add(commonPanel);
 
-        JPanel tabelPanel = new JPanel();
-        lateralPanelDX.add(tabelPanel);
+        JPanel tableResourcePanel = new JPanel();
+        lateralPanelDX.add(tableResourcePanel);
 
 
-        EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
-
-
-        for(Resource r: Resource.values()) {
-            collectedResources.put(r, 0);
-        }
-
-        collectedResources.remove(Resource.NULL);
-        collectedResources.remove(Resource.EMPTY);
-
-        createTable(resourceTable, new String[]{"Resources", "Amount"}, collectedResources, logos, null, false);
-        addScrollPane(resourceTable, tabelPanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
+        createTable(resourceTable, new String[]{"Resources", "Amount"}, collectedResources, logos, null, false, 25);
+        addScrollPane(resourceTable, tableResourcePanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
 
         Random random2 = new Random();
 
         for(Resource r: Resource.values()) {
             int randomIndex = random2.nextInt(30);
-            System.out.println("Resource: " + r + " amount: "+ randomIndex);
+            //System.out.println("Resource: " + r + " amount: "+ randomIndex);
             collectedResources.put(r, randomIndex);
         }
 
@@ -755,29 +845,15 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         namePanel.add(flipButton);
 
 
-
         GridBagConstraints gbc = createGridBagConstraints(0,0);
         gbc.anchor = GridBagConstraints.WEST;
 
         southPanel.add(namePanel, gbc);
         southPanel.add(choosePanel, createGridBagConstraints(1,0));
 
-
-        decksPanel = new JPanel(new GridBagLayout());
-
-        decksPanel = new JPanel(); //al posto di choosePanel
-        resourceImagePanel = new JPanel(new FlowLayout()); //al posto di tokenPanel
-        resourceCheckBoxPanel = new JPanel(new FlowLayout());
-
-        decksPanel = new JPanel(new GridBagLayout()); //invocare qui metodo
-        goldImagePanel = new JPanel(new FlowLayout()); //al posto di tokenPanel
-        goldCheckBoxPanel = new JPanel(new FlowLayout());
-
-
         panel1.add(southPanel, BorderLayout.SOUTH);
 
         //PAGINA 2: SCOREBOARD
-
         JPanel northPanel2 = new JPanel();
         northPanel2.setLayout(new BoxLayout(northPanel2, BoxLayout.LINE_AXIS));
         setBorderInsets(northPanel2, 15, 0, 15, 0);
@@ -795,9 +871,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         turnNamePanel2.setLayout(new BoxLayout(turnNamePanel2, BoxLayout.Y_AXIS));
         JLabel labelNickname2 = createTextLabelFont(nickname, 32);
         turnNamePanel2.add(labelNickname2);
-        turnLable2 = createTextLabelFont("It's your turn", 20);
-        turnLable2.setForeground(new Color(45, 114, 27));
-        turnNamePanel2.add(turnLable2);
+        turnLabel2 = createTextLabelFont("It's your turn", 20);
+        turnLabel2.setForeground(new Color(45, 114, 27));
+        turnNamePanel2.add(turnLabel2);
         northPanel2.add(turnNamePanel2);
 
         JLabel tokenLabel2 = new JLabel(createPlayableTokenImageIcon(token, 50));
@@ -823,67 +899,105 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             tokenManager.updatePlayerScore(player, playersScore.get(player));
         }
 
-
-        //TODO: Da completare (Chat)
-
-        JPanel lateralPanelSX2 = new JPanel();
-        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
-        setBoxComponentSize(lateralPanelSX2, 230, 14);
-
-        JComboBox<String> combobox = new JComboBox<>();
-
-        for(String s : playerPosition.keySet()){
-            combobox.addItem(s);
-        }
-
-        lateralPanelSX2.add(combobox);
-
-
-
-
-        panel2.add(lateralPanelSX2, BorderLayout.WEST);
-
+        panel2.add(tokenManager);
 
 
         JPanel lateralPanelDX2 = new JPanel();
-        setBoxComponentSize(lateralPanelDX2, 230, 14);
-        //lateralPanelDX2.setOpaque(false);
+        setBoxComponentSize(lateralPanelDX2, 350, lateralPanelDX2.getHeight());
 
         positionTable = new JTable();
-        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true);
+        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true, 35);
 
 
         int rowCount = positionTable.getRowCount();
-        System.out.println(rowCount);
-        int rowHeigth = positionTable.getRowHeight();
-        System.out.println(rowHeigth);
-        int tableHeigth = (rowCount + 1) * rowHeigth + 5;
-        System.out.println(tableHeigth);
+        //System.out.println(rowCount);
+        int rowHeight = positionTable.getRowHeight();
+        //System.out.println(rowHeight);
+        int tableHeight = (rowCount + 1) * rowHeight + 5;
+        //System.out.println(tableHeight);
 
 
-        addScrollPane(positionTable, lateralPanelDX2, 200, tableHeigth);
+        addScrollPane(positionTable, lateralPanelDX2, 200, tableHeight);
         panel2.add(lateralPanelDX2, BorderLayout.EAST);
 
         Random random = new Random();
 
+        //update score
         for(String player : playersScore.keySet()){
             int randomIndex = random.nextInt(16);
             playersScore.put(player, randomIndex);
             tokenManager.updatePlayerScore(player, playersScore.get(player));
         }
 
-        playersScore.put("Player1", 13);
-        playersScore.put("Player2", 15);
-//        playersScore.put("Player3", 28);
-//        playersScore.put("Player4", 29);
+        updateCrownImageInTable(positionTable);
 
-        for(String player : playersScore.keySet()){
-            tokenManager.updatePlayerScore(player, playersScore.get(player));
+
+        //TODO: Da completare (Chat)
+
+        JPanel lateralPanelSX2 = new JPanel();
+        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
+        lateralPanelSX2.setOpaque(false);
+        //setBoxComponentSize(lateralPanelSX2, 230, 14);
+
+
+        JPanel chatPanel = new JPanel(new GridBagLayout());
+        setBorderInsets(chatPanel, 0,5,0,5);
+
+        //combobox
+        combobox = new JComboBox<>();
+
+        for(String s : chat.keySet()){
+            combobox.addItem(s);
         }
 
-        updateCrownImageInTable(positionTable);
-        panel2.add(tokenManager);
-        
+        combobox.addActionListener(e -> updateTextArea());
+
+        GridBagConstraints gbcCombobox = createGridBagConstraints(0,0);
+        gbcCombobox.fill = GridBagConstraints.HORIZONTAL;
+
+        chatPanel.add(combobox, gbcCombobox);
+
+        //textArea
+        chatArea = new JTextArea();
+        chatArea.setPreferredSize(new Dimension(300,200));
+        chatArea.setEditable(false);
+
+        JScrollPane scrollPaneChat = new JScrollPane(chatArea);
+
+
+        messageField = new JTextField(20);
+        JScrollPane scrollPaneMessage = new JScrollPane(messageField);
+        scrollPaneMessage.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPaneMessage.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPaneMessage.setPreferredSize(new Dimension(300, 30));
+
+
+        JButton sendButton = new JButton("Invia");
+
+        sendButton.addActionListener(e -> {
+            sendMessage();
+        });
+
+
+        GridBagConstraints gbcChat = createGridBagConstraints(0,1) ;
+        gbcChat.gridwidth = 2;
+        gbcChat.gridheight = 1;
+        gbcChat.fill = GridBagConstraints.HORIZONTAL;
+        gbcChat.weightx = 1.0;
+        //gbcChat.weighty = 1.0;
+        gbcChat.insets = new Insets(5, 5, 5, 5);
+
+        chatPanel.add(scrollPaneChat,gbcChat);
+
+        //textField
+        chatPanel.add(scrollPaneMessage, createGridBagConstraints(0,2));
+
+        //sendButton
+        chatPanel.add(sendButton, createGridBagConstraints(1,2));
+
+        lateralPanelSX2.add(chatPanel);
+        panel2.add(lateralPanelSX2, BorderLayout.WEST);
+
 
         setVisible(true);
     }
@@ -893,49 +1007,54 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     //TODO: ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-    public void refreshboard(){
-         /*board.removeAll();
-        int boardheight = 11220;
-        int boardwidth = 16830;
+    public void refreshBoard(){
+        board.removeAll();
+        boardButtonMap.clear();
+
+        int boardHeight = 11220;
+        int boardWidth = 16830;
 
         for (int i = 10; i < 80; i++) {
             for (int j = 10; j < 80; j++) {
                 if ((i + j) % 2 == 0) {
-                    if (frameManager.playersBoard.get(nickname).Board[i][j] != null) {
-                        addImageToLayeredPane(board, getDirectory(frameManager.playersBoard.get(nickname).Board[i][j].getCardPointer().serialNumber, frameManager.playersBoard.get(nickname).Board[i][j].isFlipped), boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), frameManager.playersBoard.get(nickname).Board[i][j].weight);
+                    if (playersBoard.get(boardToDisplay).Board[i][j] != null) {
+                        addImageToLayeredPane(board, getDirectory(playersBoard.get(boardToDisplay).Board[i][j].getCardPointer().serialNumber, playersBoard.get(boardToDisplay).Board[i][j].isFlipped), boardWidth / 2 + ((j - 50) * 152),boardHeight / 2 + ((i - 50) * 78) , playersBoard.get(boardToDisplay).Board[i][j].weight);
                     } else {
-                        for (Coordinates coordinates : frameManager.availablesCells) {
-                            if (i == coordinates.getX() && j == coordinates.getY()) {
-                                addButtonToLayeredPane(board, boardwidth / 2 + ((i - 50) * 152), boardheight / 2 + ((j - 50) * 78), -1);
-                            }
+                        if (boardToDisplay.equals(nickname)) {
+                            for (Coordinates coordinates : availablesCells) {
 
+                                if (i == coordinates.getY() && j == coordinates.getX()) {
+                                    buttonPlaced++;
+                                    addButtonToLayeredPane(board,boardWidth / 2 + ((j - 50) * 152) , boardHeight / 2 + ((i - 50) * 78));
+                                }
+                            }
                         }
                     }
                 }
             }
         }
         board.revalidate();
-        board.repaint();*/
+        board.repaint();
     }
 
-    public String getDirectory(int serialnumber,boolean isflipped){
-        if(serialnumber>0 && serialnumber<=40){
-            if(!isflipped){
-                return RESOURCE_DIR+"/resource_card_front/resource_card_front_"+serialnumber+".png";
+    public String getDirectory(int serialNumber,boolean isFlipped){
+        if(serialNumber>0 && serialNumber<=40){
+            if(!isFlipped){
+                return RESOURCE_DIR+"/resource_card_front/resource_card_front_"+serialNumber+".png";
             }else{
-                return RESOURCE_DIR+"/resource_card_back/resource_card_back_"+serialnumber+".png";
+                return RESOURCE_DIR+"/resource_card_back/resource_card_back_"+serialNumber+".png";
             }
-        } else if(serialnumber<=80){
-            if(!isflipped){
-                return GOLD_DIR+"/gold_card_front/gold_card_front_"+serialnumber+".png";
+        } else if(serialNumber<=80){
+            if(!isFlipped){
+                return GOLD_DIR+"/gold_card_front/gold_card_front_"+serialNumber+".png";
             }else{
-                return GOLD_DIR+"/gold_card_back/gold_card_back_"+serialnumber+".png";
+                return GOLD_DIR+"/gold_card_back/gold_card_back_"+serialNumber+".png";
             }
-        } else if(serialnumber<=86){
-            if(!isflipped){
-                return STARTER_DIR+"/starter_card_front/starter_card_front_"+serialnumber+".png";
+        } else if(serialNumber<=86){
+            if(!isFlipped){
+                return STARTER_DIR+"/starter_card_front/starter_card_front_"+serialNumber+".png";
             }else{
-                return STARTER_DIR+"/starter_card_back/starter_card_back_"+serialnumber+".png";
+                return STARTER_DIR+"/starter_card_back/starter_card_back_"+serialNumber+".png";
             }
         } else return null;
     }
@@ -950,23 +1069,38 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         layeredPane.add(imageLabel, Integer.valueOf(layer));
     }
 
-    private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y,int weight) {
-        JButton button=new JButton();
+    public void setButtonVisible(){
+        if(boardButtonFlag) {
+            for(JButton button: boardButtonMap.values()){
+                button.setVisible(true);
+            }
+        }
+    }
+
+    public void setButtonNOTVisible(){
+        for(JButton button: boardButtonMap.values()){
+            button.setVisible(false);
+        }
+    }
+
+    private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y) {
+        JButton button = new JButton();
         button.addActionListener(this);
 
         Coordinates corner = new Coordinates(((x-(16830/2))/152)+50,((y-(11220/2))/78)+50);
-        buttonMap.put(corner,button);
+        boardButtonMap.put(corner,button);
 
         setBoxComponentSize(button, 192, 132);
 
         button.setVisible(false);
         button.setOpaque(false);
         button.setContentAreaFilled(false);
-        button.setBorder(BorderFactory.createLineBorder(Color.yellow,4));
+        button.setBorder(BorderFactory.createLineBorder(new Color(135, 142, 150, 255),4));
         button.setBounds(x,y,198,132);//card sizes
 
-        layeredPane.add(button,weight);
+        layeredPane.add(button,JLayeredPane.PALETTE_LAYER);
     }
+
 
 
     public Map<Integer, ArrayList<String>> showHandOrDecks(List<Integer> hand) {
@@ -1004,24 +1138,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-
-    private static JTable createTable(String[] columnNames, Object[][] data) {
-        //ImageIconTableModel model = new ImageIconTableModel(data, columnNames);
-        JTable table = new JTable(new DefaultTableModel());
-        table.getColumnModel().getColumn(0).setCellRenderer(new ImageIconRenderer());
-
-        JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 30));
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-
-        table.setRowHeight(30);
-
-        return table;
-    }
-
     public String remappingResources(Resource resource){
         switch (resource){
             case FUNGI -> {
@@ -1051,8 +1167,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b) {
-        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap);
+    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b, int dim) {
+        ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap, dim);
 
         int k = 0;
         if(b){
@@ -1061,6 +1177,32 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             for(int i = 0; i< playersScore.size(); i++){
                 newColumnDataLeft.add(false);
             }
+
+
+            ArrayList<Object> newColumnDataRight = new ArrayList<>();
+
+//            positionPlayerMap = playerPosition.entrySet().stream()
+//                    .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+//                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+//                            (e1, e2) -> e1,
+//                            () -> new EnumMap<>(Position.class)));
+//
+//
+//            for(Map.Entry<Position, String> entry : positionPlayerMap.entrySet()){
+//                listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(tokenInGame.get(entry.getValue())));
+//            }
+
+
+
+
+            for(String player : playersScore.keySet()){
+                //newColumnDataRight.add("false");
+
+                System.out.println("Player: " + player);
+            }
+
+
+
 
             model.addColumnOnLeft(" ", newColumnDataLeft);
             k = 1;
@@ -1079,10 +1221,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
 
         JTableHeader header = table.getTableHeader();
-        header.setPreferredSize(new Dimension(header.getWidth(), 32));
+        header.setPreferredSize(new Dimension(header.getWidth(), dim+5));
 
-
-        table.setRowHeight(32);
+        table.setRowHeight(dim+5);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
@@ -1094,6 +1235,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     public void updateCrownImageInTable(JTable table){
         //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
+        //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
         String maxScorePlayer = playersScore.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
         for (int row = 0; row < table.getModel().getRowCount(); row++) {
@@ -1116,6 +1258,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             board.addMouseListener(dragScrollListener);
             board.addMouseMotionListener(dragScrollListener);
         }
+
         //aggiungi al panel1 lo scrollpane
         panel.add(scrollPane);
         SwingUtilities.invokeLater(() -> {
@@ -1145,7 +1288,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         return gbc;
     }
 
-    // TODO: da utilizzare per lateralPanelDX e lateralPanelSX
     private void setBoxComponentSize(JComponent component, int w, int h){
         component.setPreferredSize(new Dimension(w, h));
         component.setMaximumSize(new Dimension(w, h));
@@ -1180,9 +1322,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
         if (e.getActionCommand().equals("Go to scoreboard")) {
             cardLayout.show(panelContainer, PANEL2);
+            setButtonNOTVisible();
         } else if (e.getActionCommand().equals("Go to game")) {
             cardLayout.show(panelContainer, PANEL1);
+            setButtonNOTVisible();
         } else if (e.getActionCommand().equals("Show Back")) {
+            setButtonNOTVisible();
+
+            for (JButton button : boardButtonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
+            }
+
             confirmButton.setEnabled(false);
             flipButton.setText("Show Front");
             refresh();
@@ -1196,14 +1347,19 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
             printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
-        }else if (e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
-            confirmButton.setEnabled(false);
-            flipButton.setText("Show Back");
+        } else if(e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
+            setButtonNOTVisible();
 
-            if (e.getActionCommand().equals("Show Hand")) {
-                decksButton.setText("Show Decks");
+            for (JButton button : boardButtonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
             }
 
+            confirmButton.setEnabled(false);
+            flipButton.setText("Show Back");
+            if(e.getActionCommand().equals("Show Hand")) {
+                decksButton.setText("Show Decks");
+            }
 
             refresh();
             refreshDecksPanels();
@@ -1222,10 +1378,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 flipToSend = false;
             }
 
-            southPanel.remove(decksPanel);
-            southPanel.add(choosePanel, createGridBagConstraints(1,0));
-
-        } else if (e.getActionCommand().equals("Confirm") || e.getActionCommand().equals("Show Decks")){
+        } else if (e.getActionCommand().equals("Show Decks")){
+            setButtonNOTVisible();
             confirmButton.setEnabled(false);
             flipButton.setEnabled(false);
             decksButton.setText("Show Hand");
@@ -1237,92 +1391,199 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
             printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
 
-            if (e.getActionCommand().equals("Show Decks")) {
-                if (checkingHandWhileDrawing) {
-                    decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
-                } else {
-                    decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
-                }
-            } else if (e.getActionCommand().equals("Confirm")) {
-                boardButtonFlag = false;
-                confirmButton.setText("Draw");
-                confirmButton.setEnabled(false);
-                flipButton.setEnabled(false);
-                decksButton.setText("Show Hand");
-
-                serialTosend = handSerialNumberCheckBoxMap.entrySet()
-                        .stream()
-                        .filter(en -> en.getValue().checkBox.isSelected())
-                        .findFirst()
-                        .orElseThrow()
-                        .getKey();
-
-
-                flipToSend = handSerialNumberCheckBoxMap.entrySet()
-                        .stream()
-                        .filter(en -> en.getValue().checkBox.isSelected())
-                        .findFirst()
-                        .orElseThrow()
-                        .getValue()
-                        .checkBox()
-                        .getText().equals("true");
-
-
-                System.out.println(serialTosend);
-                System.out.println(flipToSend);
-
-                hand = hand.stream().filter(c -> c!=serialTosend).toList();
-
-
-                checkingHandWhileDrawing = true;
+            if (checkingHandWhileDrawing) {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+            } else {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
             }
+
+        } else if (e.getActionCommand().equals("Confirm")) {
+            serialToSend = handSerialNumberCheckBoxMap.entrySet()
+                    .stream()
+                    .filter(en -> en.getValue().checkBox.isSelected())
+                    .findFirst()
+                    .orElseThrow()
+                    .getKey();
+
+
+            flipToSend = handSerialNumberCheckBoxMap.entrySet()
+                    .stream()
+                    .filter(en -> en.getValue().checkBox.isSelected())
+                    .findFirst()
+                    .orElseThrow()
+                    .getValue()
+                    .checkBox()
+                    .getText().equals("true");
+
+
+            if(cordToSend==null || serialToSend == -1 ){
+                JOptionPane.showMessageDialog(this, "Error: select the card to play ","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.out.println(serialToSend);
+                System.out.println(flipToSend);
+                System.out.println(cordToSend.getX());
+                System.out.println(cordToSend.getY());
+
+                playersBoard.get(nickname).insertCard(cordToSend.getX(), cordToSend.getY(), serialToSend, turn, flipToSend);
+                turn++;
+                checkingHandWhileDrawing = true;
+
+
+                Random random = new Random();
+                int randomIntX;
+                int randomIntY;
+                do {
+                    randomIntX = random.nextInt(-1,2);
+                    randomIntY = random.nextInt(-1,2);
+                }while(randomIntX==0 || randomIntY==0);
+
+                //cordToSend = new Coordinates(cordToSend.getX()+randomIntX, cordToSend.getY()+randomIntY);
+
+//                this.availablesCells.clear();
+//                this.availablesCells.addAll(availableCells);
+            }
+
+            setButtonNOTVisible();
+            boardButtonFlag = false;
+            confirmButton.setText("Draw");
+            confirmButton.setEnabled(false);
+            flipButton.setEnabled(false);
+            decksButton.setText("Show Hand");
+
+            refresh();
+            refreshDecksPanels();
+            drawableSerialNumberCheckBoxMap.clear();
+            handLabelCheckBoxMap.clear();
+
+            hand = hand.stream().filter(c -> c!= serialToSend).toList();
+
+            printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
+
+            decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+
+            if (checkingHandWhileDrawing) {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
+            } else {
+                decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
+            }
+
+            southPanel.revalidate();
+            southPanel.repaint();
+
         } else if (e.getActionCommand().equals("Draw")){
+            setButtonNOTVisible();
             boardButtonFlag = true;
             checkingHandWhileDrawing = false;
-            try {
-                serialTosend = drawableSerialNumberCheckBoxMap.entrySet()
-                        .stream()
-                        .filter(en -> en.getValue().checkBox.isSelected())
-                        .findFirst()
-                        .orElseThrow()
-                        .getKey();
 
-                //invio al server della carta da pescare
-                System.out.println(serialTosend);
-                List<Integer> temp = new ArrayList<>(hand);
-                temp.add(serialTosend);
+            serialToSend = drawableSerialNumberCheckBoxMap.entrySet()
+                    .stream()
+                    .filter(en -> en.getValue().checkBox.isSelected())
+                    .findFirst()
+                    .orElseThrow()
+                    .getKey();
 
-                hand = temp;
+            //invio al server della carta da pescare
+            System.out.println(serialToSend);
 
+            List<Integer> temp = new ArrayList<>(hand);
+            temp.add(serialToSend);
 
-                confirmButton.setText("Confirm");
-                confirmButton.setEnabled(false);
-                flipButton.setEnabled(true);
-                flipButton.setText("Show Back");
-                decksButton.setText("Show Decks");
+            hand = temp;
 
-                refresh();
-                refreshDecksPanels();
-                handSerialNumberCheckBoxMap.clear();
+            if(resourceCardsAvailable.size() < 3){
+                Map<Integer, Boolean> tempResource = new HashMap<>(resourceCardsAvailable);
+                boolean flag = false;
+                for(Boolean b : resourceCardsAvailable.values()){
+                    if (b) {
+                        flag = true;
+                        break;
+                    }
+                }
 
-                ArrayList<Boolean> b = new ArrayList<>();
-                for(int i=0; i<hand.size(); i++)
-                    b.add(false);
+                if(flag){
+                    tempResource.put(serialToSend + nextCardResource, false);
+                }else{
+                    tempResource.put(serialToSend + nextCardResource, true);
+                }
+                nextCardResource++;
+                resourceCardsAvailable = tempResource;
 
-                printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            } else if(goldCardsAvailable.size() < 3){
+                Map<Integer, Boolean> tempGold = new HashMap<>(goldCardsAvailable);
 
+                boolean flag = false;
+                for(Boolean b : goldCardsAvailable.values()){
+                    if (b) {
+                        flag = true;
+                        break;
+                    }
+                }
 
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Invalid card","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                if(flag){
+                    tempGold.put(serialToSend + nextCardGold, false);
+                }else{
+                    tempGold.put(serialToSend + nextCardGold, true);
+                }
+                nextCardGold++;
+                goldCardsAvailable = tempGold;
+            }
+
+            confirmButton.setText("Confirm");
+            confirmButton.setEnabled(false);
+            flipButton.setEnabled(true);
+            flipButton.setText("Show Back");
+            decksButton.setText("Show Decks");
+
+            refresh();
+            refreshDecksPanels();
+            handSerialNumberCheckBoxMap.clear();
+
+            ArrayList<Boolean> b = new ArrayList<>();
+            for(int i=0; i<hand.size(); i++)
+                b.add(false);
+
+            printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            refreshBoard();
+
+        } else {
+            for (JButton button : boardButtonMap.values()) {
+                button.setIcon(null);
+                button.setBorderPainted(true);
+                if (e.getSource().equals(button)) {
+                    try {
+                        serialToSend = handSerialNumberCheckBoxMap.entrySet()
+                                .stream()
+                                .filter(en -> en.getValue().checkBox.isSelected())
+                                .findFirst()
+                                .orElseThrow()
+                                .getKey();
+                    } catch(NoSuchElementException ex){
+                        System.out.println("il serial to send non è stato aggiornato");
+                    }
+
+                    ImageIcon originalIcon = new ImageIcon(getDirectory(serialToSend,flipToSend));
+                    Image scaledImage = originalIcon.getImage().getScaledInstance(originalIcon.getIconWidth() / 5, originalIcon.getIconHeight() / 5, Image.SCALE_SMOOTH); // Scala l'immagine
+                    ImageIcon imageIcon = new ImageIcon(scaledImage);
+                    button.setIcon(imageIcon);
+                    button.setBorderPainted(false);
+                    try {
+                        cordToSend = boardButtonMap.entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equals(button))
+                                .findFirst()
+                                .orElseThrow().getKey();
+                        System.out.println(cordToSend.getX() + cordToSend.getY());
+
+                    } catch (NoSuchElementException ex) {
+                        System.out.println("fatal error, non sappiamo programmare, mi spiace che hai scelto il nostro gioco ");
+                    }
+                }
             }
         }
     }
 
     private void refreshDecksPanels(){
-        resourceImagePanel.removeAll();
-        goldImagePanel.removeAll();
-        resourceCheckBoxPanel.removeAll();
-        goldCheckBoxPanel.removeAll();
         decksLabelCheckBoxMap.clear();
 
         Enumeration<AbstractButton> checkBoxes = buttonGroupDecks.getElements();
@@ -1341,6 +1602,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+        boardToDisplay=nickname;
     }
 
     public void setToken(TokenColor token) {
@@ -1364,8 +1626,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
 
-    public JLabel getTurnLable() {
-        return turnLable;
+    public JLabel getTurnLabel() {
+        return turnLabel;
     }
 
 
@@ -1378,12 +1640,26 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         this.playerPosition = playerPosition;
     }
 
+    public Map<Integer, CardData> getHandSerialNumberCheckBoxMap() {
+        return handSerialNumberCheckBoxMap;
+    }
+
+    public void setFlipToSend(boolean flipToSend) {
+        this.flipToSend = flipToSend;
+    }
+
 
     public void setPlayerAvatar(JPanel lateralPanelSX){
         Random random = new Random();
         int y2 = 0;
 
-        for (String player: playerPosition.keySet()) {
+        Map<Position, String> positionPlayerMap = playerPosition.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
+
+        for (Map.Entry<Position, String> entry : positionPlayerMap.entrySet()) {
             int randomIndex = random.nextInt(avatarsLogo.size());
             String selectedAvatar = avatarsLogo.get(randomIndex);
             avatarsLogo.remove(randomIndex);
@@ -1391,12 +1667,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
             JPanel playerAvatarPanel = new JPanel(new GridBagLayout());
             playerAvatarPanel.setOpaque(false);
-            JLabel playerNameLabel = createTextLabelFont(player, 16);
+            JLabel playerNameLabel = createTextLabelFont(entry.getValue(), 16);
             GridBagConstraints gbc = createGridBagConstraints(0,y1);
             gbc.anchor = GridBagConstraints.CENTER;
             playerAvatarPanel.add(playerNameLabel, gbc);
             gbc.gridy++;
-            JLabel playerPositionLabel = createTextLabelFont(playerPosition.get(player).toString().toLowerCase(), 12);
+            JLabel playerPositionLabel = createTextLabelFont(entry.getKey().toString().toLowerCase(), 12);
             setBorderInsets(playerPositionLabel, 2, 0,5, 0);
             playerPositionLabel.setForeground(Color.GRAY);
             playerAvatarPanel.add(playerPositionLabel, gbc);
@@ -1404,11 +1680,45 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             setBorderInsets(playerAvatarPanel, 15, 0, 15, 0);
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
+
+            JCheckBox jCheckBox = new JCheckBox(entry.getValue());
+            jCheckBox.setFocusPainted(false);
+            jCheckBox.setBorderPainted(false);
+            jCheckBox.setForeground(new Color(0,0,0,0));
+            avatarButtonGroup.add(jCheckBox);
+            setBorderInsets(jCheckBox, 30, 35, 30, 0);
+            jCheckBox.setOpaque(false);
+            playerCheckBoxMap.put(playerNameLabel, jCheckBox);
+
+            playerAvatarPanel.add(jCheckBox, gbc);
             gbc.gridy++;
+
+            jCheckBox.addActionListener(e -> {
+                playerCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
+
+                playerCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().equals(e.getSource()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey()
+                        .setForeground(Color.RED);
+
+                boardToDisplay = playerCheckBoxMap.entrySet()
+                        .stream()
+                        .filter(en -> en.getValue().equals(e.getSource()))
+                        .findFirst()
+                        .orElseThrow()
+                        .getKey()
+                        .getText();
+
+                refreshBoard();
+            });
 
 
 //            AvatarData avatarData = new AvatarData(player, selectedAvatar);
 //            positionToPlayerData.put(playerPosition.get(player), avatarData);
+
 
 
             lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
@@ -1473,7 +1783,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 });
 
                 jCheckBox.addActionListener(e -> {
-                    //setButtonVisible();
+                    setButtonVisible();
                     labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
                     setCompoundBorderInsets(labelCheckBoxMap.entrySet()
@@ -1498,6 +1808,25 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
             container.revalidate();
             container.repaint();
+        }
+    }
+
+    private void updateTextArea() {
+        String selectedPlayer = (String) combobox.getSelectedItem();
+        if (selectedPlayer != null) {
+            chatArea.setText(chat.get(selectedPlayer).toString());
+        }
+    }
+
+
+    //invocato da frameManager
+    private void sendMessage() {
+        String selectedPlayer = (String) combobox.getSelectedItem();
+        if (selectedPlayer != null) {
+            String message = messageField.getText();
+            chat.get(selectedPlayer).add(message);
+            updateTextArea();
+            messageField.setText("");
         }
     }
 }

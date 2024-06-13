@@ -31,11 +31,11 @@ public interface CardManager {
 
       String CROWN = "src/main/resources/it/polimi/GC13/view/GUI/crown.png";
       String ERROR_IMAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
+      String ERROR_CARD = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/Error_Card.png";
 
      ArrayList<String> logos = new ArrayList<>(Arrays.asList(FUNGI_LOGO_DIR, ANIMAL_LOGO_DIR, PLANT_LOGO_DIR, INSECT_LOGO_DIR, QUILL_LOGO_DIR, MANUSCRIPT_LOGO_DIR, INKWELL_LOGO_DIR));
      ArrayList<String> avatarsLogo = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
 
-
-     void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException; //permette di associare alla carta con tale serialNumber i corrispettivi front e back
+      void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException; //permette di associare alla carta con tale serialNumber i corrispettivi front e back
 
 }
