@@ -16,29 +16,29 @@ public class JoiningPhase implements GamePhase {
     }
 
     public void chooseToken(Player player, TokenColor token) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
     
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     public void placeStartCard(Player player, boolean isFlipped) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     @Override
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
     
     public void drawCard(Player player, int serialCardToDraw) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     @Override
     public void newChatMessage(String sender, String receiver, String message) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     public synchronized void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) throws GenericException {
@@ -48,7 +48,7 @@ public class JoiningPhase implements GamePhase {
             workingGame.getObserver().addListener(client);
             workingGame.addPlayerToGame(player);
         } catch (GenericException e) {
-            throw new GenericException("Nickname: " + player.getNickname() + " was already choose");
+            throw new GenericException("Nickname: " + player.getNickname() + " was already chosen");
         }
 
         if (workingGame.numPlayer == workingGame.getCurrNumPlayer()) {

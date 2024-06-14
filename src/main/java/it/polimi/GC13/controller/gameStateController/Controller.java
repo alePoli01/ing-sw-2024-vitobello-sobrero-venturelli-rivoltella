@@ -46,7 +46,7 @@ public class Controller implements GamePhase {
     public void updateController(GamePhase newGameController) {
         synchronized (this) {
             this.gameController = newGameController;
-            System.out.println("Controller updated to " + newGameController.getClass());
+            System.out.println("Controller updated to " + newGameController.getClass().getSimpleName());
         }
     }
 

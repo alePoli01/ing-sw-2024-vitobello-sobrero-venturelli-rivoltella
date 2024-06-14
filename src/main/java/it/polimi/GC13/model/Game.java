@@ -23,7 +23,7 @@ public class Game implements Serializable {
     private final String gameName;
     private transient Observer observer;
     private final Map<String, List<String>> chat = new HashMap<>();
-    private Set<Player> winner;
+    private Set<Player> winner = new HashSet<>();
 
     /**
      *
@@ -204,7 +204,6 @@ public class Game implements Serializable {
                 }
             }
         }
-
         this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
     }
 
@@ -213,29 +212,29 @@ public class Game implements Serializable {
         // in case two or more players have the same final score, the number of objectives achieved will be used to determine the winner
         this.playerList.forEach(player -> objectivesAchieved.put(player, this.finalScoreCalculation(player)));
 
-        // Filter out players with the maximum score
+        // Filter for players with the maximum score
         Set<Player> playersWithHighestScore = this.getTable().getPlayersScore().entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .stream()
                 .collect(Collectors.toSet());
-
         // if the size is 1, it's not necessary to check how many objective each player has achieved and the control is skipped
-        if (this.winner.size() > 1) {
+        if (playersWithHighestScore.size() > 1) {
             Map<Player, Integer> objectiveAchievedByPlayersWithHighestScore = new HashMap<>();
             playersWithHighestScore.forEach(player -> objectiveAchievedByPlayersWithHighestScore.put(player, objectivesAchieved.get(player)));
 
-            // adds to the winner set players with the highest number of objects achieved
+            // adds to the winner set players with the highest number of objectives achieved
             this.winner = objectiveAchievedByPlayersWithHighestScore.entrySet().stream()
                     .max(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey)
                     .stream()
                     .collect(Collectors.toSet());
-        }
 
+        }else{
+            this.winner=playersWithHighestScore;
+        }
         // create the set of the winners' nickname to send to the clients (views)
         Set<String> winnersNickname = this.winner.stream().map(Player::getNickname).collect(Collectors.toSet());
-
         this.observer.notifyClients(new OnGameWinnerMessage(winnersNickname));
         return winnersNickname;
     }

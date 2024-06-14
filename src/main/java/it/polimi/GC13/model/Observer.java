@@ -32,7 +32,6 @@ public class Observer {
                     message.notifyClient(client);
                 } catch (RemoteException e) {
                     System.err.println("RMI: Error notifying client: " + client);
-                    e.printStackTrace();
                 }
         });
         this.diskManager.writeOnDisk();

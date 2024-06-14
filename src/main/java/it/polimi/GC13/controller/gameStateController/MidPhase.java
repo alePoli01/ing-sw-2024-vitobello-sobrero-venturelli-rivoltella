@@ -87,8 +87,9 @@ public class MidPhase implements GamePhase {
                 player.getGame().setPlayerTurn(player);
             } else if (this.checkGameOver(player)) {
                 System.out.println(player.getNickname() + " has played his last turn. Game continues.");
+                player.getGame().setPlayerTurn(player);
             } else {
-                System.out.println(player + " has passed and game is over.");
+                System.out.println(player.getNickname() + " has passed and game is over.");
                 this.controller.updateController(new EndPhase(this.controller));
                 this.controller.getGame().setGameState(GameState.END);
             }
@@ -109,18 +110,18 @@ public class MidPhase implements GamePhase {
 
     @Override
     public void chooseToken(Player player, TokenColor token) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     // player chooses his objective card
     @Override
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     /**

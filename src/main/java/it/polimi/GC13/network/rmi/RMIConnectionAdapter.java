@@ -39,12 +39,16 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
         try {
             this.serverStub = (RMIServerInterface) registry.lookup("server");
             this.serverStub.createConnection(this);
-            this.connectionTimer=new ConnectionTimer(this,connectionBuilder);
+            connectionBuilderSetup(connectionBuilder);
         } catch (RemoteException | NotBoundException e) {
             System.err.println("Registry Lookup for server stub failed.");
             throw new IOException();
         }
         return this;
+    }
+    public void connectionBuilderSetup(ConnectionBuilder connectionBuilder) {
+        this.connectionTimer=new ConnectionTimer(this,connectionBuilder);
+
     }
 
     private void sendMessage(MessagesFromClient message) {

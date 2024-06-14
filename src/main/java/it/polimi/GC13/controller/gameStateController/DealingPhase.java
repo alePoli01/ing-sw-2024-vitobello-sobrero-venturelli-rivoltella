@@ -29,7 +29,7 @@ public class DealingPhase implements GamePhase {
     }
 
     public void chooseToken(Player player, TokenColor token) {
-        System.err.println("Error, game is in " + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     // player chooses his objective card
@@ -48,12 +48,12 @@ public class DealingPhase implements GamePhase {
 
     @Override
     public void placeStartCard(Player player, boolean isFlipped) {
-        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     @Override
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     // CHECK that all players in the same game chose their own objective card
@@ -68,15 +68,15 @@ public class DealingPhase implements GamePhase {
     }
 
     public void drawCard(Player player, int serialCardToDraw) {
-        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     @Override
     public void newChatMessage(String sender, String receiver, String message) {
-        System.out.println("Error, game is in" + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
-        System.out.println("Error, game is in " + this.controller.getGame().getGameState());
+        System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 }

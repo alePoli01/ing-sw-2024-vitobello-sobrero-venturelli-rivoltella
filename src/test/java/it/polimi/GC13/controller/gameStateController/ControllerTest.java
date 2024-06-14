@@ -1,212 +1,288 @@
 package it.polimi.GC13.controller.gameStateController;
 
+import it.polimi.GC13.app.ConnectionBuilder;
+import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.GenericException;
-import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.model.Game;
-import it.polimi.GC13.model.PlayableCard;
-import it.polimi.GC13.model.Player;
-import it.polimi.GC13.view.TUI.BoardView;
-import it.polimi.GC13.view.TUI.Printer;
+import it.polimi.GC13.model.*;
+import it.polimi.GC13.network.ClientInterface;
+import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
+import it.polimi.GC13.network.socket.ClientDispatcher;
 import junit.framework.TestCase;
 
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.rmi.RemoteException;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ControllerTest extends TestCase {
-    Game game = new Game(2, "test");
-    SetupPhase setupPhase;
+    /*
+    test methods that can't be used during a specific phase
+     */
+    Game game = new Game(2, "gameName");
     Player player1 = new Player("player1");
     Player player2 = new Player("player2");
-    MidPhase midPhase;
-    BoardView boardView = new BoardView();
+    Deck deck = new Deck();
 
-    /*
-        PASSED -> SETUP PHASE
-     */
-    public void testPlaceStartCard() {
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+
+    public void testJoiningPhaseErrorMethods() {
+        JoiningPhase joiningPhase = new JoiningPhase(new Controller(game, null, null));
+        String[] message = {
+                "Error, game is in JOINING phase.",
+                "Error, game is in JOINING phase.",
+                "Error, game is in JOINING phase.",
+                "Error, game is in JOINING phase.",
+                "Error, game is in JOINING phase.",
+                "Error, game is in JOINING phase."
+        };
         try {
-            this.game.addPlayerToGame(this.player1);
-            this.game.addPlayerToGame(this.player2);
-            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
+            joiningPhase.chooseToken(null, null);
+            joiningPhase.choosePrivateObjective(null, 0);
+            joiningPhase.placeStartCard(null, false);
+            joiningPhase.placeCard(null, 0, false, 0, 0);
+            joiningPhase.drawCard(null, 0);
+            joiningPhase.newChatMessage(null, null, null);
+            String[] messageOut = outContent.toString().trim().split("\\r?\\n");
+            for (int i = 0; i < message.length; i++) {
+                assertEquals(message[i], messageOut[i]);
+            }
         } catch (Exception e) {
-            System.out.println("Error creating");
+            fail(e.getMessage());
         }
-
-        this.setupPhase.placeStartCard(player1, true);
-        this.setupPhase.placeStartCard(player2, true);
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(50, 50)));
-        assert (this.player2.getBoard().checkListContainsCoordinates(this.player2.getBoard().getBoardMap().keySet(), new Coordinates(50, 50)));
-        assert (this.player1.getHand().size() == 3);
-        assert (this.player2.getHand().size() == 3);
     }
 
-    /*
-        PASSED -> MID PHASE
-     */
-    public void testPlaceCard() {
-        this.midPhase = new MidPhase(new Controller(this.game, null, null));
+    public void testSetupPhaseErrorMethods() {
+        System.setOut(originalOut);
+        LobbyController lobbyController = new LobbyController();
+        Controller controller = new Controller(game, lobbyController, null);
+        GamePhase gamePhase = new JoiningPhase(controller);
+        ClientInterface client = createClient();
         try {
-            this.game.addPlayerToGame(this.player1);
-            this.game.addPlayerToGame(this.player2);
-            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
+            game.addPlayerToGame(player2);
+            gamePhase.addPlayerToExistingGame(player1,game,client);
+
         } catch (GenericException e) {
+            fail(e.getMessage());
+        }
+        System.setOut(new PrintStream(outContent));
+
+        String[] message = {
+                "Error, game is in SETUP phase.",
+                "Error, game is in SETUP phase.",
+                "Error, game is in SETUP phase.",
+                "Error, game is in SETUP phase.",
+        };
+        try {
+
+            controller.choosePrivateObjective(null, 0);
+            controller.placeCard(null, 0, false, 0, 0);
+            controller.drawCard(null, 0);
+            controller.newChatMessage(null, null, null);
+            String[] messageOut = outContent.toString().trim().split("\\r?\\n");
+            for (int i = 0; i < message.length; i++) {
+                assertEquals(message[i], messageOut[i]);
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        //test addPlayerToExistingGame
+        try {
+            Player player3 = new Player("player3");
+            controller.addPlayerToExistingGame(player3,game,null);
+            assertFalse(game.getPlayerList().contains(player3));
+            assertTrue(game.getPlayerList().contains(player2));
+            assertTrue(game.getPlayerList().contains(player1));
+        } catch (GenericException e) {
+            fail("addPlayerToExistingGame should not throw Exception");
+        }
+    }
+
+    public void testDealingPhaseErrorMethods() {
+        System.setOut(originalOut);
+        Controller controller = new Controller(game, null, null);
+        GamePhase gamePhase = new SetupPhase(controller);
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        try {
+            game.addPlayerToGame(player1);
+            game.addPlayerToGame(player2);
+            game.dealStartCard();
+
+
+            gamePhase.placeStartCard(player1, true);
+            gamePhase.placeStartCard(player2, true);
+
+        } catch (GenericException e) {
+            fail(e.getMessage());
+        }
+        System.setOut(new PrintStream(outContent));
+
+        String[] message = {
+                "Error, game is in DEALING_CARDS phase.",
+                "Error, game is in DEALING_CARDS phase.",
+                "Error, game is in DEALING_CARDS phase.",
+                "Error, game is in DEALING_CARDS phase.",
+                "Error, game is in DEALING_CARDS phase.",
+                "Error, game is in DEALING_CARDS phase."
+        };
+        try {
+            controller.chooseToken(null, null);
+            controller.placeStartCard(null, false);
+            controller.placeCard(null, 0, false, 0, 0);
+            controller.drawCard(null, 0);
+            controller.newChatMessage(null, null, null);
+            controller.addPlayerToExistingGame(null, null, null);
+            String[] messageOut = outContent.toString().trim().split("\\r?\\n");
+            for (int i = 0; i < message.length; i++) {
+                assertEquals(message[i], messageOut[i]);
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    public void testMidPhaseErrorMethods() {
+        System.setOut(originalOut);
+        Controller controller = new Controller(game, null, null);
+        GamePhase gamePhase = new DealingPhase(controller);
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        try {
+            game.addPlayerToGame(player1);
+            game.addPlayerToGame(player2);
+
+            player1.setPosition(Position.FIRST);
+            player2.setPosition(Position.SECOND);
+
+            game.dealPrivateObjectiveCards();
+            gamePhase.choosePrivateObjective(player1, player1.getPrivateObjectiveCard().getFirst().serialNumber);
+            gamePhase.choosePrivateObjective(player2, player2.getPrivateObjectiveCard().getFirst().serialNumber);
+        } catch (GenericException e) {
+           fail(e.getMessage());
+        }
+        System.setOut(new PrintStream(outContent));
+        String[] message = {
+                "Error, game is in MID phase.",
+                "Error, game is in MID phase.",
+                "Error, game is in MID phase."
+        };
+        try {
+            controller.chooseToken(null, null);
+            controller.placeStartCard(null, false);
+            controller.choosePrivateObjective(null, 0);
+            String[] messageOut = outContent.toString().trim().split("\\r?\\n");
+            for (int i = 0; i < message.length; i++) {
+                assertEquals(message[i], messageOut[i]);
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    private ClientInterface createClient() {
+        try {
+            RMIConnectionAdapter client = new RMIConnectionAdapter(new ClientDispatcher());
+            client.connectionBuilderSetup(new ConnectionBuilder(0, 0, 0, 0));
+            return client;
+        } catch (RemoteException e) {
+            fail("failed to create client");
+            return null;
+        }
+    }
+
+    public void testEndPhaseErrorMethods() {
+        System.setOut(originalOut);
+        deck.parseJSON();
+        game.getTable().tableSetup();
+
+        LobbyController lobbyController = new LobbyController();
+        Controller controller = new Controller(this.game, lobbyController, null);
+        GamePhase gamePhase = new MidPhase(controller);
+
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        try {
+            //add players to game
+            game.addPlayerToGame(player1);
+            game.addPlayerToGame(player2);
+            //place starting card
+             System.out.println("\t\tsetting positions ");
+                       player1.setPosition(Position.FIRST);
+                       player2.setPosition(Position.SECOND);
+            StartCard card = deck.getStartDeck().getFirst();
+            player1.getBoard().placeCardToTheBoard(new Coordinates(50, 50), card, true);
+            player2.getBoard().placeCardToTheBoard(new Coordinates(50, 50), card, true);
+            //deal private objective cards
+            game.dealPrivateObjectiveCards();
+            player1.setPrivateObjectiveCard(player1.getPrivateObjectiveCard().getFirst().serialNumber, 1);
+            player2.setPrivateObjectiveCard(player2.getPrivateObjectiveCard().getFirst().serialNumber, 2);
+            //mid -> end
+            PlayableCard pointCard = deck.getCard(39);
+            //get card #39 : gives 1 point
+            System.out.println("\t\tplayer1 playing card ");
+            player1.getBoard().placeCardToTheBoard(new Coordinates(51, 51), pointCard, false);
+            player1.getTable().setPlayerScore(player1, pointCard.getPointsGiven(player1.getBoard(), 51, 51));
+
+            player1.setMyTurn(true);
+            System.out.println("\t\tsetting last round ");
+            game.setLastRound(player1);
+            System.out.println("\t\tincreasing turns played");
+            player1.increaseTurnPlayed();
+            player2.increaseTurnPlayed();
+
+
+            Map<Integer, Boolean> serialMap = game.getTable().getCardSerialMap(game.getTable().getResourceCardMap());
+            LinkedList<Integer> cardsOnTable = new LinkedList<>();
+            serialMap.forEach((key, value) -> cardsOnTable.add(key));
+            gamePhase.drawCard(player1, cardsOnTable.getFirst());
+
+        } catch (GenericException e) {
+            fail(e.getMessage());
+        }
+        System.setOut(new PrintStream(outContent));
+
+        String[] message = {
+                "Error, game is in END phase.",
+                "Error, game is in END phase.",
+                "Error, game is in END phase.",
+                "Error, game is in END phase.",
+                "Error, game is in END phase.",
+                "Error, game is in END phase.",
+                "Error, game is in END phase."
+        };
+        try {
+            controller.chooseToken(null, null);
+            controller.choosePrivateObjective(null, 0);
+            controller.placeStartCard(null, false);
+            controller.placeCard(null, 0, false, 0, 0);
+            controller.drawCard(null, 0);
+            controller.newChatMessage(null, null, null);
+            controller.addPlayerToExistingGame(null, null, null);
+            String[] messageOut = outContent.toString().trim().split("\\r?\\n");
+            for (int i = 0; i < message.length; i++) {
+                assertEquals(message[i], messageOut[i]);
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        try {
+            outContent.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        this.boardView.insertCard(50, 50, this.player1.getHand().getFirst().serialNumber, 0, true);
-        this.setupPhase.placeStartCard(this.player1, true);
-        this.setupPhase.placeStartCard(this.player2, true);
-
-        int X = 49;
-        int Y = 49;
-        this.player1.setMyTurn(true);
-        this.player2.setMyTurn(true);
-
-        // player 1 start card and first resource card
-        this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X, Y);
-        this.boardView.insertCard(Y, X, this.player1.getHand().getFirst().serialNumber, 1, true);
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
-        assert (this.player1.getHand().size() == 2);
-        this.boardView.printBoard();
-
-        this.midPhase.placeCard(this.player2, this.player2.getHand().getFirst().serialNumber, true, X, Y);
-        assert (this.player2.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
-        assert (this.player2.getHand().size() == 2);
-
-        X += 5;
-        Y -= 1;
-        // player 1 second resource card
-        this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, X, Y);
-        //this.boardView.insertCard(Y, X, this.player1.getHand().getFirst().serialNumber, 2, true);
-        assert (!this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(X, Y)));
-        assert (this.player1.getBoard().getBoardMap().size() == 2);
-
-        this.boardView.printBoard();
     }
 
-    public void testDrawCard() {
-        try {
-            this.game.addPlayerToGame(this.player1);
-            this.game.addPlayerToGame(this.player2);
-            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
-        } catch (GenericException e) {
-            throw new RuntimeException(e);
-        }
-
-        // insert start card in player1 board
-        this.boardView.insertCard(50, 50, this.player1.getHand().getFirst().serialNumber, 0, true);
-        this.setupPhase.placeStartCard(this.player1, true);
-        this.setupPhase.placeStartCard(this.player2, true);
-
-        // check that both players have 3 cards in each hand
-        assert (this.player1.getHand().size() == 3);
-        assert (this.player2.getHand().size() == 3);
-
-        // set players position
-        this.player1.setPosition(Position.FIRST);
-        this.player2.setPosition(Position.SECOND);
-        this.midPhase = new MidPhase(new Controller(this.game, null, null));
-
-        // place first card
-        PlayableCard cardToPlace = this.player1.getHand().getFirst();
-        this.midPhase.placeCard(this.player1, this.player1.getHand().getFirst().serialNumber, true, 49, 49);
-        this.boardView.insertCard(49, 49, this.player1.getHand().getFirst().serialNumber, 1, true);
-
-        // check that the card has been placed and the player doesn't have in his hand
-        assert (this.player1.getBoard().checkListContainsCoordinates(this.player1.getBoard().getBoardMap().keySet(), new Coordinates(49, 49)));
-        assert (this.player1.getHand().size() == 2);
-        assert (!this.player1.getHand().contains(cardToPlace));
-
-        assert (this.game.getTable().getResourceCardMap().size() == 3);
-        assert (this.game.getTable().getGoldCardMap().size() == 3);
-
-        boolean flag = true;
-        PlayableCard cardToDraw;
-
-        if (flag) {
-            Printer printer = new Printer();
-            Map<PlayableCard, Boolean> cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-            printer.showDrawableCards(this.player1.getTable().getCardSerialMap(cardToDrawMap));
-
-            cardToDrawMap.clear();
-
-            cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream()
-                    .filter(entry -> !entry.getValue())
-                    .findFirst()
-                    .stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-
-            cardToDraw = cardToDrawMap.keySet().stream().findFirst().orElseThrow();
-
-            System.out.println("Test serial card to draw: " + cardToDraw.serialNumber);
-            assert (this.game.getTable().getResourceCardMap().containsKey(cardToDraw));
-            assert (this.player1.isMyTurn());
-
-            // METHOD TO CHECK
-            this.midPhase.drawCard(player1, cardToDraw.serialNumber);
-
-            // check that the player has the selected card in his hand and that hand size is 3
-            assert (this.player1.getHand().contains(cardToDraw));
-            assert (this.player1.getHand().size() == 3);
-
-            assert (!this.player1.getTable().getResourceCardMap().containsKey(cardToDraw));
-            assert (this.game.getTable().getGoldCardMap().size() == 3);
-            assert (this.game.getTable().getResourceCardMap().size() == 3);
-
-            cardToDrawMap.clear();
-            cardToDrawMap = this.player1.getTable().getResourceCardMap().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            printer.showDrawableCards(this.player1.getTable().getCardSerialMap(cardToDrawMap));
-
-        } else {
-            cardToDraw = this.player1.getTable().getGoldCardMap().keySet().stream().findAny().orElseThrow();
-
-            System.out.println("Test card to draw: " + cardToDraw.serialNumber);
-            assert (this.game.getTable().getGoldCardMap().containsKey(cardToDraw));
-
-            // METHOD TO CHECK
-            assert (this.player1.isMyTurn());
-            this.midPhase.drawCard(player1, cardToDraw.serialNumber);
-
-            // check that the player has the selected card in his hand and that hand size is 3
-            assert (this.player1.getHand().contains(cardToDraw));
-            assert (this.player1.getHand().size() == 3);
-
-            assert (!this.player1.getTable().getGoldCardMap().containsKey(cardToDraw));
-            assert (this.game.getTable().getResourceCardMap().size() == 3);
-            assert (this.game.getTable().getGoldCardMap().size() == 3);
-        }
-        assert (!this.player1.isMyTurn());
+    public void setUp() throws Exception {
+        super.setUp();
+        System.setOut(new PrintStream(outContent));
     }
 
-    /*
-        PASSED -> MID PHASE
-     */
-    public void testCardPoints() throws GenericException {
-        this.midPhase = new MidPhase(new Controller(this.game, null, null));
-        try {
-            this.game.addPlayerToGame(this.player1);
-            this.game.addPlayerToGame(this.player2);
-            this.setupPhase = new SetupPhase(new Controller(this.game, null, null));
-        } catch (GenericException e) {
-            throw new RuntimeException(e);
-        }
-        this.boardView.insertCard(50, 50, this.player1.getHand().getFirst().serialNumber, 0, true);
-        this.setupPhase.placeStartCard(this.player1, true);
-        this.setupPhase.placeStartCard(this.player2, true);
-
-        PlayableCard cardToPlace = this.player1.getTable().getDeck().getCard(18);
-        this.player1.addToHand(List.of(cardToPlace));
-
-        this.player1.setMyTurn(true);
-        assert (this.player1.getTable().getPlayersScore().get(this.player1) == 0);
-        this.midPhase.placeCard(this.player1, cardToPlace.serialNumber, false, 51, 51);
-        assert (!this.player1.getHand().contains(cardToPlace));
-        assert (this.player1.getTable().getPlayersScore().get(this.player1) == 1);
-    }
-
-    public void testAddPlayerToExistingGame() {
+    public void tearDown() {
+        System.setOut(originalOut);
     }
 }

@@ -57,10 +57,14 @@ public class Player implements Serializable {
                     }
                 }
                 this.game.getObserver().notifyClients(new OnTokenAlreadyChosenMessage(this.getNickname(), tokenColor, tokenColorsList, this.game.getGameName()));
-                throw new GenericException(tokenColor + " already chose");
+                throw new GenericException(tokenColor + " already chosen");
             }
             this.game.getObserver().notifyClients(new OnTokenChoiceMessage(this.getNickname(), this.tokenColor));
         }
+    }
+
+    public TokenColor getTokenColor() {
+        return tokenColor;
     }
 
     public Position getPosition() {
@@ -108,8 +112,7 @@ public class Player implements Serializable {
         this.hand.forEach((card) -> handSerialNumber.add(card.serialNumber));
 
         // DEBUG
-        System.out.println(this.nickname);
-        handSerialNumber.forEach(System.out::println);
+        System.out.println(this.nickname+"'s hand:"+handSerialNumber);
 
         return handSerialNumber;
     }
@@ -148,11 +151,17 @@ public class Player implements Serializable {
         this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
+
     // chose private objective card for the game
     public void setPrivateObjectiveCard(int serialPrivateObjectiveCard, int readyPlayers) throws GenericException {
         if (this.privateObjectiveCard.size() == 2) {
-            this.privateObjectiveCard.removeIf(objectiveCard -> objectiveCard.serialNumber != serialPrivateObjectiveCard);
-            this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, serialPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
+            if(this.privateObjectiveCard.stream().anyMatch(c -> c.serialNumber == serialPrivateObjectiveCard)) {
+                //the player has 2 objective card, remove the one that wasn't chosen
+                this.privateObjectiveCard.removeIf(objectiveCard -> objectiveCard.serialNumber != serialPrivateObjectiveCard);
+                this.game.getObserver().notifyClients(new OnChoosePrivateObjectiveCardMessage(this.nickname, serialPrivateObjectiveCard, readyPlayers, this.game.numPlayer));
+            }else{
+                throw new GenericException("Private objective chosen wasn't in "+this.nickname+"'s hand");
+            }
         } else {
             throw new GenericException("Private objective already chosen");
         }
