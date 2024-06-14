@@ -4,6 +4,8 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
+import it.polimi.GC13.network.messages.fromclient.NewMessage;
+import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
 import it.polimi.GC13.view.TUI.BoardView;
@@ -608,7 +610,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        //setSize(1700, 900); //for debugging
         setResizable(true);
 
 
@@ -696,14 +697,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         northPanel.add(Box.createHorizontalGlue());
 
-//        JButton popup = createButton("popup", 27); //DA NON AGGIUNGERE
-//        northPanel.add(popup);
-//
-//        popup.addActionListener(e -> {
-//            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, "Nico4");
-//            dialog.setVisible(true);
-//        });
-
 
         northPanel.add(Box.createHorizontalGlue());
 
@@ -751,9 +744,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         JPanel lateralPanelSX = new JPanel(new GridBagLayout());
         setBoxComponentSize(lateralPanelSX, 150, lateralPanelSX.getHeight());
-
-//        lateralPanelSX.setMaximumSize(new Dimension(150, lateralPanelSX.getHeight()));
-//        lateralPanelSX.setPreferredSize(new Dimension(150, lateralPanelSX.getHeight()));
 
 
         setPlayerAvatar(lateralPanelSX);
@@ -903,21 +893,16 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         JPanel lateralPanelDX2 = new JPanel();
-        setBoxComponentSize(lateralPanelDX2, 350, lateralPanelDX2.getHeight());
+        lateralPanelDX2.setLayout(new BoxLayout(lateralPanelDX2, BoxLayout.Y_AXIS));
+        setBoxComponentSize(lateralPanelDX2, 380, lateralPanelDX2.getHeight());
 
+        JPanel tablePanel = new JPanel();
         positionTable = new JTable();
-        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, tokenInGame, true, 35);
+        createTable(positionTable, new String[]{"Token", "Player"}, positionPlayerMap, listTokenInGame, tokenInGame, true, 35);
 
+        addScrollPane(positionTable, tablePanel, 300, (positionTable.getRowCount() + 1) * positionTable.getRowHeight() + 5);
 
-        int rowCount = positionTable.getRowCount();
-        //System.out.println(rowCount);
-        int rowHeight = positionTable.getRowHeight();
-        //System.out.println(rowHeight);
-        int tableHeight = (rowCount + 1) * rowHeight + 5;
-        //System.out.println(tableHeight);
-
-
-        addScrollPane(positionTable, lateralPanelDX2, 200, tableHeight);
+        lateralPanelDX2.add(tablePanel);
         panel2.add(lateralPanelDX2, BorderLayout.EAST);
 
         Random random = new Random();
@@ -926,24 +911,19 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         for(String player : playersScore.keySet()){
             int randomIndex = random.nextInt(16);
             playersScore.put(player, randomIndex);
+            System.out.println("Player: " + player + " score: " + playersScore.get(player));
             tokenManager.updatePlayerScore(player, playersScore.get(player));
         }
 
-        updateCrownImageInTable(positionTable);
+        updateCrownImageInTable();
+        updateScoreColumn();
+
 
 
         //TODO: Da completare (Chat)
-
-        JPanel lateralPanelSX2 = new JPanel();
-        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
-        lateralPanelSX2.setOpaque(false);
-        //setBoxComponentSize(lateralPanelSX2, 230, 14);
-
-
         JPanel chatPanel = new JPanel(new GridBagLayout());
         setBorderInsets(chatPanel, 0,5,0,5);
 
-        //combobox
         combobox = new JComboBox<>();
 
         for(String s : chat.keySet()){
@@ -957,12 +937,20 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         chatPanel.add(combobox, gbcCombobox);
 
-        //textArea
         chatArea = new JTextArea();
         chatArea.setPreferredSize(new Dimension(300,200));
         chatArea.setEditable(false);
 
         JScrollPane scrollPaneChat = new JScrollPane(chatArea);
+
+        GridBagConstraints gbcChat = createGridBagConstraints(0,1) ;
+        gbcChat.gridwidth = 2;
+        gbcChat.gridheight = 1;
+        gbcChat.fill = GridBagConstraints.HORIZONTAL;
+        gbcChat.weightx = 1.0;
+        gbcChat.insets = new Insets(5, 5, 5, 5);
+
+        chatPanel.add(scrollPaneChat,gbcChat);
 
 
         messageField = new JTextField(20);
@@ -971,6 +959,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         scrollPaneMessage.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPaneMessage.setPreferredSize(new Dimension(300, 30));
 
+        chatPanel.add(scrollPaneMessage, createGridBagConstraints(0,2));
+
 
         JButton sendButton = new JButton("Invia");
 
@@ -978,25 +968,35 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             sendMessage();
         });
 
-
-        GridBagConstraints gbcChat = createGridBagConstraints(0,1) ;
-        gbcChat.gridwidth = 2;
-        gbcChat.gridheight = 1;
-        gbcChat.fill = GridBagConstraints.HORIZONTAL;
-        gbcChat.weightx = 1.0;
-        //gbcChat.weighty = 1.0;
-        gbcChat.insets = new Insets(5, 5, 5, 5);
-
-        chatPanel.add(scrollPaneChat,gbcChat);
-
-        //textField
-        chatPanel.add(scrollPaneMessage, createGridBagConstraints(0,2));
-
-        //sendButton
         chatPanel.add(sendButton, createGridBagConstraints(1,2));
 
-        lateralPanelSX2.add(chatPanel);
-        panel2.add(lateralPanelSX2, BorderLayout.WEST);
+
+        lateralPanelDX2.add(chatPanel);
+
+
+
+        JButton popup = createButton("popup", 27); //DA NON AGGIUNGERE
+        northPanel.add(popup);
+
+        popup.addActionListener(e -> {
+            FrameManager frameManager = new FrameManager();
+
+            Set<String> winner = new HashSet<>();
+            winner.add("Player1");
+
+            frameManager.gameOver2(this, winner);
+        });
+
+
+
+
+
+        JPanel lateralPanelSX2 = new JPanel();
+//        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
+//        lateralPanelSX2.setOpaque(false);
+//        //setBoxComponentSize(lateralPanelSX2, 230, 14);
+
+        //panel2.add(lateralPanelSX2, BorderLayout.WEST);
 
 
         setVisible(true);
@@ -1181,30 +1181,19 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
             ArrayList<Object> newColumnDataRight = new ArrayList<>();
 
-//            positionPlayerMap = playerPosition.entrySet().stream()
-//                    .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
-//                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
-//                            (e1, e2) -> e1,
-//                            () -> new EnumMap<>(Position.class)));
-//
-//
-//            for(Map.Entry<Position, String> entry : positionPlayerMap.entrySet()){
-//                listTokenInGame.add(P_TOKEN_DIR + getTokenFileName(tokenInGame.get(entry.getValue())));
-//            }
 
+            for (int row = 0; row < model.getRowCount(); row++) {
+                String cellValue = (String) model.getValueAt(row, 1);
 
-
-
-            for(String player : playersScore.keySet()){
-                //newColumnDataRight.add("false");
-
-                System.out.println("Player: " + player);
+                for(String playerName : playersScore.keySet()) {
+                    if (playerName.equals(cellValue)) {
+                        newColumnDataRight.add(playersScore.get(playerName));
+                    }
+                }
             }
 
-
-
-
             model.addColumnOnLeft(" ", newColumnDataLeft);
+            model.addColumnOnRight("Score", newColumnDataRight);
             k = 1;
         }
 
@@ -1232,18 +1221,30 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-    public void updateCrownImageInTable(JTable table){
+    public void updateCrownImageInTable(){
         //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
         //String maxScorePlayer = playersScore.entrySet().stream().max((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).map(n -> n.getKey()).stream().findFirst().orElseThrow();
         String maxScorePlayer = playersScore.entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
-        for (int row = 0; row < table.getModel().getRowCount(); row++) {
-            String cellValue = (String) table.getModel().getValueAt(row, 2);
+        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
             if (maxScorePlayer.equals(cellValue)) {
-                table.setValueAt(true, row , 0);
+                positionTable.setValueAt(true, row , 0);
             } else {
-                table.setValueAt(false, row , 0);
+                positionTable.setValueAt(false, row , 0);
+            }
+        }
+    }
+
+    public void updateScoreColumn(){
+        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
+
+            for(String playerName : playersScore.keySet()) {
+                if (playerName.equals(cellValue)) {
+                    positionTable.setValueAt(playersScore.get(playerName), row, 3);
+                }
             }
         }
     }
@@ -1824,9 +1825,16 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         String selectedPlayer = (String) combobox.getSelectedItem();
         if (selectedPlayer != null) {
             String message = messageField.getText();
-            chat.get(selectedPlayer).add(message);
+            chat.get(selectedPlayer).add(message + "\n");
             updateTextArea();
             messageField.setText("");
         }
+
+        //this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
+
+    }
+
+    public Map<String, Integer> getPlayersScore() {
+        return playersScore;
     }
 }

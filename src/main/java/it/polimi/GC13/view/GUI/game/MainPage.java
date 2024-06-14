@@ -1015,7 +1015,21 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 newColumnDataLeft.add(false);
             }
 
+
+            ArrayList<Object> newColumnDataRight = new ArrayList<>();
+
+            for (int row = 0; row < model.getRowCount(); row++) {
+                String cellValue = (String) model.getValueAt(row, 1);
+
+                for(String playerName : frameManager.getPlayersScore().keySet()) {
+                    if (playerName.equals(cellValue)) {
+                        newColumnDataRight.add(frameManager.getPlayersScore().get(playerName));
+                    }
+                }
+            }
+
             model.addColumnOnLeft(" ", newColumnDataLeft);
+            model.addColumnOnRight("Score", newColumnDataRight);
             k = 1;
         }
 
@@ -1043,20 +1057,34 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-    public void updateCrownImageInTable(JTable table){
+    public void updateCrownImageInTable(){
         //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
         String maxScorePlayer = frameManager.getPlayersScore().entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
-        for (int row = 0; row < table.getModel().getRowCount(); row++) {
-            String cellValue = (String) table.getModel().getValueAt(row, 2);
+        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
             if (maxScorePlayer.equals(cellValue)) {
-                table.setValueAt(true, row , 0);
+                positionTable.setValueAt(true, row , 0);
             } else {
-                table.setValueAt(false, row , 0);
+                positionTable.setValueAt(false, row , 0);
             }
         }
     }
+
+
+    public void updateScoreColumn(){
+        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
+
+            for(String playerName : frameManager.getPlayersScore().keySet()) {
+                if (playerName.equals(cellValue)) {
+                    positionTable.setValueAt(frameManager.getPlayersScore().get(playerName), row, 3);
+                }
+            }
+        }
+    }
+
 
 
 

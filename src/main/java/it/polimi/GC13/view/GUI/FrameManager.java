@@ -7,12 +7,10 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
+import it.polimi.GC13.network.messages.fromclient.NewMessage;
 import it.polimi.GC13.network.messages.fromclient.ReconnectPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
-import it.polimi.GC13.view.GUI.game.CardManager;
-import it.polimi.GC13.view.GUI.game.MainPage;
-import it.polimi.GC13.view.GUI.game.OnSetLastTurnDialog;
-import it.polimi.GC13.view.GUI.game.WinningFrame;
+import it.polimi.GC13.view.GUI.game.*;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
 import it.polimi.GC13.view.TUI.BoardView;
 import it.polimi.GC13.view.View;
@@ -44,6 +42,7 @@ public class FrameManager extends JFrame implements View {
     private boolean newMessage = false;
     public List<Coordinates> availablesCells = new LinkedList<>();
     private boolean newStatus = false;
+    private boolean firstTurn = true;
 
 
     private LoginFrame loginFrame;
@@ -317,7 +316,8 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onSetLastTurn(String nickname) {
-        SwingUtilities.invokeLater(()-> new OnSetLastTurnDialog(this, nickname));
+        OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
+        dialog.setVisible(true);
         this.newStatus = true;
     }
 
@@ -331,7 +331,8 @@ public class FrameManager extends JFrame implements View {
             gamePage.getTokenManager().updatePlayerScore(player, playersScore.get(player));
         }
 
-        gamePage.updateCrownImageInTable(gamePage.getPositionTable());
+        gamePage.updateCrownImageInTable();
+        gamePage.updateScoreColumn();
 
         if (this.nickname.equals(playerNickname)) {
             gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
@@ -365,15 +366,37 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void gameOver(Set<String> winner) {
+        gamePage.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();
             if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
-                winningFrame.setWin(true);
                 winningFrame.getWinnerLabel().setText("You win!");
+                winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
             } else {
-                winningFrame.setWin(false);
                 winningFrame.getWinnerLabel().setText("You lose!");
+                winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
             }
+        });
+    }
+
+
+    //testing
+    public void gameOver2(MainFrameProva parent, Set<String> winner) {
+        parent.dispose();
+        SwingUtilities.invokeLater(()-> {
+            winningFrame = new WinningFrame();
+
+            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(parent.getNickname()))) {
+                winningFrame.getWinnerLabel().setText("You win!");
+                winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
+            } else {
+                winningFrame.getWinnerLabel().setText("You lose!");
+                winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
+            }
+
+            winningFrame.getScoreLabel().setText("Your score: " + parent.getPlayersScore().get(parent.getNickname()));
+
+
         });
     }
 
@@ -411,16 +434,7 @@ public class FrameManager extends JFrame implements View {
     }
 
     private void sendMessage() {
-   /*   this.cooking = true;
-        String playerChosen;
-        String message;
-        do {
-            playerChosen = userStringInput("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [global]\nPlayer");
-        } while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global")));
-        message = userStringInput("Write down your message");
 
-        this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
-     */
     }
 
 
@@ -432,7 +446,7 @@ public class FrameManager extends JFrame implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
-            if (this.turnPlayed == 0) {
+            if (this.firstTurn) {
                 gamePage.getPanelContainer().removeAll();
                 gamePage.getNamePanel().removeAll();
                 gamePage.refresh();
@@ -449,8 +463,8 @@ public class FrameManager extends JFrame implements View {
 
                 gamePage.printHandOrDecksOnGUI(hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
 
-
                 refreshFrame(gamePage);
+                this.firstTurn = false;
             }
             if (this.myTurn) {
                 gamePage.getTurnLabel().setText("It's my turn!");
@@ -461,9 +475,9 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getHandLabelCheckBoxMap().values().forEach(checkBox -> checkBox.setEnabled(true));
 
             } else {
-                gamePage.getTurnLabel().setText("waiting for my turn...");
+                gamePage.getTurnLabel().setText("waiting for my turn");
                 gamePage.getTurnLabel().setForeground(new Color(175, 31, 31));
-                gamePage.getTurnLabel2().setText("waiting for my turn...");
+                gamePage.getTurnLabel2().setText("waiting for my turn");
                 gamePage.getTurnLabel2().setForeground(new Color(175, 31, 31));
             }
         }
@@ -481,6 +495,8 @@ public class FrameManager extends JFrame implements View {
      * @param key can be [global] or a player [nickname], it is used to map the chat
      * @param message message sent in chat by the player
      */
+
+    //uguale/molto simile a tui (mettere in View?)
     private void registerChatMessage(String key, String message) { // uguale + update gui
         if (this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
@@ -492,6 +508,9 @@ public class FrameManager extends JFrame implements View {
             }
         }
         this.newMessage = true; //update gui trigger
+
+        //if --> controllo se GUi mostra la chat del mittente del messaggio arrivato --> se si: updateTextArea
+
     }
 
 
