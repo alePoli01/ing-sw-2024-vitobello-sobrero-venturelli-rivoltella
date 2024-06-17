@@ -41,7 +41,7 @@ public class PlayableCard implements Serializable {
         };
     }
 
-    //TODO: controllare se si può spostare su una classe esterna
+    //TODO: check if it's possible to move the print to an external class
     public void linePrinter(int version, int line, boolean isFlipped) {
         String color;
 
@@ -56,7 +56,7 @@ public class PlayableCard implements Serializable {
 
         if (this.serialNumber >= 41) {
             switch (version) {
-                case (0): {//fullcard
+                case (0): {//full card
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -107,7 +107,7 @@ public class PlayableCard implements Serializable {
                     }
                     break;
                 }
-                case (1): {//bottomleft not shown
+                case (1): {//bottom left not shown
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -153,7 +153,7 @@ public class PlayableCard implements Serializable {
                     break;
 
                 }
-                case (2): {//bottomright not shown
+                case (2): {//bottom right not shown
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -250,7 +250,7 @@ public class PlayableCard implements Serializable {
                     break;
 
                 }
-                case (4): {//upleft not shown
+                case (4): {//up left not shown
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -510,7 +510,7 @@ public class PlayableCard implements Serializable {
                     break;
 
                 }
-                case (9): {//allside not shown
+                case (9): {//all side not shown
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -567,7 +567,7 @@ public class PlayableCard implements Serializable {
             System.out.print(reset);
         }else{
             switch(version){
-                case (0): {//fullcard
+                case (0): {//full card
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -788,7 +788,7 @@ public class PlayableCard implements Serializable {
                     }
                     break;
                 }
-                case (4): {//upleft
+                case (4): {//up left
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {
@@ -843,7 +843,7 @@ public class PlayableCard implements Serializable {
                     }
                     break;
                 }
-                case (5): {//leftside not shown
+                case (5): {//left side not shown
                     switch (line) {
                         case (0): {//first line printed
                             if (!isFlipped) {

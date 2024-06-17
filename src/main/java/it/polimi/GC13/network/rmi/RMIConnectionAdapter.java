@@ -7,7 +7,6 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 import it.polimi.GC13.network.socket.ClientDispatcher;
-import it.polimi.GC13.network.socket.SocketServer;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -15,8 +14,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

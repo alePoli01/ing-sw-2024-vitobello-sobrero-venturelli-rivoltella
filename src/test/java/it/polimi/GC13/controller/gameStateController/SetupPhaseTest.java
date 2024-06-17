@@ -4,7 +4,6 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
-import it.polimi.GC13.view.TUI.BoardView;
 import junit.framework.TestCase;
 
 public class SetupPhaseTest extends TestCase {
@@ -34,7 +33,7 @@ public class SetupPhaseTest extends TestCase {
         }
     }
 
-    public void testPlacedStartCard() {
+    public void testPlaceStartCard() {
         createGame();
 
         this.setupPhase.placeStartCard(player1, true);

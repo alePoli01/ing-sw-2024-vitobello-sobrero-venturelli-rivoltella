@@ -19,22 +19,6 @@ public enum Resource {
         String magenta = "\033[38;2;171;63;148m";  // Magenta
         String gold = "\033[38;2;255;215;0m";  // gold
         String reset = "\u001b[0m";
-        /*
-            String black = "\u001b[90m";  // black
-            String white = "\u001b[37m";
-            String mushroom = "\uD83C\uDF44";  // 🍄
-            String dog = "\uD83D\uDC36";  // 🐶
-            String insect = "\uD83D\uDC1C";  // 🐜
-            String plant = "\uD83C\uDF31";  // 🌱
-            String manuscript = "\uD83D\uDCDC";  // 📜
-            String feather = "\uD83D\uF99C";  // 🪶
-            String inkwell = "\uF991";  // 🫙
-            String backgroundRed = "\u001b[41m";   // red background
-            String backgroundGreen = "\u001b[42m"; // Green Background
-            String backgroundBlue = "\u001b[46m";  // Blue background
-            String backgroundmagenta = "\u001b[35m";  // Blue
-            String resetbackground = "\u001b[0m";  // Reset color of the background
-         */
 
         switch (this){
             case FUNGI -> {

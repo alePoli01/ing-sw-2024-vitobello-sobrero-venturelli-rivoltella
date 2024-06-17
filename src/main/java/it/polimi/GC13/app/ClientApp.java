@@ -2,10 +2,8 @@ package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.socket.ClientDispatcher;
-import it.polimi.GC13.view.GUI.game.MainFrameProva;
 import it.polimi.GC13.view.View;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,9 +45,6 @@ public class ClientApp {
         }
         System.setProperty("java.server.hostname", rmiHostname);
 
-
-           //quando vuoi dichiarare la scheda di rete usa -D 'copia dal progetto degli antichi'
-
         System.out.println("\u001B[35mHello from Client\u001B[0m");
         System.out.println("RMI port: " + rmiPort);
         System.out.println("Socket port: " + socketPort + "\n");
@@ -87,7 +82,7 @@ public class ClientApp {
             view.setVirtualServer(virtualServer);
             view.startView();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.exit(-1);
         }
     }

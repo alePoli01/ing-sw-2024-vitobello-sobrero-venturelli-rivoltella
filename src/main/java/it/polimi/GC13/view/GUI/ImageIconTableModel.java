@@ -8,7 +8,6 @@ import it.polimi.GC13.view.GUI.game.CardManager;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -184,5 +183,5 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
     }
 
     @Override
-    public void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException {}
+    public void showStarterCardAndPrivateObjectiveCard(List<Integer> hand){}
 }

@@ -12,7 +12,7 @@ public class ReignObjective extends ObjectiveCard {
 
     public int getObjectivePoints(Board board) {
         int combo = board.getCollectedResources().get(type)/3; //calculate how many times the obj. has been satisfied
-        return combo * getComboPoints();
+        return combo * this.comboPoints;
     }
 
 

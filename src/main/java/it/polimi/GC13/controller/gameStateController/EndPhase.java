@@ -1,11 +1,9 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
-import java.util.List;
 import java.util.Set;
 
 public class EndPhase implements GamePhase {

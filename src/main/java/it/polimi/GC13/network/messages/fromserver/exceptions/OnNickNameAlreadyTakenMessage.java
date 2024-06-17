@@ -22,13 +22,6 @@ public class OnNickNameAlreadyTakenMessage implements OnInputExceptionMessage {
     @Override
     public String getErrorMessage() {
         return this.errorMessage;
-        /*StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
-
-        System.out.println("Nickname already chosen.\nPlayers in game:");
-        for(Player player : playerList) {
-            joiner.add(player.getNickname());
-        }
-        return joiner.toString();*/
     }
 
     @Override

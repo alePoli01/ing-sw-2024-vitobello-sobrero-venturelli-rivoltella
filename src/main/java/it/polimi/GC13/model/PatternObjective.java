@@ -115,7 +115,7 @@ public int getObjectivePoints(Board board) {
                 flag = 0;
             }
 
-            return points * getComboPoints();
+            return points * this.comboPoints;
 
         } else {//check the direction going to the left
 
@@ -190,34 +190,20 @@ public int getObjectivePoints(Board board) {
                 }
                 iterable.setX(X_max - x_offset);
             }
-            return points * getComboPoints();
+            return points * this.comboPoints;
         }
 
     } else {//checking the L pattern
 
         int points = 0, flag = 0;
 
-        Resource color = null;
-        Resource colordiagonal = null;
-
-        switch (orientation) {
-            case (0):
-                color = Resource.PLANT;
-                colordiagonal = Resource.INSECT;
-                break;
-            case (1):
-                color = Resource.FUNGI;
-                colordiagonal = Resource.PLANT;
-                break;
-            case (2):
-                color = Resource.ANIMAL;
-                colordiagonal = Resource.FUNGI;
-                break;
-            case (3):
-                color = Resource.INSECT;
-                colordiagonal = Resource.ANIMAL;
-                break;
-        }
+        Resource color = switch (orientation) {
+            case (0) -> Resource.PLANT;
+            case (1) -> Resource.FUNGI;
+            case (2) -> Resource.ANIMAL;
+            case (3) -> Resource.INSECT;
+            default -> null;
+        };
 
         Coordinates iterable = new Coordinates(X_min, Y_min);
         Coordinates mover=new Coordinates(iterable.getX(), iterable.getY());
@@ -304,7 +290,7 @@ public int getObjectivePoints(Board board) {
             //System.out.println("---------------");
             flag = 0;
         }
-        return points * getComboPoints();
+        return points * this.comboPoints;
 
     }
 }

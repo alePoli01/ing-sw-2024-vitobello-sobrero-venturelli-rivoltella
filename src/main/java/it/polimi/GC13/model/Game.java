@@ -23,7 +23,6 @@ public class Game implements Serializable {
     private final String gameName;
     private transient Observer observer;
     private final Map<String, List<String>> chat = new HashMap<>();
-    private Set<Player> winner = new HashSet<>();
 
     /**
      *
@@ -219,22 +218,22 @@ public class Game implements Serializable {
                 .stream()
                 .collect(Collectors.toSet());
         // if the size is 1, it's not necessary to check how many objective each player has achieved and the control is skipped
+        Set<Player> winner;
         if (playersWithHighestScore.size() > 1) {
             Map<Player, Integer> objectiveAchievedByPlayersWithHighestScore = new HashMap<>();
             playersWithHighestScore.forEach(player -> objectiveAchievedByPlayersWithHighestScore.put(player, objectivesAchieved.get(player)));
 
             // adds to the winner set players with the highest number of objectives achieved
-            this.winner = objectiveAchievedByPlayersWithHighestScore.entrySet().stream()
+            winner = objectiveAchievedByPlayersWithHighestScore.entrySet().stream()
                     .max(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey)
                     .stream()
                     .collect(Collectors.toSet());
-
         }else{
-            this.winner=playersWithHighestScore;
+            winner =playersWithHighestScore;
         }
         // create the set of the winners' nickname to send to the clients (views)
-        Set<String> winnersNickname = this.winner.stream().map(Player::getNickname).collect(Collectors.toSet());
+        Set<String> winnersNickname = winner.stream().map(Player::getNickname).collect(Collectors.toSet());
         this.observer.notifyClients(new OnGameWinnerMessage(winnersNickname));
         return winnersNickname;
     }

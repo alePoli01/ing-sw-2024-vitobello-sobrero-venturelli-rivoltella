@@ -5,7 +5,7 @@ import javax.swing.table.TableCellRenderer;
 
 public class ImageIconRenderer extends JLabel implements TableCellRenderer {
     public ImageIconRenderer() {
-        setHorizontalAlignment(JLabel.CENTER); // Centra l'icona
+        setHorizontalAlignment(JLabel.CENTER); // center the icon
     }
     @Override
     public JComponent getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

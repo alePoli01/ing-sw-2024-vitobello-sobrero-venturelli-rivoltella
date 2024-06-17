@@ -33,7 +33,7 @@ public class ObjectObjective extends ObjectiveCard {
         } else {
             combo = (board.getCollectedResources().get(object.getFirst())) / 2;
         }
-        return combo * getComboPoints();
+        return combo * this.comboPoints;
     }
 
     @Override

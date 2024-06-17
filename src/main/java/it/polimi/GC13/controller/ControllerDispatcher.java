@@ -31,8 +31,7 @@ public class ControllerDispatcher {
         try {
             messagesFromClient.methodToCall(this.lobbyController, this.clientControllerMap.get(client), client, this.clientPlayerMap.get(client));
         } catch (RemoteException e) {
-            System.err.println("RMI: Error while dispatching messages from client.");
-            e.printStackTrace();
+            System.err.println("RMI: Error while dispatching messages from client: "+e.getLocalizedMessage());
         }
     }
 }

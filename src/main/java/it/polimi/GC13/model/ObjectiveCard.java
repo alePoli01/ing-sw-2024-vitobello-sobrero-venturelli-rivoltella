@@ -11,14 +11,6 @@ public abstract class ObjectiveCard implements Serializable {
         this.comboPoints = comboPoints;
     }
 
-    public int getSerialNumber() {
-        return this.serialNumber;
-    }
-
-    public int getComboPoints(){
-        return this.comboPoints;
-    }
-
     public abstract int getObjectivePoints(Board board);
 
     public abstract void printLineObjectiveCard(int line);

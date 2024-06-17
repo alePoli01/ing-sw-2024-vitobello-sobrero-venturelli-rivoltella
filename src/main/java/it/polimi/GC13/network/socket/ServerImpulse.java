@@ -16,14 +16,17 @@ public class ServerImpulse implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        boolean running = true;
+        while (running) {
             try {
                 this.virtualClient.sendMessageFromServer(new PokeMessage());
             if(!virtualClient.isConnectionOpen()){
                 break;
             }
                 Thread.sleep(delay);
-            } catch (InterruptedException | RemoteException e) {
+            } catch (InterruptedException e){
+                running = false;
+            }catch( RemoteException e) {
                 throw new RuntimeException(e);
             }
         }

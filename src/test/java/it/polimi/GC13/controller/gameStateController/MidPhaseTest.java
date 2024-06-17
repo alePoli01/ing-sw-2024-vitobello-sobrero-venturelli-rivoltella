@@ -35,6 +35,16 @@ public class MidPhaseTest extends TestCase {
         }
     }
 
+    private MidPhase createPhase() {
+        Controller controller = new Controller(game,null,null);
+        midPhase = new MidPhase(controller);
+        createGame();
+        boardView.insertCard(50, 50, player1.getHand().getFirst().serialNumber, 0, true);
+        setupPhase.placeStartCard(player1, true);
+        setupPhase.placeStartCard(player2, true);
+        return midPhase;
+    }
+
     public void testPlaceCard() {
         this.midPhase = new MidPhase(new Controller(this.game, null, null));
         createGame();
@@ -210,17 +220,10 @@ public class MidPhaseTest extends TestCase {
         System.out.println("========TEST: making player2 draw, LastRound : "+game.getLastRound()+", TurnPlayed : " + player2.getTurnPlayed());
         midPhase.drawCard(player2, cardsOnTable.get(2));
     }
-    private MidPhase createPhase(MidPhase midPhase) {
-        Controller controller = new Controller(game,null,null);
-        midPhase = new MidPhase(controller);
-        createGame();
-        boardView.insertCard(50, 50, player1.getHand().getFirst().serialNumber, 0, true);
-        setupPhase.placeStartCard(player1, true);
-        setupPhase.placeStartCard(player2, true);
-        return midPhase;
-    }
+
+
     public void testAddPlayerToExistingGame() {
-        midPhase = createPhase(midPhase);
+        midPhase = createPhase();
 
         Player player3 = new Player("player3");
         midPhase.addPlayerToExistingGame(player3,game,null);
@@ -231,7 +234,7 @@ public class MidPhaseTest extends TestCase {
 
     public void testNewChatMessage() {
         //the validity of recipient and sender is managed by the view
-        midPhase = createPhase(midPhase);
+        midPhase = createPhase();
 
         midPhase.newChatMessage("a","b","test");
         midPhase.newChatMessage("b","a","test");

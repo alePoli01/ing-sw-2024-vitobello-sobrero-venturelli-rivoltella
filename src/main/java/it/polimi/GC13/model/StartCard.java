@@ -18,7 +18,7 @@ public class StartCard extends PlayableCard {
     @Override
     public void linePrinter(int version, int line, boolean back) {
         switch (version) {
-            case (0): {//fullcard
+            case (0): {//full card
                 switch (line) {
                     case (0): {//first line printed
                         if (back) {
@@ -73,7 +73,7 @@ public class StartCard extends PlayableCard {
                 }
                 break;
             }
-            case (1): {//bottomleft not shown
+            case (1): {//bottom left not shown
                 switch (line) {
                     case (0): {//first line printed
                         if (back) {
@@ -129,7 +129,7 @@ public class StartCard extends PlayableCard {
                 break;
 
             }
-            case (2): {//bottomright not shown
+            case (2): {//bottom right not shown
                 switch (line) {
                     case (0): {//first line printed
                         if (back) {
@@ -241,7 +241,7 @@ public class StartCard extends PlayableCard {
                 break;
 
             }
-            case (4): {//upleft not shown
+            case (4): {//up left not shown
                 switch (line) {
                     case (0): {//first line printed
                         if (back) {

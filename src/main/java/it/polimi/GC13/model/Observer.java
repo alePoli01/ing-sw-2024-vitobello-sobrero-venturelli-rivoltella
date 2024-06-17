@@ -4,7 +4,6 @@ import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
