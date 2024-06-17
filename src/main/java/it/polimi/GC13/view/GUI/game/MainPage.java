@@ -799,10 +799,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         chatArea = new JEditorPane();
         chatArea.setContentType("text/html");
         chatArea.setEditorKit(new HTMLEditorKit());
-        chatArea.setPreferredSize(new Dimension(300,200));
         chatArea.setEditable(false);
 
         JScrollPane scrollPaneChat = new JScrollPane(chatArea);
+        setBoxComponentSize(scrollPaneChat, 300, 400);
 
         GridBagConstraints gbcChat = createGridBagConstraints(0,1) ;
         gbcChat.gridwidth = 2;
