@@ -6,25 +6,26 @@ import it.polimi.GC13.view.GUI.FrameManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class OnSetLastTurnDialog extends JDialog implements CardManager{
     public record ColorRecord(TokenColor token, int[] rgb){}
-    private Map<String, ColorRecord> playerToColorMap = new HashMap<>();
-    boolean b = false;
 
-    public OnSetLastTurnDialog(FrameManager frameManager, String nickname) {
+    public OnSetLastTurnDialog(FrameManager frameManager, String playerNickname) {
         super(frameManager, "Last Round", true);
-        setSize(500, 250);
         setResizable(false);
+        setSize(600, 250);
         setLocationRelativeTo(frameManager);
-
         setLayout(new BorderLayout());
+
+        Map<String, ColorRecord> playerToColorMap = new HashMap<>();
 
         for(Map.Entry<String, TokenColor> entry : frameManager.getTokenInGame().entrySet()){
             ColorRecord record = new ColorRecord(entry.getValue(), remappingTokenToColor(entry.getValue()));
@@ -35,55 +36,56 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
         JPanel panelContainer = new JPanel(new GridBagLayout());
         add(panelContainer, BorderLayout.CENTER);
 
+        //immagine
+        JPanel imagePanel = new JPanel();
         JLabel labelImage = new JLabel(createResizedTokenImageIcon(ERROR_IMAGE, 100)); //DA CAMBIARE L'IMMAGINE
         setCompoundBorderInsets(labelImage, 10,10,10,10, "ALL", Color.BLACK, 0);
-        panelContainer.add(labelImage, createGridBagConstraints(0,0));
+        imagePanel.add(labelImage);
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panelContainer.add(panel, createGridBagConstraints(1,0));
-
-        GridBagConstraints gbc = createGridBagConstraints(0,0);
-        gbc.anchor = GridBagConstraints.LINE_START;
-
-
-        EnumMap<Position, String> positionToPlayerMap = new EnumMap<>(Position.class);
-
-        for(Map.Entry<String, Position> entry : frameManager.getPlayerPositions().entrySet()){
-            positionToPlayerMap.put(entry.getValue(), entry.getKey());
-        }
+        //labels
+        JPanel labelsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints labelConstraints = createGridBagConstraints(0,0);
+        labelConstraints.weightx = 1.0;
+        labelConstraints.fill = GridBagConstraints.HORIZONTAL;
+        labelConstraints.anchor = GridBagConstraints.LINE_START;
 
 
-        String text = String.format("<span style='color: rgb(%d, %d, %d); font-size: 20px;'>" + nickname + "</span>", playerToColorMap.get(nickname).rgb[0], playerToColorMap.get(nickname).rgb[1], playerToColorMap.get(nickname).rgb[2]);
+        Map<Position, String> positionPlayerMap = frameManager.getPlayerPositions().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
+
+
+        String text = String.format("<span style='color: rgb(%d, %d, %d); font-size: 20px;'>" + playerNickname + "</span>", playerToColorMap.get(playerNickname).rgb[0], playerToColorMap.get(playerNickname).rgb[1], playerToColorMap.get(playerNickname).rgb[2]);
         JLabel messageLabel1 = createTextLabelFont( "<html>" + text + " has reached 20 points. </html>", 25);
         setBorderInsets(messageLabel1, 0,0,15,0);
-        panel.add(messageLabel1, gbc);
-        gbc.gridy++;
+        labelsPanel.add(messageLabel1, labelConstraints);
+        labelConstraints.gridy++;
 
-        int lastTurnSetterPosition = frameManager.getPlayerPositions().get(nickname).getIntPosition();
-        Position positionNickname = frameManager.getPlayerPositions().get(nickname).next(frameManager.getPlayerPositions().size());
 
-        if (lastTurnSetterPosition < frameManager.getPlayerPositions().size()) {
-            JLabel messageLabel3 = createTextLabelFont( "There will be another turn for players: ", 20);
-            setBorderInsets(messageLabel3, 0,0,5,0);
-            panel.add(messageLabel3, gbc);
-            gbc.gridy++;
+        String textMessage;
+        if (!frameManager.getPlayerPositions().get(playerNickname).equals(Position.FOURTH) ) {
+            String fourthPlayer = positionPlayerMap.get(Position.FOURTH);
+            textMessage = "<html> After " + fourthPlayer + "'s turn, the <u>last round</u> will start. </html>";
+        } else {
+            textMessage = "<html><u>Last round</u> is starting... NOW! </html>";
         }
 
-        while (lastTurnSetterPosition < frameManager.getPlayerPositions().size()) {
-            JLabel label = createTextLabelFont(" -->" + positionToPlayerMap.get(positionNickname) + " \n", 16);
-            setBorderInsets(label, 0,0,5,0);
-            panel.add(label, gbc);
-            gbc.gridy++;
-            positionNickname = positionNickname.next(frameManager.getPlayerPositions().size());
-            lastTurnSetterPosition++;
-        }
-
-        String thenText = "Then ";
-        String nowText = "Now";
-
-        JLabel finalLabel = createTextLabelFont("<html>" + (b ? thenText : nowText) + "it will start the <u>last round</u>." + "</html>", 20);
+        JLabel finalLabel = createTextLabelFont(textMessage, 20);
         setBorderInsets(finalLabel, 10,0,0,0);
-        panel.add(finalLabel, gbc);
+        labelsPanel.add(finalLabel, labelConstraints);
+
+
+        GridBagConstraints mainConstraints = createGridBagConstraints(0,0);
+        panelContainer.add(imagePanel, mainConstraints);
+
+        mainConstraints.gridx++;
+        mainConstraints.fill = GridBagConstraints.BOTH;
+        mainConstraints.weightx = 1.0;
+        mainConstraints.weighty = 1.0;
+        panelContainer.add(labelsPanel, mainConstraints);
+
 
         JButton closeButton = new JButton("OK");
         closeButton.addActionListener(e -> {
@@ -93,104 +95,6 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
         add(closeButton, BorderLayout.SOUTH);
     }
 
-
-    //STATICO
-    /*public OnSetLastTurnDialog(JFrame parent, String nickname) {
-        super(parent, "Last Round", true);
-        setSize(500, 250);
-        setResizable(false);
-        setLocationRelativeTo(parent);
-
-        Map<String, Position> playersPosition = new HashMap<>(); //DA NON METTERE
-
-        playersPosition.put("Nico", Position.FIRST);
-        playersPosition.put("Nico2", Position.SECOND);
-        playersPosition.put("Nico3", Position.THIRD);
-        playersPosition.put("Nico4", Position.FOURTH);
-
-        Map<String, TokenColor> tokenInGame = new HashMap<>();
-
-        int i = 0;
-        for(Map.Entry<String, Position> entry : playersPosition.entrySet()){ //DA NON METTERE
-            tokenInGame.put(entry.getKey(), Arrays.stream(TokenColor.values()).toList().get(i));
-            i++;
-        }
-
-
-        for(Map.Entry<String, TokenColor> entry : tokenInGame.entrySet()){
-            ColorRecord record = new ColorRecord(entry.getValue(), remappingTokenToColor(entry.getValue()));
-            playerToColorMap.put(entry.getKey(), record);
-        }
-
-
-
-        setLayout(new BorderLayout());
-
-        JPanel panelContainer = new JPanel(new GridBagLayout());
-        add(panelContainer, BorderLayout.CENTER);
-
-
-        JLabel labelImage = new JLabel(createResizedTokenImageIcon(ERROR_IMAGE, 100));
-        setCompoundBorderInsets(labelImage, 10,10,10,10, "ALL", Color.BLACK, 0);
-        panelContainer.add(labelImage, createGridBagConstraints(0,0));
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        panelContainer.add(panel, createGridBagConstraints(1,0));
-
-        GridBagConstraints gbc = createGridBagConstraints(0,0);
-        gbc.anchor = GridBagConstraints.LINE_START;
-
-
-        EnumMap<Position, String> positionToPlayerMap = new EnumMap<>(Position.class);
-
-        for(Map.Entry<String, Position> entry : playersPosition.entrySet()){
-            positionToPlayerMap.put(entry.getValue(), entry.getKey());
-        }
-
-        System.out.println(playerToColorMap.get(nickname).token);
-
-        String text = String.format("<span style='color: rgb(%d, %d, %d); font-size: 20px;'>" + nickname + "</span>", playerToColorMap.get(nickname).rgb[0], playerToColorMap.get(nickname).rgb[1], playerToColorMap.get(nickname).rgb[2]);
-        JLabel messageLabel1 = createTextLabelFont( "<html>" + text + " has reached 20 points. </html>", 25);
-        //JLabel messageLabel1 = createTextLabelFont( "<html><span style='color: red; font-size: 20px;'>" + nickname + "</span> has reached 20 points. </html>", 25);
-        setBorderInsets(messageLabel1, 0,0,15,0);
-        panel.add(messageLabel1, gbc);
-        gbc.gridy++;
-
-
-        int lastTurnSetterPosition = playersPosition.get(nickname).getIntPosition();
-        Position positionNickname = playersPosition.get(nickname).next(playersPosition.size());
-
-        if (lastTurnSetterPosition < playersPosition.size()) {
-            JLabel messageLabel3 = createTextLabelFont( "There will be another turn for players: ", 20);
-            setBorderInsets(messageLabel3, 0,0,5,0);
-            panel.add(messageLabel3, gbc);
-            gbc.gridy++;
-        }
-
-
-        while (lastTurnSetterPosition < playersPosition.size()) {
-            JLabel label = createTextLabelFont(" -->" + positionToPlayerMap.get(positionNickname) + " \n", 16);
-            setBorderInsets(label, 0,0,5,0);
-            panel.add(label, gbc);
-            gbc.gridy++;
-            positionNickname = positionNickname.next(playersPosition.size());
-            lastTurnSetterPosition++;
-        }
-
-        String thenText = "Then ";
-        String nowText = "Now";
-
-        JLabel finalLabel = createTextLabelFont("<html>" + (b ? thenText : nowText) + "it will start the <u>last round</u>." + "</html>", 20);
-        setBorderInsets(finalLabel, 10,0,0,0);
-        panel.add(finalLabel, gbc);
-
-        JButton closeButton = new JButton("OK");
-        closeButton.addActionListener(e -> {
-            dispose();
-        });
-
-        add(closeButton, BorderLayout.SOUTH);
-    }*/
 
     private void setBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight) {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
@@ -230,16 +134,16 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
     private int[] remappingTokenToColor(TokenColor token){
         switch (token){
             case BLUE -> {
-                return new int[]{107, 189, 192};
+                return new int[]{27, 78, 156};
             }
             case RED -> {
-                return new int[]{233, 73, 23};
+                return new int[]{233, 30, 23};
             }
             case GREEN -> {
-                return new int[]{113,192, 124};
+                return new int[]{21, 158, 41};
             }
             case YELLOW -> {
-                return new int[]{255, 240, 1};
+                return new int[]{177, 170, 9};
             }
             default -> {
                 return new int[]{0,0,0};

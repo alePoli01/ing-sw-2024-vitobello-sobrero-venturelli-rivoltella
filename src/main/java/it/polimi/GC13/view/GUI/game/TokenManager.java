@@ -19,7 +19,7 @@ public class TokenManager extends JPanel {
     private Map<String, TokenColor> tokenInGame;
 
     private final Map<String, Map<Integer, GridData>> tokenToScoreBoard = new HashMap<>();
-    private Map<String, Integer> previousPosition = new HashMap<>();
+    private final Map<String, Integer> previousPosition = new HashMap<>();
 
 
     public TokenManager(){
@@ -29,17 +29,14 @@ public class TokenManager extends JPanel {
 
         JPanel startPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 1));
         startPanel.setOpaque(false);
-        //startPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(10,10,20,10)));
         startPanel.setBorder(BorderFactory.createEmptyBorder(10,10,20,10));
 
         JPanel middlePanel = new JPanel(new GridLayout(4,4, 35, 25));
-        //middlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(25,15,15,15)));
         middlePanel.setBorder(BorderFactory.createEmptyBorder(25,15,15,15));
         middlePanel.setOpaque(false);
 
         JPanel endPanel = new JPanel(new GridLayout(4,5, 10, 20));
         endPanel.setOpaque(false);
-        //endPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.CYAN), BorderFactory.createEmptyBorder(30,30,10,25)));
         endPanel.setBorder(BorderFactory.createEmptyBorder(30,30,10,25));
 
 
@@ -128,122 +125,87 @@ public class TokenManager extends JPanel {
         }
     }
 
+    public int remappingScoreToPosition(int oldScore){
+        return switch (oldScore) {
+            case 21 -> 23;
+            case 22 -> 28;
+            case 23 -> 33;
+            case 24 -> 37;
+            case 25 -> 36;
+            case 26 -> 35;
+            case 27 -> 29;
+            case 28 -> 24;
+            case 29 -> 31;
+            default -> oldScore;
+        };
+    }
+
+    public int caseScore20(String player, boolean b){
+        Optional<JLabel> label;
+        if(b) {
+            label = tokenToScoreBoard.get(player).get(21)
+                    .emptyLabels.stream()
+                    .filter(l -> l.getText().equals(player))
+                    .findFirst();
+        } else {
+            label = tokenToScoreBoard.get(player).get(21)
+                    .emptyLabels.stream()
+                    .filter(l -> l.getText().equals(Integer.toString(21)))
+                    .findFirst();
+        }
+
+        if(label.isPresent()){
+            return 21;
+        }else{
+            return 26;
+        }
+    }
 
 
-
-    public void updatePlayerScore(String player, int score){
-        if(previousPosition.get(player) < score){
-           tokenToScoreBoard.get(player).get(previousPosition.get(player)).emptyLabels.stream().filter(l -> l.getText().equals(player)).findFirst().ifPresent(l -> {
+    public void updatePlayerScore(String player, int score) {
+        if (previousPosition.get(player) < score) {
+            if (score < 20) {
+                tokenToScoreBoard.get(player).get(previousPosition.get(player)).emptyLabels.stream().filter(l -> l.getText().equals(player)).findFirst().ifPresent(l -> {
                     l.setIcon(null);
                     l.setText("X");
                 });
 
-           previousPosition.put(player, score);
+                previousPosition.put(player, score);
 
-           if (score < 20) {
-               tokenToScoreBoard.get(player).get(score).emptyLabels.stream().filter(l->!l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(score))).findFirst().ifPresent(l -> {
-                   l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                   l.setText(player);
-               });
-           }
-           else if(score < 30) {
-               switch (score) {
-                   case 20:
-                       if (tokenToScoreBoard.get(player).get(21).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(21)))) {
-                           tokenToScoreBoard.get(player).get(21).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(21))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       } else if (tokenToScoreBoard.get(player).get(26).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(26)))) {
-                           tokenToScoreBoard.get(player).get(26).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(26))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
+                tokenToScoreBoard.get(player).get(score).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(score))).findFirst().ifPresent(l -> {
+                    l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
+                    l.setText(player);
+                });
+            } else if (score < 30) {
+                //old token research
+                int oldPlayerCell;
+                if (previousPosition.get(player) != 20) {
+                    oldPlayerCell = remappingScoreToPosition(previousPosition.get(player));
+                } else {
+                    oldPlayerCell = caseScore20(player, true);
+                }
 
-                   case 21:
-                       if (tokenToScoreBoard.get(player).get(23).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(23)))) {
-                           tokenToScoreBoard.get(player).get(23).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(23))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
+                tokenToScoreBoard.get(player).get(oldPlayerCell).emptyLabels.stream().filter(l -> l.getText().equals(player)).findFirst().ifPresent(l -> {
+                    l.setIcon(null);
+                    l.setText("X");
+                });
 
-                   case 22:
-                       if (tokenToScoreBoard.get(player).get(28).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(28)))) {
-                           tokenToScoreBoard.get(player).get(28).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(28))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
+                //update previousPosition map
+                previousPosition.put(player, score);
 
-                   case 23:
-                       if (tokenToScoreBoard.get(player).get(33).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(33)))) {
-                           tokenToScoreBoard.get(player).get(33).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(33))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
+                //positioning new token
+                int newPlayerCell;
+                if (score == 20) {
+                    newPlayerCell = caseScore20(player, false);
+                } else {
+                    newPlayerCell = remappingScoreToPosition(score);
+                }
 
-                   case 24:
-                       if (tokenToScoreBoard.get(player).get(37).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(37)))) {
-                           tokenToScoreBoard.get(player).get(37).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(37))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-
-                   case 25:
-                       if (tokenToScoreBoard.get(player).get(36).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(36)))) {
-                           tokenToScoreBoard.get(player).get(36).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(36))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-
-                   case 26:
-                       if (tokenToScoreBoard.get(player).get(35).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(35)))) {
-                           tokenToScoreBoard.get(player).get(35).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(35))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-
-                   case 27:
-                       if (tokenToScoreBoard.get(player).get(29).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(29)))) {
-                           tokenToScoreBoard.get(player).get(29).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(29))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-
-                   case 28:
-                       if (tokenToScoreBoard.get(player).get(24).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(24)))) {
-                           tokenToScoreBoard.get(player).get(24).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(24))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-
-                   case 29:
-                       if (tokenToScoreBoard.get(player).get(31).emptyLabels.stream().anyMatch(jLabel -> jLabel.getText().equals(Integer.toString(31)))) {
-                           tokenToScoreBoard.get(player).get(31).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(31))).findFirst().ifPresent(l -> {
-                               l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
-                               l.setText(player);
-                           });
-                       }
-                       break;
-               }
-           }
+                tokenToScoreBoard.get(player).get(newPlayerCell).emptyLabels.stream().filter(l -> !l.getText().equals("X")).filter(l -> l.getText().equals(Integer.toString(newPlayerCell))).findFirst().ifPresent(l -> {
+                    l.setIcon(createPlayableTokenImageIcon(tokenInGame.get(player), 30));
+                    l.setText(player);
+                });
+            }
         }
     }
 
@@ -258,9 +220,6 @@ public class TokenManager extends JPanel {
     private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
         return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
     }
-
-
-
 
     private GridBagConstraints createGridBagConstraints(int x, int y){
         GridBagConstraints gbc = new GridBagConstraints();
@@ -278,30 +237,5 @@ public class TokenManager extends JPanel {
     public void setTokenInGame(Map<String, TokenColor> tokenInGame) {
         this.tokenInGame = tokenInGame;
     }
-
-//    final static String GREY_TOKEN_FILE_NAME = "grey";
-
-//    private ImageIcon createGreyTokenImageIcon(int dim) {
-//        return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
-//    }
-
-// Metodo per creare una ImageIcon trasparente
-//    public static ImageIcon createTransparentIcon(ImageIcon icon, float transparency) {
-//        Image originalImage = icon.getImage();
-//
-//        BufferedImage transparentImage = new BufferedImage(
-//                originalImage.getWidth(null),
-//                originalImage.getHeight(null),
-//                BufferedImage.TYPE_INT_ARGB);
-//
-//        Graphics2D g2d = transparentImage.createGraphics();
-//
-//        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
-//
-//        g2d.drawImage(originalImage, 0, 0, null);
-//        g2d.dispose();
-//
-//        return new ImageIcon(transparentImage);
-//    }
 
 }

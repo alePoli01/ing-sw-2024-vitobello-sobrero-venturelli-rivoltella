@@ -7,7 +7,6 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromclient.NewMessage;
 import it.polimi.GC13.network.messages.fromclient.ReconnectPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.*;
@@ -38,26 +37,26 @@ public class FrameManager extends JFrame implements View {
     private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
-    private final Map<String, List<String>> chat = new HashMap<>();
+    private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();
     private boolean newMessage = false;
-    public List<Coordinates> availablesCells = new LinkedList<>();
     private boolean newStatus = false;
     private boolean firstTurn = true;
-
+    private boolean showPopup = true;
+    public List<Coordinates> availableCells = new LinkedList<>();
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
     private WinningFrame winningFrame;
 
     private final Map<String, TokenColor> tokenInGame = new HashMap<>();
+    private int playerCounter = 0;
+    private int totalPlayers;
+
 
 
     //TODO:
-    // + DA RIDIMENSIONARE TUTTO IN BASE ALLA RISOLUZIONE DELLO SCHERMO (1920X1080)
-    // + DA FARE LA CHAT (TEXTAREA + JCOMBOBOX LA SELEZIONE DEL GIOCATORE CON CUI CHATTARE)
     // + DA TESTARE NELLE VARE COMBINAZIONI TUI-GUI E RMI-SOCKET (RICERCA ERRORI)
     // + DA GESTIRE LA DISCONNESSIONE DEL SERVER (IN FRAMEMANAGER)
-    // + DA MIGLIORARE VISIVAMENTE IL POPUP DI onSetLastTurn (PROVA VISIBILE IN MAINFRAMEPROVA AL CLICK DEL TASTO POPUP)
     // + DA IMPOSTARE SFONDI
 
 
@@ -91,34 +90,35 @@ public class FrameManager extends JFrame implements View {
         this.checkForExistingGame();
     }
 
+    /**
+     used to update players hand in GUI
+     */
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
-        if (playerNickname.equals(this.nickname)) {
-            synchronized (this.hand) {
+        if(playerNickname.equals(this.nickname)) {
+            synchronized(this.hand) {
                 this.hand.clear();
                 this.hand.addAll(availableCard);
 
-                if(gamePage.getFlag()>0){
+                if(!firstTurn){
                     gamePage.getFlipButton().setText("Show Back");
                     gamePage.refresh();
                     gamePage.setFlipToSend(false);
                     gamePage.getHandSerialNumberCheckBoxMap().clear();
 
-                    if (!gamePage.isCheckingHandWhileDrawing()) {
+                    if(!gamePage.isCheckingHandWhileDrawing()) {
                         ArrayList<Boolean> b = new ArrayList<>();
                         for(int i=0; i< this.hand.size(); i++)
                             b.add(false);
 
                         gamePage.printHandOrDecksOnGUI(this.hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
                     }
-
-                    gamePage.setFlag(gamePage.getFlag()+1);
                     refreshFrame(gamePage);
                 }
             }
-        } else {
-            this.gamesLog.add(playerNickname + " has drawn a card");
         }
+        //mostro anche le mie azioni (da testare)
+        this.gamesLog.add(playerNickname + " has modified his hand;");
     }
 
     @Override
@@ -181,9 +181,15 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
+    /**
+     SETUP PHASE
+     token choice when all players joined the game
+     waiting when readPlayers < neededPlayers
+     */
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         if (readyPlayers == neededPlayers) {
+            totalPlayers = neededPlayers;
             this.gameName = gameName;
             this.loginFrame.dispose();
             if (gamePage == null) {
@@ -196,6 +202,8 @@ public class FrameManager extends JFrame implements View {
                 gamePage.showTokenChoose(tokenColorList);
                 refreshFrame(gamePage);
             }
+        } else {
+            loginFrame.getWaitingLabel().setText("players in waiting room: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
@@ -204,10 +212,9 @@ public class FrameManager extends JFrame implements View {
      * startCardSetupPhase to chose which side to place your start card
      */
     @Override
-    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor){
         tokenInGame.put(playerNickname, tokenColor);
         if(playerNickname.equals(this.nickname)) {
-
             setDataSetupPhase(playerNickname, tokenColor);
             gamePage.getPanelContainer().removeAll();
             gamePage.startCardSetup();
@@ -233,6 +240,7 @@ public class FrameManager extends JFrame implements View {
      */
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
+        playerCounter++;
         if (!this.playersBoard.containsKey(playerNickname)) {
             this.playersBoard.put(playerNickname, new BoardView());
         }
@@ -240,11 +248,15 @@ public class FrameManager extends JFrame implements View {
         this.playersBoard.get(playerNickname).insertCard(y, x, serialCardPlaced, turn, isFlipped);
 
         if (this.nickname.equals(playerNickname)) {
-            this.availablesCells.clear();
-            this.availablesCells.addAll(availableCells);
+            this.availableCells.clear();
+            this.availableCells.addAll(availableCells);
 
-            if(gamePage.isUnableExceptionFlag()){
-                gamePage.afterCardPlaced();
+            if(serialCardPlaced <= 80) {
+                if(gamePage.isUnableExceptionFlag()){
+                    gamePage.afterCardPlaced();
+                }
+            } else {
+                gamePage.getWaitingLabel().setText("Players ready: " + playerCounter + "/" + totalPlayers);
             }
         }
         this.gamePage.refreshBoard();
@@ -284,7 +296,7 @@ public class FrameManager extends JFrame implements View {
             this.gamesLog.add(playerNickname + " choose private objective card");
         }
         if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
-            //provare a impostare una label in waitingLobby in cui si indica il numero di giocatori pronti sul totale
+            gamePage.getWaitingLabel().setText("players that chose objective card: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
@@ -316,9 +328,12 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onSetLastTurn(String nickname) {
-        OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
-        dialog.setVisible(true);
-        this.newStatus = true;
+        if(showPopup) {
+            OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
+            dialog.setVisible(true);
+            this.newStatus = true;
+            showPopup = false;
+        }
     }
 
 
@@ -342,28 +357,6 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    /**
-     * method to save new a message in the chat
-     * @param sender message sender
-     * @param recipient message recipient
-     * @param message string that contains the message itself
-     */
-    @Override
-    public void onNewMessage(String sender, String recipient, String message) {
-        if (recipient.equals(this.nickname)) {
-            this.registerChatMessage(sender, message);
-        }
-        // CASE B -> BROADCAST MESSAGE
-        else if (recipient.equals("global")) {
-            this.registerChatMessage("global", message);
-        }
-        // CASE C -> I AM THE SENDER
-        else if (sender.equals(this.nickname)) {
-            this.registerChatMessage(recipient, message);
-        }
-    }
-
-
     @Override
     public void gameOver(Set<String> winner) {
         gamePage.dispose();
@@ -376,6 +369,9 @@ public class FrameManager extends JFrame implements View {
                 winningFrame.getWinnerLabel().setText("You lose!");
                 winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
             }
+
+            winningFrame.getScoreLabel().setText("Your score: " + this.getPlayersScore().get(this.nickname));
+
         });
     }
 
@@ -395,8 +391,6 @@ public class FrameManager extends JFrame implements View {
             }
 
             winningFrame.getScoreLabel().setText("Your score: " + parent.getPlayersScore().get(parent.getNickname()));
-
-
         });
     }
 
@@ -433,10 +427,6 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    private void sendMessage() {
-
-    }
-
 
     /**
      NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
@@ -450,7 +440,6 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getPanelContainer().removeAll();
                 gamePage.getNamePanel().removeAll();
                 gamePage.refresh();
-                gamePage.setFlag(1);
                 gamePage.setUnableExceptionFlag(true);
 
                 gamePage.createGamePanel();
@@ -489,29 +478,63 @@ public class FrameManager extends JFrame implements View {
     }
 
 
+    /**
+     * method to save new a message in the chat
+     * @param sender message sender
+     * @param recipient message recipient
+     * @param content string that contains the message itself
+     */
+    @Override
+    public void onNewMessage(String sender, String recipient, String content) {
+        ChatMessage message = new ChatMessage(sender, content);
+
+        // CASE A -> I AM THE RECIPIENT
+        if (recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        // CASE B -> BROADCAST MESSAGE
+        else if (recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        // CASE C -> I AM THE SENDER
+        else if (sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
+        }
+    }
+
 
     /**
      *
      * @param key can be [global] or a player [nickname], it is used to map the chat
      * @param message message sent in chat by the player
      */
-
-    //uguale/molto simile a tui (mettere in View?)
-    private void registerChatMessage(String key, String message) { // uguale + update gui
-        if (this.chat.containsKey(key)) {
+    private void registerChatMessage(String key, ChatMessage message) {
+        if(this.chat.containsKey(key)) {
             synchronized (this.chat.get(key)) {
                 this.chat.get(key).add(message);
             }
-        } else {
+        }else {
             synchronized (this.chat) {
                 this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
             }
         }
-        this.newMessage = true; //update gui trigger
+        this.newMessage = true;
 
-        //if --> controllo se GUi mostra la chat del mittente del messaggio arrivato --> se si: updateTextArea
-
+        if(Objects.equals(gamePage.getCombobox().getSelectedItem(), key)){
+            gamePage.updateChatArea(key);
+        } else {
+            //notifica nuovo messaggio (icona)
+        }
     }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -551,7 +574,7 @@ public class FrameManager extends JFrame implements View {
         return hand;
     }
 
-    public Map<String, List<String>> getChat() {
+    public Map<String, List<ChatMessage>> getChat() {
         return chat;
     }
 

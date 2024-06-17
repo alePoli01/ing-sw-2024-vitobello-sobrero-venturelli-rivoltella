@@ -19,21 +19,17 @@ import java.util.Map;
 
 
 public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
-    private JTextField nicknameField;
+    private final JTextField nicknameField;
     private JTextField gameNameField;
-    //private JList<String> existingGameList;
     private JComboBox<String> comboBox;
-    private JButton loginButton;
-    int progress;
-    int colorIndex = 0;
-    ArrayList<JRadioButton> radiobuttons;
+    private final JButton loginButton;
+    private int progress;
+    private int colorIndex = 0;
+    private ArrayList<JRadioButton> radiobuttons;
     private FrameManager frameManager;
-    private JPanel panelContainer;
-    Object source;
-    boolean flag;
-    String nickname;
-    String gameName;
-    int playersNumber = -1;
+    private final JPanel panelContainer;
+    private int playersNumber = -1;
+    private JLabel waitingLabel;
 
 
 /*JOINING PHASE
@@ -192,27 +188,6 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         gbcElements.gridy = 3;
         gbcElements.insets =  new Insets(5, 0, 0, 0);
 
-
-        /*DefaultListModel<String> listModel = new DefaultListModel<>();
-        existingGameList = new JList<>(listModel);
-        Map<String, String> map = new HashMap<>();
-
-        for(String s : gameNameWaitingPlayersMap.keySet()){
-            String concat = s + " (" + gameNameWaitingPlayersMap.get(s).toString() + " players waiting)";
-            map.put(concat, s);
-            listModel.addElement(concat);
-        }
-        existingGameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        existingGameList.setBorder(BorderFactory.createEtchedBorder());
-
-
-        credentialPanel.add(existingGameList, gbcElements);
-
-        panelContainer.add(credentialPanel);*/
-
-
-
         comboBox = new JComboBox<>();
 
         Map<String, String> map = new HashMap<>();
@@ -307,14 +282,20 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         }
 
         JLabel label2 = createTextLabelFont("Waiting for the players: ", 30);
-        setBorderInsets(label2,30,0,30,0);
+        setBorderInsets(label2,30,0,0,0);
         panelContainer.add(label2, createGridBagConstraints(0,0));
+
+        GridBagConstraints gbc = createGridBagConstraints(0,1);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        waitingLabel = createTextLabelFont("", 20);
+        setBorderInsets(waitingLabel,10,0,15,0);
+        panelContainer.add(waitingLabel, gbc);
 
         JProgressBar progressBar = new JProgressBar(0, 100);
         progressBar.setPreferredSize(new Dimension(300,30));
         progressBar.setForeground(colors.get(colorIndex));
         colorIndex++;
-        panelContainer.add(progressBar, createGridBagConstraints(0,1));
+        panelContainer.add(progressBar, createGridBagConstraints(0,2));
 
         Timer timer = new Timer(100, new ActionListener() {
             @Override
@@ -368,14 +349,12 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         panel.add(radioButton);
     }
 
-
-    //PARTE NUOVA
     @Override
     public void actionPerformed(ActionEvent e) {
-        nickname = nicknameField.getText();
-        gameName = gameNameField.getText();
-        source = e.getSource();
-        flag = false;
+        String nickname = nicknameField.getText();
+        String gameName = gameNameField.getText();
+        Object source = e.getSource();
+        //boolean flag = false;
 
         if(source instanceof JRadioButton){
             playersNumber = Integer.parseInt(((JRadioButton) source).getText());
@@ -387,5 +366,9 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
             getContentPane().revalidate();
             getContentPane().repaint();
         }
+    }
+
+    public JLabel getWaitingLabel() {
+        return waitingLabel;
     }
 }

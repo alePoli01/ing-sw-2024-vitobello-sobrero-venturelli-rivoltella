@@ -4,19 +4,22 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.network.messages.fromclient.NewMessage;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
 import it.polimi.GC13.view.TUI.BoardView;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -35,8 +38,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 //    public record AvatarData(String playerName, String avatarPath) {}
 //    private final EnumMap<Position, AvatarData> positionToPlayerData = new EnumMap<>(Position.class);
 
-    private String nickname = "Player0";
-    private TokenColor token = TokenColor.BLUE;
+    private String nickname = "culoCaneBastardoLurido";
+    private TokenColor token = TokenColor.GREEN;
     private List<Integer> hand = List.of(1, 2, 3); //DA NON METTERE
     private final List<Integer> hand2 = List.of(85); //DA NON METTERE
 
@@ -81,7 +84,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     private Coordinates cordToSend = new Coordinates(51,51);
 
-    //attributi waitingLobby
+    private Timer timer;
+    int progress = 0;
+    int colorIndex = 0;
 
     final static String PANEL1 = "Game";
     final static String PANEL2 = "Scoreboard";
@@ -116,12 +121,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     public List<Coordinates> availablesCells = List.of(new Coordinates(49,49), new Coordinates(49,51), new Coordinates(51,51),new Coordinates(51,49));//DA NON METTERE
 
 
-    private final Map<String, List<String>> chat = new LinkedHashMap<>();//DA NON METTERE
+    private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();//DA NON METTERE
     private boolean newMessage = false;//DA NON METTERE
 
     JComboBox<String> combobox;
-    JTextArea chatArea;
+    JEditorPane chatArea;
     JTextField messageField;
+    private JLabel waitingLabel;
+
 
 
 
@@ -602,7 +609,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
 
-
 //TODO: ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     //GAME
@@ -643,16 +649,23 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         EnumMap<Position, String> positionPlayerMap;
         ArrayList<String> listTokenInGame = new ArrayList<>();
 
-        chat.put("global", new ArrayList<>());
 
         //inizializzazione
-        for(int i=0; i<4; i++){
+        playerPosition.put(nickname, Arrays.stream(Position.values()).toList().getFirst());
+        tokenInGame.put(nickname, token);
+        playersScore.put(nickname, 0);
+        playersBoard.put(nickname, new BoardView());
+        playersBoard.get(nickname).insertCard(50, 50, 86, 0, false);
+
+
+
+        for(int i=1; i<4; i++){
             playerPosition.put("Player" + i, Arrays.stream(Position.values()).toList().get(i));
             tokenInGame.put("Player" + i, Arrays.stream(TokenColor.values()).toList().get(i));
-            playersScore.put("Player" + i, 0);
+            playersScore.put("Player" + i, 20);
             playersBoard.put("Player" + i, new BoardView());
             playersBoard.get("Player" + i).insertCard(50, 50, 86 + i, 0, false);
-            chat.put("Player" + i, new ArrayList<>());
+            //chat.put("Player" + i, new ArrayList<>());
             //System.out.println("Player" + i + " : " + tokenInGame.get("Player" + i) + " score: " + playersScore.get("Player" + i) + " position: " + playerPosition.get("Player" + i));
         }
 
@@ -885,10 +898,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         tokenManager.setTokenInGame(tokenInGame);
         tokenManager.initializeDataPlayer();
 
-        for(String player : playersScore.keySet()){
-            tokenManager.updatePlayerScore(player, playersScore.get(player));
-        }
-
         panel2.add(tokenManager);
 
 
@@ -905,39 +914,42 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         lateralPanelDX2.add(tablePanel);
         panel2.add(lateralPanelDX2, BorderLayout.EAST);
 
-        Random random = new Random();
-
-        //update score
-        for(String player : playersScore.keySet()){
-            int randomIndex = random.nextInt(16);
-            playersScore.put(player, randomIndex);
-            System.out.println("Player: " + player + " score: " + playersScore.get(player));
-            tokenManager.updatePlayerScore(player, playersScore.get(player));
+//        Random random = new Random();
+//
+//        //update score
+       for(String player : playersScore.keySet()){
+//            int randomIndex = random.nextInt(16);
+//            playersScore.put(player, randomIndex);
+//            System.out.println("Player: " + player + " score: " + playersScore.get(player));
+           tokenManager.updatePlayerScore(player, playersScore.get(player));
         }
 
         updateCrownImageInTable();
         updateScoreColumn();
 
 
-
-        //TODO: Da completare (Chat)
         JPanel chatPanel = new JPanel(new GridBagLayout());
         setBorderInsets(chatPanel, 0,5,0,5);
 
         combobox = new JComboBox<>();
 
-        for(String s : chat.keySet()){
-            combobox.addItem(s);
+        combobox.addItem("global");
+        for(String s : positionPlayerMap.values()){
+            if(!s.equals(nickname)) {
+                combobox.addItem(s);
+            }
         }
 
-        combobox.addActionListener(e -> updateTextArea());
+        combobox.addActionListener(e -> updateChatArea((String)combobox.getSelectedItem()));
 
         GridBagConstraints gbcCombobox = createGridBagConstraints(0,0);
         gbcCombobox.fill = GridBagConstraints.HORIZONTAL;
 
         chatPanel.add(combobox, gbcCombobox);
 
-        chatArea = new JTextArea();
+        chatArea = new JEditorPane();
+        chatArea.setContentType("text/html");
+        chatArea.setEditorKit(new HTMLEditorKit());
         chatArea.setPreferredSize(new Dimension(300,200));
         chatArea.setEditable(false);
 
@@ -954,6 +966,15 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         messageField = new JTextField(20);
+        messageField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    sendMessage();
+                }
+            }
+        });
+
         JScrollPane scrollPaneMessage = new JScrollPane(messageField);
         scrollPaneMessage.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPaneMessage.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -976,15 +997,24 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         JButton popup = createButton("popup", 27); //DA NON AGGIUNGERE
-        northPanel.add(popup);
+//        northPanel.add(popup);
 
         popup.addActionListener(e -> {
             FrameManager frameManager = new FrameManager();
-
             Set<String> winner = new HashSet<>();
-            winner.add("Player1");
+            winner.add("culo");
 
             frameManager.gameOver2(this, winner);
+
+//            List<String> stringList = new ArrayList<>(playersScore.keySet());
+//            Random random3 = new Random();
+//            int randomIndex = random3.nextInt(stringList.size());
+//            String selectedPlayer = stringList.get(randomIndex);
+//
+//            playersScore.put(selectedPlayer, playersScore.get(selectedPlayer) + 1);
+//            System.out.println("Player: " + selectedPlayer + " score: " + playersScore.get(selectedPlayer));
+//
+//            tokenManager.updatePlayerScore(selectedPlayer, playersScore.get(selectedPlayer));
         });
 
 
@@ -992,11 +1022,32 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
         JPanel lateralPanelSX2 = new JPanel();
-//        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
-//        lateralPanelSX2.setOpaque(false);
-//        //setBoxComponentSize(lateralPanelSX2, 230, 14);
+        lateralPanelSX2.setLayout(new BoxLayout(lateralPanelSX2, BoxLayout.Y_AXIS));
+        lateralPanelSX2.setOpaque(false);
 
-        //panel2.add(lateralPanelSX2, BorderLayout.WEST);
+        JPanel oisoq = new JPanel();
+//        JButton buttonText1 = new JButton("Send from Player1");
+//        JButton buttonText2 = new JButton("Send from Player2");
+//        JButton buttonText3 = new JButton("Send from Player3");
+//        JButton buttonTextGlobal = new JButton("Send from Global");
+//
+//        buttonText1.addActionListener(e ->   fakeSender("Player1"));
+//        buttonText2.addActionListener(e ->  fakeSender("Player2"));
+//        buttonText3.addActionListener(e ->  fakeSender("Player3"));
+//        buttonTextGlobal.addActionListener(e ->  fakeSender("global"));
+//
+//        oisoq.add(buttonText1);
+//        oisoq.add(buttonText2);
+//        oisoq.add(buttonText3);
+//        oisoq.add(buttonTextGlobal);
+
+        lateralPanelSX2.add(oisoq);
+        panel2.add(lateralPanelSX2, BorderLayout.WEST);
+
+
+        oisoq.add(popup);
+
+
 
 
         setVisible(true);
@@ -1682,12 +1733,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
 
-            JCheckBox jCheckBox = new JCheckBox(entry.getValue());
+            JCheckBox jCheckBox = new JCheckBox();
             jCheckBox.setFocusPainted(false);
             jCheckBox.setBorderPainted(false);
             jCheckBox.setForeground(new Color(0,0,0,0));
             avatarButtonGroup.add(jCheckBox);
-            setBorderInsets(jCheckBox, 30, 35, 30, 0);
+            setBorderInsets(jCheckBox, 30, 30, 30, 30);
             jCheckBox.setOpaque(false);
             playerCheckBoxMap.put(playerNameLabel, jCheckBox);
 
@@ -1715,12 +1766,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
                 refreshBoard();
             });
-
-
-//            AvatarData avatarData = new AvatarData(player, selectedAvatar);
-//            positionToPlayerData.put(playerPosition.get(player), avatarData);
-
-
 
             lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
             y2++;
@@ -1812,29 +1857,133 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-    private void updateTextArea() {
-        String selectedPlayer = (String) combobox.getSelectedItem();
+    private void updateChatArea(String selectedPlayer) {
         if (selectedPlayer != null) {
-            chatArea.setText(chat.get(selectedPlayer).toString());
+            List<ChatMessage> messages = chat.get(selectedPlayer);
+            if (messages != null) {
+                StringBuilder content = new StringBuilder("<html>");
+                for (ChatMessage msg : messages) {
+                    content.append("<b>").append(msg.sender()).append("</b>").append(": ").append(msg.content()).append(";<br>");
+                }
+                content.append("</html>");
+                chatArea.setText(content.toString());
+            }else{
+                chatArea.setText("");
+            }
+        }
+    }
+
+    //CASO C: sono il sender
+    private void sendMessage() {
+        String message = messageField.getText().trim();
+        if(!message.isEmpty()) {
+            String selectedPlayer = (String) combobox.getSelectedItem();
+            if(selectedPlayer != null) {
+                onNewMessage(nickname, selectedPlayer, message);
+                messageField.setText("");
+            }
+        }
+    }
+
+    public void onNewMessage(String sender, String recipient, String content) {
+        ChatMessage message = new ChatMessage(sender, content);
+
+        if(recipient.equals(this.nickname)) {
+            this.registerChatMessage(sender, message);
+        }
+        else if(recipient.equals("global")) {
+            this.registerChatMessage("global", message);
+        }
+        else if(sender.equals(this.nickname)) {
+            this.registerChatMessage(recipient, message);
         }
     }
 
 
-    //invocato da frameManager
-    private void sendMessage() {
-        String selectedPlayer = (String) combobox.getSelectedItem();
-        if (selectedPlayer != null) {
-            String message = messageField.getText();
-            chat.get(selectedPlayer).add(message + "\n");
-            updateTextArea();
-            messageField.setText("");
+    private void registerChatMessage(String key, ChatMessage message){
+        if(chat.containsKey(key)) {
+            chat.get(key).add(message);
+        }else{
+            chat.put(key, new LinkedList<>(Collections.singletonList(message)));
         }
 
-        //this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
+        if(Objects.equals(combobox.getSelectedItem(), key)){
+            updateChatArea(key);
+        }
+    }
 
+
+    //CASO A: sono il recipient
+    private void fakeSender(String sender){
+        String message = "Ma suca";
+        String recipient = nickname;
+
+        if (recipient != null) {
+            onNewMessage(sender,nickname, message);
+            messageField.setText("");
+        }
     }
 
     public Map<String, Integer> getPlayersScore() {
         return playersScore;
     }
+
+
+
+    //waitingLobby
+    /*public MainFrameProva(){
+        setTitle("Codex Naturalis");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setResizable(true);
+
+        panelContainer = new JPanel(new GridBagLayout());
+        add(panelContainer);
+
+        ArrayList<Color> colors = new ArrayList<>();
+
+        panelContainer.setLayout(new GridBagLayout());
+        panelContainer.setBackground(new Color(237,230,188,255));
+
+        for(int i=0; i<4; i++) {
+            colors.add(new Color(107, 189, 192));
+            colors.add(new Color(233, 73, 23));
+            colors.add(new Color(113, 192, 124));
+            colors.add(new Color(171, 63, 148));
+        }
+
+        JLabel label2 = createTextLabelFont("Waiting for the players: ", 60);
+        setBorderInsets(label2,30,0,20,0);
+        panelContainer.add(label2, createGridBagConstraints(0,0));
+
+
+        waitingLabel = createTextLabelFont("players in waiting room: 1/2" , 30);
+        setBorderInsets(waitingLabel,10,0,15,0);
+        panelContainer.add(waitingLabel, createGridBagConstraints(0,1));
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        setBoxComponentSize(progressBar,600,30);
+        progressBar.setForeground(colors.get(colorIndex));
+        colorIndex++;
+        panelContainer.add(progressBar, createGridBagConstraints(0,2));
+
+        timer = new Timer(100, e -> {
+            progress += 5;
+            if (progress > 100) {
+                progress = 0;
+                progressBar.setForeground(colors.get(colorIndex));
+                colorIndex = (colorIndex + 1) % colors.size();
+            }
+            progressBar.setValue(progress);
+        });
+        timer.start();
+
+        setVisible(true);
+    }*/
+
+    public Map<String, TokenColor> getTokenInGame() {
+        return tokenInGame;
+    }
+
+
 }
