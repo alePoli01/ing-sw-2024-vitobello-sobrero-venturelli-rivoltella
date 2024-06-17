@@ -58,7 +58,7 @@ public class MidPhase implements GamePhase {
                 // update player's scoreboard
                 player.getTable().setPlayerScore(player, cardToPlace.getPointsGiven(board, X, Y));
                 // check if players has reached 20 points, if so sets game's last turn
-                if (player.getScore() >= 20) {
+                if (player.getScore() >= 3) {
                     player.getGame().setLastRound(player);
                 }
             }
@@ -130,6 +130,9 @@ public class MidPhase implements GamePhase {
      * @return returns true if there is at least a player that hasn't played his last turn
      */
     private boolean checkGameOver(Player player) {
+        // DEBUG
+        player.getGame().getPlayerList()
+                .forEach(p -> System.out.println(p.getNickname() + " has played " + p.getTurnPlayed() + " turns"));
         return player.getGame().getPlayerList()
                 .stream()
                 .anyMatch(p -> p.getTurnPlayed() != player.getGame().getLastRound());
