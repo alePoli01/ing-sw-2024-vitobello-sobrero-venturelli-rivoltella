@@ -93,7 +93,7 @@ public class LobbyController implements Serializable {
     public synchronized void reconnectPlayerToGame(ClientInterface client, String gameName, String playerName) throws RemoteException {
         System.out.println("--Received: reconnectPlayerToGame");
         if (this.restartGames(gameName, playerName, client)) {
-            System.out.println("Game and Player name was found, reconnecting client");
+            System.out.println("Game and Player name was found, reconnecting " + playerName + "'s client");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
         } else {
             System.err.println("player: " + playerName + " or game:  " + gameName + " were not found in game.");

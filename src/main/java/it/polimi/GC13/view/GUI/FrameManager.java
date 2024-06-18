@@ -1,5 +1,6 @@
 package it.polimi.GC13.view.GUI;
 
+import it.polimi.GC13.app.ConnectionBuilder;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
@@ -425,6 +426,11 @@ public class FrameManager extends JFrame implements View {
                 gamePage.updateResourceTable(gamePage.getResourceTable(), collectedResources, CardManager.logos);
             }
         }
+    }
+
+    @Override
+    public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
+
     }
 
 

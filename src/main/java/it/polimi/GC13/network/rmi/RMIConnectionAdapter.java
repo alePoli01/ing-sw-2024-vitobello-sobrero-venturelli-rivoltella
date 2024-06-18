@@ -44,7 +44,7 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
         return this;
     }
     public void connectionBuilderSetup(ConnectionBuilder connectionBuilder) {
-        this.connectionTimer=new ConnectionTimer(this,connectionBuilder);
+        this.connectionTimer = new ConnectionTimer(this,connectionBuilder);
 
     }
 

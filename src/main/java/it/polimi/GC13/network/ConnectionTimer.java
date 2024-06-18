@@ -9,11 +9,13 @@ public class ConnectionTimer {
     private Timer timer;
     private final ServerInterface virtualServer;
     private final ConnectionBuilder connectionBuilder;
-    public ConnectionTimer(ServerInterface virtualServer,ConnectionBuilder connectionBuilder) {
+
+    public ConnectionTimer(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
         this.virtualServer = virtualServer;
         this.connectionBuilder = connectionBuilder;
         startTimer();
     }
+
     public void startTimer() {
         this.timer = new Timer();
         TimerTask timerTask = new TimerTask() {

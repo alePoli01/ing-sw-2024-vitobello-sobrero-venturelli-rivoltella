@@ -1,5 +1,6 @@
 package it.polimi.GC13.view.TUI;
 
+import it.polimi.GC13.app.ConnectionBuilder;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
@@ -10,6 +11,7 @@ import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.View;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -682,5 +684,64 @@ public class TUI implements View {
 
     public boolean getStatus() {
         return this.newStatus;
+    }
+
+    @Override
+    public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
+        if (virtualServer == this.virtualServer) {
+            int attemptCount = 0;       // after tot attempts ask to keep trying
+            int sleepTime = 1000;       // initial delay
+            int maxTime = 20000;        // caps the sleepTime
+            int totalElapsedTime = 0;   // to be deleted
+            double backOffBase = 1.05;  // changes the exponential growth of the time
+            boolean connectionOpen = false;
+
+            System.out.println("Internet Connection Lost, trying to reconnect...");
+            while (!connectionOpen) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    if (this.gameName == null || this.nickname == null) {
+                        System.err.println("GameName or PlayerName is Null");
+                        System.exit(1);
+                    }
+                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
+                    this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
+                    this.setVirtualServer(this.virtualServer);
+                    connectionOpen = true;
+                    System.out.println("\u001B[33mConnection restored, you an keep playing\u001B[0m");
+                    this.reconnectToGame();
+                } catch (IOException e) {
+                    // exponential backoff algorithm
+                    attemptCount++;
+                    totalElapsedTime += sleepTime;
+                    sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
+                    System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
+                    if (attemptCount > 10) {
+                        //after some attempts wait for user input
+                        String answer;
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.println("Still waiting for Internet Connection, do you want to keep trying? (y/n)");
+                        do {
+                            answer = scanner.nextLine();
+                            if (answer.equalsIgnoreCase("y")) {
+                                sleepTime = 2000;
+                                attemptCount = 0;
+                                System.out.println("trying to reconnect...");
+                            } else if (answer.equalsIgnoreCase("n")) {
+                                System.exit(0);
+                            } else {
+                                System.out.println("Character not recognised, please choose (y/n)");
+                            }
+                        } while (!(answer.equals("y") || answer.equals("n")));
+                    }
+                }
+            }
+        } else {
+            System.out.println("Virtual server passed already updated");
+        }
     }
 }

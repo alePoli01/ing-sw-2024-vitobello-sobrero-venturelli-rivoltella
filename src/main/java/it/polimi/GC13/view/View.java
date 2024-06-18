@@ -1,5 +1,6 @@
 package it.polimi.GC13.view;
 
+import it.polimi.GC13.app.ConnectionBuilder;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
@@ -72,4 +73,6 @@ public interface View {
     void onReconnectToGame();
 
     void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources);
+
+    void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder);
 }

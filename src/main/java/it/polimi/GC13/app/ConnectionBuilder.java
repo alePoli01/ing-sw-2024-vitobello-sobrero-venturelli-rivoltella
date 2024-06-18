@@ -58,12 +58,14 @@ public class ConnectionBuilder {
 
         return this.virtualServer;
     }
+
     public ServerInterface rmiSetup(int RMIPort, ClientDispatcher clientDispatcher) throws IOException {
         //setup rmiAdapter
         RMIConnectionAdapter rmiConnectionAdapter = new RMIConnectionAdapter(clientDispatcher);
 
         return rmiConnectionAdapter.startRMIConnection(System.getProperty("java.server.hostname"), RMIPort,this);
     }
+
     public ServerInterface socketSetup(int socketPort, ClientDispatcher clientDispatcher) throws IOException {
         // creating socket that represents the server
         Socket socket;
@@ -84,59 +86,6 @@ public class ConnectionBuilder {
      * @param virtualServer old virtual server
      */
     public synchronized void connectionLost(ServerInterface virtualServer, boolean connectionOpen) {
-        if (virtualServer == this.virtualServer) {
-            int attemptCount = 0;       // after tot attempts ask to keep trying
-            int sleepTime = 1000;       // initial delay
-            int maxTime = 20000;        // caps the sleepTime
-            int totalElapsedTime = 0;   // to be deleted
-            double backOffBase = 1.05;  // changes the exponential growth of the time
-
-            System.out.println("Internet Connection Lost, trying to reconnect...");
-            while (!connectionOpen) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    if (this.view.getGameName() == null || this.view.getNickname() == null) {
-                        System.err.println("GameName or PlayerName is Null");
-                        System.exit(1);
-                    }
-                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
-                    this.virtualServer = this.createServerConnection(virtualServer.getClientDispatcher());
-                    this.view.setVirtualServer(this.virtualServer);
-                    connectionOpen = true;
-                    System.out.println("\u001B[33mConnection restored, you an keep playing\u001B[0m");
-                    this.view.reconnectToGame();
-                } catch (IOException e) {
-                    // exponential backoff algorithm
-                    attemptCount++;
-                    totalElapsedTime += sleepTime;
-                    sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
-                    System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
-                    if (attemptCount > 10) {
-                        //after some attempts wait for user input
-                        String answer;
-                        Scanner scanner = new Scanner(System.in);
-                        System.out.println("Still waiting for Internet Connection, do you want to keep trying? (y/n)");
-                        do {
-                            answer = scanner.nextLine();
-                            if (answer.equalsIgnoreCase("y")) {
-                                sleepTime = 2000;
-                                attemptCount = 0;
-                                System.out.println("trying to reconnect...");
-                            } else if (answer.equalsIgnoreCase("n")) {
-                                System.exit(0);
-                            } else {
-                                System.out.println("Character not recognised, please choose (y/n)");
-                            }
-                        } while (!(answer.equals("y") || answer.equals("n")));
-                    }
-                }
-            }
-        } else {
-            System.out.println("Virtual server passed already updated");
-        }
+        this.view.restartConnection(virtualServer, this);
     }
 }
