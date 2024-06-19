@@ -39,7 +39,7 @@ public class FrameManager extends JFrame implements View {
     private final List<String> gamesLog = new ArrayList<>();
     private boolean cooking = false;
     private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();
-    private boolean newMessage = false;
+    private int newMessage = 0;
     private boolean newStatus = false;
     private boolean firstTurn = true;
     private boolean showPopup = true;
@@ -52,6 +52,8 @@ public class FrameManager extends JFrame implements View {
     private final Map<String, TokenColor> tokenInGame = new HashMap<>();
     private int playerCounter = 0;
     private int totalPlayers;
+
+    private List<String> storageReconnectionToServerMessage = new LinkedList<>();
 
 
 
@@ -359,11 +361,11 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void gameOver(Set<String> winner) {
+    public void gameOver(Set<String> winners) {
         gamePage.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();
-            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
+            if (winners.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
                 winningFrame.getWinnerLabel().setText("You win!");
                 winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
             } else {
@@ -372,26 +374,27 @@ public class FrameManager extends JFrame implements View {
             }
 
             winningFrame.getScoreLabel().setText("Your score: " + this.getPlayersScore().get(this.nickname));
-
+            winningFrame.showRankingImages(winners, this.getPlayersScore(), gamePage.getPlayersAvatarMap());
         });
     }
 
 
     //testing
-    public void gameOver2(MainFrameProva parent, Set<String> winner) {
+    public void gameOver2(MainFrameProva parent, Set<String> winners) {
         parent.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();
 
-            if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(parent.getNickname()))) {
-                winningFrame.getWinnerLabel().setText("You win!");
+            if (winners.stream().anyMatch(winnerNickname -> winnerNickname.equals(parent.getNickname()))) {
+                winningFrame.getWinnerLabel().setText("you won!");
                 winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
             } else {
-                winningFrame.getWinnerLabel().setText("You lose!");
+                winningFrame.getWinnerLabel().setText("you lose!");
                 winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
             }
 
-            winningFrame.getScoreLabel().setText("Your score: " + parent.getPlayersScore().get(parent.getNickname()));
+            winningFrame.getScoreLabel().setText("your score: " + parent.getPlayersScore().get(parent.getNickname()));
+            winningFrame.showRankingImages(winners, parent.getPlayersScore(), parent.getPlayersAvatarMap());
         });
     }
 
@@ -524,25 +527,72 @@ public class FrameManager extends JFrame implements View {
                 this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
             }
         }
-        this.newMessage = true;
 
-        if(Objects.equals(gamePage.getCombobox().getSelectedItem(), key)){
-            gamePage.updateChatArea(key);
-        } else {
-            //notifica nuovo messaggio (icona)
+        JLabel selectedLabel = (JLabel)gamePage.getCombobox().getSelectedItem();
+        if (selectedLabel != null) {
+            if(Objects.equals(selectedLabel.getText(), key)){
+                gamePage.updateChatArea(key);
+            } else {
+                if(!gamePage.getNewMessageMap().get(key).getFirst()){
+                    gamePage.getNewMessageMap().get(key).remove(gamePage.getNewMessageMap().get(key).getFirst());
+                    gamePage.getNewMessageMap().get(key).add(true);
+                } else {
+                    gamePage.getNewMessageMap().get(key).add(true);
+                }
+                this.newMessage++;
+                gamePage.changeComboBoxColor(key);
+                gamePage.changeNotifyLabelImage();
+            }
         }
+    }
+
+    private void printErrorStorageOnGUI(String errorString, ArrayList<Object> parameters){
+
     }
 
 
 
+    //server down, client reconnection
+    public void serverConnectionLost(){
+        //da testare
+//        if (Arrays.stream(gamePage.getContentPane().getComponents()).anyMatch(p -> p.equals(gamePage.getPanelContainer()))) {
+//            gamePage.getContentPane().remove(gamePage.getPanelContainer());
+//        }
+//
+//        JPanel reconnectionPanel = new JPanel(new BorderLayout());
+//        gamePage.getContentPane().add(reconnectionPanel);
+//        JLabel reconnectionLabel = createTextLabelFont("Internet Connection Lost, trying to reconnect...", 64);
+//        reconnectionPanel.add(reconnectionLabel, BorderLayout.CENTER);
 
 
 
 
+//
+//        System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
+//
+//        //after some attempts wait for user input
+//        JFrame jFrame = new JFrame();
+//        jFrame.setAlwaysOnTop(true);
+//        int choice = JOptionPane.showConfirmDialog(jFrame, "Still waiting for Internet Connection, do you want to keep trying? ",
+//                "Reconnection to Server",
+//                JOptionPane.YES_NO_OPTION);
+//
+//        if (choice == JOptionPane.YES_OPTION) {
+//            sleepTime = 2000;
+//            attemptCount = 0;
+//
+//        } else if (choice == JOptionPane.NO_OPTION) {
+//
+//        }
 
 
+    }
 
-
+    private JLabel createTextLabelFont(String content, int dim) {
+        JLabel jLabel = new JLabel(content);
+        jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
+        return jLabel;
+    }
 
     @Override
     public void showHomeMenu() {}
@@ -618,5 +668,13 @@ public class FrameManager extends JFrame implements View {
 
     public Map<String, TokenColor> getTokenInGame() {
         return tokenInGame;
+    }
+
+    public int getNewMessage() {
+        return newMessage;
+    }
+
+    public void setNewMessage(int newMessage) {
+        this.newMessage = newMessage;
     }
 }

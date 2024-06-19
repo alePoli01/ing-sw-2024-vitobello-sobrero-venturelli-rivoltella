@@ -154,7 +154,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
                         return INKWELL_LOGO_DIR;
                     }
                     default -> {
-                        return ERROR_IMAGE;
+                        return ERROR_FISH;
                     }
                 }
             }
@@ -169,7 +169,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
                 return P_TOKEN_DIR + getTokenFileName(conversionMap.get(mapInInput.get(position)));
             }
             case null, default -> {
-                return ERROR_IMAGE;
+                return ERROR_FISH;
             }
         }
     }

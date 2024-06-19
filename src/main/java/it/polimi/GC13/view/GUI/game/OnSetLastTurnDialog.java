@@ -6,7 +6,6 @@ import it.polimi.GC13.view.GUI.FrameManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
 
         //immagine
         JPanel imagePanel = new JPanel();
-        JLabel labelImage = new JLabel(createResizedTokenImageIcon(ERROR_IMAGE, 100)); //DA CAMBIARE L'IMMAGINE
+        JLabel labelImage = new JLabel(createResizedTokenImageIcon(ADVERTISEMENT_MONK, 100));
         setCompoundBorderInsets(labelImage, 10,10,10,10, "ALL", Color.BLACK, 0);
         imagePanel.add(labelImage);
 
@@ -153,5 +152,99 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
 
     @Override
     public void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //STATICO
+    public OnSetLastTurnDialog(MainFrameProva frameManager, String playerNickname) {
+        super(frameManager, "Last Round", true);
+        setResizable(false);
+        setSize(600, 250);
+        setLocationRelativeTo(frameManager);
+        setLayout(new BorderLayout());
+
+        Map<String, ColorRecord> playerToColorMap = new HashMap<>();
+
+        for(Map.Entry<String, TokenColor> entry : frameManager.getTokenInGame().entrySet()){
+            ColorRecord record = new ColorRecord(entry.getValue(), remappingTokenToColor(entry.getValue()));
+            playerToColorMap.put(entry.getKey(), record);
+        }
+
+
+        JPanel panelContainer = new JPanel(new GridBagLayout());
+        add(panelContainer, BorderLayout.CENTER);
+
+        //immagine
+        JPanel imagePanel = new JPanel();
+        JLabel labelImage = new JLabel(createResizedTokenImageIcon(ADVERTISEMENT_MONK, 195));
+        setCompoundBorderInsets(labelImage, 10,10,10,10, "ALL", Color.BLACK, 0);
+        imagePanel.add(labelImage);
+
+        //labels
+        JPanel labelsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints labelConstraints = createGridBagConstraints(0,0);
+        labelConstraints.weightx = 1.0;
+        labelConstraints.fill = GridBagConstraints.HORIZONTAL;
+        labelConstraints.anchor = GridBagConstraints.LINE_START;
+
+
+        Map<Position, String> positionPlayerMap = frameManager.getPlayerPosition().entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
+                        (e1, e2) -> e1,
+                        () -> new EnumMap<>(Position.class)));
+
+
+        String text = String.format("<span style='color: rgb(%d, %d, %d); font-size: 20px;'>" + playerNickname + "</span>", playerToColorMap.get(playerNickname).rgb[0], playerToColorMap.get(playerNickname).rgb[1], playerToColorMap.get(playerNickname).rgb[2]);
+        JLabel messageLabel1 = createTextLabelFont( "<html>" + text + " has reached 20 points. </html>", 25);
+        setBorderInsets(messageLabel1, 0,0,15,0);
+        labelsPanel.add(messageLabel1, labelConstraints);
+        labelConstraints.gridy++;
+
+
+        String textMessage;
+        if (!frameManager.getPlayerPosition().get(playerNickname).equals(Position.FOURTH) ) {
+            String fourthPlayer = positionPlayerMap.get(Position.FOURTH);
+            textMessage = "<html> After " + fourthPlayer + "'s turn, the <u>last round</u> will start. </html>";
+        } else {
+            textMessage = "<html><u>Last round</u> is starting... NOW! </html>";
+        }
+
+        JLabel finalLabel = createTextLabelFont(textMessage, 20);
+        setBorderInsets(finalLabel, 10,0,0,0);
+        labelsPanel.add(finalLabel, labelConstraints);
+
+
+        GridBagConstraints mainConstraints = createGridBagConstraints(0,0);
+        panelContainer.add(imagePanel, mainConstraints);
+
+        mainConstraints.gridx++;
+        mainConstraints.fill = GridBagConstraints.BOTH;
+        mainConstraints.weightx = 1.0;
+        mainConstraints.weighty = 1.0;
+        panelContainer.add(labelsPanel, mainConstraints);
+
+
+        JButton closeButton = new JButton("OK");
+        closeButton.addActionListener(e -> {
+            dispose();
+        });
+
+        add(closeButton, BorderLayout.SOUTH);
+    }
+
 
 }

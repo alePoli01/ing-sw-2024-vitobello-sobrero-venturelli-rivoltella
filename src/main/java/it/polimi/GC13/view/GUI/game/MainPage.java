@@ -7,6 +7,7 @@ import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.view.GUI.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.Border;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -69,6 +71,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     //HashMap and ButtonGroup
     private final ButtonGroup buttonGroup = new ButtonGroup();
     private final ButtonGroup avatarButtonGroup = new ButtonGroup(); //for the users' avatar
+    private final Map<String, String> playersAvatarMap = new HashMap<>();
+
 
     //hand attributes
     private final Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();;
@@ -110,9 +114,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private TokenManager tokenManager;
 
     //chat
-    private JComboBox<String> combobox;
+    private JComboBox<JLabel> combobox;
     private JEditorPane chatArea;
     private JTextField messageField;
+    private JLabel notifyLabel;
+    private Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
+
 
 
     public MainPage(List<TokenColor> tokenColorList) {
@@ -120,6 +127,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setResizable(true);
+
+        try {
+            Image icon = ImageIO.read(new File("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/logo.png"));
+            int newWidth = 1000;
+            int newHeight = 1000;
+            setIconImage(icon.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, e, "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
         panelContainer = new JPanel(new GridBagLayout());
         panelContainer.setBackground(new Color(237,230,188,255));
@@ -782,19 +798,38 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         combobox = new JComboBox<>();
 
-        combobox.addItem("global");
+        combobox.addItem(new JLabel("global"));
+        ArrayList<Boolean> emptyChatGlobal = new ArrayList<>();
+        emptyChatGlobal.add(false);
+        newMessageMap.put("global", emptyChatGlobal);
+
         for(String s : positionPlayerMap.values()){
             if(!s.equals(nickname)) {
-                combobox.addItem(s);
+                combobox.addItem(new JLabel(s));
+                ArrayList<Boolean> emptyChatPlayer = new ArrayList<>();
+                emptyChatPlayer.add(false);
+                newMessageMap.put(s, emptyChatPlayer);
             }
         }
 
-        combobox.addActionListener(e -> updateChatArea((String)combobox.getSelectedItem()));
+        combobox.setRenderer(new CustomComboBoxRenderer(newMessageMap));
+
+        combobox.addActionListener(e -> {
+            JLabel selectedLabel = (JLabel)combobox.getSelectedItem();
+            if(selectedLabel != null) {
+                String selectedPlayer = selectedLabel.getText();
+                updateChatArea(selectedPlayer);
+            }
+        });
 
         GridBagConstraints gbcCombobox = createGridBagConstraints(0,0);
         gbcCombobox.fill = GridBagConstraints.HORIZONTAL;
 
         chatPanel.add(combobox, gbcCombobox);
+
+        notifyLabel = new JLabel();
+        chatPanel.add(notifyLabel, createGridBagConstraints(1,0));
+
 
         chatArea = new JEditorPane();
         chatArea.setContentType("text/html");
@@ -846,15 +881,30 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public void updateChatArea(String selectedPlayer) {
         if (selectedPlayer != null) {
+            while(newMessageMap.get(selectedPlayer).stream().anyMatch(b -> b)) {
+                newMessageMap.get(selectedPlayer).remove(newMessageMap.get(selectedPlayer).getFirst());
+                frameManager.setNewMessage(frameManager.getNewMessage() - 1);
+                if (frameManager.getNewMessage() <= 0) {
+                    frameManager.setNewMessage(0);
+                }
+            }
+
+            if(newMessageMap.get(selectedPlayer).isEmpty()){
+                newMessageMap.get(selectedPlayer).add(false);
+            }
+
+            changeComboBoxColor(selectedPlayer);
+            changeNotifyLabelImage();
+
             List<ChatMessage> messages = frameManager.getChat().get(selectedPlayer);
-            if(messages != null) {
+            if (messages != null) {
                 StringBuilder content = new StringBuilder("<html>");
-                for(ChatMessage msg : messages) {
+                for (ChatMessage msg : messages) {
                     content.append("<b>").append(msg.sender()).append("</b>").append(": ").append(msg.content()).append(";<br>");
                 }
                 content.append("</html>");
                 chatArea.setText(content.toString());
-            } else {
+            }else{
                 chatArea.setText("");
             }
         }
@@ -864,11 +914,40 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private void sendMessage() {
         String message = messageField.getText().trim();
         if (!message.isEmpty()) {
-            String selectedPlayer = (String)combobox.getSelectedItem();
-            if (selectedPlayer != null) {
+            JLabel selectedLabel = (JLabel)combobox.getSelectedItem();
+            if (selectedLabel != null) {
+                String selectedPlayer = selectedLabel.getText();
                 frameManager.getVirtualServer().sendMessageFromClient(new NewMessage(this.nickname, selectedPlayer, message));
                 messageField.setText("");
             }
+        }
+    }
+
+    public void changeComboBoxColor(String selectedPlayer){
+        for (int i = 0; i < combobox.getItemCount(); i++) {
+            if (combobox.getItemAt(i).getText().equals(selectedPlayer)) {
+                if (newMessageMap.get(selectedPlayer).contains(true)) {
+                    combobox.getItemAt(i).setForeground(Color.RED); //NON FUNZIONA
+                } else {
+                    combobox.getItemAt(i).setForeground(UIManager.getColor("ComboBox.foreground"));
+                }
+            }
+        }
+    }
+
+    public void changeNotifyLabelImage(){
+        if (frameManager.getNewMessage() > 0) {
+            if(frameManager.getNewMessage() == 1) {
+                notifyLabel.setIcon(createResizedTokenImageIcon(ONE_NEWMESSAGE, 30));
+            } else if(frameManager.getNewMessage() == 2){
+                notifyLabel.setIcon(createResizedTokenImageIcon(TWO_NEWMESSAGE, 30));
+            } else if(frameManager.getNewMessage() == 3){
+                notifyLabel.setIcon(createResizedTokenImageIcon(THREE_NEWMESSAGE, 30));
+            } else {
+                notifyLabel.setIcon(createResizedTokenImageIcon(MANY_NEWMESSAGE, 30));
+            }
+        } else {
+            notifyLabel.setIcon(new ImageIcon(""));
         }
     }
 
@@ -927,7 +1006,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                             .findFirst()
                             .orElseThrow();
                 }catch(NoSuchElementException noSuchElementException){
-                    flippedIcon = CardManager.ERROR_IMAGE;
+                    flippedIcon = CardManager.ERROR_FISH;
                 }
             } else {
                 try{
@@ -937,7 +1016,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                             .findFirst()
                             .orElseThrow();
                 }catch(NoSuchElementException noSuchElementException){
-                    flippedIcon = CardManager.ERROR_IMAGE;
+                    flippedIcon = CardManager.ERROR_FISH;
                 }
             }
 
@@ -1083,7 +1162,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 return INKWELL_LOGO_DIR;
             }
             default -> {
-                return ERROR_IMAGE;
+                return ERROR_FISH;
             }
         }
     }
@@ -1499,6 +1578,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         for (Map.Entry<Position, String> entry : positionPlayerMap.entrySet()) {
             int randomIndex = random.nextInt(avatarsLogo.size());
             String selectedAvatar = avatarsLogo.get(randomIndex);
+            playersAvatarMap.put(entry.getValue(), selectedAvatar);
             avatarsLogo.remove(randomIndex);
             int y1 = 0;
 
@@ -1703,11 +1783,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return positionTable;
     }
 
-    public JComboBox<String> getCombobox() {
+    public JComboBox<JLabel> getCombobox() {
         return combobox;
     }
 
     public JLabel getWaitingLabel() {
         return waitingLabel;
+    }
+
+    public Map<String, String> getPlayersAvatarMap() {
+        return playersAvatarMap;
+    }
+
+    public Map<String, ArrayList<Boolean>> getNewMessageMap() {
+        return newMessageMap;
     }
 }

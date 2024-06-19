@@ -29,12 +29,33 @@ public interface CardManager {
       String PLANT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/plant_judge.png";
       String INSECT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/insect_judge.png";
 
+      String FUNGI_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_fungi.png";
+      String ANIMAL_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_animal.png";
+      String PLANT_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_plant.png";
+      String INSECT_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_insect.png";
+
+      String MONK1 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk1.png";
+      String MONK2 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk2.png";
+      String MONK3 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk3.png";
+      String MONK4 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk4.png";
+
       String CROWN = "src/main/resources/it/polimi/GC13/view/GUI/crown.png";
-      String ERROR_IMAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
+      String ERROR_FISH = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
       String ERROR_CARD = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/Error_Card.png";
+      String ADVERTISEMENT_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/advertisement.png";
+
+      String ONE_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_1message.png";
+      String TWO_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_2messages.png";
+      String THREE_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_3messages.png";
+      String MANY_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_many_messages.png";
+
+
+
 
      ArrayList<String> logos = new ArrayList<>(Arrays.asList(FUNGI_LOGO_DIR, ANIMAL_LOGO_DIR, PLANT_LOGO_DIR, INSECT_LOGO_DIR, QUILL_LOGO_DIR, MANUSCRIPT_LOGO_DIR, INKWELL_LOGO_DIR));
      ArrayList<String> avatarsLogo = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+     ArrayList<String> monks = new ArrayList<>(Arrays.asList(MONK1, MONK2, MONK3, MONK4));
+
 
       void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException; //permette di associare alla carta con tale serialNumber i corrispettivi front e back
 
