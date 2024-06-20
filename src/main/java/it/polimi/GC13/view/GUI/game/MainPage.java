@@ -109,6 +109,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private JLabel turnLabel2;
     private JLabel scoreLabel;
     private JLabel scoreLabel2;
+    private JLabel numAttemptLabel;
 
     //management of the movements of tokens on the ScoreBoard
     private TokenManager tokenManager;
@@ -938,13 +939,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public void changeNotifyLabelImage(){
         if (frameManager.getNewMessage() > 0) {
             if(frameManager.getNewMessage() == 1) {
-                notifyLabel.setIcon(createResizedTokenImageIcon(ONE_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(ONE_MESSAGE, 35));
             } else if(frameManager.getNewMessage() == 2){
-                notifyLabel.setIcon(createResizedTokenImageIcon(TWO_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(TWO_MESSAGE, 35));
             } else if(frameManager.getNewMessage() == 3){
-                notifyLabel.setIcon(createResizedTokenImageIcon(THREE_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(THREE_MESSAGE, 35));
             } else {
-                notifyLabel.setIcon(createResizedTokenImageIcon(MANY_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(MANY_MESSAGE, 35));
             }
         } else {
             notifyLabel.setIcon(new ImageIcon(""));
@@ -984,43 +985,45 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         board.repaint();
     }
 
-    public void printHandOrDecksOnGUI(List<Integer> list, List<Boolean> b, JPanel imagePanel, JPanel checkBoxPanel, JPanel container, ButtonGroup buttonGroup, Map<JLabel, JCheckBox> labelCheckBoxMap, Map<Integer, CardData> serialNumberCheckBoxMap, int x, int y){
-        Map<Integer, ArrayList<String>> cards = showHandOrDecks(list);
-        Map<Integer, Integer> mappingIndexCardsMap = new HashMap<>();
+    public void printHandOrDecksOnGUI(Map<Integer, Boolean> cardsMap, JPanel imagePanel, JPanel checkBoxPanel, JPanel container, ButtonGroup buttonGroup, Map<JLabel, JCheckBox> labelCheckBoxMap, Map<Integer, CardData> serialNumberCheckBoxMap, int x, int y){
+        Map<Integer, Boolean> sortedCardsMap = cardsMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
 
-        //remapping the map cards
-        int newIndex = 0;
-        for(int i : cards.keySet()){
-            mappingIndexCardsMap.put(newIndex, i);
-            newIndex++;
-        }
+        Map<Integer, ArrayList<String>> cards = showHandOrDecks(sortedCardsMap.keySet().stream().toList());
 
-        for(int i=0; i<cards.size(); i++){
+        for(Map.Entry<Integer, Boolean> entry : sortedCardsMap.entrySet()){
             String flippedIcon;
             JCheckBox jCheckBox;
-            if(!b.get(i)){
-                try{
-                    flippedIcon = cards.get(mappingIndexCardsMap.get(i))
+            if(!entry.getValue()){
+                try {
+                    flippedIcon = cards.get(entry.getKey())
                             .stream()
                             .filter(s->s.contains("front"))
                             .findFirst()
                             .orElseThrow();
-                }catch(NoSuchElementException noSuchElementException){
-                    flippedIcon = CardManager.ERROR_FISH;
+                } catch(NoSuchElementException noSuchElementException){
+                    flippedIcon = CardManager.ERROR_CARD;
                 }
             } else {
-                try{
-                    flippedIcon = cards.get(mappingIndexCardsMap.get(i))
+                try {
+                    flippedIcon = cards.get(entry.getKey())
                             .stream()
                             .filter(path -> path.contains("back"))
                             .findFirst()
                             .orElseThrow();
-                }catch(NoSuchElementException noSuchElementException){
-                    flippedIcon = CardManager.ERROR_FISH;
+                } catch(NoSuchElementException noSuchElementException) {
+                    flippedIcon = CardManager.ERROR_CARD;
                 }
             }
 
-            jCheckBox = new JCheckBox(b.get(i).toString());
+            jCheckBox = new JCheckBox(entry.getValue().toString());
             Image img = new ImageIcon(flippedIcon).getImage();
 
             JLabel imageLabel = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/6 , img.getHeight(null)/6, Image.SCALE_SMOOTH)));
@@ -1062,7 +1065,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             labelCheckBoxMap.put(imageLabel, jCheckBox);
 
             CardData record = new CardData(imageLabel, jCheckBox);
-            serialNumberCheckBoxMap.put(mappingIndexCardsMap.get(i), record);
+            serialNumberCheckBoxMap.put(entry.getKey(), record);
 
             container.add(imagePanel, createGridBagConstraints(x,y));
             container.add(checkBoxPanel, createGridBagConstraints(x,y));
@@ -1337,11 +1340,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             handSerialNumberCheckBoxMap.clear();
             flipToSend = true;
 
-            ArrayList<Boolean> b = new ArrayList<>();
-            for(int i=0; i<frameManager.getHand().size(); i++)
-                b.add(true);
+            Map<Integer, Boolean> printMap = new HashMap<>();
+            for (Integer integer : frameManager.getHand()) printMap.put(integer, true);
 
-            printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         }  else if (e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
             setButtonNOTVisible();
@@ -1361,11 +1363,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refreshDecksPanels();
             handSerialNumberCheckBoxMap.clear();
 
-            ArrayList<Boolean> b = new ArrayList<>();
-            for(int i = 0; i < frameManager.getHand().size(); i++)
-                b.add(false);
+            Map<Integer, Boolean> printMap = new HashMap<>();
+            for (Integer integer : frameManager.getHand()) printMap.put(integer, false);
 
-            printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
             if(checkingHandWhileDrawing) {
                 handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
@@ -1384,8 +1385,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refreshDecksPanels();
             drawableSerialNumberCheckBoxMap.clear();
 
-            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
-            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
 
             if (checkingHandWhileDrawing) {
@@ -1464,7 +1465,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                                 .orElseThrow()
                                 .getKey();
                     }catch(NoSuchElementException ex){
-                        System.out.println("il serial to send non è stato aggiornato");
+                        JOptionPane.showMessageDialog(this, "serialToSend not updated.");
                     }
 
                     ImageIcon originalIcon = new ImageIcon(getDirectory(serialToSend,flipToSend));
@@ -1481,7 +1482,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                                 .orElseThrow().getKey();
                         System.out.println(cordToSend.getX() + cordToSend.getY());
                     } catch (NoSuchElementException ex) {
-                        System.out.println("fatal error, non sappiamo programmare, mi spiace che hai scelto il nostro gioco ");
+                        JOptionPane.showMessageDialog(this, "fatal error, try again.");
                     }
                 }
             }
@@ -1502,8 +1503,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         drawableSerialNumberCheckBoxMap.clear();
         handLabelCheckBoxMap.clear();
 
-        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable().keySet().stream().toList(), frameManager.getResourceCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
-        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable().keySet().stream().toList(), frameManager.getGoldCardsAvailable().values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
 
         decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
@@ -1535,11 +1536,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         refreshDecksPanels();
         handSerialNumberCheckBoxMap.clear();
 
-        ArrayList<Boolean> b = new ArrayList<>();
-        for(int i=0; i<frameManager.getHand().size(); i++)
-            b.add(false);
+        Map<Integer, Boolean> printMap = new HashMap<>();
+        for (Integer integer : frameManager.getHand()) printMap.put(integer, false);
 
-        printHandOrDecksOnGUI(frameManager.getHand(), b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+        printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         if(checkingHandWhileDrawing) {
             handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
@@ -1640,7 +1640,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
     public Map<Integer, ArrayList<String>> showHandOrDecks(List<Integer> hand) {
-        Map<Integer, ArrayList<String>> handIconsPaths = new HashMap<>();
+        Map<Integer, ArrayList<String>> handIconsPaths = new LinkedHashMap<>();
 
         hand.forEach(serialCard -> {
             Path startDir = identifyPathCard(serialCard);
@@ -1797,5 +1797,51 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     public Map<String, ArrayList<Boolean>> getNewMessageMap() {
         return newMessageMap;
+    }
+
+    public JLabel getNumAttemptLabel() {
+        return numAttemptLabel;
+    }
+
+    public void reconnectionWaitingPage() {
+        getContentPane().remove(panelContainer);
+
+        numAttemptLabel = createTextLabelFont("", 30);
+        setBorderInsets(numAttemptLabel, 0,20,0,0);
+        getContentPane().add(numAttemptLabel, BorderLayout.NORTH);
+
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        JLabel reconnectionLabel = createTextLabelFont("Internet Connection Lost, trying to reconnect...", 64);
+        setBorderInsets(reconnectionLabel, 0, 0, 20, 0);
+        panel.add(reconnectionLabel, createGridBagConstraints(0, 0));
+
+        ArrayList<Color> colors = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            colors.add(new Color(107, 189, 192));
+            colors.add(new Color(233, 73, 23));
+            colors.add(new Color(113, 192, 124));
+            colors.add(new Color(171, 63, 148));
+        }
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        setBoxComponentSize(progressBar, 1200, 30);
+        progressBar.setForeground(colors.get(colorIndex));
+        colorIndex++;
+        panel.add(progressBar, createGridBagConstraints(0, 1));
+
+        timer = new Timer(100, e -> {
+            progress += 5;
+            if (progress > 100) {
+                progress = 0;
+                progressBar.setForeground(colors.get(colorIndex));
+                colorIndex = (colorIndex + 1) % colors.size();
+            }
+            progressBar.setValue(progress);
+        });
+        timer.start();
+
+        getContentPane().add(panel, BorderLayout.CENTER);
     }
 }

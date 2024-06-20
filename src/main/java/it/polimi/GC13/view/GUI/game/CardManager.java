@@ -43,11 +43,13 @@ public interface CardManager {
       String ERROR_FISH = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
       String ERROR_CARD = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/Error_Card.png";
       String ADVERTISEMENT_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/advertisement.png";
+      String ERROR_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/error_monk.png";
+      String QUESTION_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/question_monk.png";
 
-      String ONE_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_1message.png";
-      String TWO_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_2messages.png";
-      String THREE_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_3messages.png";
-      String MANY_NEWMESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_many_messages.png";
+      String ONE_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_1message.png";
+      String TWO_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_2messages.png";
+      String THREE_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_3messages.png";
+      String MANY_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_many_messages.png";
 
 
 

@@ -17,6 +17,7 @@ import it.polimi.GC13.view.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -37,10 +38,8 @@ public class FrameManager extends JFrame implements View {
     private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
     private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
     private final List<String> gamesLog = new ArrayList<>();
-    private boolean cooking = false;
     private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();
     private int newMessage = 0;
-    private boolean newStatus = false;
     private boolean firstTurn = true;
     private boolean showPopup = true;
     public List<Coordinates> availableCells = new LinkedList<>();
@@ -53,13 +52,8 @@ public class FrameManager extends JFrame implements View {
     private int playerCounter = 0;
     private int totalPlayers;
 
-    private List<String> storageReconnectionToServerMessage = new LinkedList<>();
-
-
-
     //TODO:
     // + DA TESTARE NELLE VARE COMBINAZIONI TUI-GUI E RMI-SOCKET (RICERCA ERRORI)
-    // + DA GESTIRE LA DISCONNESSIONE DEL SERVER (IN FRAMEMANAGER)
     // + DA IMPOSTARE SFONDI
 
 
@@ -110,11 +104,10 @@ public class FrameManager extends JFrame implements View {
                     gamePage.getHandSerialNumberCheckBoxMap().clear();
 
                     if(!gamePage.isCheckingHandWhileDrawing()) {
-                        ArrayList<Boolean> b = new ArrayList<>();
-                        for(int i=0; i< this.hand.size(); i++)
-                            b.add(false);
+                        Map<Integer, Boolean> printMap = new HashMap<>();
+                        for (Integer integer : this.hand) printMap.put(integer, false);
 
-                        gamePage.printHandOrDecksOnGUI(this.hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+                        gamePage.printHandOrDecksOnGUI(printMap, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
                     }
                     refreshFrame(gamePage);
                 }
@@ -334,7 +327,6 @@ public class FrameManager extends JFrame implements View {
         if(showPopup) {
             OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
             dialog.setVisible(true);
-            this.newStatus = true;
             showPopup = false;
         }
     }
@@ -355,7 +347,6 @@ public class FrameManager extends JFrame implements View {
         if (this.nickname.equals(playerNickname)) {
             gamePage.getScoreLabel().setText("Score: " + playersScore.get(playerNickname));
             gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
-            System.out.println(playersScore.get(playerNickname));
         }
     }
 
@@ -406,7 +397,10 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void onReconnectToGame() {
-        this.newStatus = true;
+        gamePage.getTimer().stop();
+        gamePage.getContentPane().removeAll();
+        gamePage.getContentPane().add(gamePage.getPanelContainer());
+        refreshFrame(gamePage);
     }
 
     @Override
@@ -433,7 +427,68 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
+        if (virtualServer == this.virtualServer) {
+            int attemptCount = 0;       // after tot attempts ask to keep trying
+            int sleepTime = 1000;       // initial delay
+            int maxTime = 20000;        // caps the sleepTime
+            int totalElapsedTime = 0;   // to be deleted
+            double backOffBase = 1.05;  // changes the exponential growth of the time
+            boolean connectionOpen = false;
 
+            gamePage.reconnectionWaitingPage();
+
+            while (!connectionOpen) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    if (this.gameName == null || this.nickname == null) {
+                        JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+                        gamePage.dispose();
+                        System.exit(1);
+                    }
+                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
+                    this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
+                    //this.setVirtualServer(this.virtualServer);
+                    virtualServer.setConnectionOpen(true);
+                    connectionOpen = true;
+                    JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(CardManager.MONK4, 140));
+                    this.reconnectToGame(); //se tutto va bene da qui si va a onReconnectToGame
+                } catch (IOException e) {
+                    // exponential backoff algorithm
+                    attemptCount++;
+                    totalElapsedTime += sleepTime;
+                    sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
+
+                    gamePage.getNumAttemptLabel().setText("Attempt #" + attemptCount + "   " + sleepTime + "ms    " + totalElapsedTime / 1000 + "s :");
+
+                    if (attemptCount > 10) {
+                        //after some attempts wait for user input
+                        int answer = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedTokenImageIcon(CardManager.QUESTION_MONK, 140));
+
+                        if(answer == JOptionPane.YES_OPTION){
+                            sleepTime = 2000;
+                            attemptCount = 0;
+
+                            //SERVE?
+                            revalidate();
+                            repaint();
+                        } else {
+                            dispose();
+                            System.exit(1);
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("Virtual server passed already updated");
+        }
+    }
+
+    private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
+        return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
 
@@ -455,11 +510,10 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getScoreLabel().setText("Score: " + 0);
                 gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
 
-                ArrayList<Boolean> b = new ArrayList<>();
-                for(int i=0; i<hand.size(); i++)
-                    b.add(false);
+                Map<Integer, Boolean> printMap = new HashMap<>();
+                for (Integer integer : this.hand) printMap.put(integer, false);
 
-                gamePage.printHandOrDecksOnGUI(hand, b, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+                gamePage.printHandOrDecksOnGUI(printMap, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(), gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(), 0, 0);
 
                 refreshFrame(gamePage);
                 this.firstTurn = false;
@@ -471,7 +525,6 @@ public class FrameManager extends JFrame implements View {
                 gamePage.getTurnLabel2().setForeground(new Color(45, 114, 27));
 
                 gamePage.getHandLabelCheckBoxMap().values().forEach(checkBox -> checkBox.setEnabled(true));
-
             } else {
                 gamePage.getTurnLabel().setText("waiting for my turn");
                 gamePage.getTurnLabel().setForeground(new Color(175, 31, 31));
@@ -481,7 +534,7 @@ public class FrameManager extends JFrame implements View {
         }
         if (turn) {
             this.gamesLog.add("\nIt's " + playerNickname + "'s turn");
-        } else {
+        } else if (this.turnPlayed > 0) {
             this.gamesLog.add("\n" + playerNickname + " passed the turn");
         }
     }
@@ -546,53 +599,6 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    private void printErrorStorageOnGUI(String errorString, ArrayList<Object> parameters){
-
-    }
-
-
-
-    //server down, client reconnection
-    public void serverConnectionLost(){
-        //da testare
-//        if (Arrays.stream(gamePage.getContentPane().getComponents()).anyMatch(p -> p.equals(gamePage.getPanelContainer()))) {
-//            gamePage.getContentPane().remove(gamePage.getPanelContainer());
-//        }
-//
-//        JPanel reconnectionPanel = new JPanel(new BorderLayout());
-//        gamePage.getContentPane().add(reconnectionPanel);
-//        JLabel reconnectionLabel = createTextLabelFont("Internet Connection Lost, trying to reconnect...", 64);
-//        reconnectionPanel.add(reconnectionLabel, BorderLayout.CENTER);
-
-
-
-
-//
-//        System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
-//
-//        //after some attempts wait for user input
-//        JFrame jFrame = new JFrame();
-//        jFrame.setAlwaysOnTop(true);
-//        int choice = JOptionPane.showConfirmDialog(jFrame, "Still waiting for Internet Connection, do you want to keep trying? ",
-//                "Reconnection to Server",
-//                JOptionPane.YES_NO_OPTION);
-//
-//        if (choice == JOptionPane.YES_OPTION) {
-//            sleepTime = 2000;
-//            attemptCount = 0;
-//
-//        } else if (choice == JOptionPane.NO_OPTION) {
-//
-//        }
-
-
-    }
-
-    private JLabel createTextLabelFont(String content, int dim) {
-        JLabel jLabel = new JLabel(content);
-        jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
-        return jLabel;
-    }
 
     @Override
     public void showHomeMenu() {}
@@ -618,6 +624,7 @@ public class FrameManager extends JFrame implements View {
     public Map<String, BoardView> getPlayersBoard() {
         return playersBoard;
     }
+
     public Map<String, Integer> getPlayersScore() {
         return playersScore;
     }

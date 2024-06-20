@@ -4,7 +4,6 @@ import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.model.Coordinates;
-import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.ImageIconRenderer;
 import it.polimi.GC13.view.GUI.ImageIconTableModel;
 import it.polimi.GC13.view.TUI.BoardView;
@@ -832,12 +831,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         tokenPanel = new JPanel(new FlowLayout());
         checkBoxPanel = new JPanel(new FlowLayout());
 
+        Map<Integer, Boolean> printMap = new HashMap<>();
+        for (Integer integer : hand) printMap.put(integer, false);
 
-        ArrayList<Boolean> b = new ArrayList<>();
-        for(int i=0; i<hand.size(); i++)
-            b.add(false);
+//        ArrayList<Boolean> b = new ArrayList<>();
+//        for(int i=0; i<hand.size(); i++)
+//            b.add(false);
 
-        printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel,choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap,0,0);
+        printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel,choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap,0,0);
 
         namePanel = new JPanel();
         namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
@@ -1028,15 +1029,20 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 //        northPanel.add(popup);
 
         popup.addActionListener(e -> {
+            reconnectionWaitingPage();
+            revalidate();
+            repaint();
+
+            //popup
 //            onSetLastTurn(nickname);
 
-            FrameManager frameManager = new FrameManager();
+            //fine gioco
+//            FrameManager frameManager = new FrameManager();
+//            Set<String> winner = new HashSet<>();
+//            winner.add("Player0");
+//            frameManager.gameOver2(this, winner);
 
-            Set<String> winner = new HashSet<>();
-            winner.add("Player0");
-
-            frameManager.gameOver2(this, winner);
-
+            //movimento token
 //            List<String> stringList = new ArrayList<>(playersScore.keySet());
 //            Random random3 = new Random();
 //            int randomIndex = random3.nextInt(stringList.size());
@@ -1089,6 +1095,77 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
     //TODO: ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+    public void reconnectionWaitingPage(){
+        getContentPane().remove(panelContainer);
+
+        JLabel numAttemptLabel = createTextLabelFont("Attempt # 2" + "     32ms" + "    007s: ", 30);
+        setBorderInsets(numAttemptLabel, 0,20,0,0);
+        getContentPane().add(numAttemptLabel, BorderLayout.NORTH);
+
+        int attemptCount = 2;
+        int sleepTime = 32;
+        double totalElapsedTime = 70;
+        System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
+
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        JLabel reconnectionLabel = createTextLabelFont("Internet Connection Lost, trying to reconnect...", 64);
+        setBorderInsets(reconnectionLabel, 0,0,20,0);
+        panel.add(reconnectionLabel, createGridBagConstraints(0,0));
+
+        ArrayList<Color> colors = new ArrayList<>();
+
+        for(int i=0; i<4; i++) {
+            colors.add(new Color(107, 189, 192));
+            colors.add(new Color(233, 73, 23));
+            colors.add(new Color(113, 192, 124));
+            colors.add(new Color(171, 63, 148));
+        }
+
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        setBoxComponentSize(progressBar,1200,30);
+        progressBar.setForeground(colors.get(colorIndex));
+        colorIndex++;
+        panel.add(progressBar, createGridBagConstraints(0,1));
+
+        timer = new Timer(100, e -> {
+            progress += 5;
+            if (progress > 100) {
+                progress = 0;
+                progressBar.setForeground(colors.get(colorIndex));
+                colorIndex = (colorIndex + 1) % colors.size();
+            }
+            progressBar.setValue(progress);
+        });
+        timer.start();
+
+        getContentPane().add(panel, BorderLayout.CENTER);
+
+
+
+        JButton button = createButton("revert", 30);
+        button.addActionListener(e -> {
+            //JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+
+
+            //JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(MONK4, 140));
+            //JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, new ImageIcon(new ImageIcon(CardManager.ERROR_FISH).getImage().getScaledInstance(100,100, Image.SCALE_SMOOTH)));
+            int c = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedTokenImageIcon(CardManager.QUESTION_MONK, 140));
+            if(c == JOptionPane.NO_OPTION){
+                dispose();
+                System.exit(1);
+            } else {
+                timer.stop();
+                getContentPane().remove(panel);
+                getContentPane().add(panelContainer);
+                revalidate();
+                repaint();
+            }
+        });
+
+        panel.add(button, createGridBagConstraints(0,2));
+
+    }
 
     private void updateChatArea(String selectedPlayer) {
         if (selectedPlayer != null) {
@@ -1205,13 +1282,13 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     public void changeNotifyLabelImage(){
         if (notifyCounter > 0) {
             if(notifyCounter == 1) {
-                notifyLabel.setIcon(createResizedTokenImageIcon(ONE_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(ONE_MESSAGE, 35));
             } else if(notifyCounter == 2){
-                notifyLabel.setIcon(createResizedTokenImageIcon(TWO_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(TWO_MESSAGE, 35));
             } else if(notifyCounter == 3){
-                notifyLabel.setIcon(createResizedTokenImageIcon(THREE_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(THREE_MESSAGE, 35));
             } else {
-                notifyLabel.setIcon(createResizedTokenImageIcon(MANY_NEWMESSAGE, 30));
+                notifyLabel.setIcon(createResizedTokenImageIcon(MANY_MESSAGE, 35));
             }
         } else {
             notifyLabel.setIcon(new ImageIcon(""));
@@ -1337,7 +1414,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
     public Map<Integer, ArrayList<String>> showHandOrDecks(List<Integer> hand) {
-        Map<Integer, ArrayList<String>> handIconsPaths = new HashMap<>();
+        Map<Integer, ArrayList<String>> handIconsPaths = new LinkedHashMap<>();
 
         hand.forEach(serialCard -> {
             Path startDir = identifyPathCard(serialCard);
@@ -1575,11 +1652,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             flipToSend = true;
 
 
-            ArrayList<Boolean> b = new ArrayList<>();
-            for(int i=0; i<hand.size(); i++)
-                b.add(true);
+//            ArrayList<Boolean> b = new ArrayList<>();
+//            for(int i=0; i<hand.size(); i++)
+//                b.add(true);
 
-            printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            Map<Integer, Boolean> printMap = new HashMap<>();
+            for (Integer integer : hand) printMap.put(integer, true);
+
+            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         } else if(e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
             setButtonNOTVisible();
@@ -1599,11 +1679,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             refreshDecksPanels();
             handSerialNumberCheckBoxMap.clear();
 
-            ArrayList<Boolean> b = new ArrayList<>();
-            for(int i=0; i<hand.size(); i++)
-                b.add(false);
+//            ArrayList<Boolean> b = new ArrayList<>();
+//            for(int i=0; i<hand.size(); i++)
+//                b.add(false);
 
-            printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            Map<Integer, Boolean> printMap = new HashMap<>();
+            for (Integer integer : hand) printMap.put(integer, false);
+
+            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
             if(checkingHandWhileDrawing) {
                 handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
@@ -1622,8 +1705,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             refreshDecksPanels();
             drawableSerialNumberCheckBoxMap.clear();
 
-            printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
-            printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
+            printHandOrDecksOnGUI(resourceCardsAvailable, tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(goldCardsAvailable, tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
 
             if (checkingHandWhileDrawing) {
                 decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
@@ -1691,8 +1774,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
             hand = hand.stream().filter(c -> c!= serialToSend).toList();
 
-            printHandOrDecksOnGUI(resourceCardsAvailable.keySet().stream().toList(),resourceCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
-            printHandOrDecksOnGUI(goldCardsAvailable.keySet().stream().toList(),goldCardsAvailable.values().stream().toList(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
+            printHandOrDecksOnGUI(resourceCardsAvailable, tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(goldCardsAvailable, tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1,0);
 
             decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
 
@@ -1773,11 +1856,14 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             refreshDecksPanels();
             handSerialNumberCheckBoxMap.clear();
 
-            ArrayList<Boolean> b = new ArrayList<>();
-            for(int i=0; i<hand.size(); i++)
-                b.add(false);
+//            ArrayList<Boolean> b = new ArrayList<>();
+//            for(int i=0; i<hand.size(); i++)
+//                b.add(false);
 
-            printHandOrDecksOnGUI(hand, b, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            Map<Integer, Boolean> printMap = new HashMap<>();
+            for (Integer integer : hand) printMap.put(integer, false);
+
+            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
             refreshBoard();
 
         } else {
@@ -1956,23 +2042,42 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
 
-    public void printHandOrDecksOnGUI(List<Integer> list, List<Boolean> b, JPanel imagePanel, JPanel checkBoxPanel, JPanel container, ButtonGroup buttonGroup, Map<JLabel, JCheckBox> labelCheckBoxMap, Map<Integer, CardData> serialNumberCheckBoxMap, int x, int y){
-        Map<Integer, ArrayList<String>> cards = showHandOrDecks(list);
-        Map<Integer, Integer> mappingIndexCardsMap = new HashMap<>();
+    public void printHandOrDecksOnGUI(Map<Integer, Boolean> cardsMap, JPanel imagePanel, JPanel checkBoxPanel, JPanel container, ButtonGroup buttonGroup, Map<JLabel, JCheckBox> labelCheckBoxMap, Map<Integer, CardData> serialNumberCheckBoxMap, int x, int y){
 
-        //remapping the map cards
-        int newIndex = 0;
-        for(int i : cards.keySet()){
-            mappingIndexCardsMap.put(newIndex, i);
-            newIndex++;
-        }
+        Map<Integer, Boolean> sortedCardsMap = cardsMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
 
-        for(int i=0; i<cards.size(); i++){
+        sortedCardsMap.forEach((key, value) -> System.out.println(key + ": " + value));
+        System.out.println("-------");
+
+        Map<Integer, ArrayList<String>> cards = showHandOrDecks(sortedCardsMap.keySet().stream().toList());
+        cards.keySet().forEach(System.out::println);
+        System.out.println("-------");
+//        Map<Integer, Integer> mappingIndexCardsMap = new HashMap<>();
+
+//        //remapping the map cards
+//        int newIndex = 0;
+//        for(int i : cards.keySet()){
+//            mappingIndexCardsMap.put(newIndex, i);
+//            newIndex++;
+//        }
+//        mappingIndexCardsMap.forEach((key, value) -> System.out.println(key + ": " + value));
+//        System.out.println("-------");
+
+
+        for(Map.Entry<Integer, Boolean> entry : sortedCardsMap.entrySet()){
             String flippedIcon;
             JCheckBox jCheckBox;
-            if(!b.get(i)){
+            if(!entry.getValue()){
                 try{
-                    flippedIcon = cards.get(mappingIndexCardsMap.get(i))
+                    flippedIcon = cards.get(entry.getKey())
                             .stream()
                             .filter(s->s.contains("front"))
                             .findFirst()
@@ -1981,18 +2086,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                     flippedIcon = CardManager.ERROR_FISH;
                 }
             } else {
-                try{
-                    flippedIcon = cards.get(mappingIndexCardsMap.get(i))
+                try {
+                    flippedIcon = cards.get(entry.getKey())
                             .stream()
                             .filter(path -> path.contains("back"))
                             .findFirst()
                             .orElseThrow();
-                }catch(NoSuchElementException noSuchElementException){
+                } catch(NoSuchElementException noSuchElementException) {
                     flippedIcon = CardManager.ERROR_FISH;
                 }
             }
 
-            jCheckBox = new JCheckBox(b.get(i).toString());
+            jCheckBox = new JCheckBox(entry.getValue().toString());
             Image img = new ImageIcon(flippedIcon).getImage();
 
             JLabel imageLabel = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/6 , img.getHeight(null)/6, Image.SCALE_SMOOTH)));
@@ -2030,7 +2135,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             labelCheckBoxMap.put(imageLabel, jCheckBox);
 
             CardData record = new CardData(imageLabel, jCheckBox);
-            serialNumberCheckBoxMap.put(mappingIndexCardsMap.get(i), record);
+            serialNumberCheckBoxMap.put(entry.getKey(), record);
 
             container.add(imagePanel, createGridBagConstraints(x,y));
             container.add(checkBoxPanel, createGridBagConstraints(x,y));
