@@ -16,9 +16,9 @@ public class DiskManager implements Serializable {
                 objectOutputStream.writeObject(gameManaged);
                 objectOutputStream.close();
                 fileOutputStream.close();
-                System.out.println("Serialization completed");
+                System.out.println("\u001B[32mSerialization completed\u001B[0m");
             } catch (IOException e) {
-                System.out.println("Error writing file");
+                System.err.println("Error writing file");
             }
         }
     }
@@ -31,12 +31,12 @@ public class DiskManager implements Serializable {
             objectInputStream.close();
             fileInputStream.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.err.println("File not found");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } catch (ClassNotFoundException e) {
-            System.out.println("Game doesn't exist or it wasn't saved");
-            System.out.println(e.getMessage());
+            System.err.println("Game doesn't exist or it wasn't saved");
+            System.err.println(e.getMessage());
         }
         System.out.println("Reading from disk completed");
         return this.gameManaged;

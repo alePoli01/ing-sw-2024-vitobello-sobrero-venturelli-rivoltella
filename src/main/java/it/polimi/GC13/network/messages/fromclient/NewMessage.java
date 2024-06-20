@@ -10,6 +10,7 @@ public record NewMessage(String sender, String recipient, String message) implem
 
     @Override
     public void methodToCall(LobbyController lobbyController, GamePhase gamePhase, ClientInterface client, Player player) {
+        System.err.println("[NewMessage] " + sender + " to " + recipient + ": " + message);
         gamePhase.newChatMessage(this.sender(), this.recipient(), this.message());
     }
 }

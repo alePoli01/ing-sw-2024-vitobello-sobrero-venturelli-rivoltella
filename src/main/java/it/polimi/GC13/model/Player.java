@@ -25,6 +25,7 @@ public class Player implements Serializable {
     private Game game;
 
 
+
     //at the creation each player has only its nickname, everything else is defined in the setup phase
     public Player(String nickname) {
         this.nickname = nickname;

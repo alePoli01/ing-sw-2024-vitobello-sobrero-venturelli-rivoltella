@@ -4,6 +4,7 @@ import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
+import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.rmi.RMIServerInterface;
 import it.polimi.GC13.network.socket.ServerImpulse;
 
@@ -43,5 +44,6 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
     @Override
     public void registerMessageFromClient(MessagesFromClient message, ClientInterface client) throws RemoteException {
         message.methodToCall(this.lobbyController, this.controllerDispatcher.getClientControllerMap().get(client), client, this.controllerDispatcher.getClientPlayerMap().get(client));
+        System.out.println("game phase found: " +this.controllerDispatcher.getClientControllerMap().get(client).getClass().getSimpleName());
     }
 }

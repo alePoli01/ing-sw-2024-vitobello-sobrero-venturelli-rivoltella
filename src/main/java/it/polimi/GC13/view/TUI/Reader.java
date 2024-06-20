@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Reader extends Thread {
-    private String input;
-    private boolean inputReady = false;
+    private volatile String input;
+    private volatile boolean inputReady = false;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private final TUI owner;
 

@@ -6,6 +6,7 @@ import it.polimi.GC13.network.ConnectionTimer;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromserver.PokeMessage;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
         super();
         this.clientDispatcher = clientDispatcher;
         this.executorService = Executors.newCachedThreadPool();
-
     }
 
     public ServerInterface startRMIConnection(String hostName, int port,ConnectionBuilder connectionBuilder) throws IOException {
@@ -45,7 +45,6 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
     }
     public void connectionBuilderSetup(ConnectionBuilder connectionBuilder) {
         this.connectionTimer = new ConnectionTimer(this,connectionBuilder);
-
     }
 
     private void sendMessage(MessagesFromClient message) {
@@ -61,9 +60,12 @@ public class RMIConnectionAdapter extends UnicastRemoteObject implements ServerI
             }
         }
     }
+
     @Override
     public void sendMessageFromClient(MessagesFromClient message) {
-        executorService.submit(() -> this.sendMessage(message));
+        if(connectionOpen){
+            executorService.submit(() -> this.sendMessage(message));
+        }
     }
 
     @Override

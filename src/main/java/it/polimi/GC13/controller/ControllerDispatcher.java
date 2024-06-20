@@ -12,14 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ControllerDispatcher {
     private final LobbyController lobbyController;
-    private final Map<ClientInterface, Controller> clientControllerMap = new ConcurrentHashMap<>();
-    private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>();
+    private final Map<ClientInterface, Controller> clientControllerMap = new ConcurrentHashMap<>(); //links client to his game's controller
+    private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>(); //links the client to the player
 
     public ControllerDispatcher(LobbyController lobbyController){
         this.lobbyController = lobbyController;
     }
 
     public Map<ClientInterface, Controller> getClientControllerMap() {
+       // DEBUG
+       /*  clientControllerMap.forEach((key, value) -> {
+            System.out.print(key.hashCode()+", ");
+            System.out.println(value.getGameController().getClass().getSimpleName());
+        });*/
         return clientControllerMap;
     }
 

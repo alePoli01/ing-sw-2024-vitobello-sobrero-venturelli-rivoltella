@@ -71,6 +71,7 @@ public class MidPhase implements GamePhase {
     @Override
     public void drawCard(Player player, int serialCardToDraw) {
         try {
+            System.out.println("Player: "+player.getNickname()+" draws card: "+ serialCardToDraw);
             // create card
             PlayableCard cardToDraw = player.getTable().getCardFromTable(serialCardToDraw);
             // check player turn

@@ -7,6 +7,7 @@ import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Observer {
     private final List<ClientInterface> listenerList = new ArrayList<>();
@@ -16,13 +17,13 @@ public class Observer {
         this.diskManager = diskManager;
         this.diskManager.setGameManaged(game);
     }
-
     public int getListenerSize() {
         return this.listenerList.size();
     }
 
     public void addListener(ClientInterface listener) {
         this.listenerList.add(listener);
+        System.out.println("Listeners: " + this.listenerList.stream().map(Object::hashCode).toList());
     }
 
     public void notifyClients(MessagesFromServer message) {

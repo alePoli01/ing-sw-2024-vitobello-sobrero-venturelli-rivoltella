@@ -364,7 +364,6 @@ public class TUI implements View {
             X = userIntegerInput("Enter X coordinate");
             Y = userIntegerInput("Enter Y coordinate");
             isFlipped = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nChoice") == 2;
-
             this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, isFlipped, X, Y));
         } else if (!this.myTurn) {
             System.out.println("It's not your turn");
@@ -710,8 +709,9 @@ public class TUI implements View {
                     }
                     // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
-                    this.setVirtualServer(this.virtualServer);
+                    //this.setVirtualServer(this.virtualServer);
                     connectionOpen = true;
+                    virtualServer.setConnectionOpen(true);
                     System.out.println("\u001B[33mConnection restored, you an keep playing\u001B[0m");
                     this.reconnectToGame();
                 } catch (IOException e) {
