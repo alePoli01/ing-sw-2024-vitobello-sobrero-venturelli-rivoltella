@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class ObjectObjective extends ObjectiveCard {
     public final ArrayList<Resource> object;
 
-    //prova
     public ObjectObjective(int serialNumber, int comboPoints, ArrayList<Resource> object) {
         super(serialNumber, comboPoints);
         this.object = new ArrayList<>();//initialize and copy the objects into the card

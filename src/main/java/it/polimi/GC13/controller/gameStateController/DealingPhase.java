@@ -1,6 +1,7 @@
 package it.polimi.GC13.controller.gameStateController;
 
 import it.polimi.GC13.enums.GameState;
+import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
@@ -38,6 +39,13 @@ public class DealingPhase implements GamePhase {
             this.readyPlayers++;
             player.setPrivateObjectiveCard(serialPrivateObjectiveCard, readyPlayers);
             if (this.playersChoseObjectiveCard(player)) {
+                // set first player to play
+                this.controller.getGame().getPlayerList().stream()
+                        .filter(p -> p.getPosition().equals(Position.FIRST))
+                        .forEach(p -> p.setMyTurn(true));
+                this.controller.getGame().getPlayerList().stream()
+                        .filter(p -> !p.getPosition().equals(Position.FIRST))
+                        .forEach(p -> p.setMyTurn(false));
                 this.controller.getGame().setGameState(GameState.MID);
                 this.controller.updateController(new MidPhase(this.controller));
             }

@@ -467,18 +467,22 @@ public class TUI implements View {
             this.myTurn = turn;
             // prints for the first time the main menu for the first player
             if (this.myTurn && this.turnPlayed == 0 && this.playersPosition.get(this.nickname).equals(Position.FIRST)) {
+                System.out.println("i am here 1");
                 this.showHomeMenu();
             } else if (!this.myTurn && this.turnPlayed == 0) {
+                System.out.println("i am here 2");
                 // prints for the first time the main menu for all other players
                 this.showHomeMenu();
             } else {
                 if (!this.myTurn) {
+                    System.out.println("i am here 3");
                     // notifies the player has passed the turn
                     System.out.println("You have passed the turn");
                     this.showHomeMenu();
                 } else if (!this.cooking) {
                     // if the player isn't in the main menu, even if it's his turn, he is not interrupted
                     this.newStatus = true;
+                    System.out.println("i am here 4");
                     this.menuOptions();
                     System.out.print("Your choice: ");
                 }
@@ -712,7 +716,7 @@ public class TUI implements View {
                     //this.setVirtualServer(this.virtualServer);
                     connectionOpen = true;
                     virtualServer.setConnectionOpen(true);
-                    System.out.println("\u001B[33mConnection restored, you an keep playing\u001B[0m");
+                    System.out.println("\u001B[33mConnection restored, you can keep playing\u001B[0m");
                     this.reconnectToGame();
                 } catch (IOException e) {
                     // exponential backoff algorithm

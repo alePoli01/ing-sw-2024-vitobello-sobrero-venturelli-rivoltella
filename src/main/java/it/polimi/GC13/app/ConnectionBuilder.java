@@ -46,17 +46,15 @@ public class ConnectionBuilder {
     public ServerInterface createServerConnection(ClientDispatcher clientDispatcher) throws IOException {
         if (connectionChoice == 1) {
             // RMI SETUP
-            this.virtualServer = rmiSetup(this.RMIPort, clientDispatcher);
-            if (virtualServer == null) System.exit(-1);
+            return rmiSetup(this.RMIPort, clientDispatcher);
         } else {
             // SOCKET SETUP
-            this.virtualServer = socketSetup(this.socketPort, clientDispatcher);
-            if (virtualServer == null) System.exit(-1);
+            ServerInterface serverInterface = socketSetup(this.socketPort, clientDispatcher);
             //thread to read incoming messages
-            new Thread((SocketServer) this.virtualServer).start();
-        }
+            new Thread((SocketServer) serverInterface).start();
 
-        return this.virtualServer;
+            return serverInterface;
+        }
     }
 
     public ServerInterface rmiSetup(int RMIPort, ClientDispatcher clientDispatcher) throws IOException {
@@ -75,8 +73,6 @@ public class ConnectionBuilder {
             System.err.println("Connection to server's socket failed");
             throw new IOException();
         }
-        //socket.setSoTimeout(8000);
-
         // the connection is socket so the virtual server is a SocketServer object
         return new SocketServer(socket, clientDispatcher, this);
     }
@@ -85,7 +81,7 @@ public class ConnectionBuilder {
      * this method is used to remap the new virtual server. if the virtual server is different, the
      * @param virtualServer old virtual server
      */
-    public synchronized void connectionLost(ServerInterface virtualServer, boolean connectionOpen) {
+    public synchronized void connectionLost(ServerInterface virtualServer) {
         this.view.restartConnection(virtualServer, this);
     }
 }

@@ -25,12 +25,10 @@ public class Player implements Serializable {
     private Game game;
 
 
-
     //at the creation each player has only its nickname, everything else is defined in the setup phase
     public Player(String nickname) {
         this.nickname = nickname;
         this.turnPlayed = 0;
-        this.myTurn = false;
         this.hand = new ArrayList<>();
         this.privateObjectiveCard = new LinkedList<>();
     }

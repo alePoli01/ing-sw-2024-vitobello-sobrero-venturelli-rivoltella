@@ -14,13 +14,6 @@ public class MidPhase implements GamePhase {
 
     public MidPhase(Controller controller) {
         this.controller = controller;
-        // set first player to play
-        this.controller.getGame().getPlayerList().stream()
-                .filter(p -> p.getPosition().equals(Position.FIRST))
-                .forEach(p -> p.setMyTurn(true));
-        this.controller.getGame().getPlayerList().stream()
-                .filter(p -> !p.getPosition().equals(Position.FIRST))
-                .forEach(p -> p.setMyTurn(false));
     }
 
     //controller gets object from network, then calls the method accordingly

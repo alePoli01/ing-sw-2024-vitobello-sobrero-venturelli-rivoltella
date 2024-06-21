@@ -2,13 +2,11 @@ package it.polimi.GC13.controller;
 
 import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.controller.gameStateController.Controller;
-import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.Game;
 import it.polimi.GC13.model.Player;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.OnCheckForExistingGameMessage;
-import it.polimi.GC13.network.messages.fromserver.OnNewMessage;
 import it.polimi.GC13.network.messages.fromserver.OnReconnectPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotReconnectedMessage;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnGameNameAlreadyTakenMessage;
@@ -18,7 +16,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class LobbyController implements Serializable {
     private final Map<String, Game> joinableGameMap = new ConcurrentHashMap<>();
@@ -115,40 +112,31 @@ public class LobbyController implements Serializable {
 
         try {
             if (game != null) {
-                synchronized (game) {
-                    System.out.println("Found serialized file: " + game.getGameName());
-                    if (game.getPlayerList().stream().anyMatch(player -> player.getNickname().equals(playerName))) {
-                        if (!this.getStartedGameMap().containsKey(gameName)) {
-                            this.getStartedGameMap().put(gameName, game);
-                            game.setObserver();
-                            game.getObserver().addListener(client);
-                            // Create a new controller for the game and put it in the map
-                            Controller controller = new Controller(game.getGameState(),game, this, this.controllerDispatcher);
-                            //map the found game with the new controller
-                            this.gameControllerMap.put(game, controller);
-                            System.out.println("added game with controller: " + controller.getGameController().getClass().getSimpleName());
-                            //create listeners list and add the player as a listener
-
-
-                            // updates controller dispatcher client <-> player Map
-                            this.controllerDispatcher.getClientPlayerMap().put(client, game.getPlayerList().stream().filter(player -> player.getNickname().equals(playerName)).toList().getFirst());
-                            // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
-                            this.controllerDispatcher.getClientControllerMap().put(client, controller);
-                        } else {
-                            this.getStartedGameMap().get(gameName).getObserver().addListener(client);
-                            /// updates controller dispatcher client <-> player Map
-                            this.controllerDispatcher.getClientPlayerMap().put(client, game.getPlayerList().stream().filter(player -> player.getNickname().equals(playerName)).toList().getFirst());
-                            // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
-                            this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(game));
-                        }
-                        return true;
+                System.out.println("Found serialized file: " + game.getGameName());
+                if (game.getPlayerList().stream().anyMatch(player -> player.getNickname().equals(playerName))) {
+                    if (!this.getStartedGameMap().containsKey(gameName)) {
+                        this.getStartedGameMap().put(gameName, game);
+                        //create listeners list and add the player as a listener
+                        game.setObserver();
+                        game.getObserver().addListener(client);
+                        // Create a new controller for the game and put it in the map
+                        Controller controller = new Controller(game.getGameState(),game, this, this.controllerDispatcher);
+                        //map the found game with the new controller
+                        this.gameControllerMap.put(game, controller);
+                        System.out.println("added game with controller: " + controller.getGameController().getClass().getSimpleName());
+                    } else {
+                        this.getStartedGameMap().get(gameName).getObserver().addListener(client);
                     }
+                    // updates controller dispatcher client <-> player Map
+                    this.controllerDispatcher.getClientPlayerMap().put(client, game.getPlayerList().stream().filter(player -> player.getNickname().equals(playerName)).toList().getFirst());
+                    // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
+                    this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(game));
+                    return true;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 }

@@ -22,7 +22,7 @@ public class ConnectionTimer {
             public void run() {
                 System.err.println("\nCONNECTION TIMER EXPIRED");
                 virtualServer.setConnectionOpen(false);
-                connectionBuilder.connectionLost(virtualServer, false);
+                connectionBuilder.connectionLost(virtualServer);
             }
         };
         timer.schedule(timerTask, 6000);
