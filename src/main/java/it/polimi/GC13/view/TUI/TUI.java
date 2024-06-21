@@ -359,6 +359,7 @@ public class TUI implements View {
             while (!this.hand.contains(serialCardToPlace)) {
                 System.out.print("You don't have the selected card. Available cards are:");
                 this.hand.forEach(card -> System.out.print(" " + card));
+                System.out.println();
                 serialCardToPlace = userIntegerInput("Enter serial card");
             }
             X = userIntegerInput("Enter X coordinate");
