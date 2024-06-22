@@ -196,7 +196,7 @@ public class TUI implements View {
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
         if (playerNickname.equals(this.nickname)) {
-            System.out.println("You choose " + tokenColor + " token\n");
+            System.out.println("You chose " + tokenColor + " token\n");
             System.out.println("--- SETUP PHASE [2/2] ---");
             System.out.println("--- START CARD ---");
             this.printer.showHand(this.hand);
@@ -207,7 +207,7 @@ public class TUI implements View {
             this.virtualServer.sendMessageFromClient(new PlaceStartCardMessage(this.choice != 1));
             this.choice = 0;
         }
-        this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
+        this.gamesLog.add(playerNickname + " chose " + tokenColor + " token");
     }
 
     /**
@@ -271,7 +271,7 @@ public class TUI implements View {
             System.out.println(message + ".");
             this.gamesLog.add(message);
         } else {
-            this.gamesLog.add(playerNickname + " choose private objective card");
+            this.gamesLog.add(playerNickname + " chose his private objective card");
         }
         if (this.serialPrivateObjectiveCard != 0 && readyPlayers != neededPlayers) {
             System.out.println("--|players that chose objective card: " + readyPlayers + "/" + neededPlayers);
@@ -307,7 +307,7 @@ public class TUI implements View {
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
-            System.out.println("\u001B[31mLaunching an exception\u001B[0m");
+            //System.out.println("\u001B[31mLaunching an exception\u001B[0m");
             System.out.println("\u001B[33m"+onInputExceptionMessage.getErrorMessage()+"\u001B[0m");
             onInputExceptionMessage.methodToRecall(this);
         }
@@ -338,6 +338,7 @@ public class TUI implements View {
         if (lastTurnSetterPosition < this.playersPosition.size()) {
             System.out.println("Players to finish the turn: " + this.playersPosition.entrySet().stream().filter(entry -> entry.getValue().getIntPosition() > lastTurnSetterPosition).map(Map.Entry::getKey).collect(Collectors.joining(" ")));
         }
+
         this.newStatus = true;
         this.menuOptions();
         System.out.print("Your choice: ");
@@ -350,7 +351,6 @@ public class TUI implements View {
     public void placeCard() throws GenericException {
         if (this.myTurn && this.hand.size() == 3) {
             int X, Y, serialCardToPlace;
-            boolean isFlipped;
             this.playersBoard.get(this.nickname).printBoard();
             System.out.println();
             this.printer.collectedResource(this.playersCollectedResources.get(this.nickname));
@@ -364,8 +364,11 @@ public class TUI implements View {
             }
             X = userIntegerInput("Enter X coordinate");
             Y = userIntegerInput("Enter Y coordinate");
-            isFlipped = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nChoice") == 2;
-            this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, isFlipped, X, Y));
+            do {
+                this.choice = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nChoice");
+            } while (this.choice != 1 && this.choice != 2);
+            this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, this.choice == 2, X, Y));
+            this.choice = 0;
         } else if (!this.myTurn) {
             System.out.println("It's not your turn");
             this.showHomeMenu();

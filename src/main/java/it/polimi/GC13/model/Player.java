@@ -111,7 +111,7 @@ public class Player implements Serializable {
         this.hand.forEach((card) -> handSerialNumber.add(card.serialNumber));
 
         // DEBUG
-        System.out.println(this.nickname+"'s hand:"+handSerialNumber);
+        System.out.println(this.nickname+"'s hand: " + handSerialNumber);
 
         return handSerialNumber;
     }

@@ -24,11 +24,7 @@ public record OnPlayerNotReconnectedMessage(String playerNickname) implements On
 
     @Override
     public String getErrorMessage() {
-        //if (cause == 0) {
-            return "GameName or PlayerName not Found";
-        /*} else {
-            return "PlayerName not Found";
-        }*/
+        return "GameName or PlayerName not Found";
     }
 
     @Override

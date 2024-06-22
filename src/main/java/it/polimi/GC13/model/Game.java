@@ -128,8 +128,10 @@ public class Game implements Serializable {
 
     // sets game's last round
     public void setLastRound(Player player) {
-        this.lastRound = player.getTurnPlayed() + 1;
-        this.observer.notifyClients(new OnSetLastTurnMessage(player.getNickname()));
+        if (this.lastRound == 0) {
+            this.lastRound = player.getTurnPlayed() + 1;
+            this.observer.notifyClients(new OnSetLastTurnMessage(player.getNickname()));
+        }
     }
 
     public int getLastRound() {
@@ -207,6 +209,7 @@ public class Game implements Serializable {
     }
 
     public Set<String> setWinner() {
+        System.out.println("Calculating winner for game " + this.gameName);
         Map<Player, Integer> objectivesAchieved = new HashMap<>();
         // in case two or more players have the same final score, the number of objectives achieved will be used to determine the winner
         this.playerList.forEach(player -> objectivesAchieved.put(player, this.finalScoreCalculation(player)));
