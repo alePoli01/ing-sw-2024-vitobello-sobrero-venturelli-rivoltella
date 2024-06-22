@@ -4,6 +4,7 @@ import it.polimi.GC13.app.DiskManager;
 import it.polimi.GC13.enums.GameState;
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.exception.GenericException;
+import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.*;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
@@ -267,5 +268,10 @@ public class Game implements Serializable {
         this.table.setPlayerScore(player, player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
                 + objectiveCommonCardsPoint.get());
         return objectivesAchieved.get();
+    }
+
+    public void closeGame(ClientInterface disconnectedClient,String disconnectedPlayerName){
+        this.observer.removeListener(disconnectedClient);
+        this.observer.notifyClients(new OnPlayerDisconnected(disconnectedPlayerName));
     }
 }

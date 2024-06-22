@@ -75,4 +75,6 @@ public interface View {
     void updateCollectedResource(String playerNickname, EnumMap<Resource, Integer> collectedResources);
 
     void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder);
+
+    void onClosingGame(String disconnectedPlayer);
 }

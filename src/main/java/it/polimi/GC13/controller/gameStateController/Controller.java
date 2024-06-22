@@ -100,4 +100,8 @@ public class Controller implements GamePhase {
     public void newChatMessage(String sender, String receiver, String message) {
         this.gameController.newChatMessage(sender, receiver, message);
     }
+
+    public void closeGame(ClientInterface client) {
+        this.game.closeGame(client, this.clientPlayerMap.get(client).getNickname());
+    }
 }

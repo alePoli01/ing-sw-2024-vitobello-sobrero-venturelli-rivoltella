@@ -10,11 +10,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- class that represents the "virtual client" for the server
-
- server calls the methods of this class
- the class then creates the messages and sends them to the
- client where they'll be elaborated
+ * class that represents the "virtual client" for the server
+ * server calls the methods of this class
+ * the class then creates the messages and sends them to the
+ * client where they'll be elaborated
  */
 public class SocketClient implements ClientInterface, Runnable {
     private final ObjectOutputStream outputStream;
@@ -49,25 +48,16 @@ public class SocketClient implements ClientInterface, Runnable {
         return connectionOpen;
     }
 
-    /**
-        The methods above are for sending messages to the client chain of calls:
-        1.(interface)MessageFromClients at runtime is one of the messages (example: MessageFromClient)
-        2.MessageFromClient.dispatch calls the ServerDispatcher passing itself so that,based on the Class type, we know what to do
-        3.ServerDispatcher.dispatch calls the ControllerDispatcher.specific_method
-        4.ControllerDispatcher calls either the lobby or the controller
-     */
     @Override
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         while (connectionOpen) {
             try {
                 MessagesFromClient message = (MessagesFromClient) inputStream.readObject();
-                executorService.submit(() ->
-                        serverDispatcher.sendToControllerDispatcher(message, this)
-                );
-            } catch (IOException | ClassNotFoundException   e) {
+                executorService.submit(() -> serverDispatcher.sendToControllerDispatcher(message, this));
+            } catch (IOException | ClassNotFoundException e) {
                 this.connectionOpen = false;
-                System.out.println("Client disconnected..."+e.getMessage());
+                System.err.println("Client disconnected, cause:" + e.getMessage());
             }
         }
         executorService.shutdown();

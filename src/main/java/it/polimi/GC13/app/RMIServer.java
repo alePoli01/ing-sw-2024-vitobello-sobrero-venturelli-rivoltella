@@ -4,9 +4,8 @@ import it.polimi.GC13.controller.ControllerDispatcher;
 import it.polimi.GC13.controller.LobbyController;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromclient.MessagesFromClient;
-import it.polimi.GC13.network.messages.fromclient.PlaceCardMessage;
 import it.polimi.GC13.network.rmi.RMIServerInterface;
-import it.polimi.GC13.network.socket.ServerImpulse;
+import it.polimi.GC13.network.ServerImpulse;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -16,10 +15,11 @@ import java.rmi.server.UnicastRemoteObject;
 public class RMIServer extends UnicastRemoteObject implements RMIServerInterface {
     private final ControllerDispatcher controllerDispatcher;
     private final LobbyController lobbyController;
+
+
     protected RMIServer(ControllerDispatcher controllerDispatcher, LobbyController lobbyController) throws RemoteException {
         this.controllerDispatcher = controllerDispatcher;
         this.lobbyController = lobbyController;
-
     }
 
     public void startServer(int port) throws RemoteException {
@@ -33,6 +33,7 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         }
         System.out.println("RMI Server is ready");
     }
+
     @Override
     public void createConnection(ClientInterface client) throws RemoteException {
         //setup Impulse
@@ -41,9 +42,9 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerInterface
         System.out.println("\t\tStarting the Impulse generator Thread");
         new Thread(serverImpulse).start();
     }
+
     @Override
     public void registerMessageFromClient(MessagesFromClient message, ClientInterface client) throws RemoteException {
         message.methodToCall(this.lobbyController, this.controllerDispatcher.getClientControllerMap().get(client), client, this.controllerDispatcher.getClientPlayerMap().get(client));
-        System.out.println("game phase found: " +this.controllerDispatcher.getClientControllerMap().get(client).getClass().getSimpleName());
     }
 }

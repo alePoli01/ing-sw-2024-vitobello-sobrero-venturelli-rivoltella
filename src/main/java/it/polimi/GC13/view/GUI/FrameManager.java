@@ -487,6 +487,11 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
+    @Override
+    public void onClosingGame(String disconnectedPlayer) {
+
+    }
+
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }

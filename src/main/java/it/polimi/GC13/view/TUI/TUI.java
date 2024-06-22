@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TUI implements View {
@@ -40,10 +41,10 @@ public class TUI implements View {
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
     private boolean newStatus = false;
+    private boolean connectionOpen = true;
 
     public TUI() {
         new Thread(this.newReader, "READER").start();
-
     }
 
     @Override
@@ -100,6 +101,8 @@ public class TUI implements View {
 
     @Override
     public void checkForExistingGame() {
+        this.nickname=null;
+        this.gameName=null;
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
@@ -137,13 +140,30 @@ public class TUI implements View {
         this.nickname = userStringInput("Choose your nickname");
         gameName = userStringInput("Choose a name for the new Game");
 
-        do {
-            playersNumber = userIntegerInput("Choose Number of players in the game [min 2, max 4]");
-        } while (playersNumber < 2 || playersNumber > 4);
-
+        playersNumber = userIntegerInput("Choose Number of players in the game [min 2, max 4]",(num)->{
+            if(num == null){
+                return false;
+            }
+            if(num < 2 || num > 4){
+                System.out.println("please enter a number between 2 and 4");
+                return false;
+            }
+            return true;
+        });
         this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
     }
-
+    private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean>validator) throws GenericException{
+        Integer num = null;
+            do{
+                System.out.print(messageToPrint + ": ");
+                try {
+                num = Integer.parseInt(this.newReader.readInput());
+                } catch (NumberFormatException | InterruptedException e) {
+                    System.out.println("Error: Please input valid numbers.");
+                }
+            }while(connectionOpen && !validator.apply(num));
+            return num;
+    }
     private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException {
         String gameName;
 
@@ -654,7 +674,7 @@ public class TUI implements View {
     private Integer userIntegerInput(String messageToPrint) throws GenericException {
         System.out.print(messageToPrint + ": ");
         try {
-            return Integer.parseInt(this.newReader.readInput());
+           return Integer.parseInt(this.newReader.readInput());
         } catch (NumberFormatException | InterruptedException e) {
             System.out.println("Error: Please input valid numbers.");
             return userIntegerInput(messageToPrint);
@@ -693,6 +713,7 @@ public class TUI implements View {
         return this.newStatus;
     }
 
+
     @Override
     public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
         if (virtualServer == this.virtualServer) {
@@ -701,9 +722,8 @@ public class TUI implements View {
             int maxTime = 20000;        // caps the sleepTime
             int totalElapsedTime = 0;   // to be deleted
             double backOffBase = 1.05;  // changes the exponential growth of the time
-            boolean connectionOpen = false;
-
-            System.out.println("Internet Connection Lost, trying to reconnect...");
+            System.err.println("\nInternet Connection Lost, trying to reconnect...");
+            connectionOpen = false;
             while (!connectionOpen) {
                 try {
                     Thread.sleep(sleepTime);
@@ -713,6 +733,7 @@ public class TUI implements View {
                 try {
                     if (this.gameName == null || this.nickname == null) {
                         System.err.println("GameName or PlayerName is Null");
+                        System.out.println("This program will be terminated");
                         System.exit(1);
                     }
                     // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
@@ -727,7 +748,7 @@ public class TUI implements View {
                     attemptCount++;
                     totalElapsedTime += sleepTime;
                     sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
-                    System.out.println("Attempt #" + attemptCount + "\t" + sleepTime + "ms\t" + totalElapsedTime / 1000 + "s :");
+                    System.out.println("Attempt #" + attemptCount + "\tSleep Time: " + sleepTime + " ms\tElapsed Time: " + totalElapsedTime / 1000 + " s");
                     if (attemptCount > 10) {
                         //after some attempts wait for user input
                         String answer;
@@ -751,5 +772,19 @@ public class TUI implements View {
         } else {
             System.out.println("Virtual server passed already updated");
         }
+    }
+
+    @Override
+    public void onClosingGame(String disconnectedPlayer) {
+        if(this.nickname.equals(disconnectedPlayer)) {
+            System.err.println("\nYou seem to have lost connection, the game is being closed...");
+        }else{
+            System.err.println("\nPlayer: "+disconnectedPlayer+" has disconnected, the game is being closed...");
+        }
+        System.exit(0);
+    }
+
+    public boolean isConnectionOpen() {
+        return this.connectionOpen;
     }
 }

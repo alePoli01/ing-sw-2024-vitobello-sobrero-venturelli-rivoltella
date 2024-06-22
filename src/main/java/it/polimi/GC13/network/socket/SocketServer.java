@@ -1,21 +1,23 @@
 package it.polimi.GC13.network.socket;
 
 import it.polimi.GC13.app.ConnectionBuilder;
-import it.polimi.GC13.network.ConnectionTimer;
+import it.polimi.GC13.network.ClientConnectionTimer;
 import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.network.messages.fromclient.PongMessage;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.MessagesFromServer;
+import it.polimi.GC13.network.messages.fromserver.PingMessage;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.*;
 
 /**
-    class that represents the "virtual server" for the client
-
-    clients calls the methods of this class
-    the class then creates the messages and sends them to the
-    server where they'll be elaborated
+ * class that represents the "virtual server" for the client
+ * <p>
+ * clients calls the methods of this class
+ * the class then creates the messages and sends them to the
+ * server where they'll be elaborated
  */
 public class SocketServer implements ServerInterface, Runnable {
     private final ObjectInputStream inputStream;
@@ -23,7 +25,7 @@ public class SocketServer implements ServerInterface, Runnable {
     private final ClientDispatcher clientDispatcher;
     private boolean connectionOpen = true;
 
-    private final ConnectionTimer connectionTimer;
+    private final ClientConnectionTimer clientConnectionTimer;
 
     @Override
     public void setConnectionOpen(boolean connectionOpen) {
@@ -35,8 +37,9 @@ public class SocketServer implements ServerInterface, Runnable {
         this.outputStream.flush();
         this.inputStream = new ObjectInputStream(socket.getInputStream());
         this.clientDispatcher = clientDispatcher;
-        this.connectionTimer = new ConnectionTimer(this,connectionBuilder);
+        this.clientConnectionTimer = new ClientConnectionTimer(this, connectionBuilder);
     }
+
     public ClientDispatcher getClientDispatcher() {
         return this.clientDispatcher;
     }
@@ -52,7 +55,7 @@ public class SocketServer implements ServerInterface, Runnable {
         } catch (IOException e) {
             if (connectionOpen) {
                 connectionOpen = false;
-                System.out.println("\nError while sending message to server\n"+e.getMessage());
+                System.out.println("\nError while sending message to server\n" + e.getMessage());
             }
         }
     }
@@ -63,9 +66,14 @@ public class SocketServer implements ServerInterface, Runnable {
         while (connectionOpen) {
             try {
                 MessagesFromServer message = (MessagesFromServer) inputStream.readObject();
-                executorService.submit(() -> this.clientDispatcher.registerMessageFromServer(message));
-                connectionTimer.stopTimer();
-                connectionTimer.startTimer();
+                executorService.submit(() -> {
+                    if (message instanceof PingMessage) {
+                        sendMessageFromClient(new PongMessage());
+                    }
+                    this.clientDispatcher.registerMessageFromServer(message);
+                });
+                clientConnectionTimer.stopTimer();
+                clientConnectionTimer.startTimer();
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {
                     connectionOpen = false;

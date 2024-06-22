@@ -33,10 +33,12 @@ public class Reader extends Thread {
         while (true) {
             try {
                 String tmp = reader.readLine();
-                synchronized (this) {
-                    this.input = tmp;
-                    this.inputReady = true;
-                    this.notifyAll();
+                if(!tmp.isBlank()){
+                    synchronized (this) {
+                        this.input = tmp;
+                        this.inputReady = true;
+                        this.notifyAll();
+                    }
                 }
             } catch (IOException e) {
                 System.out.println("Error reading");

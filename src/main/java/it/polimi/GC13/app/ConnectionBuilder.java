@@ -18,7 +18,6 @@ public class ConnectionBuilder {
     private final int socketPort;
     private final int RMIPort;
     private View view;
-    private ServerInterface virtualServer;
 
     public ConnectionBuilder(int viewChoice, int connectionChoice, int socketPort, int RMIPort) {
         this.viewChoice = viewChoice;

@@ -1,7 +1,7 @@
 package it.polimi.GC13.app;
 
 import it.polimi.GC13.network.socket.ServerDispatcher;
-import it.polimi.GC13.network.socket.ServerImpulse;
+import it.polimi.GC13.network.ServerImpulse;
 import it.polimi.GC13.network.socket.SocketClient;
 
 import java.io.IOException;
