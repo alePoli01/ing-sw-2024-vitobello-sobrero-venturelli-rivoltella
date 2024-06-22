@@ -30,6 +30,7 @@ public class Observer {
     public void removeListener(ClientInterface listener) {
         this.listenerList.remove(listener);
     }
+
     public void notifyClients(MessagesFromServer message) {
         this.listenerList.forEach(client -> {
                 try {

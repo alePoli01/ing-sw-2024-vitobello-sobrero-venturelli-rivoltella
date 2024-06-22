@@ -9,7 +9,7 @@ public class DiskManager implements Serializable {
     private Game gameManaged;
 
     public void writeOnDisk() {
-        if (this.gameManaged.getGameState() == GameState.MID || this.gameManaged.getGameState() == GameState.END) {
+        if (this.gameManaged.getGameState().equals(GameState.MID)) {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/it/polimi/GC13/app/" + this.gameManaged.getGameName() + ".ser");
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);

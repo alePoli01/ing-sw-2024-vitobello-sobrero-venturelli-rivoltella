@@ -164,6 +164,7 @@ public class TUI implements View {
             }while(connectionOpen && !validator.apply(num));
             return num;
     }
+
     private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException {
         String gameName;
 
@@ -784,7 +785,4 @@ public class TUI implements View {
         System.exit(0);
     }
 
-    public boolean isConnectionOpen() {
-        return this.connectionOpen;
-    }
 }

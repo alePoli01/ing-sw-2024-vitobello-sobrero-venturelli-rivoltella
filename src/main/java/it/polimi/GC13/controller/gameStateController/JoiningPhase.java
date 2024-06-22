@@ -56,8 +56,6 @@ public class JoiningPhase implements GamePhase {
             this.controller.getLobbyController().getStartedGameMap().put(workingGame.getGameName(), workingGame);
             this.controller.getLobbyController().getJoinableGameMap().remove(workingGame.getGameName(), workingGame);
             workingGame.setGameState(GameState.SETUP);
-            //trigger write on disk as soon as the game starts
-            workingGame.getObserver().notifyClients(new PingMessage());
             this.controller.updateController(new SetupPhase(this.controller));
         }
     }

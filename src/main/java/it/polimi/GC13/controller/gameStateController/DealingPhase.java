@@ -40,13 +40,14 @@ public class DealingPhase implements GamePhase {
             player.setPrivateObjectiveCard(serialPrivateObjectiveCard, readyPlayers);
             if (this.playersChoseObjectiveCard(player)) {
                 // set first player to play
+                this.controller.getGame().setGameState(GameState.MID);
                 this.controller.getGame().getPlayerList().stream()
                         .filter(p -> p.getPosition().equals(Position.FIRST))
                         .forEach(p -> p.setMyTurn(true));
                 this.controller.getGame().getPlayerList().stream()
                         .filter(p -> !p.getPosition().equals(Position.FIRST))
                         .forEach(p -> p.setMyTurn(false));
-                this.controller.getGame().setGameState(GameState.MID);
+
                 this.controller.updateController(new MidPhase(this.controller));
             }
         } catch (GenericException e) {
