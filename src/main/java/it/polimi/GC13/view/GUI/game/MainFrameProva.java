@@ -261,6 +261,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
     }
 
+    private ImageIcon createBlackTokenImageIcon(int dim) {
+        return createResizedTokenImageIcon(TOKEN_DIR + BLACK_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
+    }
+
 
 
     //START CARD SETUP
@@ -772,8 +776,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         JPanel lateralPanelDX = new JPanel();
         lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
         setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
-        //lateralPanelDX.setPreferredSize(new Dimension(200, lateralPanelDX.getHeight()));
-
 
         //stampa delle carte obiettivo comuni
 
@@ -826,6 +828,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         southPanel = new JPanel(new GridBagLayout());
         setBorderInsets(southPanel, 10, 0, 10, 0);
+        JScrollPane southScrollPane = new JScrollPane(southPanel);
+        southScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        southScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         choosePanel = new JPanel(new GridBagLayout());
         tokenPanel = new JPanel(new FlowLayout());
@@ -862,7 +867,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         southPanel.add(namePanel, gbc);
         southPanel.add(choosePanel, createGridBagConstraints(1,0));
 
-        panel1.add(southPanel, BorderLayout.SOUTH);
+        panel1.add(southScrollPane, BorderLayout.SOUTH);
 
         //PAGINA 2: SCOREBOARD
         JPanel northPanel2 = new JPanel();
@@ -1145,22 +1150,29 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         JButton button = createButton("revert", 30);
         button.addActionListener(e -> {
-            //JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+            //player disconnected
+//            String message = "You seem to have lost connection, the game is being closed...";
+//            JOptionPane.showMessageDialog(this, message, "Disconnection message", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+//            System.exit(0);
 
+            //disconnection before creating the game
+//            JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
 
-            //JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(MONK4, 140));
-            //JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, new ImageIcon(new ImageIcon(CardManager.ERROR_FISH).getImage().getScaledInstance(100,100, Image.SCALE_SMOOTH)));
-            int c = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedTokenImageIcon(CardManager.QUESTION_MONK, 140));
-            if(c == JOptionPane.NO_OPTION){
-                dispose();
-                System.exit(1);
-            } else {
-                timer.stop();
-                getContentPane().remove(panel);
-                getContentPane().add(panelContainer);
-                revalidate();
-                repaint();
-            }
+            //restoring connection
+//            JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(MONK4, 140));
+
+            //close or continue trying to reconnect choice
+//            int c = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedTokenImageIcon(CardManager.QUESTION_MONK, 140));
+//            if(c == JOptionPane.NO_OPTION){
+//                dispose();
+//                System.exit(1);
+//            } else {
+//                timer.stop();
+//                getContentPane().remove(panel);
+//                getContentPane().add(panelContainer);
+//                revalidate();
+//                repaint();
+//            }
         });
 
         panel.add(button, createGridBagConstraints(0,2));
@@ -1477,11 +1489,11 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
     }
 
-    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b, int dim) {
+    public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean isPositionTable, int dim) {
         ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap, dim);
 
         int k = 0;
-        if(b){
+        if(isPositionTable){
             ArrayList<Object> newColumnDataLeft = new ArrayList<>();
 
             for(int i = 0; i< playersScore.size(); i++){
@@ -1490,7 +1502,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
 
             ArrayList<Object> newColumnDataRight = new ArrayList<>();
-
 
             for (int row = 0; row < model.getRowCount(); row++) {
                 String cellValue = (String) model.getValueAt(row, 1);
@@ -1513,16 +1524,26 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             if (i == 0 || i == k) {
                 table.getColumnModel().getColumn(i).setCellRenderer(new ImageIconRenderer());
             } else {
-                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer(){
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                        c.setFont(new Font("Old English Text MT", Font.PLAIN, 14));
+                        setHorizontalAlignment(SwingConstants.CENTER);
+                        return c;
+                    }
+                };
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
         }
 
         JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         header.setPreferredSize(new Dimension(header.getWidth(), dim+5));
 
-        table.setRowHeight(dim+5);
+        table.setCellSelectionEnabled(false);
+
+        table.setRowHeight(dim+4);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
@@ -1999,13 +2020,23 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             playerAvatarPanel.add(playerPositionLabel, gbc);
             gbc.gridy++;
             setBorderInsets(playerAvatarPanel, 15, 0, 15, 0);
+
+            if (entry.getKey() == Position.FIRST) {
+                JLabel blackToken = new JLabel(createBlackTokenImageIcon(45));
+                blackToken.setOpaque(false);
+                GridBagConstraints gbcBlackToken = createGridBagConstraints(gbc.gridx, gbc.gridy);
+                gbcBlackToken.insets = new Insets(70, 70, 0, 0);
+                gbcBlackToken.anchor = GridBagConstraints.SOUTHEAST;
+                playerAvatarPanel.add(blackToken, gbcBlackToken);
+            }
+
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
 
             JCheckBox jCheckBox = new JCheckBox();
             jCheckBox.setFocusPainted(false);
             jCheckBox.setBorderPainted(false);
-            jCheckBox.setForeground(new Color(0,0,0,0));
+            //jCheckBox.setForeground(new Color(0,0,0,0));
             avatarButtonGroup.add(jCheckBox);
             setBorderInsets(jCheckBox, 30, 30, 30, 30);
             jCheckBox.setOpaque(false);
@@ -2017,13 +2048,18 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             jCheckBox.addActionListener(e -> {
                 playerCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
 
-                playerCheckBoxMap.entrySet()
+                JLabel avatarLabel = playerCheckBoxMap.entrySet()
                         .stream()
                         .filter(en -> en.getValue().equals(e.getSource()))
                         .findFirst()
                         .orElseThrow()
-                        .getKey()
-                        .setForeground(Color.RED);
+                        .getKey();
+
+                if(avatarLabel.getText().equals(nickname)){
+                    avatarLabel.setForeground(new Color(55, 133, 9));
+                }else {
+                    avatarLabel.setForeground(Color.RED);
+                }
 
                 boardToDisplay = playerCheckBoxMap.entrySet()
                         .stream()
@@ -2060,17 +2096,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         Map<Integer, ArrayList<String>> cards = showHandOrDecks(sortedCardsMap.keySet().stream().toList());
         cards.keySet().forEach(System.out::println);
         System.out.println("-------");
-//        Map<Integer, Integer> mappingIndexCardsMap = new HashMap<>();
-
-//        //remapping the map cards
-//        int newIndex = 0;
-//        for(int i : cards.keySet()){
-//            mappingIndexCardsMap.put(newIndex, i);
-//            newIndex++;
-//        }
-//        mappingIndexCardsMap.forEach((key, value) -> System.out.println(key + ": " + value));
-//        System.out.println("-------");
-
 
         for(Map.Entry<Integer, Boolean> entry : sortedCardsMap.entrySet()){
             String flippedIcon;
@@ -2208,6 +2233,47 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     public Map<String, TokenColor> getTokenInGame() {
         return tokenInGame;
     }
+
+
+
+    //Bozza modifica Position.next --> da verificarne il funzionamento
+//    switch (this){
+//        case FIRST -> {
+//            return SECOND;
+//        }
+//
+//        case SECOND, THIRD -> {
+//            if((playersInGame - 1) == this.ordinal())
+//                return FIRST;
+//        }
+//
+//        case FOURTH -> {
+//            return FIRST;
+//        }
+//    }
+//
+//       return values()[this.ordinal() + 1];
+
+
+
+    //testing
+//    public void gameOver2(MainFrameProva parent, Set<String> winners) {
+//        parent.dispose();
+//        SwingUtilities.invokeLater(()-> {
+//            winningFrame = new WinningFrame();
+//
+//            if (winners.stream().anyMatch(winnerNickname -> winnerNickname.equals(parent.getNickname()))) {
+//                winningFrame.getWinnerLabel().setText("you won!");
+//                winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
+//            } else {
+//                winningFrame.getWinnerLabel().setText("you lost!");
+//                winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
+//            }
+//
+//            winningFrame.getScoreLabel().setText("your score: " + parent.getPlayersScore().get(parent.getNickname()));
+//            winningFrame.showRankingImages(winners, parent.getPlayersScore(), parent.getPlayersAvatarMap());
+//        });
+//    }
 
 
 }

@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableModel implements CardManager {
+public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableModel {
     private String[] columnNames;
     private Object[][] data;
     private final ArrayList<String> logosPath;
@@ -133,55 +133,53 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
             case Resource resource -> {
                 switch (resource) {
                     case FUNGI -> {
-                        return FUNGI_LOGO_DIR;
+                        return CardManager.FUNGI_LOGO_DIR;
                     }
                     case ANIMAL -> {
-                        return ANIMAL_LOGO_DIR;
+                        return CardManager.ANIMAL_LOGO_DIR;
                     }
                     case PLANT -> {
-                        return PLANT_LOGO_DIR;
+                        return CardManager.PLANT_LOGO_DIR;
                     }
                     case INSECT -> {
-                        return INSECT_LOGO_DIR;
+                        return CardManager.INSECT_LOGO_DIR;
                     }
                     case QUILL -> {
-                        return QUILL_LOGO_DIR;
+                        return CardManager.QUILL_LOGO_DIR;
                     }
                     case MANUSCRIPT -> {
-                        return MANUSCRIPT_LOGO_DIR;
+                        return CardManager.MANUSCRIPT_LOGO_DIR;
                     }
                     case INKWELL -> {
-                        return INKWELL_LOGO_DIR;
+                        return CardManager.INKWELL_LOGO_DIR;
                     }
                     default -> {
-                        return ERROR_FISH;
+                        return CardManager.ERROR_FISH;
                     }
                 }
             }
             case Boolean b -> {
                 if (b) {
-                    return CROWN;
+                    return CardManager.CROWN;
                 } else {
                     return " ";
                 }
             }
             case Position position -> {
-                return P_TOKEN_DIR + getTokenFileName(conversionMap.get(mapInInput.get(position)));
+                return CardManager.P_TOKEN_DIR + getTokenFileName(conversionMap.get(mapInInput.get(position)));
             }
             case null, default -> {
-                return ERROR_FISH;
+                return CardManager.ERROR_FISH;
             }
         }
     }
 
     private String getTokenFileName(TokenColor tokenColor) {
-        return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
+        return tokenColor.toString().toLowerCase() + CardManager.TOKEN_FILE_SUFFIX;
     }
 
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
-    @Override
-    public void showStarterCardAndPrivateObjectiveCard(List<Integer> hand){}
 }

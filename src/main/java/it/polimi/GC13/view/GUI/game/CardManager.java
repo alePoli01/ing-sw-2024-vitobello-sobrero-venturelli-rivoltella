@@ -10,6 +10,7 @@ public interface CardManager {
       String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
       String TOKEN_FILE_SUFFIX = "_token.png";
       String GREY_TOKEN_FILE_NAME = "grey";
+      String BLACK_TOKEN_FILE_NAME = "black";
 
       String RESOURCE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/resource_card/";
       String GOLD_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/gold_card/";
@@ -59,6 +60,6 @@ public interface CardManager {
      ArrayList<String> monks = new ArrayList<>(Arrays.asList(MONK1, MONK2, MONK3, MONK4));
 
 
-      void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException; //permette di associare alla carta con tale serialNumber i corrispettivi front e back
+      void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException;
 
 }

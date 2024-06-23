@@ -12,9 +12,27 @@ public enum Position {
     }
 
     public int getIntPosition() {
-        if (this == FOURTH) return 4;
-        if (this == FIRST) return 1;
-        if (this == SECOND) return 2;
-        return 3;
+        switch (this){
+            case FIRST -> {
+                return  1;
+            }
+
+            case SECOND -> {
+                return  2;
+            }
+
+            case THIRD -> {
+                return  3;
+            }
+
+            default -> {
+                return 4;
+            }
+        }
+
+//        if (this == FOURTH) return 4;
+//        if (this == FIRST) return 1;
+//        if (this == SECOND) return 2;
+//        return 3;
     }
 }

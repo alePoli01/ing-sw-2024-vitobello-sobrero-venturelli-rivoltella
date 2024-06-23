@@ -64,11 +64,11 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
 
 
         String textMessage;
-        if (!frameManager.getPlayerPositions().get(playerNickname).equals(Position.FOURTH) ) {
+        if (frameManager.getPlayerPositions().get(playerNickname).getIntPosition() != positionPlayerMap.size()) {
             String fourthPlayer = positionPlayerMap.get(Position.FOURTH);
             textMessage = "<html> After " + fourthPlayer + "'s turn, the <u>last round</u> will start. </html>";
         } else {
-            textMessage = "<html><u>Last round</u> is starting... NOW! </html>";
+            textMessage = "After this turn, the <html><u>Last round</u> starts. </html>";
         }
 
         JLabel finalLabel = createTextLabelFont(textMessage, 20);

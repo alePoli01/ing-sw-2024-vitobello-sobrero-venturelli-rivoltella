@@ -159,6 +159,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         showTokenChoose(tokenColorList);
 
         confirmButton = createButton("Select", 32);
+        confirmButton.setEnabled(false);
         //confirmButton.setBackground(new Color(232, 221, 183, 255));
         panelContainer.add(confirmButton, createGridBagConstraints(0, 3));
 
@@ -169,6 +170,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     tokenColorChosen = checkBox.getText();
                     if (e.getActionCommand().equals("Select")) {
                         frameManager.getVirtualServer().sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen.toUpperCase())));
+                        confirmButton.setEnabled(false);
                     }
                     break;
                 }
@@ -256,6 +258,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
     }
 
+    private ImageIcon createBlackTokenImageIcon(int dim) {
+        return createResizedTokenImageIcon(TOKEN_DIR + BLACK_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
+    }
 
 
     public void startCardSetup(){
@@ -289,6 +294,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         isFlipped = checkBox.getText().equals("true");
                         if(e.getActionCommand().equals("Confirm")) {
                             frameManager.getVirtualServer().sendMessageFromClient(new PlaceStartCardMessage(isFlipped));
+                            confirmButton.setEnabled(false);
                             createLobby();
                             getContentPane().revalidate();
                             getContentPane().repaint();
@@ -696,8 +702,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
         southPanel = new JPanel(new GridBagLayout());
-        setBorderInsets(southPanel, 1, 0, 1, 0);
-
+        setBorderInsets(southPanel, 10, 0, 10, 0);
+//        JScrollPane southScrollPane = new JScrollPane(southPanel);
+//        southScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//        southScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+//
 
         namePanel = new JPanel();
         namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
@@ -1204,16 +1213,26 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             if (i == 0 || i == k) {
                 table.getColumnModel().getColumn(i).setCellRenderer(new ImageIconRenderer());
             } else {
-                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer(){
+                    @Override
+                    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                        c.setFont(new Font("Old English Text MT", Font.PLAIN, 14));
+                        setHorizontalAlignment(SwingConstants.CENTER);
+                        return c;
+                    }
+                };
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
         }
 
         JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         header.setPreferredSize(new Dimension(header.getWidth(), dim+5));
 
-        table.setRowHeight(dim+5);
+        table.setCellSelectionEnabled(false);
+
+        table.setRowHeight(dim+4);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
@@ -1473,7 +1492,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     ImageIcon imageIcon = new ImageIcon(scaledImage);
                     button.setIcon(imageIcon);
                     button.setBorderPainted(false);
-                    //button.setBorder(BorderFactory.createLineBorder(new Color(230, 64, 50, 255),4));
                     try {
                         cordToSend = boardButtonMap.entrySet()
                                 .stream()
@@ -1595,13 +1613,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             playerAvatarPanel.add(playerPositionLabel, gbc);
             gbc.gridy++;
             setBorderInsets(playerAvatarPanel, 15, 0, 15, 0);
+
+            if (entry.getKey() == Position.FIRST) {
+                JLabel blackToken = new JLabel(createBlackTokenImageIcon(45));
+                blackToken.setOpaque(false);
+                GridBagConstraints gbcBlackToken = createGridBagConstraints(gbc.gridx, gbc.gridy);
+                gbcBlackToken.insets = new Insets(70, 70, 0, 0);
+                gbcBlackToken.anchor = GridBagConstraints.SOUTHEAST;
+                playerAvatarPanel.add(blackToken, gbcBlackToken);
+            }
+
             JLabel avatar = new JLabel(createResizedTokenImageIcon(selectedAvatar, 100));
             playerAvatarPanel.add(avatar, gbc);
 
             JCheckBox jCheckBox = new JCheckBox();
             jCheckBox.setFocusPainted(false);
             jCheckBox.setBorderPainted(false);
-            jCheckBox.setForeground(new Color(0,0,0,0));
             avatarButtonGroup.add(jCheckBox);
             setBorderInsets(jCheckBox, 30, 30, 30, 30);
             jCheckBox.setOpaque(false);
@@ -1613,13 +1640,18 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             jCheckBox.addActionListener(e -> {
                 playerCheckBoxMap.keySet().forEach(k -> k.setForeground(Color.BLACK));
 
-                playerCheckBoxMap.entrySet()
+                JLabel avatarLabel = playerCheckBoxMap.entrySet()
                         .stream()
                         .filter(en -> en.getValue().equals(e.getSource()))
                         .findFirst()
                         .orElseThrow()
-                        .getKey()
-                        .setForeground(Color.RED);
+                        .getKey();
+
+                if(avatarLabel.getText().equals(nickname)){
+                    avatarLabel.setForeground(new Color(55, 133, 9));
+                }else {
+                    avatarLabel.setForeground(Color.RED);
+                }
 
                 boardToDisplay = playerCheckBoxMap.entrySet()
                         .stream()
@@ -1779,10 +1811,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         this.checkingHandWhileDrawing = checkingHandWhileDrawing;
     }
 
-    public JTable getPositionTable() {
-        return positionTable;
-    }
-
     public JComboBox<JLabel> getCombobox() {
         return combobox;
     }
@@ -1825,6 +1853,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             colors.add(new Color(171, 63, 148));
         }
 
+        colorIndex = 0;
         JProgressBar progressBar = new JProgressBar(0, 100);
         setBoxComponentSize(progressBar, 1200, 30);
         progressBar.setForeground(colors.get(colorIndex));

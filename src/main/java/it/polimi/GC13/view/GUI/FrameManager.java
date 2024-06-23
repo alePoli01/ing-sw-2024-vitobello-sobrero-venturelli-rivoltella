@@ -40,6 +40,7 @@ public class FrameManager extends JFrame implements View {
     private final List<String> gamesLog = new ArrayList<>();
     private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();
     private int newMessage = 0;
+    private boolean connectionOpen = true;
     private boolean firstTurn = true;
     private boolean showPopup = true;
     public List<Coordinates> availableCells = new LinkedList<>();
@@ -353,39 +354,21 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void gameOver(Set<String> winners) {
+        System.out.println("SONO ARRIVATO FINO ALLA FINE");
+
         gamePage.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();
             if (winners.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
-                winningFrame.getWinnerLabel().setText("You win!");
+                winningFrame.getWinnerLabel().setText("you won!");
                 winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
             } else {
-                winningFrame.getWinnerLabel().setText("You lose!");
+                winningFrame.getWinnerLabel().setText("You lost!");
                 winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
             }
 
             winningFrame.getScoreLabel().setText("Your score: " + this.getPlayersScore().get(this.nickname));
             winningFrame.showRankingImages(winners, this.getPlayersScore(), gamePage.getPlayersAvatarMap());
-        });
-    }
-
-
-    //testing
-    public void gameOver2(MainFrameProva parent, Set<String> winners) {
-        parent.dispose();
-        SwingUtilities.invokeLater(()-> {
-            winningFrame = new WinningFrame();
-
-            if (winners.stream().anyMatch(winnerNickname -> winnerNickname.equals(parent.getNickname()))) {
-                winningFrame.getWinnerLabel().setText("you won!");
-                winningFrame.getWinnerLabel().setForeground(new Color(61, 168, 52));
-            } else {
-                winningFrame.getWinnerLabel().setText("you lose!");
-                winningFrame.getWinnerLabel().setForeground(new Color(205, 52, 17));
-            }
-
-            winningFrame.getScoreLabel().setText("your score: " + parent.getPlayersScore().get(parent.getNickname()));
-            winningFrame.showRankingImages(winners, parent.getPlayersScore(), parent.getPlayersAvatarMap());
         });
     }
 
@@ -435,7 +418,13 @@ public class FrameManager extends JFrame implements View {
             double backOffBase = 1.05;  // changes the exponential growth of the time
             boolean connectionOpen = false;
 
-            gamePage.reconnectionWaitingPage();
+            try {
+                gamePage.reconnectionWaitingPage();
+            } catch (NullPointerException e) {
+                JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+                loginFrame.dispose();
+                System.exit(1);
+            }
 
             while (!connectionOpen) {
                 try {
@@ -444,14 +433,8 @@ public class FrameManager extends JFrame implements View {
                     throw new RuntimeException(ex);
                 }
                 try {
-                    if (this.gameName == null || this.nickname == null) {
-                        JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
-                        gamePage.dispose();
-                        System.exit(1);
-                    }
                     // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
-                    //this.setVirtualServer(this.virtualServer);
                     virtualServer.setConnectionOpen(true);
                     connectionOpen = true;
                     JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(CardManager.MONK4, 140));
@@ -485,11 +468,6 @@ public class FrameManager extends JFrame implements View {
         } else {
             System.out.println("Virtual server passed already updated");
         }
-    }
-
-    @Override
-    public void onClosingGame(String disconnectedPlayer) {
-
     }
 
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
@@ -602,6 +580,18 @@ public class FrameManager extends JFrame implements View {
                 gamePage.changeNotifyLabelImage();
             }
         }
+    }
+
+    @Override
+    public void onClosingGame(String disconnectedPlayer) {
+        String message;
+        if(this.nickname.equals(disconnectedPlayer)) {
+           message = "You seem to have lost connection, the game is being closed...";
+        }else{
+            message = "Player: "+disconnectedPlayer+" has disconnected, the game is being closed...";
+        }
+        JOptionPane.showMessageDialog(this, message, "Disconnection message", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+        System.exit(0);
     }
 
 
