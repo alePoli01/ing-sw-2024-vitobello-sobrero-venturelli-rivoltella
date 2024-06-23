@@ -57,9 +57,8 @@ public class LobbyController implements Serializable {
             Player player = new Player(playerNickname);
             Game workingGame = joinableGameMap.get(gameName);
             // updates controller playerClientMap
-            this.gameControllerMap.get(workingGame).getPlayerClientMap().put(player, client);
             // updates controller clientPlayerMap
-            this.gameControllerMap.get(workingGame).getClientPlayerMap().put(client, player);
+            this.gameControllerMap.get(workingGame).addToMaps(player, client);
             // set the game for the player
             player.setGame(workingGame);
             // adds the player to the model
@@ -73,6 +72,7 @@ public class LobbyController implements Serializable {
             client.sendMessageFromServer(new OnNickNameAlreadyTakenMessage(playerNickname));
             System.err.println(e.getMessage());
         }
+
     }
 
     /**
@@ -132,16 +132,17 @@ public class LobbyController implements Serializable {
                         System.out.println("added game with controller: " + controller.getGameController().getClass().getSimpleName());
                     } else {
                         this.getStartedGameMap().get(gameName).getObserver().addListener(client);
+
                     }
                     // updates controller dispatcher client <-> player Map
                     this.controllerDispatcher.getClientPlayerMap().put(client, game.getPlayerList().stream().filter(player -> player.getNickname().equals(playerName)).toList().getFirst());
                     // updates Controller Dispatcher's ClientGameMap adding <client, gamePhase>
                     this.controllerDispatcher.getClientControllerMap().put(client, this.gameControllerMap.get(game));
-                    /*
-                    TODO: far ripartire i timer di chi si ricollega
-                            se ci si scollega quando gli altri non sono ancora collegati è da controllare
-                     */
                     startTimer(client);
+                    game.getPlayerList().stream().findFirst().ifPresent(player -> {
+                        this.gameControllerMap.get(game).addToMaps(player, client);
+                        System.out.println("controller maps updated");
+                    });
                     return true;
                 }
             }
@@ -171,10 +172,11 @@ public class LobbyController implements Serializable {
         //fetch data to notify clients
         String gameToClose = player.getGame().getGameName();
         System.out.println("\033[0;35mClosing Game: " + gameToClose + "\033[0m");
+        //notify and remove client-player entry
         this.gameControllerMap.get(player.getGame()).closeGame(client);
 
-        //cleanup the maps
-        gameControllerMap.remove(player.getGame());
+        //cleanup lobbyController's maps
+        this.gameControllerMap.remove(player.getGame());
         if(!joinableGameMap.containsKey(gameToClose)) {
             this.startedGameMap.remove(gameToClose);
         }else{

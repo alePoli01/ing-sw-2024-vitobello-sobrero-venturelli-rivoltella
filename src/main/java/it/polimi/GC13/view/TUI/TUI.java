@@ -37,10 +37,9 @@ public class TUI implements View {
     private boolean cooking = false;
     private int choice = 0;
     private final Printer printer = new Printer();
-    private final Reader newReader = new Reader(this);
+    private final Reader newReader = new Reader();
     private final Map<String, List<String>> chat = new HashMap<>();
     private boolean newMessage = false;
-    private boolean newStatus = false;
     private boolean connectionOpen = true;
 
     public TUI() {
@@ -73,7 +72,7 @@ public class TUI implements View {
     }
 
     /**
-        used to update players hand in TUI
+     * used to update players hand in TUI
      */
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
@@ -101,26 +100,35 @@ public class TUI implements View {
 
     @Override
     public void checkForExistingGame() {
-        this.nickname=null;
-        this.gameName=null;
+        this.nickname = null;
+        this.gameName = null;
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
     /**
-        JOINING PHASE
-        [1] create new game
-        [2] join an existing one
+     * JOINING PHASE
+     * [1] create new game
+     * [2] join an existing one
      */
     @Override
-    public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException {
+    public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         if (gameNameWaitingPlayersMap.isEmpty()) {
             System.out.println("There is no existing game");
             createNewGame();
         } else {
-            do {
-                this.choice = userIntegerInput("There are existing games\n\t[1] to create a new Game\n\t[2] to join an existing Game\nYour choice");
-            } while (this.choice < 1 || this.choice > 2);
-
+            this.choice = userIntegerInput("There are existing games\n\t[1] to create a new Game\n\t[2] to join an existing Game\nYour choice", (num) -> {
+                if (num == null) {
+                    return false;
+                }
+                if (num < 1 || num > 2) {
+                    System.out.println("please enter either [1] or [2]");
+                    return false;
+                }
+                return true;
+            });
+            if (this.choice == -1) {
+                return;
+            }
             if (this.choice == 1) {
                 //player wants to create a new game
                 this.createNewGame();
@@ -132,62 +140,68 @@ public class TUI implements View {
         }
     }
 
-    private void createNewGame() throws GenericException {
+    private void createNewGame() {
         String gameName;
         int playersNumber;
 
         //asking for all the contents of the message
-        this.nickname = userStringInput("Choose your nickname");
-        gameName = userStringInput("Choose a name for the new Game");
+        this.nickname = userStringInput("Choose your nickname", (input) -> input != null && !input.isBlank());
+        if (this.nickname == null) {
+            return;
+        }
+        gameName = userStringInput("Choose a name for the new Game", (input) -> input != null && !input.isBlank());
+        if (gameName == null) {
+            return;
+        }
+        playersNumber = userIntegerInput("Choose Number of players in the game [min 2, max 4]",
+                (num) -> {
+                    if (num == null) {
+                        return false;
+                    }
+                    if (num < 2 || num > 4) {
+                        System.out.println("please enter either [2], [3] or [4]");
+                        return false;
+                    }
+                    return true;
+                });
+        if (playersNumber == -1) {
+            return;
+        }
+        this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
+    }
 
-        playersNumber = userIntegerInput("Choose Number of players in the game [min 2, max 4]",(num)->{
-            if(num == null){
+    private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) {
+        String gameName;
+        this.nickname = userStringInput("Choose your nickname", (input) -> input != null && !input.isBlank());
+        if (this.nickname == null) {
+            return;
+        }
+        System.out.println("Joinable Games:");
+        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>gameName: [" + string + "] --|players in waiting room: " + numCurrPlayer + "|"));
+        gameName = userStringInput("Select the game to join using its name", (input) -> {
+            if (input == null || input.isBlank()) {
                 return false;
             }
-            if(num < 2 || num > 4){
-                System.out.println("please enter a number between 2 and 4");
+            if (!gameNameWaitingPlayersMap.containsKey(input)) {
+                System.out.println("There is no such game");
                 return false;
             }
             return true;
         });
-        this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
-    }
-    private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean>validator) throws GenericException{
-        Integer num = null;
-            do{
-                System.out.print(messageToPrint + ": ");
-                try {
-                num = Integer.parseInt(this.newReader.readInput());
-                } catch (NumberFormatException | InterruptedException e) {
-                    System.out.println("Error: Please input valid numbers.");
-                }
-            }while(connectionOpen && !validator.apply(num));
-            return num;
-    }
-
-    private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException {
-        String gameName;
-
-        this.nickname = userStringInput("Choose your nickname");
-
-        System.out.println("Joinable Games:");
-        gameNameWaitingPlayersMap.forEach((string, numCurrPlayer) -> System.out.println("\t>game: [" + string + "] --|players in waiting room: " + numCurrPlayer + "|"));
-        do {
-            gameName = userStringInput("Select the game to join using its name");
-        } while (!gameNameWaitingPlayersMap.containsKey(gameName));
-
+        if (gameName == null) {
+            return;
+        }
         //massage is ready to be sent
         this.virtualServer.sendMessageFromClient(new AddPlayerToGameMessage(this.nickname, gameName));
     }
 
     /**
-        SETUP PHASE
-        token choice when all players joined the game
-        waiting when readPlayers < neededPlayers
+     * SETUP PHASE
+     * token choice when all players joined the game
+     * waiting when readPlayers < neededPlayers
      */
     @Override
-    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) throws GenericException {
-        boolean flag = false;
+    public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
         if (readyPlayers == neededPlayers) {
             if (this.gameName == null) {
@@ -195,35 +209,50 @@ public class TUI implements View {
             }
             tokenColorList.stream().map(TokenColor::toString).forEach(joiner::add);
             System.out.println("\n--- SETUP PHASE [1/2]---");
-            do {
-                String tokenColorChosen = userStringInput("Choose your token color " + joiner + "\nColor").toUpperCase();
-                if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(tokenColorChosen))) {
-                    flag = true;
-                    // calls the controller to update the model
-                    this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
+            String tokenColorChosen = userStringInput("Choose your token color " + joiner + "\nColor", (input) -> {
+                if (input == null || input.isBlank()) {
+                    return false;
+                }
+                if (tokenColorList.stream().anyMatch(tc -> tc.name().equalsIgnoreCase(input))) {
+                    return true;
                 } else {
                     System.out.println("Color not valid.");
+                    return false;
                 }
-            } while (!flag);
+            });
+            if (tokenColorChosen == null) {
+                return;
+            }
+            this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen.toUpperCase())));
         } else {
             System.out.println("--|players in waiting room: " + readyPlayers + "/" + neededPlayers);
         }
     }
 
     /**
-        SETUP PHASE methods to the player
-        startCardSetupPhase to chose which side to place your start card
+     * SETUP PHASE methods to the player
+     * startCardSetupPhase to chose which side to place your start card
      */
     @Override
-    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) throws GenericException {
+    public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.nickname)) {
             System.out.println("You chose " + tokenColor + " token\n");
             System.out.println("--- SETUP PHASE [2/2] ---");
             System.out.println("--- START CARD ---");
             this.printer.showHand(this.hand);
-            do {
-                this.choice = userIntegerInput("Choose which side you would like to place your start card:\n\t[1] FRONT\n\t[2] BACK\nChoice");
-            } while (this.choice < 1 || this.choice > 2);
+            this.choice = userIntegerInput("Choose which side you would like to place your start card:\n\t[1] FRONT\n\t[2] BACK\nChoice", (num) -> {
+                if (num == null) {
+                    return false;
+                }
+                if (num < 1 || num > 2) {
+                    System.out.println("please enter either [1] or [2]");
+                    return false;
+                }
+                return true;
+            });
+            if (choice == -1) {
+                return;
+            }
 
             this.virtualServer.sendMessageFromClient(new PlaceStartCardMessage(this.choice != 1));
             this.choice = 0;
@@ -232,8 +261,8 @@ public class TUI implements View {
     }
 
     /**
-        NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
-        OTHERS -> ADDS TO LOG OPERATION
+     * NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
+     * OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
@@ -257,32 +286,44 @@ public class TUI implements View {
     }
 
     /**
-        NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
-    */
+     * NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
+     */
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
 
     /**
-        METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
+     * METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
      */
     @Override
-    public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) throws GenericException {
+    public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
             this.printer.showObjectiveCard("--- COMMON OBJECTIVE CARDS ---", this.serialCommonObjectiveCard);
             this.printer.showObjectiveCard("\n--- PRIVATE OBJECTIVE CARD ---", privateObjectiveCards);
             while (!privateObjectiveCards.contains(choice)) {
-                this.choice = userIntegerInput("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]");
+                this.choice = userIntegerInput("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]",
+                        (num) -> {
+                            if (num == null) {
+                                return false;
+                            }
+                            if (!privateObjectiveCards.contains(num)) {
+                                System.out.println("please enter one of the following objective cards: [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]");
+                                return false;
+                            }
+                            return true;
+                        });
+                if (choice == -1) {
+                    return;
+                }
             }
-
             this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
             this.choice = 0;
         }
     }
 
     /**
-        NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
+     * NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
      */
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
@@ -300,7 +341,7 @@ public class TUI implements View {
     }
 
     /**
-        METHOD TO REQUEST DRAW CARD
+     * METHOD TO REQUEST DRAW CARD
      */
     @Override
     public void drawCard() throws GenericException {
@@ -310,10 +351,15 @@ public class TUI implements View {
         System.out.println("\n--- Resource Deck ---");
         this.printer.showDrawableCards(this.resourceCardsAvailable);
         if (this.myTurn && this.hand.size() == 2) {
-            do {
-                this.choice = userIntegerInput("Choose the card to withdraw");
-            } while (!this.goldCardsAvailable.containsKey(this.choice) && !this.resourceCardsAvailable.containsKey(this.choice));
-
+            this.choice = userIntegerInput("Choose the card to withdraw", (num) -> {
+                if (num == null) {
+                    return false;
+                }
+                return this.goldCardsAvailable.containsKey(num) || this.resourceCardsAvailable.containsKey(num);
+            });
+            if (choice == -1) {
+                return;
+            }
             this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
 
             this.choice = 0;
@@ -329,7 +375,7 @@ public class TUI implements View {
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
             //System.out.println("\u001B[31mLaunching an exception\u001B[0m");
-            System.out.println("\u001B[33m"+onInputExceptionMessage.getErrorMessage()+"\u001B[0m");
+            System.out.println("\u001B[33m" + onInputExceptionMessage.getErrorMessage() + "\u001B[0m");
             onInputExceptionMessage.methodToRecall(this);
         }
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
@@ -345,7 +391,7 @@ public class TUI implements View {
     }
 
     /**
-        METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
+     * METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
      */
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
@@ -360,13 +406,12 @@ public class TUI implements View {
             System.out.println("Players to finish the turn: " + this.playersPosition.entrySet().stream().filter(entry -> entry.getValue().getIntPosition() > lastTurnSetterPosition).map(Map.Entry::getKey).collect(Collectors.joining(" ")));
         }
 
-        this.newStatus = true;
         this.menuOptions();
         System.out.print("Your choice: ");
     }
 
     /**
-        METHOD USED TO PLACE CARD ON THE BOARD
+     * METHOD USED TO PLACE CARD ON THE BOARD
      */
     @Override
     public void placeCard() throws GenericException {
@@ -376,18 +421,44 @@ public class TUI implements View {
             System.out.println();
             this.printer.collectedResource(this.playersCollectedResources.get(this.nickname));
             this.printer.showHand(this.hand);
-            serialCardToPlace = userIntegerInput("Enter serial card");
-            while (!this.hand.contains(serialCardToPlace)) {
-                System.out.print("You don't have the selected card. Available cards are:");
-                this.hand.forEach(card -> System.out.print(" " + card));
-                System.out.println();
-                serialCardToPlace = userIntegerInput("Enter serial card");
+            serialCardToPlace = userIntegerInput("Enter serial card", (num) -> {
+                if (num == null) {
+                    return false;
+                }
+                if (!this.hand.contains(num)) {
+                    System.out.print("You don't have the selected card. Available cards are:");
+                    this.hand.forEach(card -> System.out.print(" " + card));
+                    System.out.println();
+                    return false;
+                }
+                return true;
+            });
+            if (serialCardToPlace == -1) {
+                return;
             }
-            X = userIntegerInput("Enter X coordinate");
-            Y = userIntegerInput("Enter Y coordinate");
-            do {
-                this.choice = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nChoice");
-            } while (this.choice != 1 && this.choice != 2);
+            //TODO: can we put negative numbers as coordinates?
+            X = userIntegerInput("Enter X coordinate", Objects::nonNull);
+            if (X == -1) {
+                return;
+            }
+            Y = userIntegerInput("Enter Y coordinate", Objects::nonNull);
+            if (Y == -1) {
+                return;
+            }
+            this.choice = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nChoice", (num) -> {
+                if (num == null) {
+                    return false;
+                }
+                if (!(num == 1 || choice == 2)) {
+                    System.out.println("please enter either [1] or [2]");
+                    return false;
+                }
+                return true;
+            });
+            if (choice == -1) {
+                this.choice = 0;
+                return;
+            }
             this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, this.choice == 2, X, Y));
             this.choice = 0;
         } else if (!this.myTurn) {
@@ -410,9 +481,10 @@ public class TUI implements View {
 
     /**
      * method to save new a message in the chat
-     * @param sender message sender
+     *
+     * @param sender    message sender
      * @param recipient message recipient
-     * @param message string that contains the message itself
+     * @param message   string that contains the message itself
      */
     @Override
     public void onNewMessage(String sender, String recipient, String message) {
@@ -447,9 +519,7 @@ public class TUI implements View {
 
     @Override
     public void onReconnectToGame() {
-        this.newStatus = true;
-        this.menuOptions();
-        System.out.print("Your choice: ");
+        this.showHomeMenu();
     }
 
     @Override
@@ -474,17 +544,30 @@ public class TUI implements View {
         this.cooking = true;
         String playerChosen;
         String message;
-        do {
-            playerChosen = userStringInput("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [global]\nPlayer");
-        } while (!(this.playersBoard.containsKey(playerChosen) || playerChosen.equals("global")));
-        message = userStringInput("Write down your message");
-
+        playerChosen = userStringInput("Choose who to send the message to: [" + (String.join("], [", this.playersBoard.keySet()) + "]") + " or [global]\nPlayer",
+                (input) -> {
+                    if (input == null || input.isBlank()) {
+                        return false;
+                    }
+                    if (!(this.playersBoard.containsKey(input) || input.equals("global"))) {
+                        System.out.println("playerName not found");
+                        return false;
+                    }
+                    return true;
+                });
+        if (playerChosen == null) {
+            return;
+        }
+        message = userStringInput("Write down your message", (input) -> input != null && !input.isBlank());
+        if (message == null) {
+            return;
+        }
         this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
     }
 
     /**
-        NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
-        OTHERS -> ADDS TO LOG OPERATION
+     * NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
+     * OTHERS -> ADDS TO LOG OPERATION
      */
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
@@ -492,22 +575,17 @@ public class TUI implements View {
             this.myTurn = turn;
             // prints for the first time the main menu for the first player
             if (this.myTurn && this.turnPlayed == 0 && this.playersPosition.get(this.nickname).equals(Position.FIRST)) {
-                System.out.println("i am here 1");
                 this.showHomeMenu();
             } else if (!this.myTurn && this.turnPlayed == 0) {
-                System.out.println("i am here 2");
                 // prints for the first time the main menu for all other players
                 this.showHomeMenu();
             } else {
                 if (!this.myTurn) {
-                    System.out.println("i am here 3");
                     // notifies the player has passed the turn
                     System.out.println("You have passed the turn");
                     this.showHomeMenu();
                 } else if (!this.cooking) {
                     // if the player isn't in the main menu, even if it's his turn, he is not interrupted
-                    this.newStatus = true;
-                    System.out.println("i am here 4");
                     this.menuOptions();
                     System.out.print("Your choice: ");
                 }
@@ -521,28 +599,31 @@ public class TUI implements View {
     }
 
     /**
-     METHOD TO SHOW TO THE CLIENT ALL POSSIBLE MOVES
+     * METHOD TO SHOW TO THE CLIENT ALL POSSIBLE MOVES
      */
     @Override
     public void showHomeMenu() {
         this.menuOptions();
-        try {
-            do {
-                this.choice = userIntegerInput("Your choice");
-                System.out.println("SELECTION: " + this.choice);
-                if (this.choice < 1 || this.choice > 13) {
-                    System.out.print("Invalid choice, enter a valid option. ");
-                }
-            } while (this.choice < 1 || this.choice > 13);
-            this.menuChoice(this.choice);
-        } catch (GenericException e) {
-            this.newStatus = false;
-            this.menuChoice(Integer.parseInt(e.getMessage()));
+        this.choice = userIntegerInput("Your choice", (num) -> {
+            if (num == null) {
+                return false;
+            }
+            if (num < 1 || num > 13) {
+                System.out.print("Invalid choice, enter a valid option. ");
+                return false;
+            }
+            return true;
+        });
+        if (this.choice == -1) {
+            return;
         }
+        System.out.println("SELECTION: " + this.choice);
+        this.menuChoice(this.choice);
     }
 
     /**
      * method used to let the user perform the desired action
+     *
      * @param choice menu choice selected by the player
      */
     private void menuChoice(int choice) {
@@ -575,12 +656,20 @@ public class TUI implements View {
                 case 6: {
                     this.cooking = true;
                     String playerChosen;
-                    do {
-                        playerChosen = userStringInput("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]" + "\nPlayer");
-                        while (!this.playersBoard.containsKey(playerChosen)) {
-                            System.out.println("Player " + playerChosen + " not found");
-                        }
-                    } while (!this.playersBoard.containsKey(playerChosen));
+                    playerChosen = userStringInput("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]" + "\nPlayer",
+                            (input) -> {
+                                if (input == null || input.isBlank()) {
+                                    return false;
+                                }
+                                if (!this.playersBoard.containsKey(input)) {
+                                    System.out.println("Player " + input + " not found");
+                                    return false;
+                                }
+                                return true;
+                            });
+                    if (playerChosen == null) {
+                        return;
+                    }
                     System.out.println("Player chosen: " + playerChosen);
                     this.playersBoard.get(playerChosen).printBoard();
                     System.out.println();
@@ -622,12 +711,20 @@ public class TUI implements View {
                     synchronized (this.chat) {
                         if (!chat.isEmpty()) {
                             String playerChosen;
-                            do {
-                                playerChosen = userStringInput("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]") + "\nPlayer");
-                                while (!(chat.containsKey(playerChosen) || playerChosen.equals("global"))) {
-                                    System.out.print("Chat with " + playerChosen + " doesn't exist");
-                                }
-                            } while (!(chat.containsKey(playerChosen) || playerChosen.equals("global")));
+                            playerChosen = userStringInput("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]") + "\nPlayer",
+                                    (input) -> {
+                                        if (input == null || input.isBlank()) {
+                                            return false;
+                                        }
+                                        if (!(chat.containsKey(input) || input.equals("global"))) {
+                                            System.out.print("Chat with " + input + " doesn't exist");
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+                            if (playerChosen == null) {
+                                return;
+                            }
                             synchronized (chat.get(playerChosen)) {
                                 System.out.println("CHAT WITH " + playerChosen.toUpperCase() + "\n" + chat.get(playerChosen)
                                         .stream()
@@ -645,7 +742,6 @@ public class TUI implements View {
                 }
             }
         } catch (GenericException e) {
-            this.newStatus = false;
             this.menuChoice(Integer.parseInt(e.getMessage()));
         }
         this.choice = 0;
@@ -672,29 +768,42 @@ public class TUI implements View {
         System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");
     }
 
-    private Integer userIntegerInput(String messageToPrint) throws GenericException {
+    private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean> validator) {
+        Integer num = null;
         System.out.print(messageToPrint + ": ");
-        try {
-           return Integer.parseInt(this.newReader.readInput());
-        } catch (NumberFormatException | InterruptedException e) {
-            System.out.println("Error: Please input valid numbers.");
-            return userIntegerInput(messageToPrint);
+        do {
+
+            try {
+                String tmp = this.newReader.readInput();
+                if (tmp != null) {
+                    num = Integer.parseInt(tmp);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Please input valid numbers.");
+            }
+        } while (connectionOpen && !validator.apply(num));
+        if (!connectionOpen) {
+            return -1;
         }
+        return num;
     }
 
-    private String userStringInput(String messageToPrint) throws GenericException {
+    private String userStringInput(String messageToPrint, Function<String, Boolean> validator) {
+        String input;
         System.out.print(messageToPrint + ": ");
-        try {
-            return this.newReader.readInput();
-        } catch (InterruptedException e) {
-            System.out.println("Interrupted exception");
-            return userStringInput(messageToPrint);
+        do {
+            input = this.newReader.readInput();
+        } while (connectionOpen && !validator.apply(input));
+        if (!connectionOpen) {
+            return null;
         }
+        return input;
     }
 
     /**
      * method used to register a message sent by any player in the game
-     * @param key can be [global] or a player [nickname], it is used to map the chat
+     *
+     * @param key     can be [global] or a player [nickname], it is used to map the chat
      * @param message message sent in chat by the player
      */
     private void registerChatMessage(String key, String message) {
@@ -710,11 +819,6 @@ public class TUI implements View {
         this.newMessage = true;
     }
 
-    public boolean getStatus() {
-        return this.newStatus;
-    }
-
-
     @Override
     public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
         if (virtualServer == this.virtualServer) {
@@ -724,6 +828,10 @@ public class TUI implements View {
             int totalElapsedTime = 0;   // to be deleted
             double backOffBase = 1.05;  // changes the exponential growth of the time
             System.err.println("\nInternet Connection Lost, trying to reconnect...");
+            int t = 0;
+            while (t < 80000) {
+                t++;
+            }
             connectionOpen = false;
             while (!connectionOpen) {
                 try {
@@ -777,10 +885,11 @@ public class TUI implements View {
 
     @Override
     public void onClosingGame(String disconnectedPlayer) {
-        if(this.nickname.equals(disconnectedPlayer)) {
-            System.err.println("\nYou seem to have lost connection, the game is being closed...");
-        }else{
-            System.err.println("\nPlayer: "+disconnectedPlayer+" has disconnected, the game is being closed...");
+        System.err.println("\n///////////////////////////////////////////////////////////");
+        if (this.nickname.equals(disconnectedPlayer)) {
+            System.err.println("You seem to have lost connection, the game is being closed...");
+        } else {
+            System.err.println("[Player: " + disconnectedPlayer + "] has disconnected, the game is being closed...");
         }
         System.exit(0);
     }

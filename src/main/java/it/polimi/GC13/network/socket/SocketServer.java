@@ -77,7 +77,7 @@ public class SocketServer implements ServerInterface, Runnable {
             } catch (IOException | ClassNotFoundException e) {
                 if (connectionOpen) {
                     connectionOpen = false;
-                    System.out.println("\nError while registering message from Server");
+                    System.err.println("Server disconnected, cause: " + e.getMessage());
                 }
             }
         }

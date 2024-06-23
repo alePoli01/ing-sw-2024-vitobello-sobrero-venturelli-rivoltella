@@ -10,21 +10,14 @@ public class Reader extends Thread {
     private volatile String input;
     private volatile boolean inputReady = false;
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private final TUI owner;
 
-    public Reader(TUI owner) {
-        this.owner = owner;
-    }
 
-    public synchronized String readInput() throws InterruptedException, GenericException {
-        while (!this.inputReady) {
-            this.wait();
-        }
-        this.inputReady = false;
-        if (!this.owner.getStatus()) {
+    public synchronized String readInput(){
+        if(inputReady) {
+            inputReady = false;
             return this.input;
-        } else {
-            throw new GenericException(this.input);
+        }else{
+            return null;
         }
     }
 

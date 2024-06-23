@@ -16,7 +16,6 @@ public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;
     private final LobbyController lobbyController;
-    //TODO: delete these 2 fields
     private final Map<Player, ClientInterface> playerClientMap = new HashMap<>();
     private final Map<ClientInterface, Player> clientPlayerMap = new HashMap<>();
     ControllerDispatcher controllerDispatcher;
@@ -65,6 +64,16 @@ public class Controller implements GamePhase {
         return this.playerClientMap;
     }
 
+    public void addToMaps(Player player, ClientInterface client) {
+        this.clientPlayerMap.put(client, player);
+        this.playerClientMap.put(player, client);
+    }
+    public void removeFromMaps(Player player) {
+
+        this.clientPlayerMap.remove(playerClientMap.get(player));
+        this.playerClientMap.remove(player);
+    }
+
     public void updateController(GamePhase newGameController) {
         synchronized (this) {
             this.gameController = newGameController;
@@ -103,5 +112,6 @@ public class Controller implements GamePhase {
 
     public void closeGame(ClientInterface client) {
         this.game.closeGame(client, this.clientPlayerMap.get(client).getNickname());
+        this.game.getPlayerList().forEach(this::removeFromMaps);
     }
 }

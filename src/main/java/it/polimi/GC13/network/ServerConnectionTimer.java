@@ -18,12 +18,14 @@ public class ServerConnectionTimer {
     }
 
     public void startTimer() {
-        if(validTimer) {
+        if(this.validTimer) {
             this.timer = new Timer();
             TimerTask timerTask = new TimerTask() {
                 public void run() {
-                    System.err.println("\nCONNECTION TIMER EXPIRED");
-                    lobbyController.closeGame(client);
+                    if(validTimer){
+                        System.err.println("\nCONNECTION TIMER EXPIRED");
+                        lobbyController.closeGame(client);
+                    }
                 }
             };
             this.timer.schedule(timerTask, 6000);

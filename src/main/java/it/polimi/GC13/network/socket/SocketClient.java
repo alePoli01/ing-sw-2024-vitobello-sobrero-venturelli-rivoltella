@@ -57,7 +57,7 @@ public class SocketClient implements ClientInterface, Runnable {
                 executorService.submit(() -> serverDispatcher.sendToControllerDispatcher(message, this));
             } catch (IOException | ClassNotFoundException e) {
                 this.connectionOpen = false;
-                System.err.println("Client disconnected, cause:" + e.getMessage());
+                System.err.println("Client disconnected, cause: " + e.getMessage());
             }
         }
         executorService.shutdown();
