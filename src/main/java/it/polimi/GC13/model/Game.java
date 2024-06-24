@@ -7,6 +7,7 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.*;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
+import it.polimi.GC13.view.GUI.game.ChatMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -23,7 +24,7 @@ public class Game implements Serializable {
     private int lastRound;
     private final String gameName;
     private transient Observer observer;
-    private final Map<String, List<String>> chat = new HashMap<>();
+    private final Map<String, List<ChatMessage>> chat = new HashMap<>();
 
     /**
      *
@@ -182,30 +183,25 @@ public class Game implements Serializable {
     }
 
     public void registerChatMessage(String sender, String recipient, String message) {
-        if (!recipient.equalsIgnoreCase("global")) {
+        String key;
+        if (!recipient.equals("global")) {
             // grants always the same key for chat between two players
-            String key = sender.compareTo(recipient) < 0 ? sender.concat(recipient) : recipient.concat(sender);
+            key = sender.compareTo(recipient) < 0 ? sender.concat(recipient) : recipient.concat(sender);
+        } else {
+            // key is global
+            key = recipient;
+        }
 
-            if (this.chat.containsKey(key)) {
-                synchronized (this.chat.get(key)) {
-                    this.chat.get(key).add(message);
-                }
-            } else {
-                synchronized (this.chat) {
-                    this.chat.put(key, new LinkedList<>(Collections.singletonList(message)));
-                }
+        if (this.chat.containsKey(key)) {
+            synchronized (this.chat.get(key)) {
+                this.chat.get(key).add(new ChatMessage(sender, message));
             }
         } else {
-            if (this.chat.containsKey("global")) {
-                synchronized (this.chat.get("global")) {
-                    this.chat.get("global").add(message);
-                }
-            } else {
-                synchronized (this.chat) {
-                    this.chat.put("global", new LinkedList<>(Collections.singletonList(message)));
-                }
+            synchronized (this.chat) {
+                this.chat.put(key, new LinkedList<>(Collections.singletonList(new ChatMessage(sender, message))));
             }
         }
+
         this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
     }
 

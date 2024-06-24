@@ -34,7 +34,7 @@ public interface View {
 
     void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial);
 
-    void checkForExistingGame(); //TODO: non lo uso nella GUI
+    void checkForExistingGame();
 
     void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) throws GenericException;
 

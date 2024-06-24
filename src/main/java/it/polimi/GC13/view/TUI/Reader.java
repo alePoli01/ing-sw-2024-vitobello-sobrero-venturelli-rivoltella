@@ -1,7 +1,5 @@
 package it.polimi.GC13.view.TUI;
 
-import it.polimi.GC13.exception.GenericException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,11 +10,11 @@ public class Reader extends Thread {
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 
-    public synchronized String readInput(){
-        if(inputReady) {
-            inputReady = false;
+    public synchronized String readInput() {
+        if (this.inputReady) {
+            this.inputReady = false;
             return this.input;
-        }else{
+        } else {
             return null;
         }
     }
@@ -25,8 +23,8 @@ public class Reader extends Thread {
     public void run() {
         while (true) {
             try {
-                String tmp = reader.readLine();
-                if(!tmp.isBlank()){
+                String tmp = this.reader.readLine();
+                if (!tmp.isBlank()) {
                     synchronized (this) {
                         this.input = tmp;
                         this.inputReady = true;
