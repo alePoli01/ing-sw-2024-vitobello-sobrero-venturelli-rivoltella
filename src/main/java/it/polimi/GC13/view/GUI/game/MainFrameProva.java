@@ -130,7 +130,8 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     private JLabel notifyLabel;
     private int notifyCounter = 0;
     private final Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
-
+    private Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
+    private JLabel resourcePlayerLabel;
 
 
 
@@ -651,17 +652,6 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         }
 
 
-        EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
-
-        for(Resource r: Resource.values()) {
-            collectedResources.put(r, 0);
-        }
-
-        collectedResources.remove(Resource.NULL);
-        collectedResources.remove(Resource.EMPTY);
-
-
-
         EnumMap<Position, String> positionPlayerMap;
         ArrayList<String> listTokenInGame = new ArrayList<>();
 
@@ -681,6 +671,19 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
             playersBoard.put("Player" + i, new BoardView());
             playersBoard.get("Player" + i).insertCard(50, 50, 86 + i, 0, false);
             //System.out.println("Player" + i + " : " + tokenInGame.get("Player" + i) + " score: " + playersScore.get("Player" + i) + " position: " + playerPosition.get("Player" + i));
+        }
+
+        for(String player : playersBoard.keySet()) {
+            EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
+
+            for(Resource r: Resource.values()) {
+                collectedResources.put(r, 0);
+            }
+
+            collectedResources.remove(Resource.NULL);
+            collectedResources.remove(Resource.EMPTY);
+
+            playersCollectedResources.put(player, collectedResources);
         }
 
 
@@ -773,7 +776,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
         panel1.add(lateralPanelSX, BorderLayout.WEST);
 
 
-        JPanel lateralPanelDX = new JPanel();
+        JPanel lateralPanelDX = new JPanel(new GridBagLayout());
         lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
         setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
 
@@ -796,32 +799,36 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         showCommonObjectiveCard(privateObjectiveCard, commonPanel, 10);
 
-        lateralPanelDX.add(commonPanel);
+        lateralPanelDX.add(commonPanel, createGridBagConstraints(0,0));
+
+        String name = String.format("<span style = 'color: rgb(%d, %d, %d);'>" + this.nickname + "</span>", 55, 133, 9);
+        resourcePlayerLabel = createTextLabelFont("<html><div style='white-space: nowrap;'> Table player: " + name + "</div></html>", 16);
+        lateralPanelDX.add(resourcePlayerLabel, createGridBagConstraints(0,1));
 
         JPanel tableResourcePanel = new JPanel();
-        lateralPanelDX.add(tableResourcePanel);
+        lateralPanelDX.add(tableResourcePanel, createGridBagConstraints(0,2));
 
-
-        createTable(resourceTable, new String[]{"Resources", "Amount"}, collectedResources, logos, null, false, 25);
+        createTable(resourceTable, new String[]{"Resources", "Amount"}, playersCollectedResources.get(nickname), logos, null, false, 24);
         addScrollPane(resourceTable, tableResourcePanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
 
         Random random2 = new Random();
 
-        for(Resource r: Resource.values()) {
-            int randomIndex = random2.nextInt(30);
-            //System.out.println("Resource: " + r + " amount: "+ randomIndex);
-            collectedResources.put(r, randomIndex);
+        for (Map.Entry<String, EnumMap<Resource, Integer>> entry : playersCollectedResources.entrySet()) {
+            for(Resource r: Resource.values()) {
+                int randomIndex = random2.nextInt(30);
+                //System.out.println("Resource: " + r + " amount: "+ randomIndex);
+                entry.getValue().put(r, randomIndex);
+            }
+
+            entry.getValue().remove(Resource.NULL);
+            entry.getValue().remove(Resource.EMPTY);
         }
 
-        collectedResources.remove(Resource.NULL);
-        collectedResources.remove(Resource.EMPTY);
-
-        updateResourceTable(resourceTable, collectedResources, logos);
-
+        updateResourceTable(resourceTable, playersCollectedResources.get(nickname), logos);
 
         decksButton = createButton("Show Decks", 27);
         decksButton.addActionListener(this);
-        lateralPanelDX.add(decksButton);
+        lateralPanelDX.add(decksButton, createGridBagConstraints(0,3));
 
         panel1.add(lateralPanelDX, BorderLayout.EAST);
 
@@ -1034,12 +1041,12 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 //        northPanel.add(popup);
 
         popup.addActionListener(e -> {
-            reconnectionWaitingPage();
-            revalidate();
-            repaint();
+//            reconnectionWaitingPage();
+//            revalidate();
+//            repaint();
 
             //popup
-//            onSetLastTurn(nickname);
+            onSetLastTurn(nickname);
 
             //fine gioco
 //            FrameManager frameManager = new FrameManager();
@@ -1543,7 +1550,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 
         table.setCellSelectionEnabled(false);
 
-        table.setRowHeight(dim+4);
+        table.setRowHeight(dim+3);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
@@ -2025,7 +2032,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                 JLabel blackToken = new JLabel(createBlackTokenImageIcon(45));
                 blackToken.setOpaque(false);
                 GridBagConstraints gbcBlackToken = createGridBagConstraints(gbc.gridx, gbc.gridy);
-                gbcBlackToken.insets = new Insets(70, 70, 0, 0);
+                gbcBlackToken.insets = new Insets(0, 0, 0, 10);
                 gbcBlackToken.anchor = GridBagConstraints.SOUTHEAST;
                 playerAvatarPanel.add(blackToken, gbcBlackToken);
             }
@@ -2055,10 +2062,13 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                         .orElseThrow()
                         .getKey();
 
+                String name;
                 if(avatarLabel.getText().equals(nickname)){
                     avatarLabel.setForeground(new Color(55, 133, 9));
+                    name = String.format("<span style = 'color: rgb(%d, %d, %d);'>" + avatarLabel.getText() + "</span>", 55, 133, 9);
                 }else {
                     avatarLabel.setForeground(Color.RED);
+                    name = String.format("<span style = 'color: red'>" + avatarLabel.getText() + "</span>");
                 }
 
                 boardToDisplay = playerCheckBoxMap.entrySet()
@@ -2068,6 +2078,9 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
                         .orElseThrow()
                         .getKey()
                         .getText();
+
+                resourcePlayerLabel.setText("<html><div style='white-space: nowrap;'>Table Player " + name + "</div></html>");
+                updateResourceTable(resourceTable, playersCollectedResources.get(boardToDisplay), logos);
 
                 refreshBoard();
             });

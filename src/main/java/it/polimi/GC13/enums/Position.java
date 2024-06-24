@@ -29,10 +29,25 @@ public enum Position {
                 return 4;
             }
         }
+    }
 
-//        if (this == FOURTH) return 4;
-//        if (this == FIRST) return 1;
-//        if (this == SECOND) return 2;
-//        return 3;
+    public static Position getPositionFromInt(int integer) {
+        switch (integer){
+            case 1 -> {
+                return  FIRST;
+            }
+
+            case 2 -> {
+                return SECOND;
+            }
+
+            case 3 -> {
+                return THIRD;
+            }
+
+            default -> {
+                return FOURTH;
+            }
+        }
     }
 }

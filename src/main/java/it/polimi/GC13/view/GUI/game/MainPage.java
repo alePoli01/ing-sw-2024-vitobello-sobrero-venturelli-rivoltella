@@ -110,6 +110,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private JLabel scoreLabel;
     private JLabel scoreLabel2;
     private JLabel numAttemptLabel;
+    private JLabel resourcePlayerLabel;
 
     //management of the movements of tokens on the ScoreBoard
     private TokenManager tokenManager;
@@ -119,7 +120,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private JEditorPane chatArea;
     private JTextField messageField;
     private JLabel notifyLabel;
-    private Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
+    private final Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
 
 
 
@@ -666,7 +667,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panel1.add(lateralPanelSX, BorderLayout.WEST);
 
 
-        JPanel lateralPanelDX = new JPanel();
+        JPanel lateralPanelDX = new JPanel(new GridBagLayout());
         lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
         setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
 
@@ -686,17 +687,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         showCommonObjectiveCard(privateObjectiveCard, commonPanel, 10);
 
-        lateralPanelDX.add(commonPanel);
+        lateralPanelDX.add(commonPanel, createGridBagConstraints(0,0));
 
+        String name = String.format("<span style = 'color: rgb(%d, %d, %d);'>" + this.nickname + "</span>", 55, 133, 9);
+        resourcePlayerLabel = createTextLabelFont("<html><div style='white-space: nowrap;'>Table player: " + name + "</div></html>", 16);
+        lateralPanelDX.add(resourcePlayerLabel, createGridBagConstraints(0,1));
 
         JPanel tableResourcePanel = new JPanel();
         addScrollPane(resourceTable, tableResourcePanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
-        lateralPanelDX.add(tableResourcePanel);
-
+        lateralPanelDX.add(tableResourcePanel, createGridBagConstraints(0,2));
 
         decksButton = createButton("Show Decks", 27);
         decksButton.addActionListener(this);
-        lateralPanelDX.add(decksButton);
+        lateralPanelDX.add(decksButton, createGridBagConstraints(0,3));
 
         panel1.add(lateralPanelDX, BorderLayout.EAST);
 
@@ -1232,7 +1235,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         table.setCellSelectionEnabled(false);
 
-        table.setRowHeight(dim+4);
+        table.setRowHeight(dim+3);
     }
 
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
@@ -1618,7 +1621,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 JLabel blackToken = new JLabel(createBlackTokenImageIcon(45));
                 blackToken.setOpaque(false);
                 GridBagConstraints gbcBlackToken = createGridBagConstraints(gbc.gridx, gbc.gridy);
-                gbcBlackToken.insets = new Insets(70, 70, 0, 0);
+                gbcBlackToken.insets = new Insets(0, 0, 0, 10);
                 gbcBlackToken.anchor = GridBagConstraints.SOUTHEAST;
                 playerAvatarPanel.add(blackToken, gbcBlackToken);
             }
@@ -1647,10 +1650,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         .orElseThrow()
                         .getKey();
 
+                String name;
                 if(avatarLabel.getText().equals(nickname)){
                     avatarLabel.setForeground(new Color(55, 133, 9));
+                    name = String.format("<span style = 'color: rgb(%d, %d, %d);'>" + avatarLabel.getText() + "</span>", 55, 133, 9);
                 }else {
                     avatarLabel.setForeground(Color.RED);
+                    name = String.format("<span style = 'color: red'>" + avatarLabel.getText() + "</span>");
                 }
 
                 boardToDisplay = playerCheckBoxMap.entrySet()
@@ -1661,6 +1667,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         .getKey()
                         .getText();
 
+                resourcePlayerLabel.setText("<html><div style='white-space: nowrap;'>Table player: " + name + "</div></html>");
+                updateResourceTable(resourceTable, frameManager.getPlayersCollectedResources().get(boardToDisplay), logos);
 
                 refreshBoard();
             });

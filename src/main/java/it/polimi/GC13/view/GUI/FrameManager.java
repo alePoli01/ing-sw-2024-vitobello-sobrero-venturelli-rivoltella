@@ -354,8 +354,6 @@ public class FrameManager extends JFrame implements View {
 
     @Override
     public void gameOver(Set<String> winners) {
-        System.out.println("SONO ARRIVATO FINO ALLA FINE");
-
         gamePage.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();
@@ -391,7 +389,7 @@ public class FrameManager extends JFrame implements View {
         if (!this.playersCollectedResources.containsKey(playerNickname)) {
             this.playersCollectedResources.put(playerNickname, collectedResources);
             if (this.nickname.equals(playerNickname)) {
-                gamePage.createTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources, CardManager.logos, null, false, 25);
+                gamePage.createTable(gamePage.getResourceTable(),new String[]{"Resources", "Amount"}, collectedResources, CardManager.logos, null, false, 24);
             }
         } else {
             this.playersCollectedResources.entrySet()

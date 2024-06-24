@@ -49,26 +49,27 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
         labelConstraints.anchor = GridBagConstraints.LINE_START;
 
 
-        Map<Position, String> positionPlayerMap = frameManager.getPlayerPositions().entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(Position::getIntPosition)))
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey,
-                        (e1, e2) -> e1,
-                        () -> new EnumMap<>(Position.class)));
-
-
-        String text = String.format("<span style='color: rgb(%d, %d, %d); font-size: 20px;'>" + playerNickname + "</span>", playerToColorMap.get(playerNickname).rgb[0], playerToColorMap.get(playerNickname).rgb[1], playerToColorMap.get(playerNickname).rgb[2]);
+        String text = String.format("<span style = 'color: rgb(%d, %d, %d); font-size: 20px;'>" + playerNickname + "</span>", playerToColorMap.get(playerNickname).rgb[0], playerToColorMap.get(playerNickname).rgb[1], playerToColorMap.get(playerNickname).rgb[2]);
         JLabel messageLabel1 = createTextLabelFont( "<html>" + text + " has reached 20 points. </html>", 25);
         setBorderInsets(messageLabel1, 0,0,15,0);
         labelsPanel.add(messageLabel1, labelConstraints);
         labelConstraints.gridy++;
 
-
         String textMessage;
-        if (frameManager.getPlayerPositions().get(playerNickname).getIntPosition() != positionPlayerMap.size()) {
-            String fourthPlayer = positionPlayerMap.get(Position.FOURTH);
-            textMessage = "<html> After " + fourthPlayer + "'s turn, the <u>last round</u> will start. </html>";
+        if (frameManager.getPlayerPositions().get(playerNickname).getIntPosition() != frameManager.getPlayerPositions().size()) {
+            String lastPlayer = "";
+            Position lastPosition = Position.getPositionFromInt(frameManager.getPlayerPositions().size());
+
+            for(String s : frameManager.getPlayerPositions().keySet()){
+                if (frameManager.getPlayerPositions().get(s) == lastPosition) {
+                    lastPlayer = s;
+                    break;
+                }
+            }
+
+            textMessage = "<html> After " + lastPlayer + "'s turn, the <u>last round</u> will start. </html>";
         } else {
-            textMessage = "After this turn, the <html><u>Last round</u> starts. </html>";
+            textMessage = "<html>After this turn, the <u>Last round</u> starts. </html>";
         }
 
         JLabel finalLabel = createTextLabelFont(textMessage, 20);
