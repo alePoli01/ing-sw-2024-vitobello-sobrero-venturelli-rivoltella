@@ -17,10 +17,10 @@ import java.util.List;
 public class Player implements Serializable {
     private final String nickname;  //username of the player
     private TokenColor tokenColor; //token chosen by the Player
-    private final ArrayList<PlayableCard> hand; //hand of the player ==> 3 cards max
-    private final LinkedList<ObjectiveCard> privateObjectiveCard; // need an array to present 2 objective cards to the player
+    private final ArrayList<PlayableCard> hand = new ArrayList<>(); //hand of the player ==> 3 cards max
+    private final LinkedList<ObjectiveCard> privateObjectiveCard = new LinkedList<>(); // need an array to present 2 objective cards to the player
     private boolean myTurn; //true if it's the player turn
-    private int turnPlayed; //number of the current turn
+    private int turnPlayed = 0; //number of the current turn
     private Position position;  //position of the player (1-4)
     private Game game;
 
@@ -28,9 +28,6 @@ public class Player implements Serializable {
     //at the creation each player has only its nickname, everything else is defined in the setup phase
     public Player(String nickname) {
         this.nickname = nickname;
-        this.turnPlayed = 0;
-        this.hand = new ArrayList<>();
-        this.privateObjectiveCard = new LinkedList<>();
     }
 
     public String getNickname() {

@@ -469,11 +469,8 @@ public class TUI implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
-            // prints for the first time the main menu for the first player
-            if (this.myTurn && this.turnPlayed == 0 && this.playersPosition.get(this.nickname).equals(Position.FIRST)) {
-                this.showHomeMenu();
-            } else if (!this.myTurn && this.turnPlayed == 0) {
-                // prints for the first time the main menu for all other players
+            // prints for the first time the main menu for
+            if (this.turnPlayed == 0) {
                 this.showHomeMenu();
             } else {
                 if (!this.myTurn) {
