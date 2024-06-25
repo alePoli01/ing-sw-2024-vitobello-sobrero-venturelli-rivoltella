@@ -40,7 +40,7 @@ public class TUI implements View {
     private final Printer printer = new Printer();
     private final Reader newReader = new Reader();
     private final Map<String, List<ChatMessage>> chat = new HashMap<>();
-    private boolean newMessage = false;
+    private final Map<String, Boolean> newMessageMap = new ConcurrentHashMap<>();
     private boolean connectionOpen = true;
     private boolean interrupt = false;
 
@@ -498,13 +498,14 @@ public class TUI implements View {
     public void showHomeMenu() {
         this.menuOptions();
         try {
+            this.cooking = false;
             this.interrupt = false;
             this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "Invalid choice, enter a valid option.");
         } catch (GenericException e) {
             System.out.print(e.getMessage());
             return;
         }
-        System.out.println("SELECTION: " + this.choice);
+        System.out.println("SELECTION: " + this.choice + "\n");
         this.menuChoice(this.choice);
     }
 
@@ -552,15 +553,12 @@ public class TUI implements View {
                 this.playersBoard.get(playerChosen).printBoard();
                 System.out.println();
                 this.printer.collectedResource(this.playersCollectedResources.get(playerChosen));
-                this.cooking = false;
                 this.showHomeMenu();
                 break;
             }
             case 7: {
                 this.cooking = true;
                 this.sendMessage();
-                this.cooking = false;
-                this.showHomeMenu();
                 break;
             }
             case 8: {
@@ -590,8 +588,11 @@ public class TUI implements View {
                     if (!chat.isEmpty()) {
                         String playerChosen;
                         try {
-                            playerChosen = userStringInput("Choose player to see the chat: [" + (String.join("], [", chat.keySet()) + "]") + "\nPlayer",
-                                    input -> !stringVerifier(input, addToSet(this.chat.keySet(), List.of("global"))), "No player found.");
+                            playerChosen = userStringInput("Choose player to see the chat: " + this.chat.keySet()
+                                    .stream()
+                                    .map(key -> "[" + key + "]" + (this.newMessageMap.get(key) ? "!" : ""))
+                                    .collect(Collectors.joining(", ")) +
+                                    "\nPlayer", input -> !stringVerifier(input, addToSet(this.chat.keySet(), List.of("global"))), "No player found.");
                         } catch (GenericException e) {
                             System.out.print(e.getMessage());
                             return;
@@ -602,13 +603,12 @@ public class TUI implements View {
                                     .stream()
                                     .map(chatMessage -> chatMessage.sender() + ": " + chatMessage.content() + ";\n")
                                     .collect(Collectors.joining()));
+                            this.newMessageMap.replace(playerChosen, false);
                         }
                     } else {
                         System.out.println("No message exists.");
                     }
-                    this.newMessage = false;
                 }
-                this.cooking = false;
                 this.showHomeMenu();
                 break;
             }
@@ -637,7 +637,7 @@ public class TUI implements View {
         System.out.println("\t[9] to show players' turns");
         System.out.println("\t[10] to draw card (only when in turn)");
         System.out.println("\t[11] to view players' score");
-        System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");
+        System.out.println("\t[12] to view chat [" + (this.newMessageMap.values().stream().anyMatch(v -> v) ? "!" : "no new messages") + "]");
     }
 
     /**
@@ -742,16 +742,20 @@ public class TUI implements View {
     }
 
     private void registerMessage(String chatName, String sender, String message) {
+        boolean flag = sender.equals(this.nickname);
+
         if (this.chat.containsKey(chatName)) {
             synchronized (this.chat.get(chatName)) {
                 this.chat.get(chatName).add(new ChatMessage(sender, message));
+                this.newMessageMap.replace(chatName, !flag);
             }
         } else {
             synchronized (this.chat) {
                 this.chat.put(chatName, new LinkedList<>(Collections.singletonList(new ChatMessage(sender, message))));
+                this.newMessageMap.put(chatName, !flag);
             }
         }
-        this.newMessage = true;
+        if (flag) this.showHomeMenu();
     }
 
     @Override
