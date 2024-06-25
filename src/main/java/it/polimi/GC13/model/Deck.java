@@ -30,11 +30,15 @@ public class Deck implements Serializable {
     }
 
     public LinkedList<ObjectiveCard> getObjectiveDeck() {
-        return objectiveDeck;
+        return this.objectiveDeck;
+    }
+
+    public ObjectiveCard getObjectiveCard(int index) {
+        return this.objectiveDeck.stream().filter(card -> card.serialNumber == index).findFirst().orElseThrow();
     }
 
     public LinkedList<StartCard> getStartDeck() {
-        return startDeck;
+        return this.startDeck;
     }
 
     private void createCompleteDeck() {

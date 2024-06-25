@@ -104,7 +104,7 @@ public class BoardTest extends TestCase {
         // card gives point only if it is not flipped
         if (!isFlipped) {
             // update player's scoreboard
-            player.getTable().setPlayerScore(player, cardToPlace.getPointsGiven(board, x, y));
+            player.getTable().addPlayerScore(player, cardToPlace.getPointsGiven(board, x, y));
             // check if players has reached 20 points, if so sets game's last turn
             if (player.getScore() >= 20) {
                 player.getGame().setLastRound(player);
@@ -151,7 +151,7 @@ public class BoardTest extends TestCase {
         try {
             //place cards on the board
             game.addPlayerToGame(player);
-            player.getTable().setPlayerScore(player,0);
+            player.getTable().addPlayerScore(player,0);
             System.out.println("Start card");
             board.placeCardToTheBoard(new Coordinates(50, 50), deck.getCard(83), false);
             board.addResource(deck.getCard(83), false);
@@ -167,7 +167,7 @@ public class BoardTest extends TestCase {
 
             board.placeCardToTheBoard(new Coordinates(50, 52), deck.getCard(44), false);
             board.addResource(deck.getCard(44), false);
-            player.getTable().setPlayerScore(player,deck.getCard(44).getPointsGiven(board, 50, 52));
+            player.getTable().addPlayerScore(player,deck.getCard(44).getPointsGiven(board, 50, 52));
             System.out.println("player score after gold card:"+ player.getScore());
         } catch (GenericException e) {
             fail("Exception thrown " + e.getMessage());

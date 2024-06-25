@@ -8,6 +8,7 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.*;
+import it.polimi.GC13.network.messages.fromserver.ObjectiveAchieved;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.ChatMessage;
 import it.polimi.GC13.view.View;
@@ -403,13 +404,14 @@ public class TUI implements View {
     }
 
     @Override
-    public void gameOver(Set<String> winner) {
+    public void gameOver(Set<String> winner, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap) {
         if (winner.stream().anyMatch(winnerNickname -> winnerNickname.equals(this.nickname))) {
             this.printer.winnerString();
         } else {
             this.printer.loserString();
         }
-        this.printer.showPlayersScore(this.playersScore);
+
+        objectiveAchievedMap.forEach((key, value) -> this.printer.objectivesAchieved(key, value, this.playersScore.get(key)));
     }
 
     @Override

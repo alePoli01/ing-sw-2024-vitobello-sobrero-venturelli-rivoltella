@@ -11,6 +11,7 @@ import it.polimi.GC13.view.GUI.game.ChatMessage;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -208,8 +209,11 @@ public class Game implements Serializable {
     public Set<String> setWinner() {
         System.out.println("Calculating winner for game " + this.gameName);
         Map<Player, Integer> objectivesAchieved = new HashMap<>();
+        // map used to track for each player which are the objective cards that gave him points and the amount
+        Map<String, List<ObjectiveAchieved>> objectiveAchievedMap = new ConcurrentHashMap<>();
+
         // in case two or more players have the same final score, the number of objectives achieved will be used to determine the winner
-        this.playerList.forEach(player -> objectivesAchieved.put(player, this.finalScoreCalculation(player)));
+        this.playerList.forEach(player -> objectivesAchieved.put(player, this.finalScoreCalculation(player, objectiveAchievedMap)));
 
         // Filter for players with the maximum score
         Set<Player> playersWithHighestScore = this.getTable().getPlayersScore().entrySet().stream()
@@ -232,41 +236,47 @@ public class Game implements Serializable {
         }else{
             winner =playersWithHighestScore;
         }
+
         // create the set of the winners' nickname to send to the clients (views)
         Set<String> winnersNickname = winner.stream().map(Player::getNickname).collect(Collectors.toSet());
-        this.observer.notifyClients(new OnGameWinnerMessage(winnersNickname));
+        this.observer.notifyClients(new OnGameWinnerMessage(winnersNickname, objectiveAchievedMap));
         return winnersNickname;
     }
 
     /**
      * method used to calculate final score with private and common objective cards
+     * @param player player who is being calculated the score
      */
-    private int finalScoreCalculation(Player player) {
+    private int finalScoreCalculation(Player player, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap) {
+        objectiveAchievedMap.put(player.getNickname(), new LinkedList<>());
         // used to track how many objective the player has achieved
-        AtomicInteger objectivesAchieved = new AtomicInteger(0);
+        AtomicInteger numberObjectivesAchieved = new AtomicInteger(0);
 
         // points scored with objective cards
-        AtomicInteger objectiveCommonCardsPoint = new AtomicInteger(0);
+        AtomicInteger commonObjectiveCardsPointsGiven = new AtomicInteger(0);
         table.getCommonObjectiveCard().forEach(objectiveCard -> {
                     // if the player achieved a point with a common objective card, the counter is incremented
                     if (objectiveCard.getObjectivePoints(player.getBoard()) > 0) {
-                        objectivesAchieved.incrementAndGet();
-                        objectiveCommonCardsPoint.addAndGet(objectiveCard.getObjectivePoints(player.getBoard()));
+                        numberObjectivesAchieved.incrementAndGet();
+                        int pointsGiven = objectiveCard.getObjectivePoints(player.getBoard());
+                        commonObjectiveCardsPointsGiven.addAndGet(pointsGiven);
+                        objectiveAchievedMap.get(player.getNickname()).add(new ObjectiveAchieved(objectiveCard.serialNumber, pointsGiven));
                     }
                 });
 
+        int pointsGiven = player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard());
         // if the player achieved a point with his private card, the counter is incremented
-        if (player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard()) > 0) {
-            objectivesAchieved.incrementAndGet();
+        if (pointsGiven > 0) {
+            numberObjectivesAchieved.incrementAndGet();
+            objectiveAchievedMap.get(player.getNickname()).add(new ObjectiveAchieved(player.getPrivateObjectiveCard().getFirst().serialNumber, pointsGiven));
         }
 
         // add player's final score = player's private objective points (based on his board) + common objective points (based on his board)
-        this.table.setPlayerScore(player, player.getPrivateObjectiveCard().getFirst().getObjectivePoints(player.getBoard())
-                + objectiveCommonCardsPoint.get());
-        return objectivesAchieved.get();
+        this.table.addPlayerScore(player, pointsGiven + commonObjectiveCardsPointsGiven.get());
+        return numberObjectivesAchieved.get();
     }
 
-    public void closeGame(ClientInterface disconnectedClient,String disconnectedPlayerName){
+    public void closeGame(ClientInterface disconnectedClient, String disconnectedPlayerName){
         this.observer.removeListener(disconnectedClient);
         this.observer.notifyClients(new OnPlayerDisconnected(disconnectedPlayerName));
     }

@@ -4,6 +4,7 @@ import it.polimi.GC13.enums.Resource;
 import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.ObjectiveCard;
 import it.polimi.GC13.model.PlayableCard;
+import it.polimi.GC13.network.messages.fromserver.ObjectiveAchieved;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,7 +49,7 @@ public class Printer {
     public void showObjectiveCard(String message, List<Integer> serialObjectiveCards) {
         System.out.println("\n" + message);
         List<ObjectiveCard> objectiveCards = new LinkedList<>();
-        serialObjectiveCards.forEach(card -> objectiveCards.add(visualDeck.getObjectiveDeck().get(card - 87)));
+        serialObjectiveCards.forEach(cardNumber -> objectiveCards.add(visualDeck.getObjectiveCard(cardNumber)));
         AtomicInteger lineCounter = new AtomicInteger(0);
 
         for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
@@ -133,8 +134,9 @@ public class Printer {
     }
 
     public void intro(){
-        System.out.println();
         System.out.println("""
+                
+                
                  ██████╗ ██████╗ ██████╗ ███████╗██╗  ██╗    ███╗   ██╗ █████╗ ████████╗██╗   ██╗██████╗  █████╗ ██╗     ██╗███████╗
                 ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚██╗██╔╝    ████╗  ██║██╔══██╗╚══██╔══╝██║   ██║██╔══██╗██╔══██╗██║     ██║██╔════╝
                 ██║     ██║   ██║██║  ██║█████╗   ╚███╔╝     ██╔██╗ ██║███████║   ██║   ██║   ██║██████╔╝███████║██║     ██║███████╗
@@ -147,5 +149,32 @@ public class Printer {
     public void collectedResource(EnumMap<Resource, Integer> collectedResource) {
         System.out.println("Collected resource are: ");
         System.out.println( collectedResource.entrySet().stream().toList()+"\n");
+    }
+
+    /**
+     * method that displays for each player and each objective how many points they scored
+     *
+     * @param playerNickname player's score
+     * @param objectiveAchieved objective achieved
+     * @param finalScore player's final score
+     */
+    public void objectivesAchieved(String playerNickname, List<ObjectiveAchieved> objectiveAchieved, int finalScore) {
+        System.out.println("\n\nPLAYER: " + playerNickname + "\nFinal score: " + finalScore + "\n");
+        objectiveAchieved
+            .forEach(objAchieved -> {
+                ObjectiveCard toPrint = visualDeck.getObjectiveCard(objAchieved.serialCard());
+                AtomicInteger lineCounter = new AtomicInteger(0);
+
+                for (lineCounter.set(0); lineCounter.get() < 6; lineCounter.incrementAndGet()) {
+                    toPrint.printLineObjectiveCard(lineCounter.get());
+                    System.out.print(" ░ ");
+                    if (lineCounter.get() == 3) {
+                        System.out.println("   points given: " + objAchieved.pointsAchieved());
+                    } else {
+                        System.out.println();
+                    }
+                }
+            });
+        System.out.print("\n----------------------------");
     }
 }

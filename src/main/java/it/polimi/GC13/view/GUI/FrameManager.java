@@ -9,6 +9,7 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.CheckForExistingGameMessage;
 import it.polimi.GC13.network.messages.fromclient.ReconnectPlayerToGameMessage;
+import it.polimi.GC13.network.messages.fromserver.ObjectiveAchieved;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 import it.polimi.GC13.view.GUI.game.*;
 import it.polimi.GC13.view.GUI.login.LoginFrame;
@@ -353,7 +354,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
-    public void gameOver(Set<String> winners) {
+    public void gameOver(Set<String> winners, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap) {
         gamePage.dispose();
         SwingUtilities.invokeLater(()-> {
             winningFrame = new WinningFrame();

@@ -49,9 +49,9 @@ public class MidPhase implements GamePhase {
             // card gives point only if it is not flipped
             if (!isFlipped) {
                 // update player's scoreboard
-                player.getTable().setPlayerScore(player, cardToPlace.getPointsGiven(board, X, Y));
+                player.getTable().addPlayerScore(player, cardToPlace.getPointsGiven(board, X, Y));
                 // check if players has reached 20 points, if so sets game's last turn
-                if (player.getScore() >= 3) {
+                if (player.getScore() >= 2) {
                     player.getGame().setLastRound(player);
                 }
             }

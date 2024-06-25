@@ -226,7 +226,7 @@ public class ControllerTest extends TestCase {
             //get card #39 : gives 1 point
             System.out.println("\t\tplayer1 playing card ");
             player1.getBoard().placeCardToTheBoard(new Coordinates(51, 51), pointCard, false);
-            player1.getTable().setPlayerScore(player1, pointCard.getPointsGiven(player1.getBoard(), 51, 51));
+            player1.getTable().addPlayerScore(player1, pointCard.getPointsGiven(player1.getBoard(), 51, 51));
 
             player1.setMyTurn(true);
             System.out.println("\t\tsetting last round ");

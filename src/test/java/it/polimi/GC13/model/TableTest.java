@@ -83,23 +83,23 @@ public class TableTest extends TestCase {
     /*
         TEST PASSED
      */
-    public void testSetPlayerScore() throws GenericException {
+    public void testAddPlayerScore() throws GenericException {
         Game game = new Game(2, "test");
         Player player1 = new Player("player1");
         Player player2 = new Player("player2");
         game.addPlayerToGame(player1);
         game.addPlayerToGame(player2);
 
-        game.getPlayerList().forEach(player -> game.getTable().setPlayerScore(player, 0));
-        game.getTable().setPlayerScore(player1, 0);
-        game.getTable().setPlayerScore(player2, 0);
+        game.getPlayerList().forEach(player -> game.getTable().addPlayerScore(player, 0));
+        game.getTable().addPlayerScore(player1, 0);
+        game.getTable().addPlayerScore(player2, 0);
         assert (game.getTable().getPlayersScore().get(player1) == 0);
         assert (game.getTable().getPlayersScore().get(player2) == 0);
-        game.getTable().setPlayerScore(player1, 5);
-        game.getTable().setPlayerScore(player2, 6);
+        game.getTable().addPlayerScore(player1, 5);
+        game.getTable().addPlayerScore(player2, 6);
         assert (game.getTable().getPlayersScore().get(player1) == 5);
         assert (game.getTable().getPlayersScore().get(player2) == 6);
-        game.getTable().setPlayerScore(player1, 1);
+        game.getTable().addPlayerScore(player1, 1);
         assert (game.getTable().getPlayersScore().get(player1) == 6);
         assert (game.getTable().getPlayersScore().get(player2) == 6);
     }

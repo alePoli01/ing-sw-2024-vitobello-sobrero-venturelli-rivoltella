@@ -16,10 +16,10 @@ public class TUITest extends TestCase {
         Set<String> winners = new HashSet<>();
         winners.add("player 1");
 
-        tui1.gameOver(winners);
+        tui1.gameOver(winners, new HashMap<>());
 
         TUI tui2 = new TUI();
-        tui2.gameOver(winners);
+        tui2.gameOver(winners, new HashMap<>());
     }
 
     public void testOnSetLastTurn() {

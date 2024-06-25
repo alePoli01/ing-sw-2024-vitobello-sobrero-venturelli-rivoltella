@@ -7,6 +7,7 @@ import it.polimi.GC13.enums.TokenColor;
 import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.Coordinates;
 import it.polimi.GC13.network.ServerInterface;
+import it.polimi.GC13.network.messages.fromserver.ObjectiveAchieved;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
 
 import java.util.EnumMap;
@@ -68,7 +69,7 @@ public interface View {
 
     void onNewMessage(String sender, String receiver, String message);
 
-    void gameOver(Set<String> winner);
+    void gameOver(Set<String> winner, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap);
 
     void onReconnectToGame();
 

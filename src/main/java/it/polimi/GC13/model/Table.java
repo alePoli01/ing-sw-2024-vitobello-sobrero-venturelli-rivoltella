@@ -148,7 +148,12 @@ public class Table implements Serializable {
         }
     }
 
-    public void setPlayerScore(Player player, int newPoints) {
+    /**
+     * method used to add new points to a player
+     * @param player player that has scored newPoints
+     * @param newPoints amount of points to add
+     */
+    public void addPlayerScore(Player player, int newPoints) {
         if (!this.playersScore.containsKey(player)) {
             this.playersScore.put(player, newPoints);
         } else {

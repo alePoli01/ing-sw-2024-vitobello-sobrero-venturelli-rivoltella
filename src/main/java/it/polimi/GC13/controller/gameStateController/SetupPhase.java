@@ -20,7 +20,7 @@ public class SetupPhase implements GamePhase {
             game.dealStartCard();
             // sets initial player's score to zero
             game.getPlayerList()
-                    .forEach(player -> game.getTable().setPlayerScore(player, 0));
+                    .forEach(player -> game.getTable().addPlayerScore(player, 0));
         } catch (GenericException e){
             System.err.println(e.getMessage());
         }
