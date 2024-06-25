@@ -619,6 +619,9 @@ public class TUI implements View {
         this.choice = 0;
     }
 
+    /**
+        MENU OPTIONS
+     */
     private void menuOptions() {
         System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + " ---");
         if (this.myTurn) {
@@ -640,10 +643,23 @@ public class TUI implements View {
         System.out.println("\t[12] to view chat [" + (this.newMessage ? "!" : "no new messages") + "]");
     }
 
+    /**
+     * rangeVerifier is used to verify input from user. numToVerify has to be higher than value to be verified
+     * @param numToVerify user's input
+     * @param value has to be lower than numToVerify in order to accept the input
+     * @return false when input correct
+     */
     private boolean rangeVerifier(int numToVerify, int value) {
         return numToVerify <= value;
     }
 
+    /**
+     * rangeVerifier is used to verify input from user. numToVerify has to be higher than highValue or lower than lowValue to be verified
+     * @param numToVerify user's input
+     * @param lowValue low range value
+     * @param highValue high range value
+     * @return false when input correct
+     */
     private boolean rangeVerifier(int numToVerify, int lowValue, int highValue) {
         return numToVerify < lowValue || numToVerify > highValue;
     }
