@@ -5,11 +5,17 @@ import it.polimi.GC13.model.Deck;
 import it.polimi.GC13.model.PlayableCard;
 import it.polimi.GC13.model.StartCard;
 
+/**
+ * Represents the view of the game board where cards are inserted into cells.
+ */
 public class BoardView {
     public Cell[][] Board;
     public int x_max, x_min, y_max, y_min;
     private final Deck deck = new Deck();
 
+    /**
+     * Constructs a new {@code BoardView} object initializing the board size and boundaries.
+     */
     public BoardView() {
         Board = new Cell[95][95];
         x_max = 50;
@@ -18,6 +24,16 @@ public class BoardView {
         y_min = 50;
     }
 
+    /**
+     * Inserts a card into the specified coordinates on the board.
+     * Depending on the serial number, retrieves the corresponding card from the appropriate deck.
+     *
+     * @param y           The y-coordinate of the cell to insert the card.
+     * @param x           The x-coordinate of the cell to insert the card.
+     * @param serialNumber The serial number of the card to be inserted.
+     * @param z           The z-coordinate of the card (depth or layer).
+     * @param isFlipped   Indicates if the card is flipped or not.
+     */
     public void insertCard(int y, int x, int serialNumber, int z, boolean isFlipped) {
         if (serialNumber >= 1 && serialNumber <= 40) {
             for (PlayableCard card : this.deck.getResourceDeck()) {
@@ -59,6 +75,10 @@ public class BoardView {
         }
     }
 
+    /**
+     * Prints the game board representation to the console, including cards and coordinates.
+     * Uses ANSI escape codes for colored output.
+     */
     public void printBoard() {
 
         String gold = "\u001b[93m";  // gold

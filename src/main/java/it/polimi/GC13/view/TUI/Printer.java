@@ -11,21 +11,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
-    CLASS USED TO PRINT MESSAGES FROM TUI
+ * class {@code Printer} is used to print messages from TUI.
  */
 public class Printer {
     private static final Deck visualDeck = new Deck();
 
     /**
-        METHOD USED TO SHOW GAME'S HISTORY
-    */
+     * Shows the game's history.
+     *
+     * @param gamesLog A list of strings representing the game's history.
+     */
     public void showHistory(List<String> gamesLog) {
         System.out.println("\n--- HISTORY ---");
         gamesLog.forEach(log -> System.out.println(log + ";"));
     }
 
     /**
-        METHOD USED TO SHOW DRAWABLE CARDS
+     * Shows the drawable cards.
+     *
+     * @param serialToDraw A map where keys are card serial numbers and values indicate in which side they are showed.
+     *                     ('true' = back, 'false' = front)
      */
     public void showDrawableCards(Map<Integer, Boolean> serialToDraw) {
         AtomicInteger lineCounter = new AtomicInteger(0);
@@ -44,7 +49,10 @@ public class Printer {
     }
 
     /**
-        METHOD USED TO PRINT OBJECTIVE CARD
+     * Prints the objective cards to the console.
+     *
+     * @param message A message to be displayed before the objective cards.
+     * @param serialObjectiveCards A list of serial numbers of the objective cards.
      */
     public void showObjectiveCard(String message, List<Integer> serialObjectiveCards) {
         System.out.println("\n" + message);
@@ -64,7 +72,9 @@ public class Printer {
     }
 
     /**
-        METHOD USED TO PRINT PLAYABLE CARDS
+     * Prints the player's hand to the console.
+     *
+     * @param hand A list of serial numbers of the playable cards in the player's hand.
      */
     public void showHand(List<Integer> hand) {
         // PRINTS START CARD
@@ -98,6 +108,7 @@ public class Printer {
     }
 
     /**
+     * Prints the players' score on TUI.
      *
      * @param playersScore players' score map; prints all players score present in the map
      *
@@ -107,6 +118,9 @@ public class Printer {
         playersScore.forEach((key, value) -> System.out.println(key + "'s current score is " + value));
     }
 
+    /**
+     * Prints the winner message to the console.
+     */
     public void winnerString() {
         System.out.println("""
                 
@@ -120,6 +134,9 @@ public class Printer {
                 """);
     }
 
+    /**
+     * Prints the loser message to the console.
+     */
     public void loserString() {
         System.out.println("""
                 
@@ -133,6 +150,9 @@ public class Printer {
                 """);
     }
 
+    /**
+     * Prints the intro message to the console.
+     */
     public void intro(){
         System.out.println("""
                 
@@ -146,13 +166,18 @@ public class Printer {
                 """);
     }
 
+    /**
+     * Prints the collected resources to the console.
+     *
+     * @param collectedResource An EnumMap containing the collected resources and their quantities.
+     */
     public void collectedResource(EnumMap<Resource, Integer> collectedResource) {
         System.out.println("Collected resource are: ");
         System.out.println( collectedResource.entrySet().stream().toList()+"\n");
     }
 
     /**
-     * method that displays for each player and each objective how many points they scored
+     * Displays the points scored by each player for each objective achieved and their final score.
      *
      * @param playerNickname player's score
      * @param objectiveAchieved objective achieved

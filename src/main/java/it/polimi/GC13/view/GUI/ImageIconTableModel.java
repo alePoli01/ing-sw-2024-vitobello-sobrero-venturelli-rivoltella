@@ -9,8 +9,15 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
+/**
+ * {@code ImageIconTableModel} is a custom table model for displaying images and values in a JTable.
+ * <p>
+ * This model supports dynamic addition of columns and custom rendering of enums as images.
+ *</p>
+ * @param <K> The type of the enum keys used in the input map
+ * @param <V> The type of the values used in the input map
+ */
 public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableModel {
     private String[] columnNames;
     private Object[][] data;
@@ -18,7 +25,15 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
     private final EnumMap<K, V> mapInInput;
     private final Map<V, TokenColor> conversionMap;
 
-
+    /**
+     * Constructs an ImageIconTableModel.
+     *
+     * @param columnNames The names of the columns
+     * @param mapInInput The input map containing enum keys and their corresponding values
+     * @param logosPath The list of paths for the logos
+     * @param conversionMap The map for converting values to token colors
+     * @param dim The dimension for resizing images
+     */
     public ImageIconTableModel(String[] columnNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, int dim) {
         this.columnNames = columnNames;
         this.logosPath = logosPath;
@@ -28,6 +43,15 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         createTable(mapInInput, dim);
     }
 
+    /**
+     * Creates the table data from the input map.
+     * <p>
+     *     The table is designed to have only two columns at creation.
+     * </p>
+     *
+     * @param mapInInput The input map containing enum keys and their corresponding values
+     * @param dim The dimension for resizing images
+     */
     public void createTable(EnumMap<K, V> mapInInput, int dim){
         try {
             for(Map.Entry<K, V> entry : mapInInput.entrySet()){
@@ -61,12 +85,26 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         return data[rowIndex][columnIndex];
     }
 
+    /**
+     * Sets the value at the specified cell in the table model.
+     * If the value is a Boolean, it checks if it should be inserted as an icon.
+     *
+     * @param aValue      The new value to set
+     * @param rowIndex    The row index of the cell
+     * @param columnIndex The column index of the cell
+     */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         data[rowIndex][columnIndex] = checkIfIconInsertionOnColumn(aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
+    /**
+     * Adds a new column to the left side of the table.
+     *
+     * @param newColumnName The name of the new column
+     * @param elements The elements to be added to the new column
+     */
     public void addColumnOnLeft(String newColumnName, ArrayList<Object> elements) {
         String[] newColumnNames = new String[columnNames.length + 1];
         newColumnNames[0] = newColumnName;
@@ -94,6 +132,12 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         fireTableStructureChanged();
     }
 
+    /**
+     * Adds a new column to the right side of the table.
+     *
+     * @param newColumnName The name of the new column
+     * @param elements The elements to be added to the new column
+     */
     public void addColumnOnRight(String newColumnName, ArrayList<Object> elements) {
         String[] newColumnNames = new String[columnNames.length + 1];
         System.arraycopy(columnNames, 0, newColumnNames, 0, columnNames.length);
@@ -121,6 +165,12 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         fireTableStructureChanged();
     }
 
+    /**
+     * Checks if the element to be inserted in the column is an icon.
+     *
+     * @param element The element to be checked
+     * @return The processed element
+     */
     public Object checkIfIconInsertionOnColumn(Object element){
         if(element instanceof Boolean){
             return createResizedTokenImageIcon(remappingEnums(element), 27);
@@ -128,6 +178,12 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         return element;
     }
 
+    /**
+     * Remaps enums to their corresponding string representation for image paths.
+     *
+     * @param key The key to be remapped
+     * @return The string representation of the key
+     */
     public String remappingEnums(Object key){
         switch (key) {
             case Resource resource -> {
@@ -174,10 +230,23 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
         }
     }
 
+    /**
+     * Gets the token file name based on the token color.
+     *
+     * @param tokenColor The color of the token
+     * @return The token file name
+     */
     private String getTokenFileName(TokenColor tokenColor) {
         return tokenColor.toString().toLowerCase() + CardManager.TOKEN_FILE_SUFFIX;
     }
 
+    /**
+     * Creates a resized ImageIcon from the given path and dimension.
+     *
+     * @param tokenImagePath The path to the image
+     * @param dim The dimension for resizing the image
+     * @return The resized ImageIcon
+     */
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }

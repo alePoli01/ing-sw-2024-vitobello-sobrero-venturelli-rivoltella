@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Interface for storing all the image path and for managing various card-related functionalities in the game GUI.
+ */
 public interface CardManager {
       String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
       String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
@@ -53,13 +56,28 @@ public interface CardManager {
       String MANY_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_many_messages.png";
 
 
-
-
+      /**
+       * ArrayList of Resources' image path
+       */
      ArrayList<String> logos = new ArrayList<>(Arrays.asList(FUNGI_LOGO_DIR, ANIMAL_LOGO_DIR, PLANT_LOGO_DIR, INSECT_LOGO_DIR, QUILL_LOGO_DIR, MANUSCRIPT_LOGO_DIR, INKWELL_LOGO_DIR));
+
+      /**
+       * ArrayList of players avatar image path
+       */
      ArrayList<String> avatarsLogo = new ArrayList<>(Arrays.asList(FUNGI_JUDGE_DIR, ANIMAL_JUDGE_DIR, PLANT_JUDGE_DIR, INSECT_JUDGE_DIR));
+
+      /**
+       * ArrayList of image path given to the winners of the game
+       */
      ArrayList<String> monks = new ArrayList<>(Arrays.asList(MONK1, MONK2, MONK3, MONK4));
 
 
+      /**
+       * Displays the starter card and private objective card for the given hand.
+       *
+       * @param hand The list of card IDs representing the player's hand.
+       * @throws IOException If an I/O error occurs while displaying the cards.
+       */
       void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) throws IOException;
 
 }

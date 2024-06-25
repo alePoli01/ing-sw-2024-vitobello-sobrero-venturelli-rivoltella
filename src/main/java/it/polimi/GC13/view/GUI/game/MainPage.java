@@ -32,10 +32,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+/**
+ * Represents the main graphical user interface (GUI) page for the game "Codex Naturalis".
+ * <p></p>
+ * Extends {@link JFrame} and implements {@link ActionListener}, {@link CardManager}, {@link WaitingLobby} interfaces.
+ * <p>
+ *     <br>
+ *     This page handles the <b>setup phase</b> <i>(<u>token selection</u>, <u>starter card selection</u>, <u>objective card selection</u>)</i>
+ *     and the <b>mid-game phase</b>, and various game interactions.
+ * </p>
+ */
 public class MainPage extends JFrame implements ActionListener, CardManager, WaitingLobby {
 
     //record(s)
+    /**
+     *A record that encapsulates a JLabel and a corresponding JCheckBox.
+     *
+     * @param label The JLabel containing the ImageIcon of a card.
+     * @param checkBox The JCheckBox associated with the JLabel.
+     */
     public record CardData(JLabel label, JCheckBox checkBox) {}
 
     //Manager of interaction between server and game
@@ -48,14 +63,14 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
     //panels and tables in the game
     private final JPanel panelContainer;
-    private final JPanel choosePanel;
     private JPanel southPanel;
-    private JPanel tokenPanel;
+    private final JPanel choosePanel;
+    private JPanel imagePanel;
     private JPanel namePanel;
     private JPanel checkBoxPanel;
-    private JPanel commonPanel;
+    private JPanel commonObjCardPanel;
     private final JTable resourceTable = new JTable(); //table in the Game page
-    private JTable positionTable; //table in the ScoreBoard page
+    private JTable scoreTable; //table in the ScoreBoard page
 
     //Game board attributes
     private JLayeredPane board;
@@ -123,7 +138,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     private final Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
 
 
-
+    /**
+     * Constructs a new {@code MainPage} with the specified list of token colors.
+     *
+     * @param tokenColorList The list of token colors available for selection
+     */
     public MainPage(List<TokenColor> tokenColorList) {
         setTitle("Codex Naturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -180,12 +199,16 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setVisible(true);
     }
 
-
+    /**
+     * Displays the token selection options based on the provided list of token colors.
+     *
+     * @param tokenColorList The list of token colors available for selection
+     */
     public void showTokenChoose(List<TokenColor> tokenColorList){
         GridBagConstraints gbc2 = createGridBagConstraints(0, 0);
-        tokenPanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
-        tokenPanel.setOpaque(false);
-        choosePanel.add(tokenPanel, gbc2);
+        imagePanel = new JPanel(new FlowLayout()); //pannello dove inserire le icone dei token
+        imagePanel.setOpaque(false);
+        choosePanel.add(imagePanel, gbc2);
 
         checkBoxPanel = new JPanel(new FlowLayout());
         checkBoxPanel.setOpaque(false);
@@ -198,13 +221,20 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setTokenColorList(tokenColorList);
     }
 
-
+    /**
+     * Sets the list of token colors available for selection, and print the token Images on the GUI.
+     * <p>
+     *     If the token is already taken, a grey token is printed.
+     * </p>
+     *
+     * @param tokenColorList The list of token colors available for selection
+     */
     public void setTokenColorList(List<TokenColor> tokenColorList) {
         this.tokenColorList = tokenColorList;
 
         Arrays.stream(TokenColor.values()).forEach( tokenColor -> {
             JLabel tokenLabelImage = new JLabel((this.tokenColorList.contains(tokenColor)) ? createPlayableTokenImageIcon(tokenColor, 300) : createGreyTokenImageIcon(300));
-            tokenPanel.add(tokenLabelImage);
+            imagePanel.add(tokenLabelImage);
 
             JLabel tokenLabelText = createTextLabelFont(tokenColor.toString().toLowerCase(), 32);
             setBorderInsets(tokenLabelText, 30, 108, 80, 125);
@@ -242,28 +272,62 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         });
     }
 
-
+    /**
+     * Gets the filename of the token image based on the token color.
+     *
+     * @param tokenColor The token color
+     * @return The filename of the token image
+     */
     private String getTokenFileName(TokenColor tokenColor) {
         return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
     }
 
+    /**
+     * Creates a resized ImageIcon from a token image path.
+     *
+     * @param tokenImagePath The path to the token image
+     * @param dim The desired dimension (width or height) of the resized image
+     * @return The resized ImageIcon
+     */
     private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * Creates a playable token image icon based on the provided TokenColor and dimension.
+     *
+     * @param tokenColor The TokenColor enum representing the color of the token
+     * @param dim The desired dimension (width or height) of the token image icon
+     * @return The ImageIcon representing the playable token
+     */
     private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
         return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
     }
 
+    /**
+     * Creates a grey token image icon with the specified dimension.
+     *
+     * @param dim The desired dimension (width or height) of the grey token image icon
+     * @return The ImageIcon representing the grey token
+     */
     private ImageIcon createGreyTokenImageIcon(int dim) {
         return createResizedTokenImageIcon(TOKEN_DIR + GREY_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
     }
 
+    /**
+     * Creates a black token image icon with the specified dimension.
+     *
+     * @param dim The desired dimension (width or height) of the black token image icon
+     * @return The ImageIcon representing the black token
+     */
     private ImageIcon createBlackTokenImageIcon(int dim) {
         return createResizedTokenImageIcon(TOKEN_DIR + BLACK_TOKEN_FILE_NAME + TOKEN_FILE_SUFFIX, dim);
     }
 
-
+    /**
+     * Handle the starter card selection during the game setup phase.
+     * This method includes displaying options for selecting starter cards and handling user interactions.
+     */
     public void startCardSetup(){
         JLabel setupLabel = createTextLabelFont("setup phase [2/3] ", 28);
         setBorderInsets(setupLabel, 0, 0, 60, 0);
@@ -305,14 +369,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 }
             } else {
                 JOptionPane.showMessageDialog(this,"Invalid card", "ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
-                //TODO: da capire cosa fare per gestire l'errore
             }
         });
     }
 
-
+    /**
+     * Refreshes the display by clearing the Components and the structures (tokenPanel, checkBoxPanel, handLabelCheckBoxMap and ButtonGroup).
+     */
     public void refresh(){
-        tokenPanel.removeAll();
+        imagePanel.removeAll();
         checkBoxPanel.removeAll();
         handLabelCheckBoxMap.clear();
 
@@ -325,7 +390,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-
+    /**
+     * Identifies the path for a specific card number based on predefined directories.
+     *
+     * @param numberCard The number of the card to identify the path for
+     * @return The Path object representing the directory of the card image files, or null if not found
+     */
     public Path identifyPathCard(int numberCard){
         Path startDir;
         try {
@@ -353,6 +423,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return startDir;
     }
 
+    /**
+     * Method used to display the starter cards and private objective card selection options on the GUI.
+     *
+     * @param numberCards A list of integers representing the card numbers
+     */
     @Override
     public void showStarterCardAndPrivateObjectiveCard(List<Integer> numberCards) {
         AtomicBoolean b = new AtomicBoolean(true);
@@ -364,7 +439,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         Image img = new ImageIcon(String.valueOf(path)).getImage();
                         JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/3 , img.getHeight(null)/3, Image.SCALE_SMOOTH)));
                         setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
-                        tokenPanel.add(startCardLabelImage);
+                        imagePanel.add(startCardLabelImage);
 
                         JLabel startCardLabelText;
                         JCheckBox jCheckBox;
@@ -429,7 +504,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                     Image img = new ImageIcon(ERROR_CARD).getImage();
                     JLabel startCardLabelImage = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth(null)/15, img.getHeight(null)/15, Image.SCALE_SMOOTH)));
                     setCompoundBorderInsets(startCardLabelImage, 0, 100, 0, 100, "ALL", Color.BLACK, 1);
-                    tokenPanel.add(startCardLabelImage);
+                    imagePanel.add(startCardLabelImage);
 
                     JLabel startCardLabelText = createTextLabelFont("Error", 32);
                     JCheckBox jCheckBox = new JCheckBox("error");
@@ -470,7 +545,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         });
     }
 
-
+    /**
+     * Displays the common objective cards on a specified panel with a given divider for scaling.
+     *
+     * @param commonObjectiveCards A list of integers representing the card numbers
+     * @param panel The JPanel where the common objective cards will be displayed
+     * @param divider The divider used for scaling the card images
+     */
     public void showCommonObjectiveCard(List<Integer> commonObjectiveCards, JPanel panel, int divider) {
         commonObjectiveCards.forEach( numberCard -> {
             Path startDir = identifyPathCard(numberCard);
@@ -540,7 +621,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         timer.start();
     }
 
-
+    /**
+     * Sets up the GUI for selecting objective cards during the game setup phase.
+     * This method includes displaying common objective cards and allowing the player to choose their private objective card.
+     *
+     * @param privateObjectiveCards A list of integers representing the private objective card options
+     */
     public void setupObjectiveCard(List<Integer> privateObjectiveCards){
         JLabel setupLabel = createTextLabelFont("setup phase [3/3] ", 28);
         setBorderInsets(setupLabel, 20, 0, 20, 0);
@@ -554,11 +640,11 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         setBorderInsets(startCardLabel, 0, 0, 40, 0);
         panelContainer.add(startCardLabel, createGridBagConstraints(0, 2));
 
-        commonPanel = new JPanel(new FlowLayout());
-        commonPanel.setOpaque(false);
-        panelContainer.add(commonPanel, createGridBagConstraints(0, 3));
+        commonObjCardPanel = new JPanel(new FlowLayout());
+        commonObjCardPanel.setOpaque(false);
+        panelContainer.add(commonObjCardPanel, createGridBagConstraints(0, 3));
 
-        showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonPanel, 3);
+        showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonObjCardPanel, 3);
 
         JLabel titleLabel2 = createTextLabelFont("Choose your private objective card: ", 32);
         setBorderInsets(titleLabel2, 0, 0, 30, 0);
@@ -598,7 +684,40 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
 
 
-
+    /**
+     * Creates and sets up the game panel for the game.
+     * <p>
+     *     This method initializes two main panels using CardLayout:
+     *     <ul>
+     *         <li><i>Panel 1</i>: Contains the main game components such as the game board, player information,
+     *         common and private objective cards, resource table, and control buttons.</li>
+     *         <li><i>Panel 2</i>: Contains the scoreboard, score table and the chat functionality.</li>
+     *     </ul>
+     * </p>
+     * <p>
+     *     <b>Panel 1 Details:</b>
+     *     <ul>
+     *         <li><i>North Panel</i>: Contains buttons, player turn information, token display, and score.</li>
+     *         <li><i>Board</i>: JLayeredPane displaying the game board with a scrollable view.</li>
+     *         <li><i>West Panel</i>: Displays player avatar and additional player-specific information.</li>
+     *         <li><i>East Panel</i>: Displays common and private objective cards, player resource table,
+     *         and control buttons for decks.</li>
+     *         <li> <i>South Panel</i>: Contains confirmation buttons and additional controls related to card flipping.</li>
+     *     </ul>
+     * </p>
+     * <p>
+     *     <b>Panel 2 Details:</b>
+     *     <ul>
+     *         <li><i>North Panel</i>: Contains buttons to navigate back to the game, player turn information,
+     *         token display, and score.</li>
+     *         <li><i>Token Manager</i>: Manages tokens in the game, displaying them according to player positions.</li>
+     *         <li>Right (East) Panel: Displays a table of player positions and their respective tokens.</li>
+     *         <li><i>Chat Panel</i>: Allows selection of chat recipients, displays chat history, and provides
+     *         input field and send button for sending messages.</li>
+     *     </ul>
+     *</p>
+     * Both panels include necessary event listeners and methods for handling user interactions.
+     */
     public void createGamePanel() {
         panelContainer.setLayout(new CardLayout());
         JPanel panel1 = new JPanel(new BorderLayout());
@@ -660,56 +779,52 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panel1.setVisible(true);
 
 
-        JPanel lateralPanelSX = new JPanel(new GridBagLayout());
-        setBoxComponentSize(lateralPanelSX, 150, lateralPanelSX.getHeight());
+        JPanel westPanel = new JPanel(new GridBagLayout());
+        setBoxComponentSize(westPanel, 150, westPanel.getHeight());
 
-        setPlayerAvatar(lateralPanelSX);
-        panel1.add(lateralPanelSX, BorderLayout.WEST);
+        setPlayerAvatar(westPanel);
+        panel1.add(westPanel, BorderLayout.WEST);
 
 
-        JPanel lateralPanelDX = new JPanel(new GridBagLayout());
-        lateralPanelDX.setLayout(new BoxLayout(lateralPanelDX, BoxLayout.Y_AXIS));
-        setBoxComponentSize(lateralPanelDX, 200,lateralPanelDX.getHeight());
+        JPanel eastPanel = new JPanel(new GridBagLayout());
+        eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
+        setBoxComponentSize(eastPanel, 200,eastPanel.getHeight());
 
-        commonPanel.removeAll();
-        commonPanel.setLayout(new BoxLayout(commonPanel, BoxLayout.Y_AXIS));
+        commonObjCardPanel.removeAll();
+        commonObjCardPanel.setLayout(new BoxLayout(commonObjCardPanel, BoxLayout.Y_AXIS));
         JLabel labelCommonObjectiveCards = createTextLabelFont("Common Objective Cards", 16);
         setBorderInsets(labelCommonObjectiveCards, 0,0,10,0);
-        commonPanel.add(labelCommonObjectiveCards);
+        commonObjCardPanel.add(labelCommonObjectiveCards);
 
-        showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonPanel, 10);
+        showCommonObjectiveCard(frameManager.getSerialCommonObjectiveCard(), commonObjCardPanel, 10);
 
         JLabel labelPrivateObjectiveCards = createTextLabelFont("Private Objective Cards", 16);
         setBorderInsets(labelPrivateObjectiveCards, 0,0,10,0);
-        commonPanel.add(labelPrivateObjectiveCards);
+        commonObjCardPanel.add(labelPrivateObjectiveCards);
 
         List<Integer> privateObjectiveCard = List.of(frameManager.getSerialPrivateObjectiveCard());
 
-        showCommonObjectiveCard(privateObjectiveCard, commonPanel, 10);
+        showCommonObjectiveCard(privateObjectiveCard, commonObjCardPanel, 10);
 
-        lateralPanelDX.add(commonPanel, createGridBagConstraints(0,0));
+        eastPanel.add(commonObjCardPanel, createGridBagConstraints(0,0));
 
         String name = String.format("<span style = 'color: rgb(%d, %d, %d);'>" + this.nickname + "</span>", 55, 133, 9);
         resourcePlayerLabel = createTextLabelFont("<html><div style='white-space: nowrap;'>Table player: " + name + "</div></html>", 16);
-        lateralPanelDX.add(resourcePlayerLabel, createGridBagConstraints(0,1));
+        eastPanel.add(resourcePlayerLabel, createGridBagConstraints(0,1));
 
         JPanel tableResourcePanel = new JPanel();
         addScrollPane(resourceTable, tableResourcePanel, 200, ((resourceTable.getRowCount() + 1) * resourceTable.getRowHeight()) + 5);
-        lateralPanelDX.add(tableResourcePanel, createGridBagConstraints(0,2));
+        eastPanel.add(tableResourcePanel, createGridBagConstraints(0,2));
 
         decksButton = createButton("Show Decks", 27);
         decksButton.addActionListener(this);
-        lateralPanelDX.add(decksButton, createGridBagConstraints(0,3));
+        eastPanel.add(decksButton, createGridBagConstraints(0,3));
 
-        panel1.add(lateralPanelDX, BorderLayout.EAST);
+        panel1.add(eastPanel, BorderLayout.EAST);
 
 
         southPanel = new JPanel(new GridBagLayout());
         setBorderInsets(southPanel, 10, 0, 10, 0);
-//        JScrollPane southScrollPane = new JScrollPane(southPanel);
-//        southScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        southScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-//
 
         namePanel = new JPanel();
         namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
@@ -793,17 +908,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
 
 
-        JPanel lateralPanelDX2 = new JPanel();
-        lateralPanelDX2.setLayout(new BoxLayout(lateralPanelDX2, BoxLayout.Y_AXIS));
-        setBoxComponentSize(lateralPanelDX2, 380, lateralPanelDX2.getHeight());
+        JPanel eastPanel2 = new JPanel();
+        eastPanel2.setLayout(new BoxLayout(eastPanel2, BoxLayout.Y_AXIS));
+        setBoxComponentSize(eastPanel2, 380, eastPanel2.getHeight());
 
         JPanel tablePanel = new JPanel();
-        positionTable = new JTable();
-        createTable(positionTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true, 35);
+        scoreTable = new JTable();
+        createTable(scoreTable, new String[]{"Token", "player"}, positionPlayerMap, listTokenInGame, frameManager.getTokenInGame(), true, 35);
 
-        addScrollPane(positionTable, tablePanel, 300, (positionTable.getRowCount() + 1) * positionTable.getRowHeight() + 5);
-        lateralPanelDX2.add(tablePanel);
-        panel2.add(lateralPanelDX2, BorderLayout.EAST);
+        addScrollPane(scoreTable, tablePanel, 300, (scoreTable.getRowCount() + 1) * scoreTable.getRowHeight() + 5);
+        eastPanel2.add(tablePanel);
+        panel2.add(eastPanel2, BorderLayout.EAST);
 
 
         JPanel chatPanel = new JPanel(new GridBagLayout());
@@ -885,13 +1000,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         sendButton.addActionListener(e -> sendMessage());
 
         chatPanel.add(sendButton, createGridBagConstraints(1,2));
-        lateralPanelDX2.add(chatPanel);
+        eastPanel2.add(chatPanel);
 
 
         setVisible(true);
     }
 
-
+    /**
+     * Updates the chat area with messages exchanged with the selected player, and print the unread messages from this one.
+     *
+     * @param selectedPlayer The player whose chat messages are to be displayed.
+     */
     public void updateChatArea(String selectedPlayer) {
         if (selectedPlayer != null) {
             while(newMessageMap.get(selectedPlayer).stream().anyMatch(b -> b)) {
@@ -923,7 +1042,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-
+    /**
+     * Sends a message from the current player to the selected player in the JComboBox.
+     */
     private void sendMessage() {
         String message = messageField.getText().trim();
         if (!message.isEmpty()) {
@@ -936,6 +1057,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Changes the color of the selected player's label in the JComboBox based on
+     * whether there are unread messages for that player.
+     *
+     * @param selectedPlayer The player whose combo box label color is to be changed.
+     */
     public void changeComboBoxColor(String selectedPlayer){
         for (int i = 0; i < combobox.getItemCount(); i++) {
             if (combobox.getItemAt(i).getText().equals(selectedPlayer)) {
@@ -948,6 +1075,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Updates the notification label based on the number of unread messages.
+     */
     public void changeNotifyLabelImage(){
         if (frameManager.getNewMessage() > 0) {
             if(frameManager.getNewMessage() == 1) {
@@ -964,7 +1094,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-
+    /**
+     * Refreshes the game board display with updated card positions and states.
+     */
     public void refreshBoard(){
         board.removeAll();
         boardButtonMap.clear();
@@ -997,6 +1129,20 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         board.repaint();
     }
 
+    /**
+     * Displays the hand or decks cards on the GUI.
+     * Sorts and displays cards based on the provided map of card serial numbers and their visibility states.
+     *
+     * @param cardsMap A map of card serial numbers and their visibility states (flipped/unflipped).
+     * @param imagePanel The panel where card images are displayed.
+     * @param checkBoxPanel The panel where selection checkboxes for cards are displayed.
+     * @param container The main container panel where all GUI components are added.
+     * @param buttonGroup The button group for checkboxes to ensure single selection behavior.
+     * @param labelCheckBoxMap A map linking card image labels to their corresponding selection checkboxes.
+     * @param serialNumberCheckBoxMap A map linking card serial numbers to their corresponding CardData objects.
+     * @param x The x-coordinate position for GUI layout.
+     * @param y The y-coordinate position for GUI layout.
+     */
     public void printHandOrDecksOnGUI(Map<Integer, Boolean> cardsMap, JPanel imagePanel, JPanel checkBoxPanel, JPanel container, ButtonGroup buttonGroup, Map<JLabel, JCheckBox> labelCheckBoxMap, Map<Integer, CardData> serialNumberCheckBoxMap, int x, int y){
         Map<Integer, Boolean> sortedCardsMap = cardsMap.entrySet()
                 .stream()
@@ -1087,6 +1233,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Sets all buttons associated with the game board to be visible.
+     */
     public void setButtonVisible(){
         if(boardButtonFlag) {
             for(JButton button: boardButtonMap.values()){
@@ -1095,12 +1244,22 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Sets all buttons associated with the game board to be not visible.
+     */
     public void setButtonNOTVisible(){
         for(JButton button: boardButtonMap.values()){
             button.setVisible(false);
         }
     }
 
+    /**
+     * Adds a button to the specified layered pane at the given coordinates.
+     *
+     * @param layeredPane The layered pane to which the button is added.
+     * @param x The x-coordinate position of the button.
+     * @param y The y-coordinate position of the button.
+     */
     private void addButtonToLayeredPane(JLayeredPane layeredPane, int x, int y) {
         JButton button = new JButton();
         button.addActionListener(this);
@@ -1119,6 +1278,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         layeredPane.add(button,JLayeredPane.PALETTE_LAYER);
     }
 
+    /**
+     * Adds an image to the specified layered pane at the given coordinates and layer.
+     *
+     * @param layeredPane The layered pane to which the image label is added.
+     * @param imagePath   The path to the image file.
+     * @param x           The x-coordinate position of the image label.
+     * @param y           The y-coordinate position of the image label.
+     * @param layer       The layer at which the image is displayed within the layered pane.
+     */
     public static void addImageToLayeredPane(JLayeredPane layeredPane, String imagePath, int x, int y, int layer) {
         ImageIcon originalIcon = new ImageIcon(imagePath);
         Image scaledImage = originalIcon.getImage().getScaledInstance(originalIcon.getIconWidth() / 5, originalIcon.getIconHeight() / 5, Image.SCALE_SMOOTH); // Scala l'immagine
@@ -1129,6 +1297,13 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         layeredPane.add(imageLabel, Integer.valueOf(layer));
     }
 
+    /**
+     * Retrieves the directory path of a card image based on its serial number and flipped status.
+     *
+     * @param serialNumber The serial number of the card.
+     * @param isFlipped Whether the card is flipped (back side) or not (front side).
+     * @return The directory path of the card image.
+     */
     public String getDirectory(int serialNumber,boolean isFlipped){
         if (serialNumber>0) {
             if(serialNumber<=40){
@@ -1153,6 +1328,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         } else return null;
     }
 
+    /**
+     * Remaps and retrieves the directory path of a resource's logo image based on the provided resource type.
+     *
+     * @param resource The resource type for which the logo directory path is retrieved.
+     * @return The directory path of the resource's logo image.
+     */
     public String remappingResources(Resource resource){
         switch (resource){
             case FUNGI -> {
@@ -1182,6 +1363,19 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Creates and configures a JTable with specified columns, data, and rendering options.
+     *
+     * @param <K>             The type of keys in the EnumMap.
+     * @param <V>             The type of values in the EnumMap.
+     * @param table           The JTable to be configured.
+     * @param columnsNames    Array of column names for the table.
+     * @param mapInInput      The EnumMap containing the data to be displayed in the table.
+     * @param logosPath       List of paths to logos used in the table.
+     * @param conversionMap   Mapping of values to token colors for rendering icons in the table.
+     * @param b               Flag indicating if additional columns should be added.
+     * @param dim             Dimension of the table rows and header.
+     */
     public <K extends Enum<K>, V> void createTable(JTable table, String[] columnsNames, EnumMap<K, V> mapInInput, ArrayList<String> logosPath, Map<V, TokenColor> conversionMap, boolean b, int dim) {
         ImageIconTableModel<K, V> model = new ImageIconTableModel<>(columnsNames, mapInInput, logosPath, conversionMap, dim);
 
@@ -1238,41 +1432,63 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         table.setRowHeight(dim+3);
     }
 
+    /**
+     * Updates the JTable with new data, reflecting changes in collected resources.
+     *
+     * @param table             The JTable to be updated.
+     * @param collectedResources The EnumMap containing the collected resources and their counts.
+     * @param logosPath         List of paths to logos used in the table.
+     */
     public void updateResourceTable(JTable table, EnumMap<Resource, Integer> collectedResources, ArrayList<String> logosPath){
         for (Resource resource : collectedResources.keySet()) {
             table.setValueAt(collectedResources.get(resource), logosPath.indexOf(remappingResources(resource)), 1);
         }
     }
 
+    /**
+     * Updates the crown image in a table to indicate the player with the highest score.
+     * Sets the crown icon next to the player with the maximum score in the table.
+     */
     public void updateCrownImageInTable(){
         //posso anche mettere la corona a tutti i giocatori a parimerito, se essi sono meno del numero totale dei giocatori
 
         String maxScorePlayer = frameManager.getPlayersScore().entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).map(Map.Entry::getKey).stream().findFirst().orElseThrow();
 
-        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
-            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
+        for (int row = 0; row < scoreTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) scoreTable.getModel().getValueAt(row, 2);
             if (maxScorePlayer.equals(cellValue)) {
-                positionTable.setValueAt(true, row , 0);
+                scoreTable.setValueAt(true, row , 0);
             } else {
-                positionTable.setValueAt(false, row , 0);
+                scoreTable.setValueAt(false, row , 0);
             }
         }
     }
 
-
+    /**
+     * Updates the score column in a table based on the current game state.
+     * Retrieves and displays the scores of players in the score column of the table.
+     */
     public void updateScoreColumn(){
-        for (int row = 0; row < positionTable.getModel().getRowCount(); row++) {
-            String cellValue = (String) positionTable.getModel().getValueAt(row, 2);
+        for (int row = 0; row < scoreTable.getModel().getRowCount(); row++) {
+            String cellValue = (String) scoreTable.getModel().getValueAt(row, 2);
 
             for(String playerName : frameManager.getPlayersScore().keySet()) {
                 if (playerName.equals(cellValue)) {
-                    positionTable.setValueAt(frameManager.getPlayersScore().get(playerName), row, 3);
+                    scoreTable.setValueAt(frameManager.getPlayersScore().get(playerName), row, 3);
                 }
             }
         }
     }
 
-
+    /**
+     * Adds a scroll pane to a component within a panel, configuring its dimensions and behavior.
+     * Ensures the scroll pane displays scrollbars as needed and centers the view within the component.
+     *
+     * @param component The component to add to the scroll pane.
+     * @param panel The panel where the scroll pane is added.
+     * @param dimW The width dimension of the scroll pane.
+     * @param dimH The height dimension of the scroll pane.
+     */
     private void addScrollPane(JComponent component, JPanel panel, int dimW, int dimH){
         JScrollPane scrollPane = new JScrollPane(component);
         scrollPane.setPreferredSize(new Dimension(dimW, dimH));
@@ -1297,12 +1513,26 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         });
     }
 
+    /**
+     * Creates a styled button with specific text and dimensions for use in the application.
+     *
+     * @param text The text label to display on the button.
+     * @param dim The font size dimension for the button text.
+     * @return A JButton instance with the specified text and styling.
+     */
     private JButton createButton(String text, int dim){
         JButton button = new JButton(text);
         button.setFont(new Font("Old English Text MT", Font.BOLD, dim)); //PlainGermanica
         return button;
     }
 
+    /**
+     * Creates and configures GridBag constraints for layout components within a GridBagLayout.
+     *
+     * @param x The x-coordinate grid position for the component.
+     * @param y The y-coordinate grid position for the component.
+     * @return Configured GridBagConstraints object for component layout.
+     */
     private GridBagConstraints createGridBagConstraints(int x, int y){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -1311,23 +1541,59 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return gbc;
     }
 
+    /**
+     * Sets the size dimensions (width and height) of a Swing component.
+     *
+     * @param component The Swing component to set the size for.
+     * @param w The width dimension to set for the component.
+     * @param h The height dimension to set for the component.
+     */
     private void setBoxComponentSize(JComponent component, int w, int h){
         component.setPreferredSize(new Dimension(w, h));
         component.setMaximumSize(new Dimension(w, h));
         component.setMinimumSize(new Dimension(w, h));
     }
 
+    /**
+     * Creates a text label with a specific font and text content for use in the application.
+     *
+     * @param content The text content to display in the label.
+     * @param dim The font size dimension for the label text.
+     * @return A JLabel instance with the specified text and font styling.
+     */
     private JLabel createTextLabelFont(String content, int dim) {
         JLabel jLabel = new JLabel(content);
         jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
         return jLabel;
     }
 
+    /**
+     * Sets the border insets (top, left, bottom, right) for a Swing component.
+     *
+     * @param jComponent The Swing component to set the border insets for.
+     * @param insetsTop The top inset dimension.
+     * @param insetsLeft The left inset dimension.
+     * @param insetsBottom The bottom inset dimension.
+     * @param insetsRight The right inset dimension.
+     */
     private void setBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight) {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
         jComponent.setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
     }
 
+    /**
+     * Sets compound border insets (top, left, bottom, right) for a Swing component,
+     * with customizable border thickness and color.
+     *
+     * @param jComponent The Swing component to set the compound border insets for.
+     * @param insetsTop The top inset dimension.
+     * @param insetsLeft The left inset dimension.
+     * @param insetsBottom The bottom inset dimension.
+     * @param insetsRight The right inset dimension.
+     * @param inset The specific border side to apply the compound border.
+     * @param color The color of the compound border.
+     * @param thickness The thickness of the compound border.
+     */
     private void setCompoundBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight, String inset, Color color, int thickness) {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
         Border b = BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right);
@@ -1339,6 +1605,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
+    /**
+     * Handles action events triggered by buttons in the GUI.
+     * Performs specific actions based on the action command of the event.
+     *
+     * @param e The action event generated by a button click.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
@@ -1365,7 +1637,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             Map<Integer, Boolean> printMap = new HashMap<>();
             for (Integer integer : frameManager.getHand()) printMap.put(integer, true);
 
-            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(printMap, imagePanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         }  else if (e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
             setButtonNOTVisible();
@@ -1388,7 +1660,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             Map<Integer, Boolean> printMap = new HashMap<>();
             for (Integer integer : frameManager.getHand()) printMap.put(integer, false);
 
-            printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+            printHandOrDecksOnGUI(printMap, imagePanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
             if(checkingHandWhileDrawing) {
                 handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
@@ -1407,8 +1679,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             refreshDecksPanels();
             drawableSerialNumberCheckBoxMap.clear();
 
-            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
-            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+            printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), imagePanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+            printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), imagePanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
 
             if (checkingHandWhileDrawing) {
@@ -1511,6 +1783,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
+    /**
+     * Executes actions to perform after a card is placed in the game.
+     * This method updates UI components and clears data for drawing cards.
+     */
     public void afterCardPlaced(){
         setButtonNOTVisible();
         confirmButton.setEnabled(false);
@@ -1524,8 +1800,8 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         drawableSerialNumberCheckBoxMap.clear();
         handLabelCheckBoxMap.clear();
 
-        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
-        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), tokenPanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
+        printHandOrDecksOnGUI(frameManager.getResourceCardsAvailable(), imagePanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 0, 0);
+        printHandOrDecksOnGUI(frameManager.getGoldCardsAvailable(), imagePanel, checkBoxPanel, choosePanel, buttonGroupDecks, decksLabelCheckBoxMap, drawableSerialNumberCheckBoxMap, 1, 0);
 
 
         decksLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(true));
@@ -1541,6 +1817,10 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     }
 
 
+    /**
+     * Executes actions to handle exceptions detected during the position of the card on the board.
+     * This method resets UI components and prepares for further actions.
+     */
     public void exceptionDetected(){
         setButtonNOTVisible();
 
@@ -1560,7 +1840,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         Map<Integer, Boolean> printMap = new HashMap<>();
         for (Integer integer : frameManager.getHand()) printMap.put(integer, false);
 
-        printHandOrDecksOnGUI(printMap, tokenPanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
+        printHandOrDecksOnGUI(printMap, imagePanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         if(checkingHandWhileDrawing) {
             handLabelCheckBoxMap.values().forEach(checkBox -> checkBox.setEnabled(false));
@@ -1570,7 +1850,9 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
-
+    /**
+     * Refreshes the decks panels in the GUI layout, clearing existing checkboxes.
+     */
     private void refreshDecksPanels(){
         decksLabelCheckBoxMap.clear();
 
@@ -1586,7 +1868,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         southPanel.repaint();
     }
 
-    public void setPlayerAvatar(JPanel lateralPanelSX){
+    /**
+     * Sets player avatars in the west panel based on player positions.
+     *
+     * @param westPanel The panel where player avatars are displayed.
+     */
+    public void setPlayerAvatar(JPanel westPanel){
         Random random = new Random();
         int y2 = 0;
 
@@ -1673,12 +1960,17 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 refreshBoard();
             });
 
-            lateralPanelSX.add(playerAvatarPanel, createGridBagConstraints(0,y2));
+            westPanel.add(playerAvatarPanel, createGridBagConstraints(0,y2));
             y2++;
         }
     }
 
-
+    /**
+     * Displays the hand or decks of cards in the GUI, showing icons for each card.
+     *
+     * @param hand The list of card IDs in the hand or decks.
+     * @return A mapping of card serial numbers to lists of paths to their corresponding icons.
+     */
     public Map<Integer, ArrayList<String>> showHandOrDecks(List<Integer> hand) {
         Map<Integer, ArrayList<String>> handIconsPaths = new LinkedHashMap<>();
 
@@ -1703,7 +1995,12 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         return handIconsPaths;
     }
 
-
+    /**
+     * Extracts a numeric value from a file path for sorting purposes.
+     *
+     * @param path The path from which to extract the number.
+     * @return The extracted numeric value from the path.
+     */
     private int extractNumberFromPath(Path path) {
         String fileName = path.getFileName().toString();
         String numberStr = fileName.replaceAll("\\D+", ""); // Rimuovi tutti i caratteri non numerici
@@ -1714,131 +2011,291 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
     }
 
+    /**
+     * Sets the nickname of the player on the GUI.
+     *
+     * @param nickname The nickname of the player.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
         boardToDisplay=nickname;
     }
 
+    /**
+     * Sets the token color of the player on the GUI.
+     *
+     * @param token The token color of the player.
+     */
     public void setToken(TokenColor token) {
         this.token = token;
     }
 
+    /**
+     * Retrieves the nickname of the player from the GUI.
+     *
+     * @return The nickname of the player.
+     */
     public String getNickname() {
         return nickname;
     }
 
+
+    /**
+     * Retrieves the token color of the player from the GUI.
+     *
+     * @return The token color of the player.
+     */
     public TokenColor getToken() {
         return token;
     }
 
+    /**
+     * Retrieves the main panel container of the GUI.
+     *
+     * @return The main panel container of the GUI.
+     */
     public JPanel getPanelContainer() {
         return panelContainer;
     }
 
+    /**
+     * Retrieves the panel for choosing options on the GUI.
+     *
+     * @return The panel for choosing options on the GUI.
+     */
     public JPanel getChoosePanel() {
         return choosePanel;
     }
 
+    /**
+     * Retrieves the panel for displaying names on the GUI.
+     *
+     * @return The panel for displaying names on the GUI.
+     */
     public JPanel getNamePanel() {
         return namePanel;
     }
 
-    public JPanel getTokenPanel() {
-        return tokenPanel;
+    /**
+     * Retrieves the panel for displaying images on the GUI.
+     *
+     * @return The panel for displaying tokens on the GUI.
+     */
+    public JPanel getImagePanel() {
+        return imagePanel;
     }
 
+    /**
+     * Retrieves the panel for displaying checkboxes on the GUI.
+     *
+     * @return The panel for displaying checkboxes on the GUI.
+     */
     public JPanel getCheckBoxPanel() {
         return checkBoxPanel;
     }
 
+    /**
+     * Retrieves the button group used in the GUI.
+     *
+     * @return The button group used in the GUI.
+     */
     public ButtonGroup getButtonGroup() {
         return buttonGroup;
     }
 
+    /**
+     * Retrieves the mapping of label-checkbox pairs for hand labels on the GUI.
+     *
+     * @return The mapping of label-checkbox pairs for hand labels on the GUI.
+     */
     public Map<JLabel, JCheckBox> getHandLabelCheckBoxMap() {
         return handLabelCheckBoxMap;
     }
 
+    /**
+     * Sets the frame manager instance for managing game frames.
+     *
+     * @param frameManager The frame manager instance to set.
+     */
     public void setFrameManager(FrameManager frameManager) {
         this.frameManager = frameManager;
     }
 
+    /**
+     * Retrieves the label displaying the current turn on the GUI.
+     *
+     * @return The label displaying the current turn on the GUI.
+     */
     public JLabel getTurnLabel() {
         return turnLabel;
     }
 
+    /**
+     * Retrieves an alternative label displaying the current turn on the GUI.
+     *
+     * @return The alternative label displaying the current turn on the GUI.
+     */
     public JLabel getTurnLabel2() {
         return turnLabel2;
     }
 
+    /**
+     * Retrieves the label displaying the current score on the GUI.
+     *
+     * @return The label displaying the current score on the GUI.
+     */
     public JLabel getScoreLabel() {
         return scoreLabel;
     }
 
+    /**
+     * Retrieves an alternative label displaying the current score on the GUI.
+     *
+     * @return The alternative label displaying the current score on the GUI.
+     */
     public JLabel getScoreLabel2() {
         return scoreLabel2;
     }
 
+    /**
+     * Retrieves the resource table displayed on the GUI.
+     *
+     * @return The resource table displayed on the GUI.
+     */
     public JTable getResourceTable() {
         return resourceTable;
     }
 
+    /**
+     * Retrieves the timer used in the GUI.
+     *
+     * @return The timer used in the GUI.
+     */
     public Timer getTimer() {
         return timer;
     }
 
+    /**
+     * Retrieves the flip button used in the GUI.
+     *
+     * @return The flip button used in the GUI.
+     */
     public JButton getFlipButton() {
         return flipButton;
     }
 
+    /**
+     * Sets the flag indicating whether a flip action is to be sent from the GUI.
+     *
+     * @param flipToSend The flag indicating whether a flip action is to be sent.
+     */
     public void setFlipToSend(boolean flipToSend) {
         this.flipToSend = flipToSend;
     }
 
+    /**
+     * Retrieves the mapping of serial numbers to checkbox components for hand labels on the GUI.
+     *
+     * @return The mapping of serial numbers to checkbox components for hand labels on the GUI.
+     */
     public Map<Integer, CardData> getHandSerialNumberCheckBoxMap() {
         return handSerialNumberCheckBoxMap;
     }
 
+    /**
+     * Retrieves the token manager instance associated with the GUI.
+     *
+     * @return The token manager instance associated with the GUI.
+     */
     public TokenManager getTokenManager() {
         return tokenManager;
     }
 
+    /**
+     * Indicates if an exception flag is set on the GUI.
+     *
+     * @return {@code true} if the exception flag is set; otherwise, {@code false}.
+     */
     public boolean isUnableExceptionFlag() {
         return unableExceptionFlag;
     }
 
+    /**
+     * Sets the flag indicating whether the GUI is in a state where exceptions are disabled.
+     *
+     * @param unableExceptionFlag The flag indicating whether exceptions are disabled.
+     */
     public void setUnableExceptionFlag(boolean unableExceptionFlag) {
         this.unableExceptionFlag = unableExceptionFlag;
     }
 
+    /**
+     * Indicates if the GUI is currently checking the player's hand while drawing.
+     *
+     * @return {@code true} if the GUI is checking the hand while drawing; otherwise, {@code false}.
+     */
     public boolean isCheckingHandWhileDrawing() {
         return checkingHandWhileDrawing;
     }
 
+    /**
+     * Sets the flag indicating whether the GUI is checking the hand while drawing.
+     *
+     * @param checkingHandWhileDrawing The flag indicating whether the GUI is checking the hand while drawing.
+     */
     public void setCheckingHandWhileDrawing(boolean checkingHandWhileDrawing) {
         this.checkingHandWhileDrawing = checkingHandWhileDrawing;
     }
 
+
+    /**
+     * Retrieves the combobox used in the GUI for displaying labels.
+     *
+     * @return The combobox used in the GUI for displaying labels.
+     */
     public JComboBox<JLabel> getCombobox() {
         return combobox;
     }
 
+    /**
+     * Retrieves the label indicating waiting status on the GUI.
+     *
+     * @return The label indicating waiting status on the GUI.
+     */
     public JLabel getWaitingLabel() {
         return waitingLabel;
     }
 
+    /**
+     * Retrieves the mapping of player names to avatar images on the GUI.
+     *
+     * @return The mapping of player names to avatar images on the GUI.
+     */
     public Map<String, String> getPlayersAvatarMap() {
         return playersAvatarMap;
     }
 
+    /**
+     * Retrieves the mapping of new messages on the GUI.
+     *
+     * @return The mapping of new messages on the GUI.
+     */
     public Map<String, ArrayList<Boolean>> getNewMessageMap() {
         return newMessageMap;
     }
 
+    /**
+     * Retrieves the label indicating the number of attempts on the GUI.
+     *
+     * @return The label indicating the number of attempts on the GUI.
+     */
     public JLabel getNumAttemptLabel() {
         return numAttemptLabel;
     }
 
+    /**
+     * Replaces the current panel container with a waiting page during reconnection attempts.
+     */
     public void reconnectionWaitingPage() {
         getContentPane().remove(panelContainer);
 

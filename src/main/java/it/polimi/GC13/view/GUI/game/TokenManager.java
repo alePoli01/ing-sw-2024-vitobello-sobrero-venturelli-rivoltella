@@ -7,7 +7,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-
+/**
+ * The {@code TokenManager} class is responsible for managing the tokens on a scoreboard.
+ * It extends {@link JPanel} and manages the token grids and their positions.
+ */
 public class TokenManager extends JPanel {
     final static String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
     final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
@@ -21,7 +24,10 @@ public class TokenManager extends JPanel {
     private final Map<String, Map<Integer, GridData>> tokenToScoreBoard = new HashMap<>();
     private final Map<String, Integer> previousPosition = new HashMap<>();
 
-
+    /**
+     * Constructs a new TokenManager.
+     * Initializes the token grids and layout for the scoreboard.
+     */
     public TokenManager(){
         BackgroundImageSetter scoreboard = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png");
         scoreboard.setOpaque(false);
@@ -75,7 +81,12 @@ public class TokenManager extends JPanel {
         add(scoreboard);
     }
 
-
+    /**
+     * Initializes a token grid at the specified position.
+     *
+     * @param k The position of the token grid
+     * @return The initialized token grid JPanel
+     */
     public JPanel initializeTokenGrid(int k){
         JPanel tokenGrid = new JPanel(new GridLayout(2,2,1, 1));
         ArrayList<JLabel> labelInTokenGrid = new ArrayList<>();
@@ -113,6 +124,10 @@ public class TokenManager extends JPanel {
         return tokenGrid;
     }
 
+    /**
+     * Initializes every players' tokens previous position to 0
+     * and put the tokens on the scoreboard at the grid 0.
+     */
     public void initializeDataPlayer(){
         for(String player : tokenInGame.keySet()){
             tokenToScoreBoard.put(player, scoreGrid);
@@ -125,6 +140,12 @@ public class TokenManager extends JPanel {
         }
     }
 
+    /**
+     * Remaps the score to a corresponding position on the internal scoreGrid of the scoreboard.
+     *
+     * @param oldScore The old score to remap
+     * @return The remapped position in the {@link #scoreGrid}
+     */
     public int remappingScoreToPosition(int oldScore){
         return switch (oldScore) {
             case 21 -> 23;
@@ -140,6 +161,13 @@ public class TokenManager extends JPanel {
         };
     }
 
+    /**
+     * Handles special cases for score 20.
+     *
+     * @param player The player's name
+     * @param b A boolean flag indicating a specific condition
+     * @return The new position based on the special case handling
+     */
     public int caseScore20(String player, boolean b){
         Optional<JLabel> label;
         if(b) {
@@ -162,6 +190,12 @@ public class TokenManager extends JPanel {
     }
 
 
+    /**
+     * Updates the player's position on the scoreboard, based on the new score in input.
+     *
+     * @param player The player's name
+     * @param score  The new score of the player
+     */
     public void updatePlayerScore(String player, int score) {
         if (previousPosition.get(player) < score) {
             if (score < 20) {
@@ -209,18 +243,45 @@ public class TokenManager extends JPanel {
         }
     }
 
+    /**
+     * Generates the filename for a token image based on its color.
+     *
+     * @param tokenColor The color of the token
+     * @return The filename of the token image
+     */
     private String getTokenFileName(TokenColor tokenColor) {
         return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
     }
 
+    /**
+     * Creates a resized ImageIcon from the specified path with given dimensions.
+     *
+     * @param tokenImagePath The path to the token image
+     * @param dim The dimensions to resize the image to
+     * @return The resized ImageIcon
+     */
     private ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * Creates a playable token ImageIcon based on its color and given dimensions.
+     *
+     * @param tokenColor The color of the token
+     * @param dim The dimensions to resize the image to
+     * @return The resized playable token ImageIcon
+     */
     private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
         return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
     }
 
+    /**
+     * Creates a GridBagConstraints object with specified grid coordinates.
+     *
+     * @param x The x-coordinate of the grid
+     * @param y The y-coordinate of the grid
+     * @return The GridBagConstraints object
+     */
     private GridBagConstraints createGridBagConstraints(int x, int y){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -234,6 +295,12 @@ public class TokenManager extends JPanel {
         return gbc;
     }
 
+
+    /**
+     * Sets the tokens in the game with their corresponding colors.
+     *
+     * @param tokenInGame A map of player names to their token colors
+     */
     public void setTokenInGame(Map<String, TokenColor> tokenInGame) {
         this.tokenInGame = tokenInGame;
     }

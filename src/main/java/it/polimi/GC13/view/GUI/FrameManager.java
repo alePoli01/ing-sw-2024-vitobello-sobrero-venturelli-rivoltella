@@ -23,43 +23,69 @@ import java.util.*;
 import java.util.List;
 
 
+//TODO: da rivedere JavaDoc
+
+/**
+ * The {@code FrameManager} class extends {@link JFrame} and implements {@link View}.
+ * It manages the GUI components and user interactions for the game.
+ * This class handles the player's actions, updates the game state, and communicates with the server.
+ */
 public class FrameManager extends JFrame implements View {
     private ServerInterface virtualServer;
     private String nickname;
     private String gameName;
-    private final List<Integer> hand = new ArrayList<>();
+    private final List<Integer> hand;
     private int serialPrivateObjectiveCard;
-    private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
-    private boolean myTurn = false;
-    private int turnPlayed = 0;
-    private final Map<String, Integer> playersScore = new HashMap<>();
-    private final Map<String, Position> playerPositions = new HashMap<>();
-    private final Map<Integer, Boolean> goldCardsAvailable = new HashMap<>();
-    private final Map<Integer, Boolean> resourceCardsAvailable = new HashMap<>();
-    private final Map<String, BoardView> playersBoard = new LinkedHashMap<>();
-    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new LinkedHashMap<>();
-    private final List<String> gamesLog = new ArrayList<>();
-    private final Map<String, List<ChatMessage>> chat = new LinkedHashMap<>();
-    private int newMessage = 0;
-    private boolean connectionOpen = true;
-    private boolean firstTurn = true;
-    private boolean showPopup = true;
-    public List<Coordinates> availableCells = new LinkedList<>();
+    private List<Integer> serialCommonObjectiveCard;
+    private boolean myTurn;
+    private int turnPlayed;
+    private final Map<String, Integer> playersScore;
+    private final Map<String, Position> playerPositions;
+    private final Map<Integer, Boolean> goldCardsAvailable;
+    private final Map<Integer, Boolean> resourceCardsAvailable;
+    private final Map<String, BoardView> playersBoard;
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources;
+    private final List<String> gamesLog;
+    private final Map<String, List<ChatMessage>> chat;
+    private int newMessage;
+    private boolean connectionOpen;
+    private boolean firstTurn;
+    private boolean showPopup;
+    public List<Coordinates> availableCells;
 
     private LoginFrame loginFrame;
     private MainPage gamePage;
     private WinningFrame winningFrame;
 
-    private final Map<String, TokenColor> tokenInGame = new HashMap<>();
-    private int playerCounter = 0;
+    private final Map<String, TokenColor> tokenInGame;
+    private int playerCounter;
     private int totalPlayers;
 
-    //TODO:
-    // + DA TESTARE NELLE VARE COMBINAZIONI TUI-GUI E RMI-SOCKET (RICERCA ERRORI)
-    // + DA IMPOSTARE SFONDI
-
-
-    public FrameManager() {}
+    /**
+     * Constructs a new {@code FrameManager} instance.
+     * Initializes all the data structures and default values for the instance variables.
+     */
+    public FrameManager() {
+        this.hand = new ArrayList<>();
+        this.serialCommonObjectiveCard = new LinkedList<>();
+        this.myTurn = false;
+        this.turnPlayed = 0;
+        this.playersScore = new HashMap<>();
+        this.playerPositions = new HashMap<>();
+        this.goldCardsAvailable = new HashMap<>();
+        this.resourceCardsAvailable = new HashMap<>();
+        this.playersBoard = new LinkedHashMap<>();
+        this.playersCollectedResources = new LinkedHashMap<>();
+        this.gamesLog = new ArrayList<>();
+        this.chat = new LinkedHashMap<>();
+        this.newMessage = 0;
+        this.connectionOpen = true;
+        this.firstTurn = true;
+        this.showPopup = true;
+        this.availableCells = new LinkedList<>();
+        this.tokenInGame = new HashMap<>();
+        this.playerCounter = 0;
+    }
 
     @Override
     public String getGameName() {
@@ -71,6 +97,11 @@ public class FrameManager extends JFrame implements View {
         return this.nickname;
     }
 
+    /**
+     * Sets the nickname of the player.
+     *
+     * @param nickname the player's nickname
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -90,7 +121,10 @@ public class FrameManager extends JFrame implements View {
     }
 
     /**
-     used to update players hand in GUI
+     * Used to update the player's hand in the GUI.
+     *
+     * @param playerNickname the player's nickname
+     * @param availableCard the list of available cards
      */
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
@@ -109,13 +143,13 @@ public class FrameManager extends JFrame implements View {
                         Map<Integer, Boolean> printMap = new HashMap<>();
                         for (Integer integer : this.hand) printMap.put(integer, false);
 
-                        gamePage.printHandOrDecksOnGUI(printMap, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
+                        gamePage.printHandOrDecksOnGUI(printMap, gamePage.getImagePanel(), gamePage.getCheckBoxPanel(),gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(),0,0);
                     }
                     refreshFrame(gamePage);
                 }
             }
         }
-        //mostro anche le mie azioni (da testare)
+
         this.gamesLog.add(playerNickname + " has modified his hand;");
     }
 
@@ -137,11 +171,6 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    /**
-     * JOINING PHASE
-     * YES_OPTION --> create new game
-     * NO_OPTION --> join an existing one
-     */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         int choice;
@@ -179,11 +208,7 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    /**
-     SETUP PHASE
-     token choice when all players joined the game
-     waiting when readPlayers < neededPlayers
-     */
+
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         if (readyPlayers == neededPlayers) {
@@ -205,10 +230,6 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    /**
-     * SETUP PHASE methods to the player
-     * startCardSetupPhase to chose which side to place your start card
-     */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor){
         tokenInGame.put(playerNickname, tokenColor);
@@ -221,21 +242,28 @@ public class FrameManager extends JFrame implements View {
         this.gamesLog.add(playerNickname + " choose " + tokenColor + " token");
     }
 
+    /**
+     * Refreshes the given JFrame by revalidating and repainting its content pane.
+     *
+     * @param frame the JFrame to be refreshed
+     */
     private void refreshFrame(JFrame frame) {
         frame.getContentPane().revalidate();
         frame.getContentPane().repaint();
     }
 
+    /**
+     * Sets up the initial data for the player during the setup phase.
+     *
+     * @param playerNickname the nickname of the player
+     * @param tokenColor     the token color assigned to the player
+     */
     private void setDataSetupPhase(String playerNickname, TokenColor tokenColor) {
         gamePage.setNickname(playerNickname);
         gamePage.setToken(tokenColor);
     }
 
 
-    /**
-     NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
-     OTHERS -> ADDS TO LOG OPERATION
-     */
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
         playerCounter++;
@@ -260,17 +288,13 @@ public class FrameManager extends JFrame implements View {
         this.gamePage.refreshBoard();
     }
 
-    /**
-     NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
-     */
+
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
 
-    /**
-     METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
-     */
+
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
@@ -282,9 +306,7 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    /**
-     NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
-     */
+
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
         if (playerNickname.equals(this.nickname)) {
@@ -314,9 +336,7 @@ public class FrameManager extends JFrame implements View {
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
-    /**
-     METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
-     */
+
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
@@ -335,6 +355,7 @@ public class FrameManager extends JFrame implements View {
 
 
     @Override
+
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
         this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
@@ -415,29 +436,33 @@ public class FrameManager extends JFrame implements View {
             int maxTime = 20000;        // caps the sleepTime
             int totalElapsedTime = 0;   // to be deleted
             double backOffBase = 1.05;  // changes the exponential growth of the time
-            boolean connectionOpen = false;
-
-            try {
-                gamePage.reconnectionWaitingPage();
-            } catch (NullPointerException e) {
-                JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
-                loginFrame.dispose();
-                System.exit(1);
+            int t = 0;
+            while (t < 80000) {
+                t++;
             }
 
+            connectionOpen = false;
             while (!connectionOpen) {
                 try {
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
+
                 try {
+                    if (this.gameName == null || this.nickname == null) {
+                        JOptionPane.showMessageDialog(this, "GameName or PlayerName is Null. \nThis program will be terminated", "ErrorMsg", JOptionPane.ERROR_MESSAGE, createResizedImageIcon(CardManager.ERROR_MONK, 140,180));
+                        loginFrame.dispose();
+                        System.exit(1);
+                    }
+                    gamePage.reconnectionWaitingPage();
+
                     // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
-                    virtualServer.setConnectionOpen(true);
                     connectionOpen = true;
-                    JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedTokenImageIcon(CardManager.MONK4, 140));
-                    this.reconnectToGame(); //se tutto va bene da qui si va a onReconnectToGame
+                    virtualServer.setConnectionOpen(true);
+                    JOptionPane.showMessageDialog(this, "Connection restored, you can keep playing", "Return to Game", JOptionPane.INFORMATION_MESSAGE, createResizedImageIcon(CardManager.MONK4, 140,180));
+                    this.reconnectToGame();
                 } catch (IOException e) {
                     // exponential backoff algorithm
                     attemptCount++;
@@ -448,13 +473,12 @@ public class FrameManager extends JFrame implements View {
 
                     if (attemptCount > 10) {
                         //after some attempts wait for user input
-                        int answer = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedTokenImageIcon(CardManager.QUESTION_MONK, 140));
+                        int answer = JOptionPane.showConfirmDialog(this, "Still waiting for Internet Connection \nDo you want to keep trying?", "Continue?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, createResizedImageIcon(CardManager.QUESTION_MONK, 140, 180));
 
                         if(answer == JOptionPane.YES_OPTION){
                             sleepTime = 2000;
                             attemptCount = 0;
 
-                            //SERVE?
                             revalidate();
                             repaint();
                         } else {
@@ -469,15 +493,22 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-    private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
-        return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
+
+    /**
+     * Creates a resized ImageIcon from the given path and dimension.
+     *
+     * @param imagePath The path to the image
+     * @param dimW The width dimension for resizing the image
+     * @param dimH The height dimension for resizing the image
+     * @return The resized ImageIcon
+     */
+    //TODO: da testare
+    private static ImageIcon createResizedImageIcon(String imagePath, int dimW, int dimH) {
+        return new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(dimW, dimH, Image.SCALE_SMOOTH));
     }
 
 
-    /**
-     NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
-     OTHERS -> ADDS TO LOG OPERATION
-     */
+
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
@@ -495,7 +526,7 @@ public class FrameManager extends JFrame implements View {
                 Map<Integer, Boolean> printMap = new HashMap<>();
                 for (Integer integer : this.hand) printMap.put(integer, false);
 
-                gamePage.printHandOrDecksOnGUI(printMap, gamePage.getTokenPanel(), gamePage.getCheckBoxPanel(), gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(), 0, 0);
+                gamePage.printHandOrDecksOnGUI(printMap, gamePage.getImagePanel(), gamePage.getCheckBoxPanel(), gamePage.getChoosePanel(), gamePage.getButtonGroup(), gamePage.getHandLabelCheckBoxMap(), gamePage.getHandSerialNumberCheckBoxMap(), 0, 0);
 
                 refreshFrame(gamePage);
                 this.firstTurn = false;
@@ -523,7 +554,8 @@ public class FrameManager extends JFrame implements View {
 
 
     /**
-     * method to save new a message in the chat
+     * Saves a new message in the chat.
+     *
      * @param sender message sender
      * @param recipient message recipient
      * @param content string that contains the message itself
@@ -548,8 +580,9 @@ public class FrameManager extends JFrame implements View {
 
 
     /**
+     * * Registers a message in the chat map.
      *
-     * @param key can be [global] or a player [nickname], it is used to map the chat
+     * @param key  the key to map the chat (global or player nickname)
      * @param message message sent in chat by the player
      */
     private void registerChatMessage(String key, ChatMessage message) {
@@ -587,12 +620,165 @@ public class FrameManager extends JFrame implements View {
         if(this.nickname.equals(disconnectedPlayer)) {
            message = "You seem to have lost connection, the game is being closed...";
         }else{
-            message = "Player: "+disconnectedPlayer+" has disconnected, the game is being closed...";
+            message = "Player: " + disconnectedPlayer + " has disconnected, the game is being closed...";
         }
-        JOptionPane.showMessageDialog(this, message, "Disconnection message", JOptionPane.ERROR_MESSAGE, createResizedTokenImageIcon(CardManager.ERROR_MONK, 140));
+        JOptionPane.showMessageDialog(this, message, "Disconnection message", JOptionPane.ERROR_MESSAGE, createResizedImageIcon(CardManager.ERROR_MONK, 140, 180));
         System.exit(0);
     }
 
+
+    //TODO: da fare
+    public void gameHistory() {
+
+    }
+
+    /**
+     * Retrieves the board views for all players.
+     *
+     * @return the map of players' board views, where the keys are player nicknames and values are BoardView objects
+     */
+    public Map<String, BoardView> getPlayersBoard() {
+        return playersBoard;
+    }
+
+    /**
+     * Retrieves the scores of all players.
+     *
+     * @return the map of players' scores, where keys are player nicknames and values are their scores
+     */
+    public Map<String, Integer> getPlayersScore() {
+        return playersScore;
+    }
+
+    /**
+     * Retrieves the positions of all players.
+     *
+     * @return the map of players' positions, where keys are player nicknames and values are their positions.
+     */
+    public Map<String, Position> getPlayerPositions() {
+        return playerPositions;
+    }
+
+    /**
+     * Retrieves the hand of the current player.
+     *
+     * @return the list of integers representing the player's hand
+     */
+    public List<Integer> getHand() {
+        return hand;
+    }
+
+    /**
+     * Retrieves the chat messages for all players.
+     *
+     * @return the map of chat messages, where keys can be player nicknames or "global", and values are lists of ChatMessage objects.
+     */
+    public Map<String, List<ChatMessage>> getChat() {
+        return chat;
+    }
+
+    /**
+     * Retrieves the list of serial numbers of common objective cards.
+     *
+     * @return the list of serial numbers of the common objective cards
+     */
+    public List<Integer> getSerialCommonObjectiveCard() {
+        return serialCommonObjectiveCard;
+    }
+
+    /**
+     * Retrieves the serial number of the private objective card for the current player.
+     *
+     * @return the serial number of the private objective card
+     */
+    public int getSerialPrivateObjectiveCard() {
+        return serialPrivateObjectiveCard;
+    }
+
+    /**
+     * Retrieves the gold cards available to draw.
+     *
+     * @return the map of available gold cards
+     */
+    public Map<Integer, Boolean> getGoldCardsAvailable() {
+        return goldCardsAvailable;
+    }
+
+    /**
+     * Retrieves the resource cards available to draw.
+     *
+     * @return the map of available resource cards, where keys are integers representing gold card's serial number and values indicate the side shown
+     */
+    public Map<Integer, Boolean> getResourceCardsAvailable() {
+        return resourceCardsAvailable;
+    }
+
+    /**
+     * Retrieves the number of turns played in the game.
+     *
+     * @return the number of turns played
+     */
+    public int getTurnPlayed() {
+        return turnPlayed;
+    }
+
+    /**
+     * Sets the number of turns played in the game.
+     *
+     * @param turnPlayed the number of turns played
+     */
+    public void setTurnPlayed(int turnPlayed) {
+        this.turnPlayed = turnPlayed;
+    }
+
+    /**
+     * Checks if it is the current player's turn.
+     *
+     * @return true if it is the player's turn, false otherwise
+     */
+    public boolean isMyTurn() {
+        return myTurn;
+    }
+
+    /**
+     * Retrieves the collected resources for each player.
+     *
+     * @return the map of collected resources, where keys are player nicknames and values are
+     * EnumMap objects containing resource types and amounts
+     */
+    public Map<String, EnumMap<Resource, Integer>> getPlayersCollectedResources() {
+        return playersCollectedResources;
+    }
+
+    /**
+     * Retrieves the token colors in the game.
+     *
+     * @return the map of tokens in the game, where keys are player nicknames and values
+     * are TokenColor objects representing their token colors.
+     */
+    public Map<String, TokenColor> getTokenInGame() {
+        return tokenInGame;
+    }
+
+    /**
+     * Retrieves the count of new messages in the chat.
+     *
+     * @return the number of new messages in the queue, not visualized by the player
+     */
+    public int getNewMessage() {
+        return newMessage;
+    }
+
+    /**
+     * Sets the count of new messages in the chat.
+     *
+     * @param newMessage the number of new messages in the queue, not visualized by the player
+     */
+    public void setNewMessage(int newMessage) {
+        this.newMessage = newMessage;
+    }
+
+    //TODO: METODI NON USATI --------------------------------------------------------------------------------------------------
 
     @Override
     public void showHomeMenu() {}
@@ -606,76 +792,4 @@ public class FrameManager extends JFrame implements View {
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {}
 
-
-
-    //TODO: ANCORA DA FARE --------------------------------------------------------------------------------------------------
-
-
-    public void gameHistory() {
-
-    }
-
-    public Map<String, BoardView> getPlayersBoard() {
-        return playersBoard;
-    }
-
-    public Map<String, Integer> getPlayersScore() {
-        return playersScore;
-    }
-
-    public Map<String, Position> getPlayerPositions() {
-        return playerPositions;
-    }
-
-    public List<Integer> getHand() {
-        return hand;
-    }
-
-    public Map<String, List<ChatMessage>> getChat() {
-        return chat;
-    }
-
-    public List<Integer> getSerialCommonObjectiveCard() {
-        return serialCommonObjectiveCard;
-    }
-
-    public int getSerialPrivateObjectiveCard() {
-        return serialPrivateObjectiveCard;
-    }
-
-    public Map<Integer, Boolean> getGoldCardsAvailable() {
-        return goldCardsAvailable;
-    }
-
-    public Map<Integer, Boolean> getResourceCardsAvailable() {
-        return resourceCardsAvailable;
-    }
-
-    public int getTurnPlayed() {
-        return turnPlayed;
-    }
-
-    public void setTurnPlayed(int turnPlayed) {
-        this.turnPlayed = turnPlayed;
-    }
-
-    public boolean isMyTurn() {
-        return myTurn;
-    }
-
-    public Map<String, EnumMap<Resource, Integer>> getPlayersCollectedResources() {
-        return playersCollectedResources;
-    }
-
-    public Map<String, TokenColor> getTokenInGame() {
-        return tokenInGame;
-    }
-
-    public int getNewMessage() {
-        return newMessage;
-    }
-
-    public void setNewMessage(int newMessage) {
-        this.newMessage = newMessage;
-    }
 }

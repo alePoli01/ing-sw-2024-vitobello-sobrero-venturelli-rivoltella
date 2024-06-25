@@ -1046,7 +1046,7 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
 //            repaint();
 
             //popup
-            onSetLastTurn(nickname);
+//            onSetLastTurn(nickname);
 
             //fine gioco
 //            FrameManager frameManager = new FrameManager();
@@ -1331,10 +1331,10 @@ public class MainFrameProva extends JFrame implements ActionListener, CardManage
     }
 
 
-    public void onSetLastTurn(String nickname) {
-        OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
-        dialog.setVisible(true);
-    }
+//    public void onSetLastTurn(String nickname) {
+//        OnSetLastTurnDialog dialog = new OnSetLastTurnDialog(this, nickname);
+//        dialog.setVisible(true);
+//    }
 
     public void refreshBoard(){
         board.removeAll();

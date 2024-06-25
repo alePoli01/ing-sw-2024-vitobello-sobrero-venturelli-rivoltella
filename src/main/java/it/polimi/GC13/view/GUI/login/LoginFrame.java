@@ -5,6 +5,7 @@ import it.polimi.GC13.network.messages.fromclient.CreateNewGameMessage;
 import it.polimi.GC13.view.GUI.BackgroundImageSetter;
 import it.polimi.GC13.view.GUI.FrameManager;
 import it.polimi.GC13.view.GUI.WaitingLobby;
+import it.polimi.GC13.view.View;
 
 import javax.swing.JFrame;
 import javax.swing.*;
@@ -17,7 +18,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Represents the graphical user interface for the login and lobby creation process.
+ * <p>
+ * Extends {@link JFrame} to manage GUI components.
+ * <p>
+ * Implements {@link WaitingLobby} interface for creating a lobby in which the players can wait the end
+ * of the joining phase, and {@link ActionListener} to handle user actions such as button clicks.
+ */
 public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private final JTextField nicknameField;
     private JTextField gameNameField;
@@ -31,14 +39,11 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private int playersNumber = -1;
     private JLabel waitingLabel;
 
-
-/*JOINING PHASE
-       1)Not existing --> game LoginFrame()
-       2)Existing game:
-            2.a) Create new game --> LoginFrame()
-            2.b) Join existing game --> LoginFrame(Map<String, Integer> gameNameWaitingPlayersMap)
-       */
-
+    /**
+     * Constructs a LoginFrame instance for starting a new game.
+     *
+     * @param frameManager The FrameManager instance managing the frames.
+     */
     public LoginFrame(FrameManager frameManager) {
         setTitle("Login Page");
         setSize(750, 750);
@@ -147,7 +152,12 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setVisible(true);
     }
 
-
+    /**
+     * Constructs a LoginFrame instance for joining an existing game.
+     *
+     * @param frameManager The FrameManager instance managing the frames.
+     * @param gameNameWaitingPlayersMap Map containing game names and number of waiting players in the lobby.
+     */
     public LoginFrame(FrameManager frameManager, Map<String, Integer> gameNameWaitingPlayersMap) {
         setTitle("Login Page");
         setSize(750, 750);
@@ -228,22 +238,16 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         loginButton = createButton("Start", 20);
         loginButton.setEnabled(false);
         loginButton.setBackground(new Color(177,163,28));
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nickname = nicknameField.getText();
-                //String gameName = map.get(existingGameList.getSelectedValue());
+        loginButton.addActionListener(e -> {
+            String nickname = nicknameField.getText();
+            String gameName = map.get((String) comboBox.getSelectedItem());
 
-                String gameName = map.get((String) comboBox.getSelectedItem());
-
-
-                frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
-                frameManager.setNickname(nickname);
-                if (e.getActionCommand().equals("Start")) {
-                    createLobby();
-                    getContentPane().revalidate();
-                    getContentPane().repaint();
-                }
+            frameManager.getVirtualServer().sendMessageFromClient(new AddPlayerToGameMessage(nickname, gameName));
+            frameManager.setNickname(nickname);
+            if (e.getActionCommand().equals("Start")) {
+                createLobby();
+                getContentPane().revalidate();
+                getContentPane().repaint();
             }
         });
 
@@ -253,18 +257,23 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setVisible(true);
     }
 
-
+    /**
+     * Enables the login button based on the filled fields and selected radio button.
+     */
     private void enableLoginButton() {
         boolean fieldsFilled = !nicknameField.getText().isEmpty() && !gameNameField.getText().isEmpty();
         boolean radioButtonSelected = radiobuttons.stream().anyMatch(AbstractButton::isSelected);
         loginButton.setEnabled(fieldsFilled && radioButtonSelected);
     }
 
-
+    /**
+     * Enables the login button for joining an existing game based on the filled nickname field.
+     */
     private void enableLoginButton2() {
         boolean fieldsFilled = !nicknameField.getText().isEmpty();
         loginButton.setEnabled(fieldsFilled);
     }
+
 
     @Override
     public void createLobby(){
@@ -312,19 +321,39 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         timer.start();
     }
 
-
+    /**
+     * Creates a JLabel with the specified text and font size.
+     *
+     * @param content The text content of the label
+     * @param dim The font size
+     * @return JLabel instance with the specified text and font
+     */
     private JLabel createTextLabelFont(String content, int dim) {
         JLabel jLabel = new JLabel(content);
         jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
         return jLabel;
     }
 
+    /**
+     * Creates a JButton with the specified text and font size.
+     *
+     * @param text The text content of the button
+     * @param dim The font size
+     * @return JButton instance with the specified text and font
+     */
     private JButton createButton(String text, int dim){
         JButton button = new JButton(text);
         button.setFont(new Font("Old English Text MT", Font.BOLD, dim)); //PlainGermanica
         return button;
     }
 
+    /**
+     * Creates GridBagConstraints with the specified grid coordinates.
+     *
+     * @param x The x-coordinate in the grid
+     * @param y The y-coordinate in the grid
+     * @return GridBagConstraints instance with the specified coordinates
+     */
     private GridBagConstraints createGridBagConstraints(int x, int y){
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -333,12 +362,30 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         return gbc;
     }
 
+    /**
+     * Sets insets for the border of a JComponent.
+     *
+     * @param jComponent The JComponent to set the border insets for
+     * @param insetsTop The top inset value
+     * @param insetsLeft The left inset value
+     * @param insetsBottom The bottom inset value
+     * @param insetsRight The right inset value
+     */
     private void setBorderInsets(JComponent jComponent, int insetsTop, int insetsLeft, int insetsBottom, int insetsRight) {
         Insets insets = new Insets(insetsTop, insetsLeft, insetsBottom, insetsRight);
         jComponent.setBorder(BorderFactory.createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
     }
 
-
+    /**
+     * Sets up a radio button with the specified text, adds it to the panel and button group,
+     * and attaches an ActionListener.
+     *
+     * @param arrayButton The ArrayList to store radio buttons
+     * @param panel The JPanel to add the radio button to
+     * @param buttonGroup The ButtonGroup to add the radio button to
+     * @param text The text content of the radio button
+     * @param textRadioListener The ActionListener for the radio button
+     */
     private void setRadioButton(ArrayList<JRadioButton> arrayButton, JPanel panel, ButtonGroup buttonGroup, String text, ActionListener textRadioListener){
         JRadioButton radioButton = new JRadioButton(text);
         buttonGroup.add(radioButton);
@@ -349,6 +396,11 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         panel.add(radioButton);
     }
 
+    /**
+     * Handles ActionListener events for buttons and radio buttons in the frame.
+     *
+     * @param e The ActionEvent triggered by user interaction
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String nickname = nicknameField.getText();
@@ -368,6 +420,11 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         }
     }
 
+    /**
+     * Retrieves the waiting label used in the lobby view.
+     *
+     * @return The JLabel instance used to display waiting messages
+     */
     public JLabel getWaitingLabel() {
         return waitingLabel;
     }

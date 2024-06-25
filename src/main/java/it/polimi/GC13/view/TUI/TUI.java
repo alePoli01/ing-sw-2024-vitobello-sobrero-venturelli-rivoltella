@@ -20,32 +20,62 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+
+/**
+ * The {@code TUI} class implements {@link View}.
+ * Initializes a new TUI instance, setting up player data, utility objects,
+ * and starting the input reader thread.
+ */
 public class TUI implements View {
     private ServerInterface virtualServer;
     private String nickname;
     private String gameName;
-    private final List<Integer> hand = new ArrayList<>();
+    private final List<Integer> hand;
     private int serialPrivateObjectiveCard;
-    private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
-    private boolean myTurn = false;
-    private int turnPlayed = 0;
-    private final Map<String, Integer> playersScore = new ConcurrentHashMap<>();
-    private final Map<String, Position> playersPosition = new ConcurrentHashMap<>();
-    private final Map<Integer, Boolean> goldCardsAvailable = new ConcurrentHashMap<>();
-    private final Map<Integer, Boolean> resourceCardsAvailable = new ConcurrentHashMap<>();
-    private final Map<String, BoardView> playersBoard = new ConcurrentHashMap<>();
-    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new ConcurrentHashMap<>();
-    private final List<String> gamesLog = new ArrayList<>();
-    private boolean cooking = false;
-    private int choice = 0;
-    private final Printer printer = new Printer();
-    private final Reader newReader = new Reader();
-    private final Map<String, List<ChatMessage>> chat = new HashMap<>();
-    private final Map<String, Boolean> newMessageMap = new ConcurrentHashMap<>();
-    private boolean connectionOpen = true;
-    private boolean interrupt = false;
+    private List<Integer> serialCommonObjectiveCard;
+    private boolean myTurn;
+    private int turnPlayed;
+    private final Map<String, Integer> playersScore;
+    private final Map<String, Position> playersPosition;
+    private final Map<Integer, Boolean> goldCardsAvailable;
+    private final Map<Integer, Boolean> resourceCardsAvailable;
+    private final Map<String, BoardView> playersBoard;
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources;
+    private final List<String> gamesLog;
+    private boolean cooking;
+    private int choice;
+    private final Printer printer;
+    private final Reader newReader;
+    private final Map<String, List<ChatMessage>> chat;
+    private final Map<String, Boolean> newMessageMap;
+    private boolean connectionOpen;
+    private boolean interrupt;
 
+    /**
+     * Initializes a new TUI instance, setting up player data, utility objects,
+     * and starting the input reader thread.
+     */
     public TUI() {
+        this.hand = new ArrayList<>();
+        this.serialCommonObjectiveCard = new LinkedList<>();
+        this.myTurn = false;
+        this.turnPlayed = 0;
+        this.playersScore = new ConcurrentHashMap<>();
+        this.playersPosition = new ConcurrentHashMap<>();
+        this.goldCardsAvailable = new ConcurrentHashMap<>();
+        this.resourceCardsAvailable = new ConcurrentHashMap<>();
+        this.playersBoard = new ConcurrentHashMap<>();
+        this.playersCollectedResources = new ConcurrentHashMap<>();
+        this.gamesLog = new ArrayList<>();
+        this.cooking = false;
+        this.choice = 0;
+        this.printer = new Printer();
+        this.newReader = new Reader();
+        this.chat = new HashMap<>();
+        this.newMessageMap = new ConcurrentHashMap<>();
+        this.connectionOpen = true;
+        this.interrupt = false;
+
         new Thread(this.newReader, "READER").start();
     }
 
@@ -74,9 +104,6 @@ public class TUI implements View {
         this.checkForExistingGame();
     }
 
-    /**
-     * used to update players hand in TUI
-     */
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
         if (playerNickname.equals(this.nickname)) {
@@ -108,11 +135,6 @@ public class TUI implements View {
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
-    /**
-     * JOINING PHASE
-     * [1] create new game
-     * [2] join an existing one
-     */
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         if (gameNameWaitingPlayersMap.isEmpty()) {
@@ -139,6 +161,11 @@ public class TUI implements View {
         }
     }
 
+
+    /**
+     * Prompts the user for their nickname, game name, and number of players, then sends a request to create a new game.
+     * Prints an error message and aborts if input validation fails.
+     */
     private void createNewGame() {
         String gameName;
         int playersNumber;
@@ -155,6 +182,14 @@ public class TUI implements View {
         this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
     }
 
+
+    /**
+     * Prompts the user to choose a nickname and select a game from the provided map to join.
+     * Sends a request to add the player to the selected game via the virtual server.
+     * Prints an error message if input validation fails.
+     *
+     * @param gameNameWaitingPlayersMap a map of game names and the number of players waiting in each game
+     */
     private void joinExistingGame(Map<String, Integer> gameNameWaitingPlayersMap) {
         String gameName;
 
@@ -170,11 +205,6 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * SETUP PHASE
-     * token choice when all players joined the game
-     * waiting when readPlayers < neededPlayers
-     */
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
         StringJoiner joiner = new StringJoiner(" / ", "[ ", " ]");
@@ -195,10 +225,6 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * SETUP PHASE methods to the player
-     * startCardSetupPhase to chose which side to place your start card
-     */
     @Override
     public void placeStartCardSetupPhase(String playerNickname, TokenColor tokenColor) {
         if (playerNickname.equals(this.nickname)) {
@@ -220,10 +246,6 @@ public class TUI implements View {
         this.gamesLog.add(playerNickname + " chose " + tokenColor + " token");
     }
 
-    /**
-     * NOTIFY RESPECTIVE CLIENT WHEN A CARD IS PLACED ON ANY BOARD
-     * OTHERS -> ADDS TO LOG OPERATION
-     */
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
         String message = playerNickname + " positioned " + serialCardPlaced + " on " + (isFlipped ? "back" : "front") + " in: " + x + ", " + y + " on turn: " + turn;
@@ -245,17 +267,11 @@ public class TUI implements View {
 
     }
 
-    /**
-     * NOTIFY THE CLIENTS ABOUT THE COMMON OBJECTIVE CARD
-     */
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
 
-    /**
-     * METHOD THAT ALLOW THE CLIENT TO CHOOSE HIS OBJECTIVE CARD
-     */
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
         if (playerNickname.equals(this.nickname)) {
@@ -274,9 +290,6 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * NOTIFY THE CORRECT CLIENT AFTER THE MODEL UPDATED THE PLAYER'S PRIVATE OBJECTIVE CARD
-     */
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
         if (playerNickname.equals(this.nickname)) {
@@ -293,7 +306,12 @@ public class TUI implements View {
     }
 
     /**
-     * METHOD TO REQUEST DRAW CARD
+     * Manages the action of drawing a card.
+     * Displays the available cards in the gold and resource decks.
+     * Allows the player to choose a card to draw if it is their turn, and they have exactly two cards in hand.
+     * Sends a message to the virtual server to draw the chosen card.
+     * Increments the turn count after successfully drawing a card.
+     * Prints an error message and returns if input validation fails or if the action cannot be performed.
      */
     @Override
     public void drawCard() {
@@ -321,7 +339,6 @@ public class TUI implements View {
         }
     }
 
-    // used to print any input error (at the moment handles token color) and recall the method from the TUI
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
         if (playerNickname.equals(this.nickname)) {
@@ -332,6 +349,11 @@ public class TUI implements View {
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
+    /**
+     * Displays the available cells where a card can be placed.
+     *
+     * @param availableCells the list of coordinates representing available cells
+     */
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
         String cellCoordinates = availableCells.stream()
@@ -341,9 +363,7 @@ public class TUI implements View {
         this.showHomeMenu();
     }
 
-    /**
-     * METHOD USED TO GIVE EACH USER VISIBILITY OF PLAYERS ORDER
-     */
+
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playersPosition.putAll(playerPositions);
@@ -362,7 +382,13 @@ public class TUI implements View {
     }
 
     /**
-     * METHOD USED TO PLACE CARD ON THE BOARD
+     * Manages the action of placing a card on the board:
+     * - Displays the player's board and collected resources.
+     * - Shows the player's hand of cards.
+     * - Allows the player to enter the serial number, X and Y coordinates, and card orientation (front or back).
+     * - Sends a message to the server to place the card based on player input.
+     * - Prints error messages and returns if input validation fails or if the action cannot be performed.
+     * - Displays appropriate messages if it's not the player's turn or if the player has already placed a card.
      */
     @Override
     public void placeCard() {
@@ -441,7 +467,10 @@ public class TUI implements View {
     }
 
     /**
-     * method to send a message to any player or to everyone
+     * Sends a message to a specific player or to everyone.
+     * Allows the user to choose the recipient from a list of players or specify "global" for a broadcast message.
+     * Sends the message to the virtual server for distribution.
+     * Prints error messages and returns if input validation fails or if the action cannot be performed.
      */
     private void sendMessage() {
         String playerChosen;
@@ -457,16 +486,20 @@ public class TUI implements View {
         }
     }
 
+    /**
+     * Combines the elements of a set and a list into a new list.
+     *
+     * @param set  the set of strings to add to the list
+     * @param list the list of strings to be added to the new list
+     * @return a new list containing all elements from the set followed by all elements from the list
+     */
     private List<String> addToSet(Set<String> set, List<String> list) {
         List<String> newList = new ArrayList<>(set.stream().toList());
         newList.addAll(list);
         return newList;
     }
 
-    /**
-     * NOTIFY RESPECTIVE CLIENT WHEN IT'S THEIR TURN
-     * OTHERS -> ADDS TO LOG OPERATION
-     */
+
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
@@ -494,7 +527,10 @@ public class TUI implements View {
     }
 
     /**
-     * METHOD TO SHOW TO THE CLIENT ALL POSSIBLE MOVES
+     * Displays the home menu options to the player and handles their selection.
+     * Allows the player to choose an action by entering a corresponding number.
+     * Executes the chosen action through the `menuChoice` method.
+     * Prints error messages and returns if input validation fails or if the action cannot be performed.
      */
     @Override
     public void showHomeMenu() {
@@ -512,9 +548,9 @@ public class TUI implements View {
     }
 
     /**
-     * method used to let the user perform the desired action
+     * Executes actions based on the player's menu choice.
      *
-     * @param choice menu choice selected by the player
+     * @param choice the selected menu option
      */
     private void menuChoice(int choice) {
         switch (choice) {
@@ -621,6 +657,11 @@ public class TUI implements View {
     /**
         MENU OPTIONS
      */
+    /**
+     * Displays the home menu options for the current user.
+     * This method prints information such as the user's nickname, turn status,
+     * and available menu options related to game actions and information viewing.
+     */
     private void menuOptions() {
         System.out.println("\n--- HOME MENU " + this.nickname.toUpperCase() + " ---");
         if (this.myTurn) {
@@ -642,18 +683,43 @@ public class TUI implements View {
         System.out.println("\t[12] to view chat [" + (this.newMessageMap.values().stream().anyMatch(v -> v) ? "!" : "no new messages") + "]");
     }
 
+    //ale vito
     /**
      * rangeVerifier is used to verify input from user. numToVerify has to be higher than value to be verified
      * @param numToVerify user's input
      * @param value has to be lower than numToVerify in order to accept the input
      * @return false when input correct
      */
+
+    //io
+    /**
+     * Checks if the given number is less than or equal to the specified value.
+     *
+     * @param numToVerify the number to verify
+     * @param value       the maximum allowed value
+     * @return true if numToVerify is less than or equal to value, false otherwise
+     */
     private boolean rangeVerifier(int numToVerify, int value) {
         return numToVerify <= value;
     }
 
+    //io
     /**
-     * rangeVerifier is used to verify input from user. numToVerify has to be higher than highValue or lower than lowValue to be verified
+     *
+     *
+     * @param numToVerify the number to verify
+     * @param lowValue    the lower bound of the range (exclusive)
+     * @param highValue   the upper bound of the range (exclusive)
+     * @return true if numToVerify is less than lowValue or greater than highValue, false otherwise
+     */
+
+
+    //ale vito
+    /**
+     *
+     * {@code #rangeVerifier} checks if the input from user is outside the specified range.
+     * NumToVerify has to be higher than highValue or lower than lowValue to be verified.
+     *
      * @param numToVerify user's input
      * @param lowValue low range value
      * @param highValue high range value
@@ -663,14 +729,34 @@ public class TUI implements View {
         return numToVerify < lowValue || numToVerify > highValue;
     }
 
+    /**
+     * Checks if the given number is not present in the provided list of integers.
+     *
+     * @param numToVerify  the number to verify
+     * @param value        the list of integers to check against
+     * @return true if numToVerify is not found in the list, false otherwise
+     */
     private boolean intVerifier(int numToVerify, List<Integer> value) {
         return value.stream().noneMatch(v -> v == numToVerify);
     }
 
+    /**
+     * Checks if the given string is null or blank.
+     *
+     * @param input the string to verify
+     * @return true if the string is null or blank, false otherwise
+     */
     private boolean stringVerifier(String input) {
         return input == null || input.isBlank();
     }
 
+    /**
+     * Checks if the given string is not found in the list of possible choices.
+     *
+     * @param input           the string to verify
+     * @param possibleChoices the list of possible choices
+     * @return true if the string is not found in possibleChoices, false otherwise
+     */
     private boolean stringVerifier(String input, List<String> possibleChoices) {
         if (input == null) {
             return true;
@@ -678,6 +764,16 @@ public class TUI implements View {
         return possibleChoices.stream().noneMatch(input::equals);
     }
 
+    /**
+     * Prompts the user with a message and validates integer input against a provided validator function.
+     * Throws a GenericException if input validation fails or if the connection is lost/interrupted.
+     *
+     * @param messageToPrint the message prompt for the user
+     * @param validator      the function to validate the integer input
+     * @param errorMessage   the error message to display on validation failure
+     * @return the validated integer input from the user
+     * @throws GenericException if input validation fails or if connection is lost/interrupted
+     */
     private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean> validator, String errorMessage) throws GenericException {
         int num = 0;
         System.out.print(messageToPrint + ": ");
@@ -703,6 +799,16 @@ public class TUI implements View {
         return num;
     }
 
+    /**
+     * Prompts the user with a message and validates string input against a provided validator function.
+     * Throws a GenericException if input validation fails or if the connection is lost/interrupted.
+     *
+     * @param messageToPrint the message prompt for the user
+     * @param validator      the function to validate the string input
+     * @param errorMessage   the error message to display on validation failure
+     * @return the validated string input from the user
+     * @throws GenericException if input validation fails or if connection is lost/interrupted
+     */
     private String userStringInput(String messageToPrint, Function<String, Boolean> validator, String errorMessage) throws GenericException {
         String input;
         System.out.print(messageToPrint + ": ");
@@ -743,6 +849,14 @@ public class TUI implements View {
         }
     }
 
+    /**
+     * Registers a new chat message by adding it to the specified chat room in the internal chat storage.
+     * If the chat room doesn't exist, it creates a new one and adds the message.
+     *
+     * @param chatName the name of the chat room to register the message in
+     * @param sender   the sender of the message
+     * @param message  the content of the message
+     */
     private void registerMessage(String chatName, String sender, String message) {
         boolean flag = sender.equals(this.nickname);
 
