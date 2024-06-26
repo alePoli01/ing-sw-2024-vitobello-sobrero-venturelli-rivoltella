@@ -94,6 +94,7 @@ public class MidPhaseTest extends TestCase {
         // set players position
         this.player1.setPosition(Position.FIRST);
         this.player2.setPosition(Position.SECOND);
+        player1.setMyTurn(true);
         this.midPhase = new MidPhase(new Controller(this.game, null, null));
 
         // place first card

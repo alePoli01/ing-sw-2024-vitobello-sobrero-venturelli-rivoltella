@@ -92,7 +92,7 @@ public class Board implements Serializable {
                 .orElseThrow(() -> {
                     this.owner.getGame().getObserver().notifyClients(new OnForbiddenCellMessage(owner.getNickname(), X, Y, this.availableCells));
                     this.availableCells.forEach(cell -> System.out.println("(" + cell.getX() + ", " + cell.getY() + ") "));
-                    return new GenericException("Forbidden cell " + X + ", " + Y);
+                    return new GenericException("Cell " + X + ", " + Y + " not available");
                 });
     }
 

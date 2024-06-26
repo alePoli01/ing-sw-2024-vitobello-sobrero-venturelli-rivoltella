@@ -28,9 +28,6 @@ public class DiskManagerTest extends TestCase {
         PlayableCard card = p1.getTable().getGoldCardMap().keySet().stream().findFirst().get();
         System.out.println("Game deleted");
 
-        game = null;
-        p1 = null;
-        p2 = null;
         game = diskManager.readFromDisk(gameName);
         p1 = game.getPlayerList().stream().filter(p -> p.getNickname().equals("p1")).findFirst().get();
         p2 = game.getPlayerList().stream().filter(p -> p.getNickname().equals("p2")).findFirst().get();
