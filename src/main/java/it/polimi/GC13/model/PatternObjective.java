@@ -3,97 +3,252 @@ package it.polimi.GC13.model;
 import it.polimi.GC13.enums.Resource;
 
 //TODO controllare le condizioni dei for
-public class PatternObjective  extends ObjectiveCard {
 
+/**
+ * Represents a pattern objective card that awards points based on specific patterns formed on the game board.
+ */
+public class PatternObjective extends ObjectiveCard {
     public final boolean diagonal;  //what kind of disposition is required
     public final int orientation; //orientation of the disposition
 
-public PatternObjective(int serialNumber, int comboPoints, boolean diagonal, int orientation) {
-    super(serialNumber, comboPoints);
-    this.diagonal = diagonal;
-    this.orientation = orientation;
-}
 
-public int getObjectivePoints(Board board) {
-
-    int X_max = 50, X_min = 50, Y_max = 50, Y_min = 50;
-
-    //creating the variables that rapresent the dimension of the board
-    for (Coordinates xy : board.getBoardMap().keySet()) {
-        if (xy.getX() > X_max) {
-            X_max = xy.getX();
-        }
-        if (xy.getX() < X_min) {
-            X_min = xy.getX();
-        }
-        if (xy.getY() > Y_max) {
-            Y_max = xy.getY();
-        }
-        if (xy.getY() < Y_min) {
-            Y_min = xy.getY();
-        }
+    /**
+     * Constructs a {@code PatternObjective} instance with the specified parameters.
+     *
+     * @param serialNumber The serial number of the objective card.
+     * @param comboPoints  The points awarded by this objective card.
+     * @param diagonal     True if a diagonal pattern is required, false otherwise.
+     * @param orientation  The orientation of the pattern.
+     */
+    public PatternObjective(int serialNumber, int comboPoints, boolean diagonal, int orientation) {
+        super(serialNumber, comboPoints);
+        this.diagonal = diagonal;
+        this.orientation = orientation;
     }
 
+    /**
+     * Calculates the total points achieved for this objective card based on the patterns formed on the board.
+     *
+     * @param board The board object representing the current game state.
+     * @return The total points achieved for this objective card.
+     */
+    public int getObjectivePoints(Board board) {
 
-    //start to check the patterns by dividing the 2 cases
-    if (diagonal) {
+        int X_max = 50, X_min = 50, Y_max = 50, Y_min = 50;
 
-        int flag = 0, points = 0;
-        //checking the diagonals going to the right
-        if (orientation == 0 || orientation == 2) {
-
-            Coordinates iterable = new Coordinates(X_min, Y_max);
-            Resource color;
-
-            if (orientation == 0) {
-                color = Resource.FUNGI;
-            } else {
-                color = Resource.ANIMAL;
+        //creating the variables that rapresent the dimension of the board
+        for (Coordinates xy : board.getBoardMap().keySet()) {
+            if (xy.getX() > X_max) {
+                X_max = xy.getX();
             }
+            if (xy.getX() < X_min) {
+                X_min = xy.getX();
+            }
+            if (xy.getY() > Y_max) {
+                Y_max = xy.getY();
+            }
+            if (xy.getY() < Y_min) {
+                Y_min = xy.getY();
+            }
+        }
 
-            Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
 
-            //checking the diagonals of the upper part of the board
-            for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min+1; y_offset++) {
+        //start to check the patterns by dividing the 2 cases
+        if (diagonal) {
 
-                mover.setX(iterable.getX());
-                mover.setY(iterable.getY());
+            int flag = 0, points = 0;
+            //checking the diagonals going to the right
+            if (orientation == 0 || orientation == 2) {
 
-                for (int d = 1; d <= (Y_max - Y_min) + 1; d++) {
+                Coordinates iterable = new Coordinates(X_min, Y_max);
+                Resource color;
 
-                    if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
-
-                        if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
-                            flag++;
-                        } else {
-                            flag = 0;
-                        }
-                    } else {
-                        flag = 0;
-                    }
-                    if (flag == 3) {
-                        points++;
-                        flag = 0;
-                    }
-                    mover.setX(iterable.getX() + d);
-                    mover.setY(iterable.getY() - d);
+                if (orientation == 0) {
+                    color = Resource.FUNGI;
+                } else {
+                    color = Resource.ANIMAL;
                 }
-                iterable.setY(Y_max - y_offset);
+
+                Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
+
+                //checking the diagonals of the upper part of the board
+                for (int y_offset = 1; y_offset < (Y_max - 2) - Y_min + 1; y_offset++) {
+
+                    mover.setX(iterable.getX());
+                    mover.setY(iterable.getY());
+
+                    for (int d = 1; d <= (Y_max - Y_min) + 1; d++) {
+
+                        if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
+
+                            if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
+                                flag++;
+                            } else {
+                                flag = 0;
+                            }
+                        } else {
+                            flag = 0;
+                        }
+                        if (flag == 3) {
+                            points++;
+                            flag = 0;
+                        }
+                        mover.setX(iterable.getX() + d);
+                        mover.setY(iterable.getY() - d);
+                    }
+                    iterable.setY(Y_max - y_offset);
+                    flag = 0;
+                }
+
+                //resetting variables except points
+                iterable.setX(X_min + 1);
+                iterable.setY(Y_max);
                 flag = 0;
+
+                //checking the diagonals of the lower part of the board
+                for (int x_offset = 1; x_offset < ((X_max - 2) - (X_min)) - 1; x_offset++) {
+
+                    mover.setX(iterable.getX());
+                    mover.setY(iterable.getY());
+
+                    for (int d = 1; d < X_max - X_min; d++) {
+
+                        if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
+                            if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
+                                flag++;
+                            } else {
+                                flag = 0;
+                            }
+                        } else {
+                            flag = 0;
+                        }
+                        if (flag == 3) {
+                            points++;
+                            flag = 0;
+                        }
+                        mover.setX(iterable.getX() + d);
+                        mover.setY(iterable.getY() - d);
+                    }
+                    iterable.setX(X_min + x_offset);
+                    flag = 0;
+                }
+
+                return points * this.comboPoints;
+
+            } else {//check the direction going to the left
+
+                Coordinates iterable = new Coordinates(X_max, Y_max);
+                Resource color;
+
+                if (orientation == 1) {
+                    color = Resource.INSECT;
+                } else {
+                    color = Resource.PLANT;
+                }
+
+                Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
+
+                //checking the diagonals of the upper part of the board
+                for (int y_offset = 1; y_offset <= (Y_max - 2) - Y_min + 1; y_offset++) {
+
+                    mover.setX(iterable.getX());
+                    mover.setY(iterable.getY());
+
+                    for (int d = 1; d <= (Y_max - Y_min) + 1; d++) {
+
+                        if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
+                            if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
+                                flag++;
+                            } else {
+                                flag = 0;
+                            }
+                        } else {
+                            flag = 0;
+                        }
+                        if (flag == 3) {
+                            points++;
+                            flag = 0;
+                        }
+                        mover.setX(iterable.getX() - d);
+                        mover.setY(iterable.getY() - d);
+                    }
+                    iterable.setY(Y_max - y_offset);
+                    flag = 0;
+                }
+
+                //resetting variables except points
+                iterable.setX(X_max - 1);
+                iterable.setY(Y_max);
+                flag = 0;
+
+                //checking the diagonals of the lower part of the board
+                for (int x_offset = 1; x_offset <= (X_max) - (X_min + 2) + 1; x_offset++) {
+
+                    mover.setX(iterable.getX());
+                    mover.setY(iterable.getY());
+
+                    for (int d = 1; d <= (X_max - X_min) + 1; d++) {
+
+                        if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
+                            if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
+                                flag++;
+                            } else {
+                                flag = 0;
+                            }
+                        } else {
+                            flag = 0;
+                        }
+                        if (flag == 3) {
+                            points++;
+                            flag = 0;
+                        }
+                        mover.setX(iterable.getX() - d);
+                        mover.setY(iterable.getY() - d);
+                        flag = 0;
+                    }
+                    iterable.setX(X_max - x_offset);
+                }
+                return points * this.comboPoints;
             }
 
-            //resetting variables except points
-            iterable.setX(X_min + 1);
-            iterable.setY(Y_max);
-            flag = 0;
+        } else {//checking the L pattern
 
-            //checking the diagonals of the lower part of the board
-            for (int x_offset = 1; x_offset < ((X_max - 2) - (X_min)) - 1; x_offset++) {
+            int points = 0, flag = 0;
+
+            Resource color = switch (orientation) {
+                case (0) -> Resource.PLANT;
+                case (1) -> Resource.FUNGI;
+                case (2) -> Resource.ANIMAL;
+                case (3) -> Resource.INSECT;
+                default -> null;
+            };
+
+            Coordinates iterable = new Coordinates(X_min, Y_min);
+            Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
+            Coordinates moverdiagonal = new Coordinates(iterable.getX(), iterable.getY());
+
+            for (int x_offset = 1; x_offset <= (X_max - X_min) + 1; x_offset++) {
 
                 mover.setX(iterable.getX());
-                mover.setY(iterable.getY());
-
-                for (int d = 1; d < X_max - X_min; d++) {
+                if (iterable.getY() % 2 == 0) {
+                    if (mover.getX() % 2 == 0) {
+                        //System.out.println("A");
+                        mover.setY(iterable.getY());
+                    } else {
+                        //System.out.println("B");
+                        mover.setY(iterable.getY() + 1);
+                    }
+                } else {
+                    if (mover.getX() % 2 != 0) {
+                        //System.out.println("C");
+                        mover.setY(iterable.getY());
+                    } else {
+                        //System.out.println("D");
+                        mover.setY(iterable.getY() + 1);
+                    }
+                }
+                //ystem.out.println(mover.getX()+" "+ mover.getY());
+                for (int y_offset = 2; y_offset <= (Y_max - Y_min) + 1; y_offset = y_offset + 2) {
 
                     if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
                         if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
@@ -104,197 +259,86 @@ public int getObjectivePoints(Board board) {
                     } else {
                         flag = 0;
                     }
-                    if (flag == 3) {
-                        points++;
+                    if (flag == 2) {
+                        switch (orientation) {
+                            case (0):
+                                moverdiagonal.setX(mover.getX() - 1);
+                                moverdiagonal.setY(mover.getY() + 1);
+                                break;
+                            case (1):
+                                moverdiagonal.setX(mover.getX() + 1);
+                                moverdiagonal.setY(mover.getY() + 1);
+                                break;
+                            case (2):
+                                moverdiagonal.setX(mover.getX() + 1);
+                                moverdiagonal.setY(mover.getY() - 3);
+                                break;
+                            case (3):
+                                moverdiagonal.setX(mover.getX() - 1);
+                                moverdiagonal.setY(mover.getY() - 3);
+                                break;
+                        }
+                        //System.out.println(moverdiagonal.getX()+" "+ moverdiagonal.getY());
+                        if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
+                            if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
+                                points++;
+                            }
+                        }
                         flag = 0;
                     }
-                    mover.setX(iterable.getX() + d);
-                    mover.setY(iterable.getY() - d);
+
+                    if (iterable.getY() % 2 == 0) {
+                        if (mover.getX() % 2 == 0) {
+                            mover.setY(iterable.getY() + y_offset);
+                        } else {
+                            mover.setY(iterable.getY() + y_offset + 1);
+                        }
+                    } else {
+                        if (mover.getX() % 2 == 0) {
+                            mover.setY(iterable.getY() + y_offset + 1);
+                        } else {
+                            mover.setY(iterable.getY() + y_offset);
+                        }
+
+                    }
+                    //System.out.println(mover.getX()+" "+ mover.getY());
                 }
                 iterable.setX(X_min + x_offset);
+                //System.out.println("---------------");
                 flag = 0;
             }
-
             return points * this.comboPoints;
 
-        } else {//check the direction going to the left
-
-            Coordinates iterable = new Coordinates(X_max, Y_max);
-            Resource color;
-
-            if (orientation == 1) {
-                color = Resource.INSECT;
-            } else {
-                color = Resource.PLANT;
-            }
-
-            Coordinates mover = new Coordinates(iterable.getX(), iterable.getY());
-
-            //checking the diagonals of the upper part of the board
-            for (int y_offset = 1; y_offset <= (Y_max - 2) - Y_min+1; y_offset++) {
-
-                mover.setX(iterable.getX());
-                mover.setY(iterable.getY());
-
-                for (int d = 1; d <= (Y_max - Y_min)+1; d++) {
-
-                    if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
-                        if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
-                            flag++;
-                        } else {
-                            flag = 0;
-                        }
-                    } else {
-                        flag = 0;
-                    }
-                    if (flag == 3) {
-                        points++;
-                        flag = 0;
-                    }
-                    mover.setX(iterable.getX() - d);
-                    mover.setY(iterable.getY() - d);
-                }
-                iterable.setY(Y_max - y_offset);
-                flag = 0;
-            }
-
-            //resetting variables except points
-            iterable.setX(X_max - 1);
-            iterable.setY(Y_max);
-            flag = 0;
-
-            //checking the diagonals of the lower part of the board
-            for (int x_offset = 1; x_offset <= (X_max) - (X_min + 2)+1; x_offset++) {
-
-                mover.setX(iterable.getX());
-                mover.setY(iterable.getY());
-
-                for (int d = 1; d <= (X_max - X_min)+1; d++) {
-
-                    if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
-                        if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
-                            flag++;
-                        } else {
-                            flag = 0;
-                        }
-                    } else {
-                        flag = 0;
-                    }
-                    if (flag == 3) {
-                        points++;
-                        flag = 0;
-                    }
-                    mover.setX(iterable.getX() - d);
-                    mover.setY(iterable.getY() - d);
-                    flag = 0;
-                }
-                iterable.setX(X_max - x_offset);
-            }
-            return points * this.comboPoints;
         }
-
-    } else {//checking the L pattern
-
-        int points = 0, flag = 0;
-
-        Resource color = switch (orientation) {
-            case (0) -> Resource.PLANT;
-            case (1) -> Resource.FUNGI;
-            case (2) -> Resource.ANIMAL;
-            case (3) -> Resource.INSECT;
-            default -> null;
-        };
-
-        Coordinates iterable = new Coordinates(X_min, Y_min);
-        Coordinates mover=new Coordinates(iterable.getX(), iterable.getY());
-        Coordinates moverdiagonal = new Coordinates(iterable.getX(), iterable.getY());
-
-        for (int x_offset = 1; x_offset <= (X_max - X_min)+1; x_offset++) {
-            
-            mover.setX(iterable.getX());
-            if(iterable.getY()%2==0) {
-                if (mover.getX() % 2 == 0) {
-                    //System.out.println("A");
-                    mover.setY(iterable.getY());
-                } else {
-                    //System.out.println("B");
-                    mover.setY(iterable.getY() + 1);
-                }
-            }else{
-                if (mover.getX() % 2 != 0) {
-                    //System.out.println("C");
-                    mover.setY(iterable.getY());
-                } else {
-                    //System.out.println("D");
-                    mover.setY(iterable.getY() + 1);
-                }
-            }
-            //ystem.out.println(mover.getX()+" "+ mover.getY());
-            for (int y_offset = 2; y_offset <= (Y_max - Y_min)+1; y_offset=y_offset+2) {
-
-                if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
-                        if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
-                        flag++;
-                    } else {
-                        flag = 0;
-                    }
-                } else {
-                    flag = 0;
-                }
-                if (flag == 2) {
-                    switch (orientation) {
-                        case (0):
-                            moverdiagonal.setX(mover.getX() - 1);
-                            moverdiagonal.setY(mover.getY() + 1);
-                            break;
-                        case (1):
-                            moverdiagonal.setX(mover.getX() + 1);
-                            moverdiagonal.setY(mover.getY() + 1);
-                            break;
-                        case (2):
-                            moverdiagonal.setX(mover.getX() + 1);
-                            moverdiagonal.setY(mover.getY() - 3);
-                            break;
-                        case (3):
-                            moverdiagonal.setX(mover.getX() - 1);
-                            moverdiagonal.setY(mover.getY() - 3);
-                            break;
-                    }
-                    //System.out.println(moverdiagonal.getX()+" "+ moverdiagonal.getY());
-                    if (board.checkListContainsCoordinates(board.getBoardMap().keySet(), mover)) {
-                        if (board.getBoardMap().get(board.getCoordinateFromList(board.getBoardMap().keySet(), mover)).getCardPointer().reign.equals(color)) {
-                            points++;
-                        }
-                    }
-                    flag = 0;
-                }
-
-                if(iterable.getY()%2==0) {
-                    if (mover.getX() % 2 == 0) {
-                        mover.setY(iterable.getY() + y_offset);
-                    }else{
-                        mover.setY(iterable.getY() + y_offset+1);
-                    }
-                }
-                else{
-                    if (mover.getX() % 2 == 0){
-                    mover.setY(iterable.getY() + y_offset+1);
-                    }else{
-                        mover.setY(iterable.getY() + y_offset);
-                    }
-
-                }
-                //System.out.println(mover.getX()+" "+ mover.getY());
-            }
-            iterable.setX(X_min + x_offset);
-            //System.out.println("---------------");
-            flag = 0;
-        }
-        return points * this.comboPoints;
-
     }
-}
 
+
+    /**
+     * Prints a specific line of the objective card pattern based on the diagonal and orientation settings.
+     * This method uses ANSI escape codes to colorize the output for different elements of the pattern.
+     *
+     * @param line The line number to print (0 to 5 inclusive).
+     *             Each line corresponds to a specific row in the objective card pattern.
+     *             <br>
+     *             The color and content of each line are dynamically selected based on the following:
+     *             - If the pattern is diagonal, it checks the orientation to determine which symbols and colors to use.
+     *             - If the pattern is not diagonal, it prints a different set of symbols and colors based on the orientation.
+     *             <br>
+     *             The output includes:
+     *             - Gold-colored digits representing the combo points of the objective card.
+     *             - Colored background squares representing different resource types (Fungi, Animal, Insect, Plant).
+     *             - Black text and colored background for contrast and visual appeal.
+     *             <br>
+     *             Example usage:
+     *             <pre>{@code
+     *             PatternObjective patternObjective = new PatternObjective(serialNumber, comboPoints, diagonal, orientation);
+     *             for (int line = 0; line <= 5; line++) {
+     *                 patternObjective.printLineObjectiveCard(line);
+     *                 System.out.println(); // Move to the next line for the next part of the pattern
+     *             }
+     *             }</pre>
+     */
+    @Override
     public void printLineObjectiveCard(int line) {
         String backgroundRed = "\033[48;2;223;73;23m";   // red background
         String backgroundGreen = "\033[48;2;113;192;124m"; // Green Background
@@ -307,96 +351,192 @@ public int getObjectivePoints(Board board) {
         if (this.diagonal) {
             switch (this.orientation) {
                 case (0): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  ║"+gold+"2"+reset+"║            ║");break;
-                        case 2:System.out.print("║          "+black+backgroundRed+"  F  "+resetbackground+reset+"  ║");break;
-                        case 3:System.out.print("║      "+black+backgroundRed+"  F  "+resetbackground+reset+"      ║");break;
-                        case 4:System.out.print("║  "+black+backgroundRed+"  F  "+resetbackground+reset+"          ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║  ║" + gold + "2" + reset + "║            ║");
+                            break;
+                        case 2:
+                            System.out.print("║          " + black + backgroundRed + "  F  " + resetbackground + reset + "  ║");
+                            break;
+                        case 3:
+                            System.out.print("║      " + black + backgroundRed + "  F  " + resetbackground + reset + "      ║");
+                            break;
+                        case 4:
+                            System.out.print("║  " + black + backgroundRed + "  F  " + resetbackground + reset + "          ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
                     break;
                 }
                 case (2): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  ║"+gold+"2"+reset+"║            ║");break;
-                        case 2:System.out.print("║          "+black+backgroundBlue+"  A  "+resetbackground+reset+"  ║");break;
-                        case 3:System.out.print("║      "+black+backgroundBlue+"  A  "+resetbackground+reset+"      ║");break;
-                        case 4:System.out.print("║  "+black+backgroundBlue+"  A  "+resetbackground+reset+"          ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║  ║" + gold + "2" + reset + "║            ║");
+                            break;
+                        case 2:
+                            System.out.print("║          " + black + backgroundBlue + "  A  " + resetbackground + reset + "  ║");
+                            break;
+                        case 3:
+                            System.out.print("║      " + black + backgroundBlue + "  A  " + resetbackground + reset + "      ║");
+                            break;
+                        case 4:
+                            System.out.print("║  " + black + backgroundBlue + "  A  " + resetbackground + reset + "          ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
 
                     break;
                 }
                 case (1): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            ║"+gold+"2"+reset+"║  ║");break;
-                        case 2:System.out.print("║  "+black+backgroundmagenta+"  I  "+resetbackground+reset+"          ║");break;
-                        case 3:System.out.print("║      "+black+backgroundmagenta+"  I  "+resetbackground+reset+"      ║");break;
-                        case 4:System.out.print("║          "+black+backgroundmagenta+"  I  "+resetbackground+reset+"  ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║            ║" + gold + "2" + reset + "║  ║");
+                            break;
+                        case 2:
+                            System.out.print("║  " + black + backgroundmagenta + "  I  " + resetbackground + reset + "          ║");
+                            break;
+                        case 3:
+                            System.out.print("║      " + black + backgroundmagenta + "  I  " + resetbackground + reset + "      ║");
+                            break;
+                        case 4:
+                            System.out.print("║          " + black + backgroundmagenta + "  I  " + resetbackground + reset + "  ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
 
                     break;
                 }
                 case (3): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            ║"+gold+"2"+reset+"║  ║");break;
-                        case 2:System.out.print("║  "+black+backgroundGreen+"  P  "+resetbackground+reset+"          ║");break;
-                        case 3:System.out.print("║      "+black+backgroundGreen+"  P  "+resetbackground+reset+"      ║");break;
-                        case 4:System.out.print("║          "+black+backgroundGreen+"  P  "+resetbackground+reset+"  ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║            ║" + gold + "2" + reset + "║  ║");
+                            break;
+                        case 2:
+                            System.out.print("║  " + black + backgroundGreen + "  P  " + resetbackground + reset + "          ║");
+                            break;
+                        case 3:
+                            System.out.print("║      " + black + backgroundGreen + "  P  " + resetbackground + reset + "      ║");
+                            break;
+                        case 4:
+                            System.out.print("║          " + black + backgroundGreen + "  P  " + resetbackground + reset + "  ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
 
                     break;
                 }
             }
-        }else{
+        } else {
             switch (this.orientation) {
                 case (0): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  ║"+gold+"3"+reset+"║            ║");break;
-                        case 2:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
-                        case 3:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
-                        case 4:System.out.print("║    "+black+backgroundmagenta+"  I  "+resetbackground+reset+"        ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║  ║" + gold + "3" + reset + "║            ║");
+                            break;
+                        case 2:
+                            System.out.print("║        " + black + backgroundGreen + "  P  " + resetbackground + reset + "    ║");
+                            break;
+                        case 3:
+                            System.out.print("║        " + black + backgroundGreen + "  P  " + resetbackground + reset + "    ║");
+                            break;
+                        case 4:
+                            System.out.print("║    " + black + backgroundmagenta + "  I  " + resetbackground + reset + "        ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
                     break;
                 }
                 case (2): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║  ║"+gold+"3"+reset+"║            ║");break;
-                        case 2:System.out.print("║         "+black+backgroundRed+"  F  "+resetbackground+reset+"   ║");break;
-                        case 3:System.out.print("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");break;
-                        case 4:System.out.print("║     "+black+backgroundBlue+"  A  "+resetbackground+reset+"       ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║  ║" + gold + "3" + reset + "║            ║");
+                            break;
+                        case 2:
+                            System.out.print("║         " + black + backgroundRed + "  F  " + resetbackground + reset + "   ║");
+                            break;
+                        case 3:
+                            System.out.print("║     " + black + backgroundBlue + "  A  " + resetbackground + reset + "       ║");
+                            break;
+                        case 4:
+                            System.out.print("║     " + black + backgroundBlue + "  A  " + resetbackground + reset + "       ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
                     break;
                 }
                 case (1): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            ║"+gold+"3"+reset+"║  ║");break;
-                        case 2:System.out.print("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");break;
-                        case 3:System.out.print("║    "+black+backgroundRed+"  F  "+resetbackground+reset+"        ║");break;
-                        case 4:System.out.print("║        "+black+backgroundGreen+"  P  "+resetbackground+reset+"    ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║            ║" + gold + "3" + reset + "║  ║");
+                            break;
+                        case 2:
+                            System.out.print("║    " + black + backgroundRed + "  F  " + resetbackground + reset + "        ║");
+                            break;
+                        case 3:
+                            System.out.print("║    " + black + backgroundRed + "  F  " + resetbackground + reset + "        ║");
+                            break;
+                        case 4:
+                            System.out.print("║        " + black + backgroundGreen + "  P  " + resetbackground + reset + "    ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
                     break;
                 }
                 case (3): {
-                    switch(line){
-                        case 0:System.out.print("╔═════════════════╗");break;
-                        case 1:System.out.print("║            ║"+gold+"3"+reset+"║  ║");break;
-                        case 2:System.out.print("║   "+black+backgroundBlue+"  A  "+resetbackground+reset+"         ║");break;
-                        case 3:System.out.print("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");break;
-                        case 4:System.out.print("║       "+black+backgroundmagenta+"  I  "+resetbackground+reset+"     ║");break;
-                        case 5:System.out.print("╚═════════════════╝");break;
+                    switch (line) {
+                        case 0:
+                            System.out.print("╔═════════════════╗");
+                            break;
+                        case 1:
+                            System.out.print("║            ║" + gold + "3" + reset + "║  ║");
+                            break;
+                        case 2:
+                            System.out.print("║   " + black + backgroundBlue + "  A  " + resetbackground + reset + "         ║");
+                            break;
+                        case 3:
+                            System.out.print("║       " + black + backgroundmagenta + "  I  " + resetbackground + reset + "     ║");
+                            break;
+                        case 4:
+                            System.out.print("║       " + black + backgroundmagenta + "  I  " + resetbackground + reset + "     ║");
+                            break;
+                        case 5:
+                            System.out.print("╚═════════════════╝");
+                            break;
                     }
                     break;
                 }

@@ -12,8 +12,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Class that represents the board. Each player has a board and it's the object that stores all the placed card and other information
- * such as the collected resource
+ * {@code Board} class represents the game board. Each player has a board, in which players can place their cards during the game
+ * and all the collected resources are stored. <br>
+ * The class implements {@link Serializable} to support object serialization.
  */
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
@@ -29,7 +30,8 @@ public class Board implements Serializable {
     );
 
     /**
-     * board constructor
+     *Constructs a new {@code Board} for the specified owner player.
+     *
      * @param owner player that will place his cards on this board
      */
     public Board(Player owner) {
@@ -40,14 +42,30 @@ public class Board implements Serializable {
                 .forEach(resource -> collectedResources.put(resource, 0));
     }
 
+    /**
+     * Retrieves the map representing the board layout.
+     *
+     * @return The map of coordinates to cells on the board.
+     */
     public Map<Coordinates, Cell> getBoardMap() {
         return boardMap;
     }
 
+    /**
+     * Retrieves the collected resources on the board.
+     *
+     * @return The EnumMap containing counts of each resource type collected on the board.
+     */
     public EnumMap<Resource, Integer> getCollectedResources() {
         return this.collectedResources;
     }
 
+    /**
+     * Verifies if the resources required by the given card can be placed on the board.
+     *
+     * @param cardToPlace The card to be placed on the board.
+     * @throws GenericException If there are not enough resources on the board to place the card.
+     */
     // check goldCard has enough resource to be played
     public void resourceVerifier(PlayableCard cardToPlace) throws GenericException {
         for (Resource reign : Resource.values()) {
@@ -59,6 +77,8 @@ public class Board implements Serializable {
     }
 
     /**
+     * Checks if it's possible to place a card at the specified coordinates on the board.
+     *
      * @param X coordinate x
      * @param Y coordinate y
      * @return returns the coordinate from the board if it is possible to place or throw a GenericException
@@ -76,7 +96,8 @@ public class Board implements Serializable {
                 });
     }
 
-    /** place the card to the board
+    /**
+     * Places the specified card on the board at the given coordinates.
      *
      * @param xy coordinate to place card
      * @param cardToPlace card to place on the board
@@ -96,6 +117,15 @@ public class Board implements Serializable {
         }
     }
 
+    /**
+     * Updates the available and not available cells on the board after placing a card.
+     *
+     * @param cardPlaced   The card that was placed on the board.
+     * @param xy           The coordinates where the card was placed.
+     * @param isFlipped    Whether the card is flipped or not.
+     * @param edgeResource The resources on the edge of the card.
+     * @return The updated list of available cells.
+     */
     // updates notAvailableCells and availableCells sets
     private List<Coordinates> updateAvailableCells(PlayableCard cardPlaced, Coordinates xy, boolean isFlipped, Resource[] edgeResource) {
         this.availableCells.remove(xy);
@@ -136,6 +166,13 @@ public class Board implements Serializable {
         return new LinkedList<>(this.availableCells);
     }
 
+    /**
+     * Counts the number of surrounding cards at the specified coordinates.
+     *
+     * @param x The x-coordinate to check.
+     * @param y The y-coordinate to check.
+     * @return The number of surrounding cards.
+     */
     // method used to cycle on surrounding coordinate (atm used only to count gold card given points)
     public int surroundingCardsNumber(int x, int y) {
         AtomicInteger counter = new AtomicInteger(0);
@@ -149,6 +186,12 @@ public class Board implements Serializable {
         return counter.get();
     }
 
+    /**
+     * Removes resources from the board when a card covers them.
+     *
+     * @param x The x-coordinate to remove resources.
+     * @param y The y-coordinate to remove resources.
+     */
     // update surrounding cards edges
     public void removeResources(int x, int y) {
         AtomicInteger edge = new AtomicInteger(2);
@@ -177,6 +220,12 @@ public class Board implements Serializable {
             });
     }
 
+    /**
+     * Adds resources to the board based on the card placed and its orientation.
+     *
+     * @param cardToPlace The card that is being placed on the board.
+     * @param isFlipped   Indicates whether the card is flipped (back side) or not.
+     */
     // simplified for cycles to update reigns and objects
     public void addResource(PlayableCard cardToPlace, boolean isFlipped) {
         // if card is on the back side
@@ -202,11 +251,25 @@ public class Board implements Serializable {
         this.owner.getGame().getObserver().notifyClients(new OnUpdateResourceMessage(this.owner.getNickname(), new EnumMap<>(this.collectedResources)));
     }
 
+    /**
+     * Checks if a given set of coordinates exists within a list of coordinates.
+     *
+     * @param coordinatesList   The list of coordinates to check.
+     * @param coordinatesToCheck The coordinates to search for in the list.
+     * @return True if the coordinates list contains the coordinates to check, false otherwise.
+     */
     public boolean checkListContainsCoordinates(Set<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
         return coordinatesList.stream()
                 .anyMatch(coordinate -> coordinate.equals(coordinatesToCheck));
     }
 
+    /**
+     * Retrieves a specific coordinate from a list of coordinates, if it exists.
+     *
+     * @param coordinatesList   The list of coordinates to search within.
+     * @param coordinatesToCheck The coordinates to retrieve from the list.
+     * @return The found coordinates if present in the list, otherwise null.
+     */
     public Coordinates getCoordinateFromList(Set<Coordinates> coordinatesList, Coordinates coordinatesToCheck) {
         return coordinatesList.stream()
                 .filter(coordinate -> coordinate.equals(coordinatesToCheck))

@@ -25,23 +25,41 @@ public class Table implements Serializable {
     private final Map<Player, Board> playerBoardMap = new HashMap<>();
 
     /**
-     * Table constructor
-     * @param game table referred to the game
+     * Constructs a {@code Table} with a specified game.
+     *
+     * @param game the game referred to the game
      */
+    //constructor of table
     public Table(Game game) {
         this.game = game;
         this.deck = new Deck();
         this.deck.shuffleDecks();
     }
-
+    /**
+     * Gets the map of gold cards on the table.
+     *
+     * @return the map of gold cards.
+     */
     public Map<PlayableCard, Boolean> getGoldCardMap() {
         return goldCardMap;
     }
 
+    /**
+     * Gets the map of resource cards on the table.
+     *
+     * @return the map of resource cards.
+     */
     public Map<PlayableCard, Boolean> getResourceCardMap() {
         return resourceCardMap;
     }
 
+    /**
+     * Gets a card from the table by its serial number.
+     *
+     * @param serialNumber the serial number of the card to get.
+     * @return the playable card with the specified serial number.
+     * @throws GenericException if the card is not found.
+     */
     public PlayableCard getCardFromTable(int serialNumber) throws GenericException {
         try{
             return this.goldCardMap.keySet().stream()
@@ -61,26 +79,54 @@ public class Table implements Serializable {
         }
     }
 
+    /**
+     * Gets the list of token colors available on the table.
+     *
+     * @return the list of token colors.
+     */
     public ArrayList<TokenColor> getTokenColors() {
         return tokenColors;
     }
 
+    /**
+     * Gets the list of common objective cards.
+     *
+     * @return the list of common objective cards.
+     */
     public List<ObjectiveCard> getCommonObjectiveCard() {
         return this.commonObjectiveCard;
     }
 
+    /**
+     * Gets the map of player boards.
+     *
+     * @return the map of player boards.
+     */
     public Map<Player, Board> getPlayerBoardMap() {
         return playerBoardMap;
     }
 
+    /**
+     * Gets the map of players' scores.
+     *
+     * @return the map of players' scores.
+     */
     public Map<Player, Integer> getPlayersScore() {
         return this.playersScore;
     }
 
+    /**
+     * Gets the deck of cards for the game.
+     *
+     * @return the deck of cards.
+     */
     public Deck getDeck() {
         return this.deck;
     }
 
+    /**
+     * Initializes the drawable cards on the table.
+     */
     // initialize drawable card on the table
     public void tableSetup() {
         for (int i = 0; i < 2; i++) {
@@ -94,9 +140,12 @@ public class Table implements Serializable {
         this.game.getObserver().notifyClients(new OnNewResourceCardsAvailableMessage(getCardSerialMap(this.resourceCardMap)));
     }
 
+
     /**
-        METHOD USED TO GET SERIAL NUMBER FROM PLAYABLE CARDS
-        @param cardMap card map used to get serial number
+     * Gets the serial numbers from the playable cards in the given map.
+     *
+     * @param cardMap the card map to get serial numbers from.
+     * @return a map of serial numbers and their visibility status.
      */
     public Map<Integer, Boolean> getCardSerialMap(Map<PlayableCard, Boolean> cardMap) {
         return cardMap.entrySet()
@@ -105,9 +154,10 @@ public class Table implements Serializable {
     }
 
     /**
-        METHOD THAT IDENTIFIES THE TYPE OF THE CARD
-        THEN CALLS THE METHOD TO UPDATE CARD/RESOURCE CARD MAP AND THE DECK
-        @param cardToDraw card to draw from the deck
+     * Draws a card from the table.
+     *
+     * @param cardToDraw the card to draw.
+     * @throws GenericException if the card is not found in any deck.
      */
     public void drawCard(PlayableCard cardToDraw) throws GenericException {
         // if cardToDraw is the goldMap
@@ -124,13 +174,17 @@ public class Table implements Serializable {
         }
     }
 
+
+
     /**
      * method used to update deck card map after a card has been drawn
-     * @param deckCardMap deck card map to update
-     * @param drawnCard card to remove from the map
-     * @param deckToManage
-     * @param backupDeck
-     * @throws GenericException
+     * Updates the drawable cards on the table.
+     *
+     * @param deckCardMap the map of cards to update.
+     *  * @param drawnCard the card that was drawn.
+     *  * @param deckToManage the deck to manage.
+     *  * @param backupDeck the backup deck to use if the main deck is empty.
+     *  * @throws GenericException if both decks are empty.
      */
     private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard drawnCard, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
         // if the card isn't covered
@@ -158,9 +212,10 @@ public class Table implements Serializable {
     }
 
     /**
-     * method used to add new points to a player
-     * @param player player that has scored newPoints
-     * @param newPoints amount of points to add
+     * Adds new points to a player.
+     *
+     * @param player the player that scored new points.
+     * @param newPoints the amount of points to add.
      */
     public void addPlayerScore(Player player, int newPoints) {
         if (!this.playersScore.containsKey(player)) {

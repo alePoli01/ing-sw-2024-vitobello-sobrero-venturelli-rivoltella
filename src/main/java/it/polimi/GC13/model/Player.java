@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Class that represents a player in a game
+ * {@code Player} class represents a player in a game
  */
 public class Player implements Serializable {
     private final String nickname;  //username of the player
@@ -28,21 +28,39 @@ public class Player implements Serializable {
     private Game game;
 
     /**
-     * player constructor
-     * @param nickname nickname that identifies the player in a game
+     * Creates a new {@code Player} with a specified nickname.
+     *
+     * @param nickname identifies the player in a game
      */
+
     public Player(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * Gets the nickname of the player.
+     *
+     * @return the nickname of the player.
+     */
     public String getNickname() {
         return this.nickname;
     }
 
+    /**
+     * Checks if it is the player's turn.
+     *
+     * @return true if it is the player's turn, false otherwise.
+     */
     public boolean isMyTurn() {
         return this.myTurn;
     }
 
+    /**
+     * Sets the token color for the player.
+     *
+     * @param tokenColor the token color to be set.
+     * @throws GenericException if the token color is already chosen.
+     */
     public void setTokenColor(TokenColor tokenColor) throws GenericException {
         if (this.tokenColor == null) {
             if (this.getTable().getTokenColors().contains(tokenColor)) {
@@ -64,50 +82,108 @@ public class Player implements Serializable {
         }
     }
 
+    /**
+     * Gets the token color of the player.
+     *
+     * @return the token color of the player.
+     */
     public TokenColor getTokenColor() {
         return tokenColor;
     }
 
+    /**
+     * Gets the position of the player.
+     *
+     * @return the position of the player.
+     */
     public Position getPosition() {
         return this.position;
     }
 
+    /**
+     * Sets the game for the player.
+     *
+     * @param game the game to be set.
+     */
     public void setGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * Gets the private objective cards of the player.
+     *
+     * @return a linked list of the player's private objective cards.
+     */
     public LinkedList<ObjectiveCard> getPrivateObjectiveCard() {
         return this.privateObjectiveCard;
     }
 
+    /**
+     * Sets the position of the player.
+     *
+     * @param position the position to be set.
+     */
     public void setPosition(Position position) {
         this.position = position;
     }
 
+    /**
+     * Gets the number of turns played by the player.
+     *
+     * @return the number of turns played by the player.
+     */
     public int getTurnPlayed() {
         return this.turnPlayed;
     }
 
+    /**
+     * Increases the number of turns played by the player by one.
+     */
     public void increaseTurnPlayed() {
         this.turnPlayed += 1;
     }
 
+    /**
+     * Gets the game of the player.
+     *
+     * @return the game of the player.
+     */
     public Game getGame() {
         return this.game;
     }
 
+    /**
+     * Gets the board of the player.
+     *
+     * @return the board of the player.
+     */
     public Board getBoard() {
         return this.game.getTable().getPlayerBoardMap().get(this);
     }
 
+    /**
+     * Gets the table of the game.
+     *
+     * @return the table of the game.
+     */
     public Table getTable() {
         return this.game.getTable();
     }
 
+    /**
+     * Gets the hand of the player.
+     *
+     * @return an array list of the player's hand.
+     */
     public ArrayList<PlayableCard> getHand() {
         return this.hand;
     }
 
+    /**
+     * Gets the serial numbers of the cards in the player's hand.
+     *
+     * @return a linked list of the serial numbers of the cards in the player's hand.
+     */
     private LinkedList<Integer> getHandSerialNumber() {
         LinkedList<Integer> handSerialNumber = new LinkedList<>();
         this.hand.forEach((card) -> handSerialNumber.add(card.serialNumber));
@@ -118,12 +194,22 @@ public class Player implements Serializable {
         return handSerialNumber;
     }
 
+    /**
+     * Sets whether it is the player's turn.
+     *
+     * @param myTurn true if it is the player's turn, false otherwise.
+     */
     public void setMyTurn(boolean myTurn) {
         this.myTurn = myTurn;
         System.out.println(this.nickname + " turn updated to " + this.myTurn);
         this.game.getObserver().notifyClients(new OnTurnUpdateMessage(this.getNickname(), myTurn));
     }
 
+    /**
+     * Checks if it is the player's turn.
+     *
+     * @throws GenericException if it is not the player's turn.
+     */
     // check it is player's turn before playing
     public void checkMyTurn() throws GenericException {
         if (!myTurn) {
@@ -131,6 +217,12 @@ public class Player implements Serializable {
         }
     }
 
+    /**
+     * Removes a card from the player's hand after it is placed on the board.
+     *
+     * @param placedCard the card to be removed from the hand.
+     * @throws GenericException if the card is not successfully removed.
+     */
     // remove placedCard after it is placed on the board
     public void removeFromHand(PlayableCard placedCard) throws GenericException {
         this.hand.remove(placedCard);
@@ -142,6 +234,12 @@ public class Player implements Serializable {
         this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
+    /**
+     * Adds drawn cards to the player's hand.
+     *
+     * @param drawnCard the cards to be added to the hand.
+     * @throws GenericException if the cards are not successfully added.
+     */
     // add drawnCard to the hand
     public void addToHand(List<PlayableCard> drawnCard) throws GenericException {
         this.hand.addAll(drawnCard);
@@ -152,7 +250,13 @@ public class Player implements Serializable {
         this.game.getObserver().notifyClients(new OnHandUpdate(this.nickname, this.getHandSerialNumber()));
     }
 
-
+    /**
+     * Chooses a private objective card for the game.
+     *
+     * @param serialPrivateObjectiveCard the serial number of the chosen private objective card.
+     * @param readyPlayers the number of players ready.
+     * @throws GenericException if the private objective card is not in the player's hand or already chosen.
+     */
     // chose private objective card for the game
     public void setPrivateObjectiveCard(int serialPrivateObjectiveCard, int readyPlayers) throws GenericException {
         if (this.privateObjectiveCard.size() == 2) {
@@ -168,6 +272,11 @@ public class Player implements Serializable {
         }
     }
 
+    /**
+     * Gets the serial numbers of the player's private objective cards.
+     *
+     * @return a linked list of the serial numbers of the player's private objective cards.
+     */
     public LinkedList<Integer> getPrivateObjectiveCardSerialNumber() {
         LinkedList<Integer> privateObjectiveCardSerialNumber = new LinkedList<>();
         this.privateObjectiveCard

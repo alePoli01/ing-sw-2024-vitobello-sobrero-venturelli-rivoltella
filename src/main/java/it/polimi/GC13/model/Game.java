@@ -15,8 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+
 /**
- * Game class, it is created for each game and has reference to each part of the model
+ * The {@code Game} class represents the core model for a game instance;
+ * it's created for each game and has reference to each part of the model.
+ <br>
+ * It manages the state of the game, players, and interactions within the game.
  */
 public class Game implements Serializable {
     private GameState gameState;
@@ -30,9 +34,10 @@ public class Game implements Serializable {
     private final Map<String, List<ChatMessage>> chat = new HashMap<>();
 
     /**
-     * game constructor
-     * @param numPlayer number of players who will play the game. It is set by the creator.
-     * @param gameName name of the game. It is a unique readable identifier for the game
+     * Constructs a new {@code Game} instance.
+     *
+     * @param numPlayer the number of players who will play the game, set by the creator.
+     * @param gameName the name of the game, which serves as a unique readable identifier.
      */
     public Game(int numPlayer, String gameName) {
         this.gameName = gameName;
@@ -42,38 +47,81 @@ public class Game implements Serializable {
         this.setObserver();
     }
 
+    /**
+     * Returns the name of the game.
+     *
+     * @return the game name.
+     */
     public String getGameName() {
         return this.gameName;
     }
 
+    /**
+     * Returns the observer associated with this game.
+     *
+     * @return the observer.
+     */
     public Observer getObserver() {
         return this.observer;
     }
 
+    /**
+     * Sets the observer for the game.
+     */
     public void setObserver() {
         this.observer = new Observer(new DiskManager(), this);
     }
 
+    /**
+     * Sets the current state of the game.
+     *
+     * @param newState the new game state.
+     */
     public void setGameState(GameState newState) {
         this.gameState = newState;
     }
 
+    /**
+     * Returns the current state of the game.
+     *
+     * @return the game state.
+     */
     public GameState getGameState() {
         return this.gameState;
     }
 
+    /**
+     * Returns the game table.
+     *
+     * @return the table.
+     */
     public Table getTable() {
         return table;
     }
 
+    /**
+     * Returns the current number of players in the game.
+     *
+     * @return the current number of players.
+     */
     public int getCurrNumPlayer() {
         return currNumPlayer;
     }
 
+    /**
+     * Returns the list of players in the game.
+     *
+     * @return the player list.
+     */
     public List<Player> getPlayerList() {
         return this.playerList;
     }
 
+    /**
+     * Deals the initial set of cards to each player.
+     *
+     * @throws GenericException if an error occurs while dealing cards.
+     */
     // give firsts 3 cards to each player
     public void giveFirstCards() throws GenericException {
         List<PlayableCard> firstHand = new ArrayList<>();
@@ -87,6 +135,9 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Adds common objective cards to the table.
+     */
     // add common objective card to the table
     public void setCommonObjectiveCards() {
         LinkedList<Integer> commonSerialObjectiveCards = new LinkedList<>();
@@ -96,6 +147,9 @@ public class Game implements Serializable {
         this.observer.notifyClients(new OnDealCommonObjectiveCardMessage(commonSerialObjectiveCards));
     }
 
+    /**
+     * Sets the positions of players in the game.
+     */
     // set players position
     public void setPlayersPosition() {
         Random random = new Random();
@@ -121,6 +175,11 @@ public class Game implements Serializable {
         this.observer.notifyClients(new OnTurnSetMessage(playerPositions));
     }
 
+    /**
+     * Updates the turn for the next player at the end of every round.
+     *
+     * @param player the current player.
+     */
     // updates players turn at the end of every round
     public void setPlayerTurn(Player player) {
         Position nextPlayerPosition = player.getPosition().next(playerList.size());
@@ -129,6 +188,11 @@ public class Game implements Serializable {
                 .forEach(p -> p.setMyTurn(true));
     }
 
+    /**
+     * Sets the last round for the game.
+     *
+     * @param player the player who triggers the last round.
+     */
     // sets game's last round
     public void setLastRound(Player player) {
         if (this.lastRound == 0) {
@@ -137,10 +201,21 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Returns the last round of the game.
+     *
+     * @return the last round.
+     */
     public int getLastRound() {
         return this.lastRound;
     }
 
+    /**
+     * Adds a player to the game.
+     *
+     * @param player the player to be added.
+     * @throws GenericException if an error occurs while adding the player.
+     */
     // add the selected player to the game
     public void addPlayerToGame(Player player) throws GenericException {
         if (currNumPlayer < numPlayer) {
@@ -160,12 +235,20 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Deals the starting card to each player.
+     *
+     * @throws GenericException if an error occurs while dealing the cards.
+     */
     public void dealStartCard() throws GenericException {
         for (Player player : this.playerList) {
             player.addToHand(List.of(this.table.getDeck().getStartDeck().removeFirst()));
         }
     }
 
+    /**
+     * Deals private objective cards to each player.
+     */
     // gives two objective cards to each player, after that, each player will have to choose one of this
     public void dealPrivateObjectiveCards() {
         for (Player player : playerList) {
@@ -175,6 +258,13 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Checks if a nickname is already used by another player.
+     *
+     * @param nickname the nickname to check.
+     * @param player the player who wants to use the nickname.
+     * @throws GenericException if the nickname is already used.
+     */
     public void checkNickname(String nickname, Player player) throws GenericException {
         for (Player playerToCheck : playerList) {
             if (playerToCheck.getNickname().equals(nickname) && !playerToCheck.equals(player)) {
@@ -183,6 +273,13 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Registers a chat message.
+     *
+     * @param sender the sender of the message.
+     * @param recipient the recipient of the message.
+     * @param message the message content.
+     */
     public void registerChatMessage(String sender, String recipient, String message) {
         String key;
         if (!recipient.equals("global")) {
@@ -206,6 +303,11 @@ public class Game implements Serializable {
         this.observer.notifyClients(new OnNewMessage(sender, recipient, message));
     }
 
+    /**
+     * Determines and sets the winner(s) of the game.
+     *
+     * @return a set of the winners' nicknames.
+     */
     public Set<String> setWinner() {
         System.out.println("Calculating winner for game " + this.gameName);
         Map<Player, Integer> objectivesAchieved = new HashMap<>();
@@ -244,8 +346,11 @@ public class Game implements Serializable {
     }
 
     /**
-     * method used to calculate final score with private and common objective cards
-     * @param player player who is being calculated the score
+     * Calculates the final score for a player based on private and common objective cards.
+     *
+     * @param player the player whose score is being calculated.
+     * @param objectiveAchievedMap a map to track objectives achieved by each player.
+     * @return the number of objectives achieved by the player.
      */
     private int finalScoreCalculation(Player player, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap) {
         objectiveAchievedMap.put(player.getNickname(), new LinkedList<>());
@@ -276,6 +381,12 @@ public class Game implements Serializable {
         return numberObjectivesAchieved.get();
     }
 
+    /**
+     * Closes the game and handles the disconnection of a client.
+     *
+     * @param disconnectedClient the client interface of the disconnected client.
+     * @param disconnectedPlayerName the name of the disconnected player.
+     */
     public void closeGame(ClientInterface disconnectedClient, String disconnectedPlayerName){
         this.observer.removeListener(disconnectedClient);
         this.observer.notifyClients(new OnPlayerDisconnected(disconnectedPlayerName));

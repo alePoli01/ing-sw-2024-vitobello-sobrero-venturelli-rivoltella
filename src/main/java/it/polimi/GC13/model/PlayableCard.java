@@ -5,6 +5,12 @@ import it.polimi.GC13.enums.*;
 import java.io.Serializable;
 import java.util.Map;
 
+//TODO: da completare JavaDoc
+
+/**
+ * Represents a playable card in the game. Each card has a serial number, reign, type, resources on the edges,
+ * resources needed to play, points given under certain conditions, and specific points condition.
+ */
 public class PlayableCard implements Serializable {
     public final int serialNumber;
     public final Resource reign;
@@ -20,6 +26,17 @@ public class PlayableCard implements Serializable {
     private final String gold = "\033[38;2;255;215;0m";  // gold
     private final String reset = "\u001b[0m";  // reset color of the characters
 
+    /**
+     * Constructs a new {@code PlayableCard} with the given attributes.
+     *
+     * @param serialNumber      The serial number of the card.
+     * @param reign             The reign resource associated with the card.
+     * @param cardType          The type of the card.
+     * @param edgeFrontResource The resources on the edges of the card.
+     * @param resourceNeeded    The resources needed to play the card and their quantities.
+     * @param pointsGiven       The points given by the card.
+     * @param condition         The condition under which points are given.
+     */
     public PlayableCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeFrontResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition) {
         this.serialNumber = serialNumber;
         this.reign = reign;
@@ -30,7 +47,14 @@ public class PlayableCard implements Serializable {
         this.condition = condition;
     }
 
-    // method to calculate points given after a gold card is placed
+    /**
+     * Calculates the points given after the card is placed on the board based on the specified condition.
+     *
+     * @param board The game board where the card is placed.
+     * @param X     The X coordinate of the card placement.
+     * @param Y     The Y coordinate of the card placement.
+     * @return The points given based on the condition.
+     */
     public int getPointsGiven(Board board, int X, int Y) {
         return switch (condition) {
             case QUILL -> board.getCollectedResources().get(Resource.QUILL) * pointsGiven;
@@ -1069,6 +1093,7 @@ public class PlayableCard implements Serializable {
         }
     }
 
+
     private void printGoldCardRequirementsWithEdgeL(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[0]  + color + " ║ "+reset + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
@@ -1077,6 +1102,7 @@ public class PlayableCard implements Serializable {
         }
     }
 
+
     private void printGoldCardRequirementsWithEdgeR(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1]  + color + " ║");
@@ -1084,6 +1110,7 @@ public class PlayableCard implements Serializable {
             System.out.print("         ║   ║");
         }
     }
+
 
     private void printGoldCardRequirements(boolean isFlipped) {
         if (!isFlipped) {
@@ -1094,6 +1121,7 @@ public class PlayableCard implements Serializable {
 
     }
 
+
     private void printGoldCardInfo(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[3]  + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition  + reset + color + "   ║ " + this. edgeFrontResource[2]  + color + " ║");
@@ -1102,6 +1130,7 @@ public class PlayableCard implements Serializable {
         }
 
     }
+
 
     private void printGoldCardRequirementsWithBothEdges(boolean isFlipped, String color) {
         if (!isFlipped) {

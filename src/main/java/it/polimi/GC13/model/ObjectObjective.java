@@ -4,16 +4,35 @@ import it.polimi.GC13.enums.Resource;
 
 import java.util.ArrayList;
 
-
+/**
+ * Represents an objective card based on a specific set of resources (objects).
+ * Extends {@link ObjectiveCard}.
+ */
 public class ObjectObjective extends ObjectiveCard {
+    /**
+     * The list of resources (objects) that define this objective card.
+     */
     public final ArrayList<Resource> object;
 
+    /**
+     * Constructs an ObjectObjective with the given serial number, combo points, and list of resources (objects).
+     *
+     * @param serialNumber The serial number of the objective card.
+     * @param comboPoints  The combo points associated with completing this objective.
+     * @param object       The list of resources (objects) required to fulfill this objective.
+     */
     public ObjectObjective(int serialNumber, int comboPoints, ArrayList<Resource> object) {
         super(serialNumber, comboPoints);
         this.object = new ArrayList<>();//initialize and copy the objects into the card
         this.object.addAll(object);
     }
 
+    /**
+     * Calculates and returns the total points achieved by fulfilling this objective on the given board.
+     *
+     * @param board The game board where the resources are collected.
+     * @return The total points achieved by fulfilling this objective.
+     */
     public int getObjectivePoints(Board board) {
         int combo;
         ArrayList<Resource> allItems= new ArrayList<>();
@@ -34,6 +53,7 @@ public class ObjectObjective extends ObjectiveCard {
         }
         return combo * this.comboPoints;
     }
+
 
     @Override
     public void printLineObjectiveCard(int line) {

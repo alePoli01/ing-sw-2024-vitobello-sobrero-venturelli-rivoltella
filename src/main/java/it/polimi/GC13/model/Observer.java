@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Object used to notify listeners, therefore connected players and the disk manager
+ * The {@code Observer} class manages client listeners and notifies them with messages from the server.
+ * It
  */
 public class Observer {
     private final List<ClientInterface> listenerList = new ArrayList<>();
@@ -18,9 +19,10 @@ public class Observer {
     private final String gameName;
 
     /**
-     * observer constructor
-     * @param diskManager class uses to write and read serialized file
-     * @param game game observed by the observer
+     * Constructs an {@code Observer} instance with the specified {@link DiskManager} and {@link Game}.
+     *
+     * @param diskManager The {@link DiskManager} responsible for managing game state persistence.
+     * @param game        The {@link Game} instance to observe.
      */
     public Observer(DiskManager diskManager, Game game) {
         this.diskManager = diskManager;
@@ -28,18 +30,42 @@ public class Observer {
         this.gameName = game.getGameName();
     }
 
+
+    /**
+     * Retrieves the number of listeners currently registered with this Observer.
+     *
+     * @return The number of listeners.
+     */
     public int getListenerSize() {
         return this.listenerList.size();
     }
 
+
+    /**
+     * Adds a client listener to the list of listeners.
+     *
+     * @param listener The client listener to add.
+     */
     public void addListener(ClientInterface listener) {
         this.listenerList.add(listener);
         System.out.println("[Game: "+ gameName +"][Listeners size: " + this.listenerList.size()+"]");
     }
+
+    /**
+     * Removes a client listener from the list of listeners.
+     *
+     * @param listener The client listener to remove.
+     */
     public void removeListener(ClientInterface listener) {
         this.listenerList.remove(listener);
     }
 
+
+    /**
+     * Notifies all registered clients with the specified message.
+     *
+     * @param message The message to notify clients with.
+     */
     public void notifyClients(MessagesFromServer message) {
         this.listenerList.forEach(client -> {
                 try {
@@ -51,6 +77,11 @@ public class Observer {
         this.diskManager.writeOnDisk();
     }
 
+    /**
+     * Retrieves the DiskManager associated with this Observer.
+     *
+     * @return The DiskManager instance.
+     */
     public DiskManager getDiskManager() {
         return this.diskManager;
     }

@@ -4,11 +4,26 @@ import it.polimi.GC13.enums.*;
 
 import java.util.Map;
 
+/**
+ * Represents the starter card in the game, extending {@link PlayableCard}.
+ */
 public class StartCard extends PlayableCard {
     public final Resource[] backReigns;
     public final Resource[] edgeBackResource;
 
-
+    /**
+     * Constructs a {@code StartCard} object with specified parameters.
+     *
+     * @param serialNumber     the serial number of the card
+     * @param reign            the reign resource of the card
+     * @param cardType         the type of the card (<i>Resource</i>, <i>Gold</i>)
+     * @param edgeResource     the resources at the edge of the card
+     * @param resourceNeeded   the resources needed to obtain this card
+     * @param pointsGiven      the points given by this card
+     * @param condition        the condition for obtaining this card
+     * @param backReigns       the array of resources at the back reigns of the card
+     * @param edgeBackResource the array of resources at the edge of the back side of the card
+     */
     public StartCard(int serialNumber, Resource reign, CardType cardType, Resource[] edgeResource, Map<Resource, Integer> resourceNeeded, int pointsGiven, PointsCondition condition, Resource[] backReigns, Resource[] edgeBackResource) {
         super(serialNumber, reign, cardType, edgeResource, resourceNeeded, pointsGiven, condition);
         this.backReigns = backReigns;
