@@ -2,9 +2,17 @@ package it.polimi.GC13.model;
 
 import java.io.Serializable;
 
+/**
+ * Class that represents the coordinate where the card has been placed
+ */
 public class Coordinates implements Serializable {
     private int x, y;
 
+    /**
+     * constructor
+     * @param x coordinate x
+     * @param y coordinate y
+     */
     public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;

@@ -11,6 +11,10 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Class that represents the board. Each player has a board and it's the object that stores all the placed card and other information
+ * such as the collected resource
+ */
 public class Board implements Serializable {
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
     private final Player owner;               //owner of the board
@@ -25,7 +29,7 @@ public class Board implements Serializable {
     );
 
     /**
-     *
+     * board constructor
      * @param owner player that will place his cards on this board
      */
     public Board(Player owner) {

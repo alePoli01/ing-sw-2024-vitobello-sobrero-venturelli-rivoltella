@@ -30,52 +30,32 @@ public class TUI implements View {
     private ServerInterface virtualServer;
     private String nickname;
     private String gameName;
-    private final List<Integer> hand;
+    private final List<Integer> hand = new ArrayList<>();
     private int serialPrivateObjectiveCard;
-    private List<Integer> serialCommonObjectiveCard;
-    private boolean myTurn;
-    private int turnPlayed;
-    private final Map<String, Integer> playersScore;
-    private final Map<String, Position> playersPosition;
-    private final Map<Integer, Boolean> goldCardsAvailable;
-    private final Map<Integer, Boolean> resourceCardsAvailable;
-    private final Map<String, BoardView> playersBoard;
-    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources;
-    private final List<String> gamesLog;
-    private boolean cooking;
-    private int choice;
-    private final Printer printer;
-    private final Reader newReader;
-    private final Map<String, List<ChatMessage>> chat;
-    private final Map<String, Boolean> newMessageMap;
-    private boolean connectionOpen;
-    private boolean interrupt;
+    private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
+    private boolean myTurn = false;
+    private int turnPlayed = 0;
+    private final Map<String, Integer> playersScore = new ConcurrentHashMap<>();
+    private final Map<String, Position> playersPosition = new ConcurrentHashMap<>();
+    private final Map<Integer, Boolean> goldCardsAvailable = new ConcurrentHashMap<>();
+    private final Map<Integer, Boolean> resourceCardsAvailable = new ConcurrentHashMap<>();
+    private final Map<String, BoardView> playersBoard = new ConcurrentHashMap<>();
+    private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new ConcurrentHashMap<>();
+    private final List<String> gamesLog = new ArrayList<>();
+    private boolean cooking = false;
+    private int choice = 0;
+    private final Printer printer = new Printer();
+    private final Reader newReader = new Reader();
+    private final Map<String, List<ChatMessage>> chat = new HashMap<>();
+    private final Map<String, Boolean> newMessageMap = new ConcurrentHashMap<>();
+    private boolean connectionOpen = true;
+    private boolean interrupt = false;
 
     /**
      * Initializes a new TUI instance, setting up player data, utility objects,
      * and starting the input reader thread.
      */
     public TUI() {
-        this.hand = new ArrayList<>();
-        this.serialCommonObjectiveCard = new LinkedList<>();
-        this.myTurn = false;
-        this.turnPlayed = 0;
-        this.playersScore = new ConcurrentHashMap<>();
-        this.playersPosition = new ConcurrentHashMap<>();
-        this.goldCardsAvailable = new ConcurrentHashMap<>();
-        this.resourceCardsAvailable = new ConcurrentHashMap<>();
-        this.playersBoard = new ConcurrentHashMap<>();
-        this.playersCollectedResources = new ConcurrentHashMap<>();
-        this.gamesLog = new ArrayList<>();
-        this.cooking = false;
-        this.choice = 0;
-        this.printer = new Printer();
-        this.newReader = new Reader();
-        this.chat = new HashMap<>();
-        this.newMessageMap = new ConcurrentHashMap<>();
-        this.connectionOpen = true;
-        this.interrupt = false;
-
         new Thread(this.newReader, "READER").start();
     }
 
@@ -161,7 +141,6 @@ public class TUI implements View {
         }
     }
 
-
     /**
      * Prompts the user for their nickname, game name, and number of players, then sends a request to create a new game.
      * Prints an error message and aborts if input validation fails.
@@ -181,7 +160,6 @@ public class TUI implements View {
         }
         this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
     }
-
 
     /**
      * Prompts the user to choose a nickname and select a game from the provided map to join.
@@ -363,7 +341,6 @@ public class TUI implements View {
         this.showHomeMenu();
     }
 
-
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playersPosition.putAll(playerPositions);
@@ -498,7 +475,6 @@ public class TUI implements View {
         newList.addAll(list);
         return newList;
     }
-
 
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
@@ -654,9 +630,7 @@ public class TUI implements View {
         this.choice = 0;
     }
 
-    /**
-        MENU OPTIONS
-     */
+
     /**
      * Displays the home menu options for the current user.
      * This method prints information such as the user's nickname, turn status,
@@ -683,17 +657,8 @@ public class TUI implements View {
         System.out.println("\t[12] to view chat [" + (this.newMessageMap.values().stream().anyMatch(v -> v) ? "!" : "no new messages") + "]");
     }
 
-    //ale vito
     /**
-     * rangeVerifier is used to verify input from user. numToVerify has to be higher than value to be verified
-     * @param numToVerify user's input
-     * @param value has to be lower than numToVerify in order to accept the input
-     * @return false when input correct
-     */
-
-    //io
-    /**
-     * Checks if the given number is less than or equal to the specified value.
+     * {@code #rangeVerifier} Checks if the given number is less than or equal to the specified value.
      *
      * @param numToVerify the number to verify
      * @param value       the maximum allowed value
@@ -703,27 +668,14 @@ public class TUI implements View {
         return numToVerify <= value;
     }
 
-    //io
-    /**
-     *
-     *
-     * @param numToVerify the number to verify
-     * @param lowValue    the lower bound of the range (exclusive)
-     * @param highValue   the upper bound of the range (exclusive)
-     * @return true if numToVerify is less than lowValue or greater than highValue, false otherwise
-     */
-
-
-    //ale vito
     /**
      *
      * {@code #rangeVerifier} checks if the input from user is outside the specified range.
      * NumToVerify has to be higher than highValue or lower than lowValue to be verified.
-     *
-     * @param numToVerify user's input
-     * @param lowValue low range value
-     * @param highValue high range value
-     * @return false when input correct
+     * @param numToVerify the number to verify
+     * @param lowValue    the lower bound of the range (exclusive)
+     * @param highValue   the upper bound of the range (exclusive)
+     * @return true if numToVerify is less than lowValue or greater than highValue, false otherwise
      */
     private boolean rangeVerifier(int numToVerify, int lowValue, int highValue) {
         return numToVerify < lowValue || numToVerify > highValue;
@@ -948,5 +900,4 @@ public class TUI implements View {
         }
         System.exit(0);
     }
-
 }

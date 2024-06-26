@@ -5,6 +5,10 @@ import it.polimi.GC13.model.Game;
 
 import java.io.*;
 
+/**
+ * Class that represent disk manager. It is responsible for writing on/reading from the disk to permit the continued of a game
+ * in case the server loses connections with clients
+ */
 public class DiskManager implements Serializable {
     private Game gameManaged;
 

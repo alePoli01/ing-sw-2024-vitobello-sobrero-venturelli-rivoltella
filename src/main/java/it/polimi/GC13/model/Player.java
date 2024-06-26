@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class that represents a player in a game
+ */
 public class Player implements Serializable {
     private final String nickname;  //username of the player
     private TokenColor tokenColor; //token chosen by the Player
@@ -24,8 +27,10 @@ public class Player implements Serializable {
     private Position position;  //position of the player (1-4)
     private Game game;
 
-
-    //at the creation each player has only its nickname, everything else is defined in the setup phase
+    /**
+     * player constructor
+     * @param nickname nickname that identifies the player in a game
+     */
     public Player(String nickname) {
         this.nickname = nickname;
     }

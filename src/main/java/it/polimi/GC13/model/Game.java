@@ -15,20 +15,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-
+/**
+ * Game class, it is created for each game and has reference to each part of the model
+ */
 public class Game implements Serializable {
     private GameState gameState;
     private final Table table;
     public final int numPlayer;
-    private int currNumPlayer;
-    private final List<Player> playerList;
+    private int currNumPlayer = 0;
+    private final List<Player> playerList = new ArrayList<>();
     private int lastRound;
     private final String gameName;
     private transient Observer observer;
     private final Map<String, List<ChatMessage>> chat = new HashMap<>();
 
     /**
-     *
+     * game constructor
      * @param numPlayer number of players who will play the game. It is set by the creator.
      * @param gameName name of the game. It is a unique readable identifier for the game
      */
@@ -37,8 +39,6 @@ public class Game implements Serializable {
         this.gameState = GameState.JOINING;
         this.table = new Table(this);
         this.numPlayer = numPlayer;
-        this.playerList = new ArrayList<>();
-        this.currNumPlayer = 0;
         this.setObserver();
     }
 

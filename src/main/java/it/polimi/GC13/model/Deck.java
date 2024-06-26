@@ -9,6 +9,9 @@ import java.lang.reflect.Type;
 
 import java.util.*;
 
+/**
+ * Class that represents Deck. It is divided in 4 different decks -> objective, starter, resource and gold card
+ */
 public class Deck implements Serializable {
     private final LinkedList<ObjectiveCard> objectiveDeck = new LinkedList<>();
     private LinkedList<StartCard> startDeck = new LinkedList<>();
@@ -16,6 +19,9 @@ public class Deck implements Serializable {
     private LinkedList<PlayableCard> goldDeck = new LinkedList<>();
     private final LinkedList<PlayableCard> completeDeck = new LinkedList<>();
 
+    /**
+     * deck constructor, uses gson to import card specifics
+     */
     public Deck() {
         this.parseJSON();
         createCompleteDeck();

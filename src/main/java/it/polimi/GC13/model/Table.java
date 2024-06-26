@@ -10,7 +10,10 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//class that represent the table, common between players. Each game has one table, with card to pick and the score of each player
+/**
+ * Class that represent Table, one for each game. On the table are stored the available cards to draw and the score of each player
+ */
+
 public class Table implements Serializable {
     private final Game game;
     private final Map<Player, Integer> playersScore = new HashMap<>(); //vector that keeps players scores
@@ -18,14 +21,15 @@ public class Table implements Serializable {
     private final Map<PlayableCard, Boolean> goldCardMap =  new LinkedHashMap<>();
     private final Map<PlayableCard, Boolean> resourceCardMap = new LinkedHashMap<>();
     private final Deck deck;
-    private final ArrayList<TokenColor> tokenColors;
-    private final Map<Player, Board> playerBoardMap;
+    private final ArrayList<TokenColor> tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
+    private final Map<Player, Board> playerBoardMap = new HashMap<>();
 
-    //constructor of table
+    /**
+     * Table constructor
+     * @param game table referred to the game
+     */
     public Table(Game game) {
         this.game = game;
-        this.playerBoardMap = new HashMap<>();
-        this.tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
         this.deck = new Deck();
         this.deck.shuffleDecks();
     }
@@ -120,8 +124,13 @@ public class Table implements Serializable {
         }
     }
 
-    /*
-        METHOD CALLED FROM DRAW CARD
+    /**
+     * method used to update deck card map after a card has been drawn
+     * @param deckCardMap deck card map to update
+     * @param drawnCard card to remove from the map
+     * @param deckToManage
+     * @param backupDeck
+     * @throws GenericException
      */
     private void updateDrawableCards(Map<PlayableCard, Boolean> deckCardMap, PlayableCard drawnCard, LinkedList<PlayableCard> deckToManage, LinkedList<PlayableCard> backupDeck) throws GenericException {
         // if the card isn't covered
