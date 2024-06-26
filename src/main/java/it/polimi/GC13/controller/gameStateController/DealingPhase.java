@@ -7,6 +7,9 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
+/**
+ * Game phase responsible to deal cards and objective cards to players
+ */
 public class DealingPhase implements GamePhase {
     private final Controller controller;
     private int readyPlayers = 0;
@@ -16,6 +19,9 @@ public class DealingPhase implements GamePhase {
         this.dealCards();
     }
 
+    /**
+     * method that adds cards to players
+     */
     private void dealCards() {
         try {
             Game game = this.controller.getGame();
@@ -29,11 +35,12 @@ public class DealingPhase implements GamePhase {
         }
     }
 
+    @Override
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
-    // player chooses his objective card
+    @Override
     public void choosePrivateObjective(Player player, int serialPrivateObjectiveCard) {
         try {
             this.readyPlayers++;
@@ -65,7 +72,11 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
-    // CHECK that all players in the same game chose their own objective card
+    /**
+     * Checks that all players in the same game chose their own objective card
+     * @param player player that has chosen the objective card
+     * @return true if he is the last one, false if there is someone missing
+     */
     private synchronized boolean playersChoseObjectiveCard(Player player) {
         for (Player p : player.getGame().getPlayerList()) {
             if (p.getPrivateObjectiveCard().size() == 2) {
@@ -76,6 +87,7 @@ public class DealingPhase implements GamePhase {
         return true;
     }
 
+    @Override
     public void drawCard(Player player, int serialCardToDraw) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -85,6 +97,7 @@ public class DealingPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }

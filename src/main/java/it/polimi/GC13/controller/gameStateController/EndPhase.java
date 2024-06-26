@@ -6,6 +6,9 @@ import it.polimi.GC13.network.ClientInterface;
 
 import java.util.Set;
 
+/**
+ * Game phase responsible to calculate the winner
+ */
 public class EndPhase implements GamePhase {
     private final Controller controller;
 
@@ -15,10 +18,12 @@ public class EndPhase implements GamePhase {
         System.out.println("GAME OVER -> Winner is " + winner);
     }
 
+    @Override
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -33,6 +38,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void drawCard(Player player, int serialCardToDraw) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -42,6 +48,7 @@ public class EndPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }

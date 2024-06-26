@@ -10,10 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * class that represents the "virtual client" for the server
- * server calls the methods of this class
- * the class then creates the messages and sends them to the
- * client where they'll be elaborated
+ * class that represents the "virtual client" for the server calls the methods of this class
+ * the class then creates the messages and sends them to the client where they'll be elaborated
  */
 public class SocketClient implements ClientInterface, Runnable {
     private final ObjectOutputStream outputStream;
@@ -48,6 +46,10 @@ public class SocketClient implements ClientInterface, Runnable {
         return connectionOpen;
     }
 
+    /**
+     * Thread used to read messages sent by the client and forward them to the {@link ServerDispatcher}
+     * It also reveals when the client isn't connected anymore
+     */
     @Override
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();

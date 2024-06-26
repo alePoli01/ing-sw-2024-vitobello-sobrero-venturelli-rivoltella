@@ -12,6 +12,9 @@ import it.polimi.GC13.network.ClientInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that represents the controller which is responsible to call the correct game phase class to perform the action request by the players
+ */
 public class Controller implements GamePhase {
     private GamePhase gameController;
     private final Game game;

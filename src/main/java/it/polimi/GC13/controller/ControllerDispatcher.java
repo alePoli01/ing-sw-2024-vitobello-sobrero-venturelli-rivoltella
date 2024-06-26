@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class that receives all messages from {@link it.polimi.GC13.network.socket.ServerDispatcher} and it forwards them to the {@link Controller}
+ */
 public class ControllerDispatcher {
     private final LobbyController lobbyController;
     private final Map<ClientInterface, Controller> clientControllerMap = new ConcurrentHashMap<>(); //links client to his game's controller

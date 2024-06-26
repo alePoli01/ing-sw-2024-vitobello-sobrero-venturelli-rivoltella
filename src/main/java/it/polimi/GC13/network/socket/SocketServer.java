@@ -60,7 +60,10 @@ public class SocketServer implements ServerInterface, Runnable {
         }
     }
 
-    // LISTEN CALLS FROM SERVER
+    /**
+     * Thread used to read messages sent by the server and forward them to the {@link it.polimi.GC13.network.ClientInterface}
+     * It also reveals when the server isn't connected anymore
+     */
     public void run() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         while (connectionOpen) {

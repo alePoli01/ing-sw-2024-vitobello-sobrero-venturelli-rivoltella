@@ -9,6 +9,9 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMes
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Game phase responsible to execute placeCard and drawCard
+ */
 public class MidPhase implements GamePhase {
     private final Controller controller;
 
@@ -79,7 +82,7 @@ public class MidPhase implements GamePhase {
             if (player.getGame().getLastRound() == 0 || player.getTurnPlayed() < player.getGame().getLastRound()) {
                 System.out.println(player.getNickname() + " has passed and game continues.");
                 player.getGame().setPlayerTurn(player);
-            } else if (this.checkGameOver(player)) {
+            } else if (!this.checkGameOver(player)) {
                 System.out.println(player.getNickname() + " has played his last turn. Game continues.");
                 player.getGame().setPlayerTurn(player);
             } else {
@@ -119,9 +122,9 @@ public class MidPhase implements GamePhase {
     }
 
     /**
-     *
+     * method used to check if all players have played last turn
      * @param player current player playing
-     * @return returns true if there is at least a player that hasn't played his last turn
+     * @return returns true if there is no player that hasn't played the last turn
      */
     private boolean checkGameOver(Player player) {
         // DEBUG
@@ -129,6 +132,6 @@ public class MidPhase implements GamePhase {
                 .forEach(p -> System.out.println(p.getNickname() + " has played " + p.getTurnPlayed() + " turns"));
         return player.getGame().getPlayerList()
                 .stream()
-                .anyMatch(p -> p.getTurnPlayed() != player.getGame().getLastRound());
+                .noneMatch(p -> p.getTurnPlayed() != player.getGame().getLastRound());
     }
 }

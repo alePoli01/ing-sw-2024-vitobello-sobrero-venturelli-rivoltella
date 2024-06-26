@@ -8,7 +8,9 @@ import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromclient.PongMessage;
 import it.polimi.GC13.network.messages.fromserver.PingMessage;
 
-
+/**
+ * Game phase responsible to add players to the desired game
+ */
 public class JoiningPhase implements GamePhase {
     private final Controller controller;
 
@@ -16,14 +18,17 @@ public class JoiningPhase implements GamePhase {
         this.controller = controller;
     }
 
+    @Override
     public void chooseToken(Player player, TokenColor token) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
-    
+
+    @Override
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void placeStartCard(Player player, boolean isFlipped) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -32,7 +37,8 @@ public class JoiningPhase implements GamePhase {
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
-    
+
+    @Override
     public void drawCard(Player player, int serialCardToDraw) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -42,6 +48,7 @@ public class JoiningPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public synchronized void addPlayerToExistingGame(Player player, Game workingGame, ClientInterface client) throws GenericException {
         // it adds players to the existing game
         try {

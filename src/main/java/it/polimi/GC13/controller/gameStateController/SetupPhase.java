@@ -7,6 +7,9 @@ import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
 
+/**
+ * Game phase responsible to deal all players the starter card
+ */
 public class SetupPhase implements GamePhase {
     private final Controller controller;
 
@@ -15,6 +18,10 @@ public class SetupPhase implements GamePhase {
         this.prepareTable(this.controller.getGame());
     }
 
+    /**
+     * method used to deal cards to players
+     * @param game game to serve
+     */
     private void prepareTable(Game game) {
         try {
             game.dealStartCard();
@@ -26,6 +33,7 @@ public class SetupPhase implements GamePhase {
         }
     }
 
+    @Override
     public void placeStartCard(Player player, boolean isFlipped) {
         try {
             StartCard cardToPlace = (StartCard) player.getHand().getFirst();
@@ -43,7 +51,10 @@ public class SetupPhase implements GamePhase {
         }
     }
 
-    // check that all players in the same game positioned the start card
+    /**
+     * check that all players in the same game positioned the start card
+     * @param player player that places the starter card
+     */
     private synchronized boolean playersPlacedStartCard(Player player) {
         System.out.println("checking place cards...");
         for (Player p : player.getGame().getPlayerList()) {
@@ -56,6 +67,7 @@ public class SetupPhase implements GamePhase {
         return true;
     }
 
+    @Override
     public void chooseToken(Player player, TokenColor tokenColor) {
         try {
             player.setTokenColor(tokenColor);
@@ -69,6 +81,7 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void drawCard(Player player, int serialCardToDraw) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
@@ -78,10 +91,12 @@ public class SetupPhase implements GamePhase {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void choosePrivateObjective(Player player, int indexPrivateObjectiveCard) {
         System.out.println("Error, game is in " + this.controller.getGame().getGameState() + " phase.");
     }
 
+    @Override
     public void addPlayerToExistingGame(Player player, Game existingGame, ClientInterface client) {
         existingGame.getObserver().notifyClients(new OnPlayerNotAddedMessage(player.getNickname(), existingGame.getGameName()));
     }
