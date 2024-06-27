@@ -194,7 +194,7 @@ public class TUI implements View {
             System.out.println("\n--- SETUP PHASE [1/2]---");
             try {
                 String tokenColorChosen = userStringInput("Choose your token color " + joiner + "\nColor", input -> !stringVerifier(input, tokenColorList.stream().map(TokenColor::toString).collect(Collectors.toList())), "Token color not found.");
-                this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen)));
+                this.virtualServer.sendMessageFromClient(new TokenChoiceMessage(TokenColor.valueOf(tokenColorChosen.toUpperCase())));
             } catch (GenericException e) {
                 System.out.print(e.getMessage());
             }
@@ -658,8 +658,7 @@ public class TUI implements View {
     }
 
     /**
-     * {@code #rangeVerifier} Checks if the given number is less than or equal to the specified value.
-     *
+     * Checks if the given number is less than or equal to the specified value.
      * @param numToVerify the number to verify
      * @param value       the maximum allowed value
      * @return true if numToVerify is less than or equal to value, false otherwise
@@ -669,8 +668,7 @@ public class TUI implements View {
     }
 
     /**
-     *
-     * {@code #rangeVerifier} checks if the input from user is outside the specified range.
+     * Checks if the input from user is outside the specified range.
      * NumToVerify has to be higher than highValue or lower than lowValue to be verified.
      * @param numToVerify the number to verify
      * @param lowValue    the lower bound of the range (exclusive)
@@ -713,7 +711,7 @@ public class TUI implements View {
         if (input == null) {
             return true;
         }
-        return possibleChoices.stream().noneMatch(input::equals);
+        return possibleChoices.stream().noneMatch(input::equalsIgnoreCase);
     }
 
     /**
@@ -777,7 +775,7 @@ public class TUI implements View {
             }
         } while (!validator.apply(input));
 
-        return input;
+        return input == null ? input : input.toLowerCase();
     }
 
     /**
@@ -795,8 +793,8 @@ public class TUI implements View {
         } else if (recipient.equals("global")) {
             // CASE B : global chat
             registerMessage(recipient, sender, message);
-        } else {
-            // CASE C : I AM THE ONLY RECEIVER
+        } else if (this.nickname.equals(recipient)) {
+            // CASE C : I AM THE RECEIVER
             registerMessage(sender, sender, message);
         }
     }
