@@ -7,7 +7,6 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.network.ClientInterface;
 import it.polimi.GC13.network.messages.fromserver.*;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMessage;
-import it.polimi.GC13.view.GUI.game.ChatMessage;
 
 import java.io.Serializable;
 import java.util.*;

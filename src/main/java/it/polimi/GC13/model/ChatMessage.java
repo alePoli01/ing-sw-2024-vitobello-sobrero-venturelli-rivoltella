@@ -1,4 +1,4 @@
-package it.polimi.GC13.view.GUI.game;
+package it.polimi.GC13.model;
 
 import java.io.Serializable;
 

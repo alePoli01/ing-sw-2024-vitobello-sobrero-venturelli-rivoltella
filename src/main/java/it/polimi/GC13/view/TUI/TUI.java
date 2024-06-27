@@ -10,7 +10,7 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.messages.fromclient.*;
 import it.polimi.GC13.network.messages.fromserver.ObjectiveAchieved;
 import it.polimi.GC13.network.messages.fromserver.exceptions.OnInputExceptionMessage;
-import it.polimi.GC13.view.GUI.game.ChatMessage;
+import it.polimi.GC13.model.ChatMessage;
 import it.polimi.GC13.view.View;
 
 import java.io.IOException;
