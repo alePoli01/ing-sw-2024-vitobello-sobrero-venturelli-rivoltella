@@ -95,7 +95,7 @@ public class LobbyController implements Serializable {
         System.out.println("--Received: reconnectPlayerToGame : [player:" + playerName +" gameName:"+gameName + "]");
 
         if (this.restartGames(gameName, playerName, client)) {
-            System.out.println("\033[0;35mGame and Player name was found, reconnecting " + playerName + "'s client\033[0m");
+            System.out.println("\033[0;35mGame and Player name was found, " + playerName + "'s client has been reconnected\033[0m");
             client.sendMessageFromServer(new OnReconnectPlayerToGameMessage());
         } else {
             System.err.println("[player: " + playerName + "] or [game:  " + gameName + "] were not found in game.");

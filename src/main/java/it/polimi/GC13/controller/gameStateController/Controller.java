@@ -97,7 +97,6 @@ public class Controller implements GamePhase {
     }
 
     public void placeCard(Player player, int cardToPlaceHandIndex, boolean isFlipped, int X, int Y) {
-        System.out.println("Phase: "+gameController.getClass().getSimpleName());
         this.gameController.placeCard(player, cardToPlaceHandIndex, isFlipped, X, Y);
     }
 

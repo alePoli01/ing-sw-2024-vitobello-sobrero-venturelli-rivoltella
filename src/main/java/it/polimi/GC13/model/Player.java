@@ -213,7 +213,7 @@ public class Player implements Serializable {
     // check it is player's turn before playing
     public void checkMyTurn() throws GenericException {
         if (!myTurn) {
-            throw new GenericException("It's not" + this.nickname + "turn.");
+            throw new GenericException("It's not " + this.nickname + " turn.");
         }
     }
 

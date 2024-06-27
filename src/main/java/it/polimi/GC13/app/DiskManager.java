@@ -36,11 +36,14 @@ public class DiskManager implements Serializable {
             fileInputStream.close();
         } catch (FileNotFoundException e) {
             System.err.println("File not found");
+            return null;
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            return null;
         } catch (ClassNotFoundException e) {
             System.err.println("Game doesn't exist or it wasn't saved");
             System.err.println(e.getMessage());
+            return null;
         }
         System.out.println("Reading from disk completed");
         return this.gameManaged;
