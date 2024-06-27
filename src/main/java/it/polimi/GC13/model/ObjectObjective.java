@@ -27,12 +27,8 @@ public class ObjectObjective extends ObjectiveCard {
         this.object.addAll(object);
     }
 
-    /**
-     * Calculates and returns the total points achieved by fulfilling this objective on the given board.
-     *
-     * @param board The game board where the resources are collected.
-     * @return The total points achieved by fulfilling this objective.
-     */
+
+    @Override
     public int getObjectivePoints(Board board) {
         int combo;
         ArrayList<Resource> allItems= new ArrayList<>();

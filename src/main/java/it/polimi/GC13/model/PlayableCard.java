@@ -5,7 +5,6 @@ import it.polimi.GC13.enums.*;
 import java.io.Serializable;
 import java.util.Map;
 
-//TODO: da completare JavaDoc
 
 /**
  * Represents a playable card in the game. Each card has a serial number, reign, type, resources on the edges,

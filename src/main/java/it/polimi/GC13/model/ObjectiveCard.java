@@ -21,7 +21,8 @@ public abstract class ObjectiveCard implements Serializable {
     }
 
     /**
-     * Retrieves the objective points awarded by this card based on the state of the board.
+     * Retrieves the total points awarded by this card based on the state of the board.
+     * The points can be awarded forming patterns on the board or collecting object or reign resources
      *
      * @param board The game board on which the objective points are calculated.
      * @return The objective points awarded by this card.

@@ -26,12 +26,8 @@ public class PatternObjective extends ObjectiveCard {
         this.orientation = orientation;
     }
 
-    /**
-     * Calculates the total points achieved for this objective card based on the patterns formed on the board.
-     *
-     * @param board The board object representing the current game state.
-     * @return The total points achieved for this objective card.
-     */
+
+    @Override
     public int getObjectivePoints(Board board) {
 
         int X_max = 50, X_min = 50, Y_max = 50, Y_min = 50;
@@ -313,31 +309,7 @@ public class PatternObjective extends ObjectiveCard {
     }
 
 
-    /**
-     * Prints a specific line of the objective card pattern based on the diagonal and orientation settings.
-     * This method uses ANSI escape codes to colorize the output for different elements of the pattern.
-     *
-     * @param line The line number to print (0 to 5 inclusive).
-     *             Each line corresponds to a specific row in the objective card pattern.
-     *             <br>
-     *             The color and content of each line are dynamically selected based on the following:
-     *             - If the pattern is diagonal, it checks the orientation to determine which symbols and colors to use.
-     *             - If the pattern is not diagonal, it prints a different set of symbols and colors based on the orientation.
-     *             <br>
-     *             The output includes:
-     *             - Gold-colored digits representing the combo points of the objective card.
-     *             - Colored background squares representing different resource types (Fungi, Animal, Insect, Plant).
-     *             - Black text and colored background for contrast and visual appeal.
-     *             <br>
-     *             Example usage:
-     *             <pre>{@code
-     *             PatternObjective patternObjective = new PatternObjective(serialNumber, comboPoints, diagonal, orientation);
-     *             for (int line = 0; line <= 5; line++) {
-     *                 patternObjective.printLineObjectiveCard(line);
-     *                 System.out.println(); // Move to the next line for the next part of the pattern
-     *             }
-     *             }</pre>
-     */
+
     @Override
     public void printLineObjectiveCard(int line) {
         String backgroundRed = "\033[48;2;223;73;23m";   // red background

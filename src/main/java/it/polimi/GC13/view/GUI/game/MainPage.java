@@ -2300,6 +2300,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public void reconnectionWaitingPage() {
         getContentPane().remove(panelContainer);
 
+        System.out.println("Prova");
         numAttemptLabel = createTextLabelFont("", 30);
         setBorderInsets(numAttemptLabel, 0,20,0,0);
         getContentPane().add(numAttemptLabel, BorderLayout.NORTH);

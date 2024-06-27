@@ -21,23 +21,14 @@ public class ReignObjective extends ObjectiveCard {
         this.type = type;
     }
 
-    /**
-     * Calculates the total points achieved for this objective card
-     * based on the collected resources of the specified type on the board.
-     *
-     * @param board The board object representing the current game state.
-     * @return The total points achieved for this objective card.
-     */
+
+    @Override
     public int getObjectivePoints(Board board) {
         int combo = board.getCollectedResources().get(type)/3; //calculate how many times the obj. has been satisfied
         return combo * this.comboPoints;
     }
 
-    /**
-     * Prints the objective card representation for a specific line.
-     *
-     * @param line The line number to print the objective card representation.
-     */
+
     public void printLineObjectiveCard(int line) {
         String gold = "\u001b[93m";  // gold
         String reset = "\u001b[0m";  // reset color of the characters

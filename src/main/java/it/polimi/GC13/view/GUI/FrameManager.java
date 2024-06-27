@@ -437,9 +437,6 @@ public class FrameManager extends JFrame implements View {
             int totalElapsedTime = 0;   // to be deleted
             double backOffBase = 1.05;  // changes the exponential growth of the time
             int t = 0;
-            while (t < 80000) {
-                t++;
-            }
 
             connectionOpen = false;
             while (!connectionOpen) {
@@ -455,7 +452,10 @@ public class FrameManager extends JFrame implements View {
                         loginFrame.dispose();
                         System.exit(1);
                     }
-                    gamePage.reconnectionWaitingPage();
+                    if(t==0) {
+                        gamePage.reconnectionWaitingPage();
+                        t++;
+                    }
 
                     // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
                     this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
@@ -469,7 +469,9 @@ public class FrameManager extends JFrame implements View {
                     totalElapsedTime += sleepTime;
                     sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
 
+//                    gamePage.getNumAttemptLabel().setText(" ");
                     gamePage.getNumAttemptLabel().setText("Attempt #" + attemptCount + "   " + sleepTime + "ms    " + totalElapsedTime / 1000 + "s :");
+
 
                     if (attemptCount > 10) {
                         //after some attempts wait for user input
