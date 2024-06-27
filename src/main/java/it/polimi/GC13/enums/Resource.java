@@ -130,5 +130,38 @@ public enum Resource {
         }
         return null;
     }
+
+    public String uncoloredToString(){
+        switch (this){
+            case FUNGI -> {
+                return "FUNGI";
+            }
+            case ANIMAL -> {
+                return "ANIMAL";
+            }
+            case INSECT -> {
+                return "INSECT";
+            }
+            case PLANT -> {
+                return "PLANT";
+            }
+            case NULL -> {
+                return "X";
+            }
+            case EMPTY -> {
+                return " ";
+            }
+            case INKWELL -> {
+                return "INKWELL";
+            }
+            case QUILL -> {
+                return "QUILL";
+            }
+            case MANUSCRIPT -> {
+                return "MANUSCRIPT";
+            }
+        }
+        return null;
+    }
 }
 

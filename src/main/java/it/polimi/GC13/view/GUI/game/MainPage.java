@@ -160,7 +160,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         }
 
         panelContainer = new JPanel(new GridBagLayout());
-        panelContainer.setBackground(new Color(237,230,188,255));
         add(panelContainer);
 
         JLabel setupLabel = createTextLabelFont("setup phase [1/3] ", 28);
@@ -587,7 +586,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         ArrayList<Color> colors = new ArrayList<>();
 
         panelContainer.setLayout(new GridBagLayout());
-        panelContainer.setBackground(new Color(237,230,188,255));
+        //panelContainer.setBackground(new Color(237,230,188,255));
 
         for(int i=0; i<4; i++) {
             colors.add(new Color(107, 189, 192));
@@ -725,7 +724,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         panel1.setOpaque(false);
 
         JPanel panel2 = new JPanel(new BorderLayout());
-        panel2.setBackground(new Color(237,230,188,255));
+        //panel2.setBackground(new Color(237,230,188,255));
 
         panelContainer.add(panel1, PANEL1);
         panelContainer.add(panel2, PANEL2);
@@ -1203,7 +1202,15 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             });
 
             jCheckBox.addActionListener(e -> {
+
+                cordToSend=null;
+                confirmButton.setEnabled(true);
+                for (JButton button : boardButtonMap.values()) {
+                    button.setIcon(null);
+                    button.setBorderPainted(true);
+                }
                 setButtonVisible();
+
                 labelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
 
                 setButtonVisible();
@@ -1273,7 +1280,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         button.setVisible(false);
         button.setOpaque(false);
         button.setContentAreaFilled(false);
-        button.setBorder(BorderFactory.createLineBorder(new Color(135, 142, 150, 255),4));
+        button.setBorder(BorderFactory.createLineBorder(new Color(30, 30, 30, 255),4));
         button.setBounds(x,y,198,132);//card sizes
 
         layeredPane.add(button,JLayeredPane.PALETTE_LAYER);
@@ -1616,12 +1623,16 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
     public void actionPerformed(ActionEvent e) {
         CardLayout cardLayout = (CardLayout) panelContainer.getLayout();
         if (e.getActionCommand().equals("Go to scoreboard")) {
+            cordToSend=null;
+            confirmButton.setEnabled(false);
             cardLayout.show(panelContainer, PANEL2);
             setButtonNOTVisible();
         } else if (e.getActionCommand().equals("Go to game")) {
             cardLayout.show(panelContainer, PANEL1);
+            handLabelCheckBoxMap.keySet().forEach(k -> setCompoundBorderInsets(k, 0, 30, 0, 30, "ALL", Color.BLACK, 1));
             setButtonNOTVisible();
         } else if (e.getActionCommand().equals("Show Back")) {
+            cordToSend=null;
             setButtonNOTVisible();
 
             for (JButton button : boardButtonMap.values()) {
@@ -1641,6 +1652,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
             printHandOrDecksOnGUI(printMap, imagePanel, checkBoxPanel, choosePanel, buttonGroup, handLabelCheckBoxMap, handSerialNumberCheckBoxMap, 0,0);
 
         }  else if (e.getActionCommand().equals("Show Front") || e.getActionCommand().equals("Show Hand")) {
+            cordToSend=null;
             setButtonNOTVisible();
 
             for (JButton button : boardButtonMap.values()) {
@@ -1672,6 +1684,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
 
         } else if (e.getActionCommand().equals("Show Decks")) {
             setButtonNOTVisible();
+            cordToSend=null;
             confirmButton.setEnabled(false);
             flipButton.setEnabled(false);
             decksButton.setText("Show Hand");
@@ -1710,7 +1723,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                         .getText().equals("true");
 
                 if(cordToSend==null || serialToSend == -1 ){
-                    JOptionPane.showMessageDialog(this, "Error: select the card to play ","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error. How to insert a card: \n 1) click on a card in your deck\n 2) choose a place to insert the card in the board\n 3) click on the 'Confirm' button","ErrorMsg: ", JOptionPane.ERROR_MESSAGE);
                 } else{
                     frameManager.getVirtualServer().sendMessageFromClient(new PlaceCardMessage(serialToSend,flipToSend, cordToSend.getX(), cordToSend.getY()));
                     checkingHandWhileDrawing = true;

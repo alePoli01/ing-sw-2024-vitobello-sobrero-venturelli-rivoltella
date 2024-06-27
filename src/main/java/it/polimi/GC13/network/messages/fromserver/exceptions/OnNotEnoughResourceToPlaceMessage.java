@@ -11,7 +11,7 @@ public class OnNotEnoughResourceToPlaceMessage implements OnInputExceptionMessag
     private final String playerNickname;
 
     public OnNotEnoughResourceToPlaceMessage(String playerNickname, Resource reign) {
-        this.errorMessage = "You don't have enough " + reign + " to play this card";
+        this.errorMessage = "You don't have enough " + reign.uncoloredToString() + " to play this card";
         this.playerNickname = playerNickname;
     }
 
