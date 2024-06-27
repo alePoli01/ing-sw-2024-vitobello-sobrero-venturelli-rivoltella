@@ -27,29 +27,121 @@ import java.util.stream.Collectors;
  * and starting the input reader thread.
  */
 public class TUI implements View {
+    /**
+     * Interface for server communication.
+     */
     private ServerInterface virtualServer;
+
+    /**
+     * The nickname of the player.
+     */
     private String nickname;
+
+    /**
+     * The name of the game being played.
+     */
     private String gameName;
+
+    /**
+     * The hand of cards for the player.
+     */
     private final List<Integer> hand = new ArrayList<>();
+
+    /**
+     * Serial number for the private objective card.
+     */
     private int serialPrivateObjectiveCard;
+
+    /**
+     * Serial numbers for the common objective cards.
+     */
     private List<Integer> serialCommonObjectiveCard = new LinkedList<>();
+
+    /**
+     * Indicates whether it is the player's turn.
+     */
     private boolean myTurn = false;
+
+    /**
+     * The number of turns the player has played.
+     */
     private int turnPlayed = 0;
+
+    /**
+     * Scores of the players.
+     */
     private final Map<String, Integer> playersScore = new ConcurrentHashMap<>();
+
+    /**
+     * Positions of the players.
+     */
     private final Map<String, Position> playersPosition = new ConcurrentHashMap<>();
+
+    /**
+     * Availability status of gold cards.
+     */
     private final Map<Integer, Boolean> goldCardsAvailable = new ConcurrentHashMap<>();
+
+    /**
+     * Availability status of resource cards.
+     */
     private final Map<Integer, Boolean> resourceCardsAvailable = new ConcurrentHashMap<>();
+
+    /**
+     * Board views of the players.
+     */
     private final Map<String, BoardView> playersBoard = new ConcurrentHashMap<>();
+
+    /**
+     * Resources collected by the players.
+     */
     private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources = new ConcurrentHashMap<>();
+
+    /**
+     * Log of game events.
+     */
     private final List<String> gamesLog = new ArrayList<>();
+
+    /**
+     * Indicates if the player isn't in the main menu.
+     */
     private boolean cooking = false;
+
+    /**
+     * The player's choice in a given context.
+     */
     private int choice = 0;
+
+    /**
+     * Printer utility for output.
+     */
     private final Printer printer = new Printer();
+
+    /**
+     * Reader utility for input.
+     */
     private final Reader newReader = new Reader();
+
+    /**
+     * Chat messages between players.
+     */
     private final Map<String, List<ChatMessage>> chat = new HashMap<>();
+
+    /**
+     * Map to track new messages.
+     */
     private final Map<String, Boolean> newMessageMap = new ConcurrentHashMap<>();
+
+    /**
+     * Indicates if the connection is open.
+     */
     private boolean connectionOpen = true;
+
+    /**
+     * Indicates if there is an interrupt signal.
+     */
     private boolean interrupt = false;
+
 
     /**
      * Initializes a new TUI instance, setting up player data, utility objects,
@@ -154,11 +246,10 @@ public class TUI implements View {
             this.nickname = userStringInput("Choose your nickname", input -> !stringVerifier(input), "");
             gameName = userStringInput("Choose a name for the new Game", input -> !stringVerifier(input), "");
             playersNumber = userIntegerInput("Choose number of players in the game [min 2, max 4]", num -> !rangeVerifier(num, 2, 4), "Please enter either [2], [3] or [4].");
+            this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
         } catch (GenericException e) {
             System.out.print(e.getMessage());
-            return;
         }
-        this.virtualServer.sendMessageFromClient(new CreateNewGameMessage(this.nickname, playersNumber, gameName));
     }
 
     /**
@@ -213,13 +304,12 @@ public class TUI implements View {
 
             try {
                 this.choice = userIntegerInput("Choose which side you would like to place your start card:\n\t[1] FRONT\n\t[2] BACK\nYour choice", num -> !rangeVerifier(num, 1, 2), "Please enter either [1] or [2].");
+                this.virtualServer.sendMessageFromClient(new PlaceStartCardMessage(this.choice != 1));
+                this.choice = 0;
             } catch (GenericException e) {
                 System.out.print(e.getMessage());
                 return;
             }
-
-            this.virtualServer.sendMessageFromClient(new PlaceStartCardMessage(this.choice != 1));
-            this.choice = 0;
         }
         this.gamesLog.add(playerNickname + " chose " + tokenColor + " token");
     }
@@ -258,13 +348,11 @@ public class TUI implements View {
 
             try {
                 this.choice = userIntegerInput("\nChoose your private objective card [" + privateObjectiveCards.stream().map(Object::toString).collect(Collectors.joining("] [")) + "]", num -> !intVerifier(num, privateObjectiveCards), "You don't have the selected card.");
+                this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(this.choice));
+                this.choice = 0;
             } catch (GenericException e) {
                 System.out.print(e.getMessage());
-                return;
             }
-
-            this.virtualServer.sendMessageFromClient(new ChoosePrivateObjectiveCardMessage(choice));
-            this.choice = 0;
         }
     }
 
@@ -302,15 +390,11 @@ public class TUI implements View {
         if (this.myTurn && this.hand.size() == 2) {
             try {
                 this.choice = userIntegerInput("Choose the card to withdraw", num -> !(intVerifier(num, this.goldCardsAvailable.keySet().stream().toList()) && intVerifier(num, this.resourceCardsAvailable.keySet().stream().toList())), "Selected card isn't available.");
+                this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
+                this.turnPlayed++;
             } catch (GenericException e) {
                 System.out.print(e.getMessage());
-                return;
             }
-
-            this.virtualServer.sendMessageFromClient(new DrawCardFromDeckMessage(choice));
-
-            this.choice = 0;
-            this.turnPlayed++;
         } else {
             System.out.println("You cannot draw from the deck if it is not your turn or you didn't place one card on the board.");
             this.showHomeMenu();
@@ -377,17 +461,15 @@ public class TUI implements View {
             this.printer.showHand(this.hand);
 
             try {
-                serialCardToPlace = userIntegerInput("Enter serial card", num -> !intVerifier(num, this.hand), "You don't have the selected card. Available cards are:");
+                serialCardToPlace = userIntegerInput("Enter serial card", num -> !intVerifier(num, this.hand), "You don't have the selected card. Available cards are: " + this.hand.stream().map(Object::toString).collect(Collectors.joining(" ")));
                 X = userIntegerInput("Enter X coordinate", num -> !rangeVerifier(num, 0), "Invalid coordinate, enter X > 0.");
                 Y = userIntegerInput("Enter Y coordinate", num -> !rangeVerifier(num, 0), "Invalid coordinate, enter Y > 0.");
                 this.choice = userIntegerInput("Enter\n\t[1] for FRONT\n\t[2] for BACK\nYour choice", num -> !rangeVerifier(num, 1, 2), "Please enter either [1] or [2].");
+                this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, this.choice == 2, X, Y));
+                this.choice = 0;
             } catch (GenericException e) {
                 System.out.print(e.getMessage());
-                return;
             }
-
-            this.virtualServer.sendMessageFromClient(new PlaceCardMessage(serialCardToPlace, this.choice == 2, X, Y));
-            this.choice = 0;
         } else if (!this.myTurn) {
             System.out.println("It's not your turn");
             this.showHomeMenu();
@@ -459,7 +541,6 @@ public class TUI implements View {
             this.virtualServer.sendMessageFromClient(new NewMessage(this.nickname, playerChosen, message));
         } catch (GenericException e) {
             System.out.print(e.getMessage());
-            return;
         }
     }
 
@@ -487,27 +568,6 @@ public class TUI implements View {
         } else if (this.turnPlayed > 0) {
             this.gamesLog.add(playerNickname + " passed the turn");
         }
-    }
-
-    /**
-     * Displays the home menu options to the player and handles their selection.
-     * Allows the player to choose an action by entering a corresponding number.
-     * Executes the chosen action through the `menuChoice` method.
-     * Prints error messages and returns if input validation fails or if the action cannot be performed.
-     */
-    @Override
-    public void showHomeMenu() {
-        this.menuOptions();
-        try {
-            this.cooking = false;
-            this.interrupt = false;
-            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "Invalid choice, enter a valid option.");
-        } catch (GenericException e) {
-            System.out.print(e.getMessage());
-            return;
-        }
-        System.out.println("SELECTION: " + this.choice + "\n");
-        this.menuChoice(this.choice);
     }
 
     /**
@@ -637,6 +697,7 @@ public class TUI implements View {
      * @param choice the selected menu option
      */
     private void menuChoice(int choice) {
+        this.choice = 0;
         switch (choice) {
             case 1: {
                 this.printer.showHand(this.hand);
@@ -664,18 +725,17 @@ public class TUI implements View {
             }
             case 6: {
                 this.cooking = true;
-                String playerChosen;
                 try {
-                    playerChosen = userStringInput("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]" + "\nPlayer", input -> !stringVerifier(input, this.playersBoard.keySet().stream().toList()), "");
+                    String playerChosen = userStringInput("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]" + "\nPlayer", input -> !stringVerifier(input, this.playersBoard.keySet().stream().toList()), "");
+                    System.out.println("Player chosen: " + playerChosen);
+                    this.playersBoard.get(playerChosen).printBoard();
+                    System.out.println();
+                    this.printer.collectedResource(this.playersCollectedResources.get(playerChosen));
+                    this.showHomeMenu();
                 } catch (GenericException e) {
                     System.out.print(e.getMessage());
                     return;
                 }
-                System.out.println("Player chosen: " + playerChosen);
-                this.playersBoard.get(playerChosen).printBoard();
-                System.out.println();
-                this.printer.collectedResource(this.playersCollectedResources.get(playerChosen));
-                this.showHomeMenu();
                 break;
             }
             case 7: {
@@ -735,7 +795,28 @@ public class TUI implements View {
                 break;
             }
         }
-        this.choice = 0;
+    }
+
+    /**
+     * Displays the home menu options to the player and handles their selection.
+     * Allows the player to choose an action by entering a corresponding number.
+     * Executes the chosen action through the `menuChoice` method.
+     * Prints error messages and returns if input validation fails or if the action cannot be performed.
+     */
+    @Override
+    public void showHomeMenu() {
+        this.menuOptions();
+        this.cooking = false;
+        this.interrupt = false;
+
+        try {
+            System.out.println("I have been called");
+            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "Invalid choice, enter a valid option.");
+            System.out.println("SELECTION: " + this.choice + "\n");
+            this.menuChoice(this.choice);
+        } catch (GenericException e) {
+            System.out.print(e.getMessage());
+        }
     }
 
     /**
@@ -846,6 +927,7 @@ public class TUI implements View {
      */
     private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean> validator, String errorMessage) throws GenericException {
         int num = 0;
+        boolean flag = false;
         System.out.print(messageToPrint + ": ");
 
         do {
@@ -853,7 +935,14 @@ public class TUI implements View {
                 String tmp = this.newReader.readInput();
                 if (tmp != null) {
                     num = Integer.parseInt(tmp);
-                    if (!validator.apply(num)) System.out.print(errorMessage + "\n" + messageToPrint + ": ");
+                    if (!validator.apply(num)) {
+                        System.out.print(errorMessage + "\n" + messageToPrint + ": ");
+                    } else {
+                        // real return
+                        return num;
+                    }
+                } else {
+                    flag = true;
                 }
             } catch (NumberFormatException e) {
                 System.out.print("Error: Please input a valid number.\n" + messageToPrint + ": ");
@@ -864,7 +953,7 @@ public class TUI implements View {
             } else if (this.interrupt) {
                 throw new GenericException("");
             }
-        } while (!validator.apply(num));
+        } while (flag);
 
         return num;
     }
