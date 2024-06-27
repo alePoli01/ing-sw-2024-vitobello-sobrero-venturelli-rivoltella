@@ -463,19 +463,6 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * Combines the elements of a set and a list into a new list.
-     *
-     * @param set  the set of strings to add to the list
-     * @param list the list of strings to be added to the new list
-     * @return a new list containing all elements from the set followed by all elements from the list
-     */
-    private List<String> addToSet(Set<String> set, List<String> list) {
-        List<String> newList = new ArrayList<>(set.stream().toList());
-        newList.addAll(list);
-        return newList;
-    }
-
     @Override
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
@@ -521,6 +508,127 @@ public class TUI implements View {
         }
         System.out.println("SELECTION: " + this.choice + "\n");
         this.menuChoice(this.choice);
+    }
+
+    /**
+     * method to save new a message in the chat
+     *
+     * @param sender    message sender
+     * @param recipient message recipient
+     * @param message   string that contains the message itself
+     */
+    @Override
+    public void onNewMessage(String sender, String recipient, String message) {
+        // CASE A : I AM THE SENDER
+        if (this.nickname.equals(sender)) {
+            registerMessage(recipient, sender, message);
+        } else if (recipient.equals("global")) {
+            // CASE B : global chat
+            registerMessage(recipient, sender, message);
+        } else if (this.nickname.equals(recipient)) {
+            // CASE C : I AM THE RECEIVER
+            registerMessage(sender, sender, message);
+        }
+    }
+
+    /**
+     * Registers a new chat message by adding it to the specified chat room in the internal chat storage.
+     * If the chat room doesn't exist, it creates a new one and adds the message.
+     *
+     * @param chatName the name of the chat room to register the message in
+     * @param sender   the sender of the message
+     * @param message  the content of the message
+     */
+    private void registerMessage(String chatName, String sender, String message) {
+        boolean flag = sender.equals(this.nickname);
+
+        if (this.chat.containsKey(chatName)) {
+            synchronized (this.chat.get(chatName)) {
+                this.chat.get(chatName).add(new ChatMessage(sender, message));
+                this.newMessageMap.replace(chatName, !flag);
+            }
+        } else {
+            synchronized (this.chat) {
+                this.chat.put(chatName, new LinkedList<>(Collections.singletonList(new ChatMessage(sender, message))));
+                this.newMessageMap.put(chatName, !flag);
+            }
+        }
+        if (flag) this.showHomeMenu();
+    }
+
+    @Override
+    public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
+        if (virtualServer == this.virtualServer) {
+            int attemptCount = 0;       // after tot attempts ask to keep trying
+            int sleepTime = 1000;       // initial delay
+            int maxTime = 20000;        // caps the sleepTime
+            int totalElapsedTime = 0;   // to be deleted
+            double backOffBase = 1.05;  // changes the exponential growth of the time
+            System.err.println("\nInternet Connection Lost, trying to reconnect...");
+            int t = 0;
+            while (t < 80000) {
+                t++;
+            }
+            this.connectionOpen = false;
+            while (!this.connectionOpen) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    if (this.gameName == null || this.nickname == null) {
+                        System.err.println("GameName or PlayerName is Null");
+                        System.out.println("This program will be terminated");
+                        System.exit(1);
+                    }
+                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
+                    this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
+                    //this.setVirtualServer(this.virtualServer);
+                    this.connectionOpen = true;
+                    virtualServer.setConnectionOpen(true);
+                    System.out.println("\u001B[33mConnection restored, you can keep playing\u001B[0m");
+                    this.reconnectToGame();
+                } catch (IOException e) {
+                    // exponential backoff algorithm
+                    attemptCount++;
+                    totalElapsedTime += sleepTime;
+                    sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
+                    System.out.println("Attempt #" + attemptCount + "\tSleep Time: " + sleepTime + " ms\tElapsed Time: " + totalElapsedTime / 1000 + " s");
+                    if (attemptCount > 10) {
+                        //after some attempts wait for user input
+                        String answer;
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.println("Still waiting for Internet Connection, do you want to keep trying? (y/n)");
+                        do {
+                            answer = scanner.nextLine();
+                            if (answer.equalsIgnoreCase("y")) {
+                                sleepTime = 2000;
+                                attemptCount = 0;
+                                System.out.println("trying to reconnect...");
+                            } else if (answer.equalsIgnoreCase("n")) {
+                                System.exit(0);
+                            } else {
+                                System.out.println("Character not recognised, please choose (y/n)");
+                            }
+                        } while (!(answer.equals("y") || answer.equals("n")));
+                    }
+                }
+            }
+        } else {
+            System.out.println("Virtual server passed already updated");
+        }
+    }
+
+    @Override
+    public void onClosingGame(String disconnectedPlayer) {
+        System.err.println("\n///////////////////////////////////////////////////////////");
+        if (this.nickname.equals(disconnectedPlayer)) {
+            System.err.println("You seem to have lost connection, the game is being closed...");
+        } else {
+            System.err.println("[Player: " + disconnectedPlayer + "] has disconnected, the game is being closed...");
+        }
+        System.exit(0);
     }
 
     /**
@@ -630,7 +738,6 @@ public class TUI implements View {
         this.choice = 0;
     }
 
-
     /**
      * Displays the home menu options for the current user.
      * This method prints information such as the user's nickname, turn status,
@@ -655,6 +762,19 @@ public class TUI implements View {
         System.out.println("\t[10] to draw card (only when in turn)");
         System.out.println("\t[11] to view players' score");
         System.out.println("\t[12] to view chat [" + (this.newMessageMap.values().stream().anyMatch(v -> v) ? "!" : "no new messages") + "]");
+    }
+
+    /**
+     * Combines the elements of a set and a list into a new list.
+     *
+     * @param set  the set of strings to add to the list
+     * @param list the list of strings to be added to the new list
+     * @return a new list containing all elements from the set followed by all elements from the list
+     */
+    private List<String> addToSet(Set<String> set, List<String> list) {
+        List<String> newList = new ArrayList<>(set.stream().toList());
+        newList.addAll(list);
+        return newList;
     }
 
     /**
@@ -778,124 +898,4 @@ public class TUI implements View {
         return input == null ? input : input.toLowerCase();
     }
 
-    /**
-     * method to save new a message in the chat
-     *
-     * @param sender    message sender
-     * @param recipient message recipient
-     * @param message   string that contains the message itself
-     */
-    @Override
-    public void onNewMessage(String sender, String recipient, String message) {
-        // CASE A : I AM THE SENDER
-        if (this.nickname.equals(sender)) {
-            registerMessage(recipient, sender, message);
-        } else if (recipient.equals("global")) {
-            // CASE B : global chat
-            registerMessage(recipient, sender, message);
-        } else if (this.nickname.equals(recipient)) {
-            // CASE C : I AM THE RECEIVER
-            registerMessage(sender, sender, message);
-        }
-    }
-
-    /**
-     * Registers a new chat message by adding it to the specified chat room in the internal chat storage.
-     * If the chat room doesn't exist, it creates a new one and adds the message.
-     *
-     * @param chatName the name of the chat room to register the message in
-     * @param sender   the sender of the message
-     * @param message  the content of the message
-     */
-    private void registerMessage(String chatName, String sender, String message) {
-        boolean flag = sender.equals(this.nickname);
-
-        if (this.chat.containsKey(chatName)) {
-            synchronized (this.chat.get(chatName)) {
-                this.chat.get(chatName).add(new ChatMessage(sender, message));
-                this.newMessageMap.replace(chatName, !flag);
-            }
-        } else {
-            synchronized (this.chat) {
-                this.chat.put(chatName, new LinkedList<>(Collections.singletonList(new ChatMessage(sender, message))));
-                this.newMessageMap.put(chatName, !flag);
-            }
-        }
-        if (flag) this.showHomeMenu();
-    }
-
-    @Override
-    public void restartConnection(ServerInterface virtualServer, ConnectionBuilder connectionBuilder) {
-        if (virtualServer == this.virtualServer) {
-            int attemptCount = 0;       // after tot attempts ask to keep trying
-            int sleepTime = 1000;       // initial delay
-            int maxTime = 20000;        // caps the sleepTime
-            int totalElapsedTime = 0;   // to be deleted
-            double backOffBase = 1.05;  // changes the exponential growth of the time
-            System.err.println("\nInternet Connection Lost, trying to reconnect...");
-            int t = 0;
-            while (t < 80000) {
-                t++;
-            }
-            this.connectionOpen = false;
-            while (!this.connectionOpen) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    if (this.gameName == null || this.nickname == null) {
-                        System.err.println("GameName or PlayerName is Null");
-                        System.out.println("This program will be terminated");
-                        System.exit(1);
-                    }
-                    // WHEN CONNECTION CLIENT <-> SERVER IS RESTORED, THE VIEW RECEIVES THE NEW VIRTUAL SERVER
-                    this.virtualServer = connectionBuilder.createServerConnection(virtualServer.getClientDispatcher());
-                    //this.setVirtualServer(this.virtualServer);
-                    this.connectionOpen = true;
-                    virtualServer.setConnectionOpen(true);
-                    System.out.println("\u001B[33mConnection restored, you can keep playing\u001B[0m");
-                    this.reconnectToGame();
-                } catch (IOException e) {
-                    // exponential backoff algorithm
-                    attemptCount++;
-                    totalElapsedTime += sleepTime;
-                    sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
-                    System.out.println("Attempt #" + attemptCount + "\tSleep Time: " + sleepTime + " ms\tElapsed Time: " + totalElapsedTime / 1000 + " s");
-                    if (attemptCount > 10) {
-                        //after some attempts wait for user input
-                        String answer;
-                        Scanner scanner = new Scanner(System.in);
-                        System.out.println("Still waiting for Internet Connection, do you want to keep trying? (y/n)");
-                        do {
-                            answer = scanner.nextLine();
-                            if (answer.equalsIgnoreCase("y")) {
-                                sleepTime = 2000;
-                                attemptCount = 0;
-                                System.out.println("trying to reconnect...");
-                            } else if (answer.equalsIgnoreCase("n")) {
-                                System.exit(0);
-                            } else {
-                                System.out.println("Character not recognised, please choose (y/n)");
-                            }
-                        } while (!(answer.equals("y") || answer.equals("n")));
-                    }
-                }
-            }
-        } else {
-            System.out.println("Virtual server passed already updated");
-        }
-    }
-
-    @Override
-    public void onClosingGame(String disconnectedPlayer) {
-        System.err.println("\n///////////////////////////////////////////////////////////");
-        if (this.nickname.equals(disconnectedPlayer)) {
-            System.err.println("You seem to have lost connection, the game is being closed...");
-        } else {
-            System.err.println("[Player: " + disconnectedPlayer + "] has disconnected, the game is being closed...");
-        }
-        System.exit(0);
-    }
 }
