@@ -556,6 +556,7 @@ public class TUI implements View {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
             // prints for the first time the main menu for
+            System.err.println("data:\n\tturnPlayed: " + this.turnPlayed + "\tinSubMenu: " + this.inSubMenu + "\tinterrupt: " + interrupt + "\tmyTurn: " + this.myTurn);
             if (this.turnPlayed == 0) {
                 setInterrupt(true);
                 this.showHomeMenu();
