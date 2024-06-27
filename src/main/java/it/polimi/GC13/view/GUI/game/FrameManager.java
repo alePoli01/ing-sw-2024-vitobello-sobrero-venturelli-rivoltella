@@ -174,7 +174,6 @@ public class FrameManager extends JFrame implements View {
         this.virtualServer.sendMessageFromClient(new CheckForExistingGameMessage());
     }
 
-
     @Override
     public void joiningPhase(Map<String, Integer> gameNameWaitingPlayersMap) {
         int choice;
@@ -211,7 +210,6 @@ public class FrameManager extends JFrame implements View {
             }
         }
     }
-
 
     @Override
     public void chooseTokenSetupPhase(int readyPlayers, int neededPlayers, List<TokenColor> tokenColorList, String gameName) {
@@ -267,7 +265,6 @@ public class FrameManager extends JFrame implements View {
         gamePage.setToken(tokenColor);
     }
 
-
     @Override
     public void onPlacedCard(String playerNickname, int serialCardPlaced, boolean isFlipped, int x, int y, int turn, List<Coordinates> availableCells) {
         playerCounter++;
@@ -292,12 +289,10 @@ public class FrameManager extends JFrame implements View {
         this.gamePage.refreshBoard();
     }
 
-
     @Override
     public void setSerialCommonObjectiveCard(List<Integer> serialCommonObjectiveCard) {
         this.serialCommonObjectiveCard = serialCommonObjectiveCard;
     }
-
 
     @Override
     public void choosePrivateObjectiveCard(String playerNickname, List<Integer> privateObjectiveCards) {
@@ -309,7 +304,6 @@ public class FrameManager extends JFrame implements View {
             refreshFrame(gamePage);
         }
     }
-
 
     @Override
     public void setPrivateObjectiveCard(String playerNickname, int serialPrivateObjectiveCard, int readyPlayers, int neededPlayers) {
@@ -323,7 +317,6 @@ public class FrameManager extends JFrame implements View {
             gamePage.getWaitingLabel().setText("players that chose objective card: " + readyPlayers + "/" + neededPlayers);
         }
     }
-
 
     @Override
     public void exceptionHandler(String playerNickname, OnInputExceptionMessage onInputExceptionMessage) {
@@ -340,13 +333,10 @@ public class FrameManager extends JFrame implements View {
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
-
     @Override
     public void setPlayersOrder(Map<String, Position> playerPositions) {
         this.playerPositions.putAll(playerPositions);
     }
-
-
 
     @Override
     public void onSetLastTurn(String nickname) {
@@ -357,9 +347,7 @@ public class FrameManager extends JFrame implements View {
         }
     }
 
-
     @Override
-
     public void updatePlayerScore(String playerNickname, int newPlayerScore) {
         this.playersScore.computeIfPresent(playerNickname, (key, oldValue) -> newPlayerScore);
         this.playersScore.putIfAbsent(playerNickname, newPlayerScore);
@@ -376,7 +364,6 @@ public class FrameManager extends JFrame implements View {
             gamePage.getScoreLabel2().setText(gamePage.getScoreLabel().getText());
         }
     }
-
 
     @Override
     public void gameOver(Set<String> winners, Map<String, List<ObjectiveAchieved>> objectiveAchievedMap) {
@@ -395,7 +382,6 @@ public class FrameManager extends JFrame implements View {
             winningFrame.showRankingImages(winners, this.getPlayersScore(), gamePage.getPlayersAvatarMap());
         });
     }
-
 
     @Override
     public void reconnectToGame() {
