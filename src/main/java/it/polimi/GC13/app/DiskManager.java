@@ -6,16 +6,23 @@ import it.polimi.GC13.model.Game;
 import java.io.*;
 
 /**
- * Class that represent disk manager. It is responsible for writing on/reading from the disk to permit the continued of a game
- * in case the server loses connections with clients
+ * Class that represents a disk manager. It is responsible for writing to and reading from the disk
+ * to allow the continuation of a game in case the server loses connection with clients.
  */
 public class DiskManager implements Serializable {
+    /**
+     * game managed by the DiskManager
+     */
     private Game gameManaged;
 
+    /**
+     * Writes the current game state to disk if the game is in the MID state.
+     * The game is serialized to a file with the name of the game.
+     */
     public void writeOnDisk() {
         if (this.gameManaged.getGameState().equals(GameState.MID)) {
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/it/polimi/GC13/app/" + this.gameManaged.getGameName() + ".ser");
+                FileOutputStream fileOutputStream = new FileOutputStream(this.gameManaged.getGameName() + ".ser");
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
                 objectOutputStream.writeObject(gameManaged);
                 objectOutputStream.close();
@@ -27,9 +34,16 @@ public class DiskManager implements Serializable {
         }
     }
 
+    /**
+     * Reads a game state from disk.
+     * The game is deserialized from a file with the specified game name.
+     *
+     * @param gameName the name of the game file to read
+     * @return the deserialized Game object, or null if an error occurs
+     */
     public Game readFromDisk(String gameName) {
         try {
-            FileInputStream fileInputStream = new FileInputStream("src/main/java/it/polimi/GC13/app/" + gameName + ".ser");
+            FileInputStream fileInputStream = new FileInputStream(gameName + ".ser");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
             this.gameManaged = (Game) objectInputStream.readObject();
             objectInputStream.close();
@@ -49,6 +63,11 @@ public class DiskManager implements Serializable {
         return this.gameManaged;
     }
 
+    /**
+     * Sets the game to be managed by this DiskManager.
+     *
+     * @param gameManaged the Game object to be managed
+     */
     public void setGameManaged(Game gameManaged) {
         this.gameManaged = gameManaged;
     }
