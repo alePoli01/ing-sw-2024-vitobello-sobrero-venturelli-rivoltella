@@ -2,10 +2,10 @@ package it.polimi.GC13.view.GUI.login;
 
 import it.polimi.GC13.network.messages.fromclient.AddPlayerToGameMessage;
 import it.polimi.GC13.network.messages.fromclient.CreateNewGameMessage;
-import it.polimi.GC13.view.GUI.BackgroundImageSetter;
-import it.polimi.GC13.view.GUI.FrameManager;
-import it.polimi.GC13.view.GUI.WaitingLobby;
-import it.polimi.GC13.view.View;
+import it.polimi.GC13.view.GUI.game.BackgroundImageSetter;
+import it.polimi.GC13.view.GUI.game.FrameManager;
+import it.polimi.GC13.view.GUI.game.ResourceGetter;
+import it.polimi.GC13.view.GUI.game.WaitingLobby;
 
 import javax.swing.JFrame;
 import javax.swing.*;
@@ -38,6 +38,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
     private final JPanel panelContainer;
     private int playersNumber = -1;
     private JLabel waitingLabel;
+    private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
      * Constructs a LoginFrame instance for starting a new game.
@@ -52,8 +53,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.frameManager = frameManager;
-
-        JPanel backgroundPanel = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogoTitle.png");
+        JPanel backgroundPanel = new BackgroundImageSetter(this.resourceGetter.getURL("CodexLogoTitle.png"));
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
@@ -166,7 +166,7 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
-        JPanel backgroundPanel = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/CodexLogoTitle.png");
+        JPanel backgroundPanel = new BackgroundImageSetter(this.resourceGetter.getURL("CodexLogoTitle.png"));
         getContentPane().add(backgroundPanel);
         panelContainer = new JPanel();
         panelContainer.setLayout(new BoxLayout(panelContainer, BoxLayout.LINE_AXIS));
@@ -273,7 +273,6 @@ public class LoginFrame extends JFrame implements WaitingLobby, ActionListener {
         boolean fieldsFilled = !nicknameField.getText().isEmpty();
         loginButton.setEnabled(fieldsFilled);
     }
-
 
     @Override
     public void createLobby(){

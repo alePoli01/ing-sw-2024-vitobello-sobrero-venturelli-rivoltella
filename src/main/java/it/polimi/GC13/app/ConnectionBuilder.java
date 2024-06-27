@@ -4,13 +4,12 @@ import it.polimi.GC13.network.ServerInterface;
 import it.polimi.GC13.network.rmi.RMIConnectionAdapter;
 import it.polimi.GC13.network.socket.ClientDispatcher;
 import it.polimi.GC13.network.socket.SocketServer;
-import it.polimi.GC13.view.GUI.FrameManager;
+import it.polimi.GC13.view.GUI.game.FrameManager;
 import it.polimi.GC13.view.TUI.TUI;
 import it.polimi.GC13.view.View;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ConnectionBuilder {
     private final int viewChoice;

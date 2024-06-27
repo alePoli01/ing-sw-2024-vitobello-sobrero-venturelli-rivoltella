@@ -9,51 +9,50 @@ import java.util.List;
  * Interface for storing all the image path and for managing various card-related functionalities in the game GUI.
  */
 public interface CardManager {
-      String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
-      String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
-      String TOKEN_FILE_SUFFIX = "_token.png";
-      String GREY_TOKEN_FILE_NAME = "grey";
-      String BLACK_TOKEN_FILE_NAME = "black";
+      // fixed
+      String RESOURCE_DIR = "resource_card";
+      String GOLD_DIR = "gold_card";
+      String STARTER_DIR = "starter_card";
 
-      String RESOURCE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/resource_card/";
-      String GOLD_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/gold_card/";
-      String STARTER_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/starter_card/";
-      String OBJECTIVE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/objective_card/";
+      // fixed
+      String FUNGI_LOGO_DIR = "fungi_reign_logo.png";
+      String ANIMAL_LOGO_DIR = "animal_reign_logo.png";
+      String PLANT_LOGO_DIR = "plant_reign_logo.png";
+      String INSECT_LOGO_DIR = "insect_reign_logo.png";
+      String QUILL_LOGO_DIR = "quill.png";
+      String MANUSCRIPT_LOGO_DIR = "manuscript.png";
+      String INKWELL_LOGO_DIR = "inkwell.png";
 
-      String FUNGI_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/fungi_reign_logo.png";
-      String ANIMAL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/animal_reign_logo.png";
-      String PLANT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/plant_reign_logo.png";
-      String INSECT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/insect_reign_logo.png";
-      String QUILL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/quill.png";
-      String MANUSCRIPT_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/manuscript.png";
-      String INKWELL_LOGO_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/logos/inkwell.png";
+      // fixed
+      String FUNGI_JUDGE_DIR = "fungi_judge.png";
+      String ANIMAL_JUDGE_DIR = "animal_judge.png";
+      String PLANT_JUDGE_DIR = "plant_judge.png";
+      String INSECT_JUDGE_DIR = "insect_judge.png";
 
-      String FUNGI_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/fungi_judge.png";
-      String ANIMAL_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/animal_judge.png";
-      String PLANT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/plant_judge.png";
-      String INSECT_JUDGE_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/playersAvatar/insect_judge.png";
+      // fixed
+      String FUNGI_GRAVESTONE = "gravestone_fungi.png";
+      String ANIMAL_GRAVESTONE = "gravestone_animal.png";
+      String PLANT_GRAVESTONE = "gravestone_plant.png";
+      String INSECT_GRAVESTONE = "gravestone_insect.png";
 
-      String FUNGI_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_fungi.png";
-      String ANIMAL_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_animal.png";
-      String PLANT_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_plant.png";
-      String INSECT_GRAVESTONE = "src/main/resources/it/polimi/GC13/view/GUI/game/graveyard/gravestone_insect.png";
+      // fixed
+      String MONK1 = "monk1.png";
+      String MONK2 = "monk2.png";
+      String MONK3 = "monk3.png";
+      String MONK4 = "monk4.png";
 
-      String MONK1 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk1.png";
-      String MONK2 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk2.png";
-      String MONK3 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk3.png";
-      String MONK4 = "src/main/resources/it/polimi/GC13/view/GUI/game/monks/monk4.png";
+      // fixed
+      String CROWN = "crown.png";
+      String ERROR_FISH = "dead-fish.png";
+      String ADVERTISEMENT_MONK = "advertisement.png";
+      String ERROR_MONK = "error_monk.png";
+      String QUESTION_MONK = "question_monk.png";
 
-      String CROWN = "src/main/resources/it/polimi/GC13/view/GUI/crown.png";
-      String ERROR_FISH = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/dead-fish.png";
-      String ERROR_CARD = "src/main/resources/it/polimi/GC13/view/GUI/game/cards/Error_Card.png";
-      String ADVERTISEMENT_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/advertisement.png";
-      String ERROR_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/error_monk.png";
-      String QUESTION_MONK = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/question_monk.png";
-
-      String ONE_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_1message.png";
-      String TWO_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_2messages.png";
-      String THREE_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_3messages.png";
-      String MANY_MESSAGE = "src/main/resources/it/polimi/GC13/view/GUI/backgrounds/icons/notify_many_messages.png";
+      // fixed
+      String ONE_MESSAGE = "notify_1message.png";
+      String TWO_MESSAGE = "notify_2messages.png";
+      String THREE_MESSAGE = "notify_3messages.png";
+      String MANY_MESSAGE = "notify_many_messages.png";
 
 
       /**

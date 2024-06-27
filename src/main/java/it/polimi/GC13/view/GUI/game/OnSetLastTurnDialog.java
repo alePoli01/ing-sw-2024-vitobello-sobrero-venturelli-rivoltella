@@ -2,26 +2,27 @@ package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.Position;
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.view.GUI.FrameManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A dialog window that informs the player about the last round of the game.
  * Displays information about the player's score reaching 20 points and the start of the last round.
  */
-public class OnSetLastTurnDialog extends JDialog implements CardManager{
+public class OnSetLastTurnDialog extends JDialog implements CardManager {
     /**
      * Record representing a token color and its RGB values.
      */
     public record ColorRecord(TokenColor token, int[] rgb){}
+
+    private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
      * Constructs an OnSetLastTurnDialog.
@@ -49,7 +50,7 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
 
         //image
         JPanel imagePanel = new JPanel();
-        JLabel labelImage = new JLabel(createResizedTokenImageIcon(ADVERTISEMENT_MONK, 100));
+        JLabel labelImage = new JLabel(createResizedTokenImageIcon(this.resourceGetter.getURL(ADVERTISEMENT_MONK), 100));
         setCompoundBorderInsets(labelImage, 10,10,10,10, "ALL", Color.BLACK, 0);
         imagePanel.add(labelImage);
 
@@ -157,7 +158,7 @@ public class OnSetLastTurnDialog extends JDialog implements CardManager{
      * @param dim The dimension to resize the image to
      * @return The resized ImageIcon
      */
-    private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
+    private ImageIcon createResizedTokenImageIcon(URL tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 

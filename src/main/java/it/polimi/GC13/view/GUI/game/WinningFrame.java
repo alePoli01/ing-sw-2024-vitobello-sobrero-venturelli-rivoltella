@@ -2,6 +2,7 @@ package it.polimi.GC13.view.GUI.game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class WinningFrame extends JFrame implements CardManager {
     private final JLabel winnerLabel;
     private final JLabel scoreLabel;
     private final JPanel scorePanel;
+    private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
      * Constructs a new WinningFrame.
@@ -114,7 +116,7 @@ public class WinningFrame extends JFrame implements CardManager {
      * @param dim The desired dimension of the resized image
      * @return The resized ImageIcon
      */
-    private static ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
+    private ImageIcon createResizedImageIcon(URL tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
@@ -146,13 +148,12 @@ public class WinningFrame extends JFrame implements CardManager {
 
                 JLabel labelImage;
                 if(!player.equals(maxScorePlayer)){
-                    String gravestonePath = remappingAvatarToGravestone(playersAvatarMap.get(player));
-                    labelImage = new JLabel(createResizedTokenImageIcon(gravestonePath, 250));
+                    labelImage = new JLabel(createResizedImageIcon(this.resourceGetter.getURL(remappingAvatarToGravestone(playersAvatarMap.get(player))), 250));
                 } else {
                     int randomIndex = random.nextInt(4);
                     String selectedMonk = monks.get(randomIndex);
                     monks.remove(selectedMonk);
-                    labelImage = new JLabel(createResizedTokenImageIcon(selectedMonk, 250));
+                    labelImage = new JLabel(createResizedImageIcon(this.resourceGetter.getURL(selectedMonk), 250));
                 }
 
                 panel.add(labelImage, gbc);

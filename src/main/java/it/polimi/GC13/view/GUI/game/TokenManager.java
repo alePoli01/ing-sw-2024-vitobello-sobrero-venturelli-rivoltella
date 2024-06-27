@@ -1,10 +1,10 @@
 package it.polimi.GC13.view.GUI.game;
 
 import it.polimi.GC13.enums.TokenColor;
-import it.polimi.GC13.view.GUI.BackgroundImageSetter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -12,10 +12,6 @@ import java.util.*;
  * It extends {@link JPanel} and manages the token grids and their positions.
  */
 public class TokenManager extends JPanel {
-    final static String TOKEN_DIR = "src/main/resources/it/polimi/GC13/view/GUI/game/token/";
-    final static String P_TOKEN_DIR = TOKEN_DIR + "playableToken/";
-    final static String TOKEN_FILE_SUFFIX = "_token.png";
-
     private record GridData(JPanel grid, ArrayList<JLabel> emptyLabels){}
 
     private final Map<Integer, GridData> scoreGrid = new HashMap<>();
@@ -29,7 +25,7 @@ public class TokenManager extends JPanel {
      * Initializes the token grids and layout for the scoreboard.
      */
     public TokenManager(){
-        BackgroundImageSetter scoreboard = new BackgroundImageSetter("src/main/resources/it/polimi/GC13/view/GUI/backgrounds/scoreboard.png");
+        BackgroundImageSetter scoreboard = new BackgroundImageSetter(getClass().getResource("scoreboard.png"));
         scoreboard.setOpaque(false);
         scoreboard.setLayout(new GridBagLayout());
 
@@ -189,7 +185,6 @@ public class TokenManager extends JPanel {
         }
     }
 
-
     /**
      * Updates the player's position on the scoreboard, based on the new score in input.
      *
@@ -243,24 +238,14 @@ public class TokenManager extends JPanel {
         }
     }
 
-    /**
-     * Generates the filename for a token image based on its color.
-     *
-     * @param tokenColor The color of the token
-     * @return The filename of the token image
-     */
-    private String getTokenFileName(TokenColor tokenColor) {
-        return tokenColor.toString().toLowerCase() + TOKEN_FILE_SUFFIX;
-    }
-
-    /**
-     * Creates a resized ImageIcon from the specified path with given dimensions.
-     *
-     * @param tokenImagePath The path to the token image
-     * @param dim The dimensions to resize the image to
-     * @return The resized ImageIcon
-     */
-    private ImageIcon createResizedTokenImageIcon(String tokenImagePath, int dim) {
+//    /**
+//     * Creates a resized ImageIcon from the specified path with given dimensions.
+//     *
+//     * @param tokenImagePath The path to the token image
+//     * @param dim The dimensions to resize the image to
+//     * @return The resized ImageIcon
+//     */
+    private ImageIcon createResizedTokenImageIcon(URL tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
@@ -272,7 +257,7 @@ public class TokenManager extends JPanel {
      * @return The resized playable token ImageIcon
      */
     private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
-        return createResizedTokenImageIcon(P_TOKEN_DIR + getTokenFileName(tokenColor), dim);
+        return createResizedTokenImageIcon(getClass().getResource(tokenColor.toString().toLowerCase() + "_token.png"), dim);
     }
 
     /**
@@ -294,7 +279,6 @@ public class TokenManager extends JPanel {
 
         return gbc;
     }
-
 
     /**
      * Sets the tokens in the game with their corresponding colors.
