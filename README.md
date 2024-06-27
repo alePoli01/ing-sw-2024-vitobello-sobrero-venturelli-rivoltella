@@ -63,7 +63,7 @@ The structure of the whole system is displayed by different UMLs. In the `Delive
 1. `HandcraftedUML` which contains the initial handcrafted diagrams, such as:
     - [model-controller-network class diagram](Deliveries/UML/HandcraftedUML/UML_controller_model_network.pdf);
     - [network sequence diagrams](Deliveries/UML/HandcraftedUML).
-2. `FinalUML` which contains the [final diagrams](Deliveries/UML/FinalUML/model.png), generated from the code by automated tools.
+2. `FinalUML` which contains the [final diagrams](Deliveries/UML/FinalUML), generated from the code by automated tools.
 
 ## Testing
 The tests achieved the following coverage:
