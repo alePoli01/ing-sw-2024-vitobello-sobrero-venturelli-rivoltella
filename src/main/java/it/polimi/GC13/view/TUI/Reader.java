@@ -43,7 +43,6 @@ public class Reader extends Thread {
                     synchronized (this) {
                         this.input = tmp;
                         this.inputReady = true;
-                        this.notifyAll();
                     }
                 }
             } catch (IOException e) {
