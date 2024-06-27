@@ -693,7 +693,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
      *         common and private objective cards, resource table, and control buttons.</li>
      *         <li><i>Panel 2</i>: Contains the scoreboard, score table and the chat functionality.</li>
      *     </ul>
-     * </p>
+     *
      * <p>
      *     <b>Panel 1 Details:</b>
      *     <ul>
@@ -704,7 +704,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
      *         and control buttons for decks.</li>
      *         <li> <i>South Panel</i>: Contains confirmation buttons and additional controls related to card flipping.</li>
      *     </ul>
-     * </p>
+     *
      * <p>
      *     <b>Panel 2 Details:</b>
      *     <ul>
@@ -715,7 +715,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
      *         <li><i>Chat Panel</i>: Allows selection of chat recipients, displays chat history, and provides
      *         input field and send button for sending messages.</li>
      *     </ul>
-     *</p>
+     *
      * Both panels include necessary event listeners and methods for handling user interactions.
      */
     public void createGamePanel() {

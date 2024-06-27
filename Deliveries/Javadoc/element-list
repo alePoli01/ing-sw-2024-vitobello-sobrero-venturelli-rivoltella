@@ -1,0 +1,17 @@
+it.polimi.GC13.app
+it.polimi.GC13.controller
+it.polimi.GC13.controller.gameStateController
+it.polimi.GC13.enums
+it.polimi.GC13.exception
+it.polimi.GC13.model
+it.polimi.GC13.network
+it.polimi.GC13.network.messages.fromclient
+it.polimi.GC13.network.messages.fromserver
+it.polimi.GC13.network.messages.fromserver.exceptions
+it.polimi.GC13.network.rmi
+it.polimi.GC13.network.socket
+it.polimi.GC13.view
+it.polimi.GC13.view.GUI
+it.polimi.GC13.view.GUI.game
+it.polimi.GC13.view.GUI.login
+it.polimi.GC13.view.TUI
