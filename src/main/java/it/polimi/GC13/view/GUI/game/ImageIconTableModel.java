@@ -210,7 +210,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
                         return CardManager.INKWELL_LOGO_DIR;
                     }
                     default -> {
-                        return CardManager.ERROR_FISH;
+                        return CardManager.ERROR_MONK;
                     }
                 }
             }
@@ -225,7 +225,7 @@ public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableMode
                 return this.conversionMap.get(this.mapInInput.get(position)).toString().toLowerCase() + "_token.png";
             }
             case null, default -> {
-                return CardManager.ERROR_FISH;
+                return CardManager.ERROR_MONK;
             }
         }
     }

@@ -28,7 +28,7 @@ public class DragScrollListener implements MouseListener, MouseMotionListener {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        // Salva il punto di partenza
+        // saves starting point
         startPoint = e.getPoint();
     }
 

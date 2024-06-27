@@ -394,8 +394,6 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
         cardNumber.forEach(serialNumber -> {
             List<URL> privateUrls = new LinkedList<>();
             if (cardNumber.size() == 1) {
-                //privateUrls.addLast(this.starterCardGetter.getURL(STARTER_DIR + "_front_" + serialNumber + ".png"));
-                //privateUrls.addLast(this.starterCardGetter.getURL(STARTER_DIR + "_back_" + serialNumber + ".png"));
                 privateUrls.add(getDirectory(serialNumber, true));
                 privateUrls.add(getDirectory(serialNumber, false));
             } else {
@@ -1233,7 +1231,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 return INKWELL_LOGO_DIR;
             }
             default -> {
-                return ERROR_FISH;
+                return ERROR_MONK;
             }
         }
     }

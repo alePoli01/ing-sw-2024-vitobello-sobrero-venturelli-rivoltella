@@ -20,12 +20,14 @@ public class TokenManager extends JPanel {
     private final Map<String, Map<Integer, GridData>> tokenToScoreBoard = new HashMap<>();
     private final Map<String, Integer> previousPosition = new HashMap<>();
 
+    private final ResourceGetter resourceGetter = new ResourceGetter();
+
     /**
      * Constructs a new TokenManager.
      * Initializes the token grids and layout for the scoreboard.
      */
     public TokenManager(){
-        BackgroundImageSetter scoreboard = new BackgroundImageSetter(getClass().getResource("scoreboard.png"));
+        BackgroundImageSetter scoreboard = new BackgroundImageSetter(this.resourceGetter.getURL("scoreboard.png"));
         scoreboard.setOpaque(false);
         scoreboard.setLayout(new GridBagLayout());
 

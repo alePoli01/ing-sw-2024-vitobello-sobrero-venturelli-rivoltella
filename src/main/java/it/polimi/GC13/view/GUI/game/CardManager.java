@@ -43,7 +43,6 @@ public interface CardManager {
 
       // fixed
       String CROWN = "crown.png";
-      String ERROR_FISH = "dead-fish.png";
       String ADVERTISEMENT_MONK = "advertisement.png";
       String ERROR_MONK = "error_monk.png";
       String QUESTION_MONK = "question_monk.png";
