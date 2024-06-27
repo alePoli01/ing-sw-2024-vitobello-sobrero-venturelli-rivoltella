@@ -73,7 +73,7 @@ The tests achieved the following coverage:
 
 
 ## JavaDoc
-The following documentation includes a description of all classes and methods: [javadoc](deliveries/javadoc).
+The following documentation includes a description of all classes and methods: [javadoc](Deliveries/Javadoc).
 
 ## Libraries and Plugins
 | Library/Plugin  | Description                                                                   |
