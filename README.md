@@ -36,7 +36,7 @@ Project requirements are available [here](src/main/resources/requirements.pdf).
 | Advanced functionality 4 | ✅ Persistence                                                            |
 
 ## How to run the game
-Download the jar files from [here](out)
+Download the jar files from [here](https://1drv.ms/f/s!AojSp3-Z0yGVpx7XgWVWGXNQL_rx?e=e5FrGE)
 ### Server
 To execute Server please run the following command
 ```
