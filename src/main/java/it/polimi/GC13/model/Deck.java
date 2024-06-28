@@ -10,7 +10,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * Class that represents Deck. It is divided in 4 different decks -> objective, starter, resource and gold card
+ * {@code Deck} class represents a collection of different card decks used in the game.
+ * It includes objective, starter, resource, and gold card decks.
  */
 public class Deck implements Serializable {
     private final LinkedList<ObjectiveCard> objectiveDeck = new LinkedList<>();
@@ -20,43 +21,84 @@ public class Deck implements Serializable {
     private final LinkedList<PlayableCard> completeDeck = new LinkedList<>();
 
     /**
-     * deck constructor, uses gson to import card specifics
+     * Constructs a new {@code Deck} and initializes it by parsing card data from JSON files.
      */
     public Deck() {
         this.parseJSON();
         createCompleteDeck();
     }
 
+    /**
+     * Retrieves the resource deck.
+     *
+     * @return The resource deck.
+     */
     public LinkedList<PlayableCard> getResourceDeck() {
         return this.resourceDeck;
     }
 
+    /**
+     * Retrieves the gold deck.
+     *
+     * @return The gold deck.
+     */
     public LinkedList<PlayableCard> getGoldDeck() {
         return this.goldDeck;
     }
 
+    /**
+     * Retrieves the objective deck containing objective cards.
+     *
+     * @return The objective deck.
+     */
     public LinkedList<ObjectiveCard> getObjectiveDeck() {
         return this.objectiveDeck;
     }
 
+
+    /**
+     * Retrieves a specific objective card from the objective deck based on its serial number.
+     *
+     * @param index The serial number of the objective card to retrieve.
+     * @return The objective card with the specified serial number.
+     */
     public ObjectiveCard getObjectiveCard(int index) {
         return this.objectiveDeck.stream().filter(card -> card.serialNumber == index).findFirst().orElseThrow();
     }
 
+    /**
+     * Retrieves the start deck containing starter cards.
+     *
+     * @return The start deck.
+     */
     public LinkedList<StartCard> getStartDeck() {
         return this.startDeck;
     }
 
+
+    /**
+     * Creates a complete deck by combining resource, gold, and start decks.
+     */
     private void createCompleteDeck() {
         completeDeck.addAll(this.resourceDeck);
         completeDeck.addAll(this.goldDeck);
         completeDeck.addAll(this.startDeck);
     }
 
+
+    /**
+     * Retrieves a playable card from the complete deck based on its serial number.
+     *
+     * @param serialNumber The serial number of the card to retrieve.
+     * @return The playable card with the specified serial number.
+     */
     public PlayableCard getCard(int serialNumber) {
         return this.completeDeck.get(serialNumber - 1);
     }
 
+    /**
+     * Shuffles all decks (objective, start, resource, and gold decks).
+     */
     public void shuffleDecks() {
         Collections.shuffle(this.objectiveDeck);
         Collections.shuffle(this.startDeck);
@@ -64,6 +106,10 @@ public class Deck implements Serializable {
         Collections.shuffle(this.goldDeck);
     }
 
+    /**
+     * Parses card data from JSON files and initializes the respective decks.
+     * Uses Gson library for JSON parsing.
+     */
     public void parseJSON() {
         Gson gson = new Gson();
 

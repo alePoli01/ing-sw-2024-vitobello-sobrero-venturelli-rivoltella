@@ -17,11 +17,35 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The class implements {@link Serializable} to support object serialization.
  */
 public class Board implements Serializable {
+
+    /**
+     * The map representing the board layout, mapping coordinates to cells.
+     */
     private final Map<Coordinates, Cell> boardMap = new HashMap<>();
-    private final Player owner;               //owner of the board
-    private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);     //counter for each type of object present on the board
+
+    /**
+     * The owner player of the board.
+     */
+    private final Player owner;
+
+    /**
+     * EnumMap holding the counts of each resource type collected on the board.
+     */
+    private final EnumMap<Resource, Integer> collectedResources = new EnumMap<>(Resource.class);
+
+    /**
+     * List of coordinates representing available cells on the board.
+     */
     private final List<Coordinates> availableCells = new LinkedList<>();
+
+    /**
+     * List of coordinates representing not available cells on the board.
+     */
     private final List<Coordinates> notAvailableCells = new LinkedList<>();   // -> used to not add available cell
+
+    /**
+     * List of offset coordinates used for checking surrounding cells.
+     */
     private final List<Coordinates> offset = List.of(
             new Coordinates(-1, +1),
             new Coordinates(+1, +1),

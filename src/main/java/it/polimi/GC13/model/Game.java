@@ -22,15 +22,52 @@ import java.util.stream.Collectors;
  * It manages the state of the game, players, and interactions within the game.
  */
 public class Game implements Serializable {
+
+    /**
+     * The current state of the game.
+     */
     private GameState gameState;
+
+    /**
+     * The table where game elements are placed and managed.
+     */
     private final Table table;
+
+    /**
+     * The total number of players in the game.
+     */
     public final int numPlayer;
+
+    /**
+     * The current number of players who have joined the game.
+     */
     private int currNumPlayer = 0;
+
+    /**
+     * The list of players currently participating in the game.
+     */
     private final List<Player> playerList = new ArrayList<>();
+
+    /**
+     * The last round number of the game.
+     */
     private int lastRound;
+
+    /**
+     * The name of the game, serving as a unique identifier.
+     */
     private final String gameName;
+
+    /**
+     * The observer responsible for managing notifications and updates within the game.
+     */
     private transient Observer observer;
+
+    /**
+     * The map storing chat messages, where keys represent different chat contexts.
+     */
     private final Map<String, List<ChatMessage>> chat = new HashMap<>();
+
 
     /**
      * Constructs a new {@code Game} instance.

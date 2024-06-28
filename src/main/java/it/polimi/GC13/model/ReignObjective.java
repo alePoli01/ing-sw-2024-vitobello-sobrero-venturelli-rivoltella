@@ -5,6 +5,8 @@ import it.polimi.GC13.enums.Resource;
 /**
  * Represents a reign objective card that specifies points
  * based on the number of times a specific reign resource has been collected.
+ * <br>
+ * Extends {@link ObjectiveCard}.
  */
 public class ReignObjective extends ObjectiveCard {
     public final Resource type; //Which reign is required

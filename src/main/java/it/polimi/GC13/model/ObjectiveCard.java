@@ -6,8 +6,16 @@ import java.io.Serializable;
  * Abstract class representing an objective card in the game.
  */
 public abstract class ObjectiveCard implements Serializable {
+    /**
+     * The serial number of the objective card.
+     */
     public final int serialNumber;
-    public final int comboPoints; //points given by the card
+
+    /**
+     * The points given by the objective card.
+     */
+    public final int comboPoints;
+
 
     /**
      * Constructs an objective card with the specified serial number and combo points.

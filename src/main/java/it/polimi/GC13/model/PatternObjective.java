@@ -2,14 +2,22 @@ package it.polimi.GC13.model;
 
 import it.polimi.GC13.enums.Resource;
 
-//TODO controllare le condizioni dei for
-
 /**
  * Represents a pattern objective card that awards points based on specific patterns formed on the game board.
+ * <br>
+ * Extends {@link ObjectiveCard}.
  */
 public class PatternObjective extends ObjectiveCard {
-    public final boolean diagonal;  //what kind of disposition is required
-    public final int orientation; //orientation of the disposition
+
+    /**
+     * Indicates what kind of disposition is required.
+     */
+    public final boolean diagonal;
+
+    /**
+     * Specifies the orientation of the pattern.
+     */
+    public final int orientation;
 
 
     /**

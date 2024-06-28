@@ -14,9 +14,22 @@ import java.util.stream.Collectors;
  * It
  */
 public class Observer {
+
+    /**
+     * List of client listeners registered with this Observer to receive notifications.
+     */
     private final List<ClientInterface> listenerList = new ArrayList<>();
+
+    /**
+     * DiskManager responsible for managing game state persistence and disk operations.
+     */
     private final DiskManager diskManager;
+
+    /**
+     * The name of the game being observed by this Observer instance.
+     */
     private final String gameName;
+
 
     /**
      * Constructs an {@code Observer} instance with the specified {@link DiskManager} and {@link Game}.

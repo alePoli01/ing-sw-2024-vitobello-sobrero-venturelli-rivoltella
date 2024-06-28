@@ -11,19 +11,36 @@ import java.util.Map;
  * resources needed to play, points given under certain conditions, and specific points condition.
  */
 public class PlayableCard implements Serializable {
+
+    /** The serial number of the card. */
     public final int serialNumber;
+
+    /** The reign resource associated with the card. */
     public final Resource reign;
+
+    /** The type of the card (<i>Resource</i>, <i>Gold</i> or <i>Starter</i>). */
     public final CardType cardType;
+
+    /** The resources on the edges of the card. */
     public final Resource[] edgeFrontResource;
+
+    /** The resources needed to play the card and their quantities. */
     public final Map<Resource, Integer> resourceNeeded;
+
+    /** The points given by the card. */
     public final int pointsGiven;
+
+    /** The condition under which points are given. */
     public final PointsCondition condition;
+
+
     private final String red = "\033[38;2;233;73;23m";   // Red
     private final String green = "\033[38;2;113;192;124m"; // green
     private final String blue = "\033[38;2;107;189;192m";  // Blue
     private final String magenta = "\033[38;2;171;63;148m";  // Magenta
     private final String gold = "\033[38;2;255;215;0m";  // gold
     private final String reset = "\u001b[0m";  // reset color of the characters
+
 
     /**
      * Constructs a new {@code PlayableCard} with the given attributes.
@@ -64,7 +81,6 @@ public class PlayableCard implements Serializable {
         };
     }
 
-    //TODO: check if it's possible to move the print to an external class
     public void linePrinter(int version, int line, boolean isFlipped) {
         String color;
 
@@ -1092,7 +1108,12 @@ public class PlayableCard implements Serializable {
         }
     }
 
-
+    /**
+     * Prints the requirements and information of a gold card, formatted in a specific way.
+     *
+     * @param isFlipped Whether the card is flipped or not.
+     * @param color     The color to be used for printing.
+     */
     private void printGoldCardRequirementsWithEdgeL(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[0]  + color + " ║ "+reset + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
@@ -1101,7 +1122,12 @@ public class PlayableCard implements Serializable {
         }
     }
 
-
+    /**
+     * Prints the requirements and information of a gold card, formatted in a specific way.
+     *
+     * @param isFlipped Whether the card is flipped or not.
+     * @param color     The color to be used for printing.
+     */
     private void printGoldCardRequirementsWithEdgeR(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this.edgeFrontResource[1]  + color + " ║");
@@ -1110,7 +1136,11 @@ public class PlayableCard implements Serializable {
         }
     }
 
-
+    /**
+     * Prints the requirements of the card for a gold card, formatted in a specific way.
+     *
+     * @param isFlipped Whether the card is flipped or not.
+     */
     private void printGoldCardRequirements(boolean isFlipped) {
         if (!isFlipped) {
             System.out.print(" " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + " ");
@@ -1120,7 +1150,12 @@ public class PlayableCard implements Serializable {
 
     }
 
-
+    /**
+     * Prints the information of the card for a gold card, formatted in a specific way.
+     *
+     * @param isFlipped Whether the card is flipped or not.
+     * @param color     The color to be used for printing.
+     */
     private void printGoldCardInfo(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[3]  + color + " ║   " + gold + this.pointsGiven + reset + color + "║" + gold + this.condition  + reset + color + "   ║ " + this. edgeFrontResource[2]  + color + " ║");
@@ -1131,6 +1166,12 @@ public class PlayableCard implements Serializable {
     }
 
 
+    /**
+     * Prints the information of the card for a gold card, formatted in a specific way.
+     *
+     * @param isFlipped Whether the card is flipped or not.
+     * @param color     The color to be used for printing.
+     */
     private void printGoldCardRequirementsWithBothEdges(boolean isFlipped, String color) {
         if (!isFlipped) {
             System.out.print("║ " + this.edgeFrontResource[0]  + color + " ║ " + red + this.resourceNeeded.get(Resource.FUNGI) + reset + "│" + blue + this.resourceNeeded.get(Resource.ANIMAL) + reset + "│" + green + this.resourceNeeded.get(Resource.PLANT) + reset + "│" + magenta + this.resourceNeeded.get(Resource.INSECT) + reset + color + " ║ " + this. edgeFrontResource[1]  + color + " ║");

@@ -8,7 +8,15 @@ import java.util.Map;
  * Represents the starter card in the game, extending {@link PlayableCard}.
  */
 public class StartCard extends PlayableCard {
+
+    /**
+     * Array of resources at the back reigns of the card.
+     */
     public final Resource[] backReigns;
+
+    /**
+     * Array of resources at the edge of the card.
+     */
     public final Resource[] edgeBackResource;
 
     /**

@@ -7,7 +7,17 @@ import java.io.Serializable;
  * {@code Coordinates} class represents a set of coordinates in a 2-dimensional space where the card has been placed.
  */
 public class Coordinates implements Serializable {
-    private int x, y;
+
+    /**
+     *The x-coordinate
+     */
+    private int x;
+
+    /**
+     *The y-coordinate
+     */
+    private int y;
+
 
     /**
      * Constructs a set of coordinates with the specified x and y values.

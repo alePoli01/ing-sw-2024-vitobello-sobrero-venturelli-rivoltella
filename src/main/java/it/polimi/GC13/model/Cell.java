@@ -7,9 +7,21 @@ import java.io.Serializable;
  * {@code Cell} class represents a cell on the board containing a playable card.
  */
 public class Cell implements Serializable {
+
+    /**
+     * The playable card stored in this cell.
+     */
     private final PlayableCard card;   //pointer to the card object
+
+    /**
+     * The weight or 'z coordinate' of the card.
+     */
     public final int weight;
-    public final boolean isFlipped;//to be intended as 'z coordinate' or height of the pointed card
+
+    /**
+     * Indicates whether the card is flipped (back side) or not.
+     */
+    public final boolean isFlipped;
 
 
 

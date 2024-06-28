@@ -16,9 +16,24 @@ public class BoardView {
     public Cell[][] Board;
 
     /**
-     * Maximum and minimum x-coordinate and y-coordinate of the board.
+     * Maximum x-coordinate of the board.
      */
-    public int x_max, x_min, y_max, y_min;
+    public int x_max;
+
+    /**
+     * Minimum x-coordinate of the board.
+     */
+    public int x_min;
+
+    /**
+     * Maximum y-coordinate of the board.
+     */
+    public int y_max;
+
+    /**
+     * Minimum y-coordinate of the board.
+     */
+    public int y_min;
 
     /**
      * Deck used to retrieve different types of cards.

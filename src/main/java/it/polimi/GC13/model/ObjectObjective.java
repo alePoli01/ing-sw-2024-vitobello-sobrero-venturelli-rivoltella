@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Represents an objective card based on a specific set of resources (objects).
+ * <br>
  * Extends {@link ObjectiveCard}.
  */
 public class ObjectObjective extends ObjectiveCard {
@@ -15,7 +16,7 @@ public class ObjectObjective extends ObjectiveCard {
     public final ArrayList<Resource> object;
 
     /**
-     * Constructs an ObjectObjective with the given serial number, combo points, and list of resources (objects).
+     * Constructs an {@code ObjectObjective} with the given serial number, combo points, and list of resources (objects).
      *
      * @param serialNumber The serial number of the objective card.
      * @param comboPoints  The combo points associated with completing this objective.
@@ -26,6 +27,7 @@ public class ObjectObjective extends ObjectiveCard {
         this.object = new ArrayList<>();//initialize and copy the objects into the card
         this.object.addAll(object);
     }
+
 
 
     @Override

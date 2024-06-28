@@ -11,18 +11,56 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Class that represent Table, one for each game. On the table are stored the available cards to draw and the score of each player
+ * {@code Table} class represents the game table, storing available cards and player scores.
  */
 
 public class Table implements Serializable {
+
+    /**
+     * Reference to the {@link Game} object associated with the table.
+     */
     private final Game game;
+
+    /**
+     * Map that stores the scores of each player.
+     */
     private final Map<Player, Integer> playersScore = new HashMap<>(); //vector that keeps players scores
+
+    /**
+     * List of {@link ObjectiveCard} objects that are common between players.
+     */
     private final List<ObjectiveCard> commonObjectiveCard = new LinkedList<>();//Objective cards in common between players
+
+    /**
+     * LinkedHashMap mapping {@link PlayableCard} objects to a boolean, indicating the side of the card shown.
+     * <p>
+     * The boolean value {@code false} indicates the front side of the card, while {@code true} indicates the back side.
+     */
     private final Map<PlayableCard, Boolean> goldCardMap =  new LinkedHashMap<>();
+
+    /**
+     * LinkedHashMap mapping {@link PlayableCard} objects to a boolean, indicating the side of the card shown.
+     * <p>
+     * The boolean value {@code false} indicates the front side of the card, while {@code true} indicates the back side.
+     */
     private final Map<PlayableCard, Boolean> resourceCardMap = new LinkedHashMap<>();
+
+    /**
+     * Deck of cards used in the game, represented by {@link Deck}.
+     */
     private final Deck deck;
+
+    /**
+     * ArrayList containing all available {@link TokenColor} values, representing the available token colors.
+     */
     private final ArrayList<TokenColor> tokenColors = new ArrayList<>(Arrays.asList(TokenColor.values()));
+
+    /**
+     * Map that associates each {@link Player} with their corresponding {@link Board} object.
+     */
     private final Map<Player, Board> playerBoardMap = new HashMap<>();
+
+
 
     /**
      * Constructs a {@code Table} with a specified game.

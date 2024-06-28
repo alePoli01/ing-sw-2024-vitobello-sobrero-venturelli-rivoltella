@@ -18,21 +18,54 @@ import java.util.List;
  * {@code Player} class represents a player in a game
  */
 public class Player implements Serializable {
-    private final String nickname;  //username of the player
-    private TokenColor tokenColor; //token chosen by the Player
-    private final ArrayList<PlayableCard> hand = new ArrayList<>(); //hand of the player ==> 3 cards max
-    private final LinkedList<ObjectiveCard> privateObjectiveCard = new LinkedList<>(); // need an array to present 2 objective cards to the player
-    private boolean myTurn; //true if it's the player turn
-    private int turnPlayed = 0; //number of the current turn
-    private Position position;  //position of the player (1-4)
+
+    /**
+     * Username of the player.
+     */
+    private final String nickname;
+
+    /**
+     * Token chosen by the player.
+     */
+    private TokenColor tokenColor;
+
+    /**
+     * Hand of the player, maximum 3 cards.
+     */
+    private final ArrayList<PlayableCard> hand = new ArrayList<>();
+
+    /**
+     * List of private objective cards (up to 2) owned by the player.
+     */
+    private final LinkedList<ObjectiveCard> privateObjectiveCard = new LinkedList<>();
+
+
+    /**
+     * Flag indicating if it's currently the player's turn.
+     */
+    private boolean myTurn;
+
+    /**
+     * Number of turns played by the player.
+     */
+    private int turnPlayed = 0;
+
+    /**
+     * Position of the player (1-4).
+     */
+    private Position position;
+
+    /**
+     * Reference to the game object that the player is associated with.
+     */
     private Game game;
+
 
     /**
      * Creates a new {@code Player} with a specified nickname.
      *
      * @param nickname identifies the player in a game
      */
-
     public Player(String nickname) {
         this.nickname = nickname;
     }
