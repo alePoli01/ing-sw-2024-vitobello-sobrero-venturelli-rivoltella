@@ -259,7 +259,7 @@ public class TokenManager extends JPanel {
      * @return The resized playable token ImageIcon
      */
     private ImageIcon createPlayableTokenImageIcon(TokenColor tokenColor, int dim) {
-        return createResizedTokenImageIcon(getClass().getResource(tokenColor.toString().toLowerCase() + "_token.png"), dim);
+        return createResizedTokenImageIcon(this.resourceGetter.getURL(tokenColor.toString().toLowerCase() + "_token.png"), dim);
     }
 
     /**

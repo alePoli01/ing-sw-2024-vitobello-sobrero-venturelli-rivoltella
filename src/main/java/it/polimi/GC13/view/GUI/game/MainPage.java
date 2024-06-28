@@ -282,7 +282,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
      * @param dim The desired dimension (width or height) of the resized image
      * @return The resized ImageIcon
      */
-    private static ImageIcon createResizedTokenImageIcon(URL tokenImagePath, int dim) {
+    private ImageIcon createResizedTokenImageIcon(URL tokenImagePath, int dim) {
         return new ImageIcon(new ImageIcon(tokenImagePath).getImage().getScaledInstance(dim, dim, Image.SCALE_SMOOTH));
     }
 
@@ -1792,7 +1792,7 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
                 playerAvatarPanel.add(blackToken, gbcBlackToken);
             }
 
-            JLabel avatar = new JLabel(createResizedTokenImageIcon(getClass().getResource(selectedAvatar), 100));
+            JLabel avatar = new JLabel(createResizedTokenImageIcon(this.resourceGetter.getURL(selectedAvatar), 100));
             playerAvatarPanel.add(avatar, gbc);
 
             JCheckBox jCheckBox = new JCheckBox();

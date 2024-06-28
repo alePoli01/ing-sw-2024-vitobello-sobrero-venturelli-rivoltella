@@ -135,12 +135,12 @@ public class TUI implements View {
     /**
      * Indicates if the connection is open.
      */
-    private volatile boolean connectionOpen = true;
+    private boolean connectionOpen = true;
 
     /**
      * Indicates if there is an interrupt signal.
      */
-    private volatile Boolean interrupt = false;
+    private boolean interrupt = false;
 
     private final Object lock = new Object();
 
@@ -444,9 +444,7 @@ public class TUI implements View {
 
     private void setInterrupt(boolean interrupt) {
         System.err.println("setting interrupt to: " + interrupt);
-        synchronized (lock) {
-            this.interrupt = interrupt;
-        }
+        this.interrupt = interrupt;
     }
 
     /**
@@ -513,7 +511,6 @@ public class TUI implements View {
 
     @Override
     public void onReconnectToGame() {
-        this.inSubMenu = true;
         this.showHomeMenu();
     }
 
@@ -557,20 +554,16 @@ public class TUI implements View {
             this.myTurn = turn;
             // prints for the first time the main menu for
             System.err.println("data:\n\tturnPlayed: " + this.turnPlayed + "\tinSubMenu: " + this.inSubMenu + "\tinterrupt: " + interrupt + "\tmyTurn: " + this.myTurn);
-            if (this.turnPlayed == 0) {
-                setInterrupt(true);
+            if (this.turnPlayed == 0 && (this.playersPosition.get(this.nickname).equals(Position.FIRST) || !this.myTurn)) {
                 this.showHomeMenu();
             } else {
                 if (!this.myTurn) {
-                    // notifies the player has passed the turn
+                    // notifies the player he has passed the turn
                     System.out.println("You have passed the turn");
                     this.showHomeMenu();
-                }
-                if (!this.inSubMenu) {
-                    // if the player isn't in the main menu, even if it's his turn, he is not interrupted
-                    System.err.println("XXXX interrupt a true XXXX");
+                } else if (!this.inSubMenu) {
+                    // if the player isn't in a sub menu, he is interrupted when his turn occurs
                     setInterrupt(true);
-                    this.showHomeMenu();
                 }
             }
         }
@@ -708,6 +701,7 @@ public class TUI implements View {
      * @param choice the selected menu option
      */
     private void menuChoice(int choice) {
+        this.inSubMenu = true;
         this.choice = 0;
         switch (choice) {
             case 1: {
@@ -735,7 +729,6 @@ public class TUI implements View {
                 break;
             }
             case 6: {
-                this.inSubMenu = true;
                 try {
                     String playerChosen = userStringInput("Choose player board to view: [" + String.join("], [", this.playersBoard.keySet()) + "]" + "\nPlayer", input -> !stringVerifier(input, this.playersBoard.keySet().stream().toList()), "");
                     System.out.println("Player chosen: " + playerChosen);
@@ -750,7 +743,6 @@ public class TUI implements View {
                 break;
             }
             case 7: {
-                this.inSubMenu = true;
                 this.sendMessage();
                 break;
             }
@@ -776,7 +768,6 @@ public class TUI implements View {
                 break;
             }
             case 12: {
-                this.inSubMenu = true;
                 synchronized (this.chat) {
                     if (!chat.isEmpty()) {
                         String playerChosen;
@@ -806,8 +797,6 @@ public class TUI implements View {
                 break;
             }
             default: {
-                System.out.println("DEFAULTING");
-                this.showHomeMenu();
                 break;
             }
         }
@@ -821,17 +810,22 @@ public class TUI implements View {
      */
     @Override
     public void showHomeMenu() {
-        this.menuOptions();
         this.inSubMenu = false;
-        setInterrupt(false);
+        this.menuOptions();
 
         try {
             System.out.println("I have been called");
-            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "MENU SAYS:Invalid choice, enter a valid option.");
-            System.out.println("SELECTION: " + this.choice + "\n");
-            this.menuChoice(this.choice);
+            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "MENU SAYS: Invalid choice, enter a valid option.");
+            if (!this.inSubMenu) {
+                System.out.println("SELECTION: " + this.choice + "\n");
+                this.menuChoice(this.choice);
+            }
         } catch (GenericException e) {
-            System.out.print(e.getMessage());
+            if (e.getMessage().equals("Interrupted")) {
+                this.showHomeMenu();
+            } else {
+                System.out.print(e.getMessage());
+            }
         }
     }
 
@@ -945,7 +939,7 @@ public class TUI implements View {
      */
     private Integer userIntegerInput(String messageToPrint, Function<Integer, Boolean> validator, String errorMessage) throws GenericException {
         int num = 0;
-        boolean flag = false;
+        boolean flag = true;
         System.out.print(messageToPrint + ": ");
 
         do {
@@ -959,9 +953,8 @@ public class TUI implements View {
                         // real return
                         return num;
                     }
-                } else {
-                    flag = true;
                 }
+                flag = false;
             } catch (NumberFormatException e) {
                 System.out.print("Error: Please input a valid number.\n" + messageToPrint + ": ");
             }
@@ -969,15 +962,14 @@ public class TUI implements View {
             if (!this.connectionOpen) {
                 throw new GenericException("Connection Lost\n");
             }
-            synchronized (lock) {
-                if (interrupt) {
-                    throw new GenericException("");
-                }
+            if (this.interrupt) {
+                setInterrupt(false);
+                throw new GenericException("Interrupted");
             }
 
-        } while (flag);
+        } while (!flag);
 
-        return num;
+        return 0;
     }
 
     /**
@@ -999,14 +991,13 @@ public class TUI implements View {
             if (input != null) {
                 if (!validator.apply(input)) System.out.print(errorMessage + "\n" + messageToPrint + ": ");
             }
+
             if (!this.connectionOpen) {
                 throw new GenericException("Connection lost\n");
             }
-            synchronized (lock) {
-                if (this.interrupt) {
-                    System.out.println("XXXXchiuso per interrupt");
-                    throw new GenericException("");
-                }
+            if (this.interrupt) {
+                setInterrupt(false);
+                throw new GenericException("");
             }
 
         } while (!validator.apply(input));
