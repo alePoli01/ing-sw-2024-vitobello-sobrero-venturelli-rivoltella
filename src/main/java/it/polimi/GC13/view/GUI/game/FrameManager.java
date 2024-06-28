@@ -25,7 +25,6 @@ import java.util.List;
 import static it.polimi.GC13.view.GUI.game.CardManager.*;
 
 
-//TODO: da rivedere JavaDoc
 
 /**
  * The {@code FrameManager} class extends {@link JFrame} and implements {@link View}.
@@ -33,36 +32,148 @@ import static it.polimi.GC13.view.GUI.game.CardManager.*;
  * This class handles the player's actions, updates the game state, and communicates with the server.
  */
 public class FrameManager extends JFrame implements View {
+
+    /**
+     * The virtual server interface for communication with the game server.
+     */
     private ServerInterface virtualServer;
+
+    /**
+     * The nickname of the player.
+     */
     private String nickname;
+
+    /**
+     * The name of the current game.
+     */
     private String gameName;
+
+    /**
+     * The list of serial numbers representing the player's hand.
+     */
     private final List<Integer> hand;
+
+    /**
+     * The serial number of the private objective card assigned to this player.
+     */
     private int serialPrivateObjectiveCard;
+
+    /**
+     * The list of serial numbers of common objective cards available in the game.
+     */
     private List<Integer> serialCommonObjectiveCard;
+
+    /**
+     * Flag indicating whether it is currently the player's turn.
+     */
     private boolean myTurn;
+
+    /**
+     * The number of turns played in the game by the player.
+     */
     private int turnPlayed;
+
+    /**
+     * Map storing players' scores, where keys are player nicknames and values are their scores.
+     */
     private final Map<String, Integer> playersScore;
+
+    /**
+     * Map storing the positions of players on the game.
+     */
     private final Map<String, Position> playerPositions;
+
+    /**
+     * Map indicating the gold card that can be drawn. The keys are serial numbers
+     * and the values represents their shown side
+     */
     private final Map<Integer, Boolean> goldCardsAvailable;
+
+    /**
+     * Map indicating the resource card that can be drawn. The keys are serial numbers
+     * and the values represents their shown side
+     */
     private final Map<Integer, Boolean> resourceCardsAvailable;
+
+    /**
+     * Map storing the game board views of each player, where keys are player nicknames and values are BoardView instances.
+     */
     private final Map<String, BoardView> playersBoard;
+
+    /**
+     * Map storing the collected resources of each player, where keys are player nicknames and values are EnumMap instances
+     * containing resource types and amounts.
+     */
     private final Map<String, EnumMap<Resource, Integer>> playersCollectedResources;
+
+    /**
+     * List storing game history.
+     */
     private final List<String> gamesLog;
+
+    /**
+     * Map storing chat messages, where keys can be player nicknames or "global", and values are lists of ChatMessage objects.
+     */
     private final Map<String, List<ChatMessage>> chat;
+
+    /**
+     * Number of new unread chat messages.
+     */
     private int newMessage;
+
+    /**
+     * Flag indicating whether the connection to the server is open.
+     */
     private boolean connectionOpen;
+
+    /**
+     * Flag indicating whether it is the first turn of the game.
+     */
     private boolean firstTurn;
+
+    /**
+     * Flag indicating whether to show popup dialogs.
+     */
     private boolean showPopup;
+
+    /**
+     * List storing available cells on the game board for placing cards.
+     */
     public List<Coordinates> availableCells;
 
+    /**
+     * The login frame instance for user authentication and game setup.
+     */
     private LoginFrame loginFrame;
+
+    /**
+     * The main game page containing the GUI components for gameplay.
+     */
     private MainPage gamePage;
+
+    /**
+     * The winning frame displayed at the end of the game to show results.
+     */
     private WinningFrame winningFrame;
 
+    /**
+     * Map storing the token colors assigned to players, where keys are player nicknames and values are TokenColor values.
+     */
     private final Map<String, TokenColor> tokenInGame;
+
+    /**
+     * Counter tracking the number of players (used only for displaying purpose).
+     */
     private int playerCounter;
+
+    /**
+     * Total number of players in the game (used only for displaying purpose).
+     */
     private int totalPlayers;
 
+    /**
+     * Utility class for retrieving resources.
+     */
     private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
@@ -124,12 +235,7 @@ public class FrameManager extends JFrame implements View {
         this.checkForExistingGame();
     }
 
-    /**
-     * Used to update the player's hand in the GUI.
-     *
-     * @param playerNickname the player's nickname
-     * @param availableCard the list of available cards
-     */
+
     @Override
     public void handUpdate(String playerNickname, List<Integer> availableCard) {
         if(playerNickname.equals(this.nickname)) {
@@ -459,7 +565,6 @@ public class FrameManager extends JFrame implements View {
                     totalElapsedTime += sleepTime;
                     sleepTime = (int) Math.min(sleepTime * Math.pow(backOffBase, attemptCount), maxTime);
 
-//                    gamePage.getNumAttemptLabel().setText(" ");
                     gamePage.getNumAttemptLabel().setText("Attempt #" + attemptCount + "   " + sleepTime + "ms    " + totalElapsedTime / 1000 + "s :");
 
 
@@ -543,13 +648,7 @@ public class FrameManager extends JFrame implements View {
     }
 
 
-    /**
-     * Saves a new message in the chat.
-     *
-     * @param sender message sender
-     * @param recipient message recipient
-     * @param content string that contains the message itself
-     */
+
     @Override
     public void onNewMessage(String sender, String recipient, String content) {
         ChatMessage message = new ChatMessage(sender, content);
@@ -616,11 +715,6 @@ public class FrameManager extends JFrame implements View {
         System.exit(0);
     }
 
-
-    //TODO: da fare
-    public void gameHistory() {
-
-    }
 
     /**
      * Retrieves the board views for all players.
@@ -768,7 +862,6 @@ public class FrameManager extends JFrame implements View {
         this.newMessage = newMessage;
     }
 
-    //TODO: METODI NON USATI --------------------------------------------------------------------------------------------------
 
     @Override
     public void showHomeMenu() {}

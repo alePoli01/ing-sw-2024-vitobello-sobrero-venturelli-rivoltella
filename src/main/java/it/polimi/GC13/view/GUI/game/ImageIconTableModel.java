@@ -18,15 +18,41 @@ import java.util.*;
  * @param <V> The type of the values used in the input map
  */
 public class ImageIconTableModel<K extends Enum<K>, V> extends AbstractTableModel {
-    private String[] columnNames;
-    private Object[][] data;
-    private final ArrayList<String> logosPath;
-    private final EnumMap<K, V> mapInInput;
-    private final Map<V, TokenColor> conversionMap;
-    private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
-     * Constructs an ImageIconTableModel.
+     * The names of the columns in the table.
+     */
+    private String[] columnNames;
+
+    /**
+     * The data stored in the table, consisting of rows and columns.
+     */
+    private Object[][] data;
+
+
+    /**
+     * The list of paths for logo images used in the table.
+     */
+    private final ArrayList<String> logosPath;
+
+    /**
+     * The input map containing enum keys and their corresponding values.
+     */
+    private final EnumMap<K, V> mapInInput;
+
+    /**
+     * A map for converting values to token colors used for rendering images.
+     */
+    private final Map<V, TokenColor> conversionMap;
+
+    /**
+     * An instance of ResourceGetter used to retrieve resources (e.g., image URLs).
+     */
+    private final ResourceGetter resourceGetter = new ResourceGetter();
+
+
+    /**
+     * Constructs an {@code ImageIconTableModel}.
      *
      * @param columnNames The names of the columns
      * @param mapInInput The input map containing enum keys and their corresponding values

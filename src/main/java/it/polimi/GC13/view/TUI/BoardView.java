@@ -9,8 +9,20 @@ import it.polimi.GC13.model.StartCard;
  * Represents the view of the game board where cards are inserted into cells.
  */
 public class BoardView {
+
+    /**
+     * The board representing cells where cards are inserted.
+     */
     public Cell[][] Board;
+
+    /**
+     * Maximum and minimum x-coordinate and y-coordinate of the board.
+     */
     public int x_max, x_min, y_max, y_min;
+
+    /**
+     * Deck used to retrieve different types of cards.
+     */
     private final Deck deck = new Deck();
 
     /**

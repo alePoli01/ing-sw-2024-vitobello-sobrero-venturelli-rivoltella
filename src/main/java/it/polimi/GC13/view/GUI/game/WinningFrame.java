@@ -11,13 +11,29 @@ import java.util.List;
  * and the ranking of players at the end of the game. It implements the {@link CardManager} interface.
  */
 public class WinningFrame extends JFrame implements CardManager {
+
+    /**
+     * JLabel displaying the winner's name in the WinningFrame GUI.
+     */
     private final JLabel winnerLabel;
+
+    /**
+     * JLabel displaying the score in the WinningFrame GUI.
+     */
     private final JLabel scoreLabel;
+
+    /**
+     * JPanel containing the score ranking information in the WinningFrame GUI.
+     */
     private final JPanel scorePanel;
+
+    /**
+     * Instance of ResourceGetter used to retrieve resources (monks or gravestone images) in the WinningFrame GUI.
+     */
     private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
-     * Constructs a new WinningFrame.
+     * Constructs a new {@code WinningFrame}.
      * Sets up the main frame properties and initializes the components.
      */
     public WinningFrame() {
@@ -39,7 +55,6 @@ public class WinningFrame extends JFrame implements CardManager {
 
         scorePanel = new JPanel(new GridBagLayout());
         scorePanel.setOpaque(false);
-        //scorePanel.setBorder(BorderFactory.createTitledBorder("Ranking"));
         winnerPanel.add(scorePanel, createGridBagConstraints(0,2));
 
 
@@ -55,7 +70,6 @@ public class WinningFrame extends JFrame implements CardManager {
      * @param dim The font size of the label text
      * @return A JLabel with the specified text and font size
      */
-    //Forse da mettere in CardManager
     private JLabel createTextLabelFont(String content, int dim) {
         JLabel jLabel = new JLabel(content);
         jLabel.setFont(new Font("Old English Text MT", Font.BOLD, dim));
@@ -198,7 +212,6 @@ public class WinningFrame extends JFrame implements CardManager {
     }
 
 
-    //Da mandare la lista delle carte obiettivo
     @Override
     public void showStarterCardAndPrivateObjectiveCard(List<Integer> hand) {}
 }

@@ -13,8 +13,20 @@ import java.io.InputStreamReader;
  * </p>
  */
 public class Reader extends Thread {
+
+    /**
+     * The most recent non-blank input read from the console.
+     */
     private volatile String input;
+
+    /**
+     * Indicates whether new input is ready to be retrieved.
+     */
     private volatile boolean inputReady = false;
+
+    /**
+     * The buffered reader used to read input from the console.
+     */
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     /**
@@ -32,7 +44,7 @@ public class Reader extends Thread {
     }
 
     /**
-     * Continuously reads input from the console.
+     * Continuously reads input from the console and updates the stored input.
      */
     @Override
     public void run() {

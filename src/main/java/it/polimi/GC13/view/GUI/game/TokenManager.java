@@ -12,18 +12,44 @@ import java.util.*;
  * It extends {@link JPanel} and manages the token grids and their positions.
  */
 public class TokenManager extends JPanel {
-    private record GridData(JPanel grid, ArrayList<JLabel> emptyLabels){}
-
-    private final Map<Integer, GridData> scoreGrid = new HashMap<>();
-    private Map<String, TokenColor> tokenInGame;
-
-    private final Map<String, Map<Integer, GridData>> tokenToScoreBoard = new HashMap<>();
-    private final Map<String, Integer> previousPosition = new HashMap<>();
-
-    private final ResourceGetter resourceGetter = new ResourceGetter();
 
     /**
-     * Constructs a new TokenManager.
+     * Represents a grid data structure containing a JPanel and a list of empty JLabels.
+     * <br>
+     * The JPanel represents a score position on the scoreboard, and for each of them there are four JLabel in which
+     * the players' token can be printed
+     */
+    private record GridData(JPanel grid, ArrayList<JLabel> emptyLabels){}
+
+    /**
+     * Maps score positions to their corresponding GridData, which holds grid panels and empty labels.
+     */
+    private final Map<Integer, GridData> scoreGrid = new HashMap<>();
+
+    /**
+     * Maps player names to their token colors currently in the game.
+     */
+    private Map<String, TokenColor> tokenInGame;
+
+    /**
+     * Maps each player to their scoreboard representation, mapping score positions to GridData.
+     */
+    private final Map<String, Map<Integer, GridData>> tokenToScoreBoard = new HashMap<>();
+
+    /**
+     * Maps each player to their previous score position on the scoreboard.
+     */
+    private final Map<String, Integer> previousPosition = new HashMap<>();
+
+    /**
+     * ResourceGetter instance used for fetching resources like images.
+     */
+    private final ResourceGetter resourceGetter = new ResourceGetter();
+
+
+
+    /**
+     * Constructs a new {@code TokenManager}.
      * Initializes the token grids and layout for the scoreboard.
      */
     public TokenManager(){

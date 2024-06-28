@@ -72,14 +72,16 @@ public interface View {
     /**
      * Updates the list of gold cards available to draw.
      *
-     * @param goldCardSerial a map of gold card serial numbers and the shown side
+     * @param goldCardSerial a map of gold card that can be drawn; the keys are serial numbers and the values represents their shown side
+     *                       (true for back, false for front)
      */
     void updateGoldCardsAvailableToDraw(Map<Integer, Boolean> goldCardSerial);
 
     /**
      * Updates the resource cards available to draw.
      *
-     * @param resourceCardSerial a map of resource card serial numbers and the shown side
+     * @param resourceCardSerial a map of resource card that can be drawn; the keys are serial numbers and the values represents their shown side
+     *      *                       (true for back, false for front).
      */
     void updateResourceCardsAvailableToDraw(Map<Integer, Boolean> resourceCardSerial);
 
@@ -137,11 +139,27 @@ public interface View {
      */
     void setPrivateObjectiveCard(String playerNickname, int indexPrivateObjectiveCard, int readyPlayers, int neededPlayers);
 
+    /**
+     * Manages the action of drawing a card.
+     * Displays the available cards in the gold and resource decks.
+     * Allows the player to choose a card to draw if it is their turn, and they have exactly two cards in hand.
+     * Sends a message to the virtual server to draw the chosen card.
+     * Increments the turn count after successfully drawing a card.
+     * Prints an error message and returns if input validation fails or if the action cannot be performed.
+     * <br>
+     * Method used only in TUI
+     */
+    void drawCard() throws GenericException;
 
-    void drawCard() throws GenericException; //TODO: non lo uso in GUI
-
-
-    void showHomeMenu(); //TODO: non lo uso in GUI
+    /**
+     * Displays the home menu options to the player and handles their selection.
+     * Allows the player to choose an action by entering a corresponding number.
+     * Executes the chosen action through the `menuChoice` method.
+     * Prints error messages and returns if input validation fails or if the action cannot be performed.
+     * <br>
+     * Method used only in TUI
+     */
+    void showHomeMenu();
 
     /**
      * Handles exceptions that occur on input.
@@ -171,8 +189,14 @@ public interface View {
      */
     void updateTurn(String playerNickname, boolean turn);
 
-
-    void displayAvailableCells(List<Coordinates> availableCells); //TODO: non lo uso in GUI
+    /**
+     * Displays the available cells where a card can be placed.
+     *
+     * @param availableCells the list of coordinates representing available cells
+     * <br>
+     * Method used only in TUI
+     */
+    void displayAvailableCells(List<Coordinates> availableCells);
 
     /**
      * Notify the players when someone reaches 20 points and start the last round.
@@ -182,7 +206,15 @@ public interface View {
     void onSetLastTurn(String playerNickname);
 
 
-    void placeCard() throws GenericException; //TODO: non lo uso in GUI
+    /**
+     * Attempts to place a card on the board during the player's turn.
+     * <br>
+     * Method used only in TUI
+     *
+     * @throws GenericException if any error occurs during the card placement process.
+     *                          Specific error messages are printed to the console.
+     */
+    void placeCard() throws GenericException;
 
     /**
      * Updates the player's score.

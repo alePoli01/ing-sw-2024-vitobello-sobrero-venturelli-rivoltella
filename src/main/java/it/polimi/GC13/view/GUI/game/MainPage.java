@@ -51,96 +51,322 @@ public class MainPage extends JFrame implements ActionListener, CardManager, Wai
      */
     public record CardData(JLabel label, JCheckBox checkBox) {}
 
+
     //Manager of interaction between server and game
+    /**
+     * Manager of interaction between server and game
+     */
     private FrameManager frameManager;
 
     //setting user parameters
+    /**
+     * The nickname of the current user.
+     */
     private String nickname;
+
+    /**
+     * The token color chosen by the current user.
+     */
     private TokenColor token;
+
+    /**
+     * The list of available token colors for the game.
+     */
     private List<TokenColor> tokenColorList;
 
+
     //panels and tables in the game
+    /**
+     * The main container panel that holds all other panels in the GUI.
+     */
     private final JPanel panelContainer;
+
+    /**
+     * The panel displayed in the south section of the GUI (player hand and decks).
+     */
     private JPanel southPanel;
+
+    /**
+     * The panel for choosing game setup options.
+     */
     private final JPanel choosePanel;
+
+    /**
+     * The panel containing images related to the game, used in setup phases and in the game.
+     */
     private JPanel imagePanel;
+
+    /**
+     * The panel displaying labels during setup phase and re-used in the game.
+     */
     private JPanel namePanel;
+
+    /**
+     * The panel containing checkboxes for various options.
+     */
     private JPanel checkBoxPanel;
+
+    /**
+     * The panel displaying common objective cards.
+     */
     private JPanel commonObjCardPanel;
-    private final JTable resourceTable = new JTable(); //table in the Game page
+
+    /**
+     * The table displaying player's resources in the board.
+     */
+    private final JTable resourceTable = new JTable();
+
+    /**
+     * The table displaying scores in the scoreboard page.
+     */
     private JTable scoreTable; //table in the ScoreBoard page
 
+
     //Game board attributes
+    /**
+     * The layered pane representing the game board.
+     */
     private JLayeredPane board;
+
+    /**
+     * A map associating coordinates on the board with corresponding buttons.
+     */
     private final Map<Coordinates, JButton> boardButtonMap = new HashMap<>();
+
+    /**
+     * The name of the board configuration to display.
+     */
     public String boardToDisplay;
 
+
     //parameters to send to the server
+    /**
+     * Flag indicating whether to flip a card before sending.
+     */
     private boolean flipToSend = false;
+
+    /**
+     * Serial number of the card to send.
+     */
     private int serialToSend = -1;
+
+    /**
+     * Coordinates of the action to send.
+     */
     private Coordinates cordToSend = null;
 
 
     //HashMap and ButtonGroup
+    /**
+     * Button group for radio buttons in the GUI.
+     */
     private final ButtonGroup buttonGroup = new ButtonGroup();
-    private final ButtonGroup avatarButtonGroup = new ButtonGroup(); //for the users' avatar
+
+    /**
+     * Button group for avatar selection.
+     */
+    private final ButtonGroup avatarButtonGroup = new ButtonGroup();
+
+    /**
+     * Mapping of player names to their chosen avatars.
+     */
     private final Map<String, String> playersAvatarMap = new HashMap<>();
 
 
     //hand attributes
-    private final Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();;
+    /**
+     * Mapping of JLabels to associated JCheckBoxes representing cards in hand.
+     */
+    private final Map<JLabel, JCheckBox> handLabelCheckBoxMap = new HashMap<>();
+
+    /**
+     * Mapping of serial numbers to CardData objects representing cards in hand.
+     */
     private final Map<Integer, CardData> handSerialNumberCheckBoxMap = new HashMap<>();
+
+    /**
+     * Mapping of JLabels to associated JCheckBoxes representing player options.
+     */
     private final Map<JLabel, JCheckBox> playerCheckBoxMap = new HashMap<>();
 
+
     //decks attributes
+    /**
+     * Button group for radio buttons related to decks.
+     */
     private final ButtonGroup buttonGroupDecks = new ButtonGroup();
+
+    /**
+     * Mapping of JLabels to associated JCheckBoxes representing cards in decks.
+     */
     private final Map<JLabel, JCheckBox> decksLabelCheckBoxMap = new HashMap<>();
+
+    /**
+     * Mapping of serial numbers to CardData objects representing drawable cards.
+     */
     private final Map<Integer, CardData> drawableSerialNumberCheckBoxMap = new HashMap<>();
 
+
     //buttons
+    /**
+     * The button to confirm actions.
+     */
     private JButton confirmButton;
+
+    /**
+     * The button to flip the cards in the hand.
+     */
     private JButton flipButton;
+
+    /**
+     * The button to interact with decks.
+     */
     private JButton decksButton;
 
+
+
     //attributes for the waiting Lobby
+    /**
+     * Timer for managing waiting lobby progress.
+     */
     private Timer timer;
+
+    /**
+     * Progress indicator for the waiting lobby.
+     */
     int progress = 0;
+
+    /**
+     * Index for color management in the waiting lobby.
+     */
     int colorIndex = 0;
 
+
     //GamePanel and ScoreBoardPanel
+    /**
+     * Constant representing the game panel.
+     */
     final static String PANEL1 = "Game";
+
+    /**
+     * Constant representing the scoreboard panel.
+     */
     final static String PANEL2 = "Scoreboard";
 
     //Flags
+    /**
+     * Flag indicating whether the hand is being checked during drawing.
+     */
     private boolean checkingHandWhileDrawing = false;
+
+    /**
+     * Flag indicating the state of board buttons.
+     */
     private boolean boardButtonFlag = true;
+
+    /**
+     * Flag indicating an exception state.
+     */
     private boolean unableExceptionFlag = false;
 
+
     //Labels
+    /**
+     * Label for displaying waiting messages.
+     */
     private JLabel waitingLabel;
+
+    /**
+     * Label for displaying turn information, used in the game page.
+     */
     private JLabel turnLabel;
+
+    /**
+     * Label for displaying turn information, used in the scoreboard page.
+     */
     private JLabel turnLabel2;
+
+    /**
+     * Label for displaying score information, used in the game page.
+     */
     private JLabel scoreLabel;
+
+    /**
+     * Label for displaying score information, used in the scoreboard page.
+     */
     private JLabel scoreLabel2;
+
+    /**
+     * Label for displaying number of attempts during the reconnection to the server.
+     */
     private JLabel numAttemptLabel;
+
+    /**
+     * Label for displaying the name of the player table resource.
+     */
     private JLabel resourcePlayerLabel;
 
+
     //management of the movements of tokens on the ScoreBoard
+    /**
+     * Manager for handling token movements on the scoreboard.
+     */
     private TokenManager tokenManager;
 
+
     //chat
+    /**
+     * Combo box for selecting player to chat with.
+     */
     private JComboBox<JLabel> combobox;
+
+    /**
+     * Editor pane for displaying chat messages.
+     */
     private JEditorPane chatArea;
+
+    /**
+     * Text field for entering chat messages.
+     */
     private JTextField messageField;
+
+    /**
+     * Label for notifications in the chat.
+     */
     private JLabel notifyLabel;
+
+    /**
+     * Mapping of player names to lists of new message indicators.
+     */
     private final Map<String, ArrayList<Boolean>> newMessageMap = new HashMap<>();
 
+
     // getter
+    /**
+     * Getter instance for accessing resources.
+     */
     private final ResourceGetter resourceGetter = new ResourceGetter();
+
+    /**
+     * Getter instance for accessing resource cards.
+     */
     private final ResourceCardGetter resourceCardGetter = new ResourceCardGetter();
+
+    /**
+     * Getter instance for accessing gold cards.
+     */
     private final GoldCardGetter goldCardGetter = new GoldCardGetter();
+
+    /**
+     * Getter instance for accessing starter cards.
+     */
     private final StarterCardGetter starterCardGetter = new StarterCardGetter();
+
+    /**
+     * Getter instance for accessing objective cards.
+     */
     private final ObjectiveCardGetter objectiveCardGetter = new ObjectiveCardGetter();
+
 
     /**
      * Constructs a new {@code MainPage} with the specified list of token colors.

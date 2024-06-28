@@ -14,6 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * class {@code Printer} is used to print messages from TUI.
  */
 public class Printer {
+
+    /**
+     * Static visual deck used for retrieving card images.
+     */
     private static final Deck visualDeck = new Deck();
 
     /**

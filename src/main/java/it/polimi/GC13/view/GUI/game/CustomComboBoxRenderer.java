@@ -11,6 +11,12 @@ import java.util.Map;
  * This renderer customizes the appearance of items based on their selection status and additional data.
  */
 public class CustomComboBoxRenderer extends JLabel implements ListCellRenderer<JLabel>{
+
+    /**
+     * A map indicating new message indicators for each label in the JComboBox.
+     * Keys represent player nicknames (or 'global'), and values are lists indicating new message status.
+     * Each list contains 'true' for each new message; if there are no new messages, it contains only 'false'.
+     */
     private final Map<String, ArrayList<Boolean>> newMessageMap;
 
     /**
@@ -18,9 +24,7 @@ public class CustomComboBoxRenderer extends JLabel implements ListCellRenderer<J
      *
      * @param newMessageMap A map where keys are labels in which is written the player's nickname (or 'global')
      *                      and values are lists indicating new message status.
-     *                      <br>
-     *                      If there are no new messages, each values of the map contains only one element 'false',
-     *                      otherwise it contains a 'true' value for each new message in the queue.
+     *
      */
     public CustomComboBoxRenderer(Map<String, ArrayList<Boolean>> newMessageMap) {
         this.newMessageMap = newMessageMap;

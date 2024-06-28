@@ -9,8 +9,17 @@ import java.awt.event.*;
  * This listener allows the user to drag the viewport of the scroll pane by clicking and dragging with the mouse.
  */
 public class DragScrollListener implements MouseListener, MouseMotionListener {
+
+    /**
+     * The JScrollPane associated with this DragScrollListener.
+     */
     private final JScrollPane scrollPane;
+
+    /**
+     * The starting point of the mouse drag operation.
+     */
     private Point startPoint;
+
 
     /**
      * Constructs a DragScrollListener for the specified scroll pane.

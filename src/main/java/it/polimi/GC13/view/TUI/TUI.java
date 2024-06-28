@@ -372,14 +372,7 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * Manages the action of drawing a card.
-     * Displays the available cards in the gold and resource decks.
-     * Allows the player to choose a card to draw if it is their turn, and they have exactly two cards in hand.
-     * Sends a message to the virtual server to draw the chosen card.
-     * Increments the turn count after successfully drawing a card.
-     * Prints an error message and returns if input validation fails or if the action cannot be performed.
-     */
+
     @Override
     public void drawCard() {
         System.out.println("\n--- DRAWABLE CARDS ---");
@@ -412,11 +405,7 @@ public class TUI implements View {
         this.gamesLog.add(onInputExceptionMessage.getErrorMessage());
     }
 
-    /**
-     * Displays the available cells where a card can be placed.
-     *
-     * @param availableCells the list of coordinates representing available cells
-     */
+
     @Override
     public void displayAvailableCells(List<Coordinates> availableCells) {
         String cellCoordinates = availableCells.stream()
@@ -447,15 +436,7 @@ public class TUI implements View {
         this.interrupt = interrupt;
     }
 
-    /**
-     * Manages the action of placing a card on the board:
-     * - Displays the player's board and collected resources.
-     * - Shows the player's hand of cards.
-     * - Allows the player to enter the serial number, X and Y coordinates, and card orientation (front or back).
-     * - Sends a message to the server to place the card based on player input.
-     * - Prints error messages and returns if input validation fails or if the action cannot be performed.
-     * - Displays appropriate messages if it's not the player's turn or if the player has already placed a card.
-     */
+
     @Override
     public void placeCard() {
         if (this.myTurn && this.hand.size() == 3) {
@@ -802,12 +783,7 @@ public class TUI implements View {
         }
     }
 
-    /**
-     * Displays the home menu options to the player and handles their selection.
-     * Allows the player to choose an action by entering a corresponding number.
-     * Executes the chosen action through the `menuChoice` method.
-     * Prints error messages and returns if input validation fails or if the action cannot be performed.
-     */
+
     @Override
     public void showHomeMenu() {
         this.inSubMenu = false;

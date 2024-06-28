@@ -11,12 +11,16 @@ import java.net.URL;
  * A JPanel subclass used to display a background image.
  */
 public class BackgroundImageSetter extends JPanel {
+
+    /**
+     * The background image to be displayed on the panel.
+     */
     private BufferedImage backgroundImage;
 
     /**
-     * Constructs a BackgroundImageSetter instance with the specified background image file.
+     * Constructs a {@code BackgroundImageSetter} instance with the specified background image file.
      *
-     * @param resource The path to the background image file
+     * @param resource The path to the background image file as a URL
      */
     public BackgroundImageSetter(URL resource) {
         try {
