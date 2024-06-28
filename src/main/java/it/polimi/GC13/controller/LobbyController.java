@@ -18,27 +18,86 @@ import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The {@code LobbyController} class manages the state of games and players in the lobby system.
+ * It handles operations such as creating new games, adding players to games, checking for existing games,
+ * and reconnecting players to ongoing games.
+ */
 public class LobbyController implements Serializable {
+    /**
+     * Map storing joinable games where games are mapped by their unique game name.
+     */
     private final Map<String, Game> joinableGameMap = new ConcurrentHashMap<>();
+
+    /**
+     * Map storing started games where games are mapped by their unique game name.
+     */
     private final Map<String, Game> startedGameMap = new ConcurrentHashMap<>();
+
+    /**
+     * Map associating ongoing games with their respective `Controller` instances.
+     * This map contains all ongoing games and their controllers.
+     */
     private transient final Map<Game, Controller> gameControllerMap = new ConcurrentHashMap<>(); //contains all ongoing games controller
+
+    /**
+     * The {@link ControllerDispatcher} responsible for dispatching game-related operations.
+     */
     private ControllerDispatcher controllerDispatcher;
+
+    /**
+     * Manages disk operations for saving and retrieving game states.
+     */
     private final DiskManager diskManager = new DiskManager();
+
+    /**
+     * List of game names that are in the process of reconnecting.
+     */
     private List<String> gamesReconnecting = new ArrayList<>();
+
+    /**
+     * Map associating clients ({@link ClientInterface}) with their respective {@link ServerConnectionTimer} instances.
+     * Used for managing client connections and timeouts.
+     */
     private final Map<ClientInterface, ServerConnectionTimer> connectionTimerMap = new HashMap<>();
 
+
+
+    /**
+     * Sets the controller dispatcher for managing client-server interactions.
+     *
+     * @param controllerDispatcher the dispatcher to handle client requests.
+     */
     public void setControllerDispatcher(ControllerDispatcher controllerDispatcher) {
         this.controllerDispatcher = controllerDispatcher;
     }
 
+    /**
+     * Retrieves the map of joinable games.
+     *
+     * @return the map containing joinable games by name.
+     */
     public Map<String, Game> getJoinableGameMap() {
         return this.joinableGameMap;
     }
 
+
+    /**
+     * Retrieves the map of started games.
+     *
+     * @return the map containing started games by name.
+     */
     public Map<String, Game> getStartedGameMap() {
         return this.startedGameMap;
     }
 
+
+    /**
+     * Sends information about existing joinable games to the client.
+     *
+     * @param client the client interface to send the message to.
+     * @throws RemoteException if there's an issue communicating with the client remotely.
+     */
     public void checkForExistingGame(ClientInterface client) throws RemoteException {
         //upon check just provide the answer
         System.out.println("--Received: checkForExistingGame");
@@ -48,7 +107,12 @@ public class LobbyController implements Serializable {
     }
 
     /**
-     * METHOD TO ADD EACH PLAYER TO THE GAME
+     * Adds a player to an existing game based on the provided player nickname and game name.
+     *
+     * @param client the client interface representing the player.
+     * @param playerNickname the nickname of the player to add.
+     * @param gameName the name of the game to add the player to.
+     * @throws RemoteException if there's an issue communicating with the client remotely.
      */
     public synchronized void addPlayerToGame(ClientInterface client, String playerNickname, String gameName) throws RemoteException {
         System.out.println("--Received: PlayerJoiningMessage: [player:" + playerNickname + "]");
@@ -76,7 +140,13 @@ public class LobbyController implements Serializable {
     }
 
     /**
-     * METHOD TO CREATE A NEW GAME
+     * Creates a new game with the specified parameters.
+     *
+     * @param client the client interface initiating the game creation.
+     * @param playerNickname the nickname of the player creating the game.
+     * @param playersNumber the number of players for the game.
+     * @param gameName the name of the game to create.
+     * @throws RemoteException if there's an issue communicating with the client remotely.
      */
     public synchronized void createNewGame(ClientInterface client, String playerNickname, int playersNumber, String gameName) throws RemoteException {
         Game workingGame;
@@ -91,6 +161,15 @@ public class LobbyController implements Serializable {
         }
     }
 
+
+    /**
+     * Reconnects a player to an existing game.
+     *
+     * @param client the client interface representing the player.
+     * @param gameName the name of the game to reconnect to.
+     * @param playerName the name of the player to reconnect.
+     * @throws RemoteException if there's an issue communicating with the client remotely.
+     */
     public synchronized void reconnectPlayerToGame(ClientInterface client, String gameName, String playerName) throws RemoteException {
         System.out.println("--Received: reconnectPlayerToGame : [player:" + playerName +" gameName:"+gameName + "]");
 
@@ -103,6 +182,15 @@ public class LobbyController implements Serializable {
         }
     }
 
+
+    /**
+     * Restarts a game from disk or existing maps and reconnects the client to it.
+     *
+     * @param gameName the name of the game to reconnect to.
+     * @param playerName the name of the player to reconnect.
+     * @param client the client interface representing the player.
+     * @return true if the game and player were successfully reconnected; false otherwise.
+     */
     public boolean restartGames(String gameName, String playerName, ClientInterface client) {
         Game game;
         if (!this.gamesReconnecting.contains(gameName)) {
@@ -152,11 +240,21 @@ public class LobbyController implements Serializable {
         return false;
     }
 
+    /**
+     * Starts a timer for the client to monitor connection status.
+     *
+     * @param client the client interface to start the timer for.
+     */
     public void startTimer(ClientInterface client) {
         ServerConnectionTimer connectionTimer = new ServerConnectionTimer(client, this);
         this.connectionTimerMap.put(client, connectionTimer);
     }
 
+    /**
+     * Closes the game associated with the client.
+     *
+     * @param client the client interface representing the player.
+     */
     public void closeGame(ClientInterface client) {
 
         Player player = controllerDispatcher.getClientPlayerMap().get(client);
@@ -184,6 +282,11 @@ public class LobbyController implements Serializable {
         }
     }
 
+    /**
+     * Handles the response from a client to a ping message (pong message).
+     *
+     * @param client The `ClientInterface` representing the client responding with a pong message.
+     */
     public void pongAnswer(ClientInterface client) {
         //ping is sent by the ServerImpulse no need to answer here
         connectionTimerMap.get(client).stopTimer();

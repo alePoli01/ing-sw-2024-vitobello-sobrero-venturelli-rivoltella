@@ -5,6 +5,10 @@ import it.polimi.GC13.exception.GenericException;
 import it.polimi.GC13.model.*;
 import it.polimi.GC13.network.ClientInterface;
 
+/**
+ * Interface representing the various phases and actions that can be performed during a game.
+ * Implementations of this interface handle interactions between players, game state, and clients.
+ */
 public interface GamePhase {
 
     /**

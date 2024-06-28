@@ -10,8 +10,16 @@ import java.util.Set;
  * Game phase responsible to calculate the winner
  */
 public class EndPhase implements GamePhase {
+    /**
+     * The {@link Controller} instance managing the current game phase.
+     */
     private final Controller controller;
 
+    /**
+     * Constructs a {@code EndPhase} with the specified controller.
+     *
+     * @param controller The {@link Controller} instance managing this game phase.
+     */
     public EndPhase(Controller controller) {
         this.controller = controller;
         Set<String> winner = this.controller.getGame().setWinner();

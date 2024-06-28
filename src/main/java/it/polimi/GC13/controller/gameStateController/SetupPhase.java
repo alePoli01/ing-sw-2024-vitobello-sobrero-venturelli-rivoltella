@@ -11,8 +11,17 @@ import it.polimi.GC13.network.messages.fromserver.exceptions.OnPlayerNotAddedMes
  * Game phase responsible to deal all players the starter card
  */
 public class SetupPhase implements GamePhase {
+    /**
+     * The {@link Controller} instance managing the current game phase.
+     */
     private final Controller controller;
 
+
+    /**
+     * Constructs a {@code SetupPhase} with the specified controller.
+     *
+     * @param controller The {@link Controller} instance managing this game phase.
+     */
     public SetupPhase(Controller controller) {
         this.controller = controller;
         this.prepareTable(this.controller.getGame());

@@ -12,8 +12,16 @@ import it.polimi.GC13.network.messages.fromserver.PingMessage;
  * Game phase responsible to add players to the desired game
  */
 public class JoiningPhase implements GamePhase {
+    /**
+     * The {@link Controller} instance managing the current game phase.
+     */
     private final Controller controller;
 
+    /**
+     * Constructs a {@code JoiningPhase} with the specified Controller.
+     *
+     * @param controller The Controller instance managing this game phase.
+     */
     public JoiningPhase(Controller controller) {
         this.controller = controller;
     }

@@ -13,8 +13,16 @@ import java.util.NoSuchElementException;
  * Game phase responsible to execute placeCard and drawCard
  */
 public class MidPhase implements GamePhase {
+    /**
+     * The {@link Controller} instance managing the current game phase.
+     */
     private final Controller controller;
 
+    /**
+     * Constructs a {@code MidPhase} with the specified Controller.
+     *
+     * @param controller The Controller instance managing this game phase.
+     */
     public MidPhase(Controller controller) {
         this.controller = controller;
     }

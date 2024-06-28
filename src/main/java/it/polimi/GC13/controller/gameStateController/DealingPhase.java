@@ -11,16 +11,28 @@ import it.polimi.GC13.network.ClientInterface;
  * Game phase responsible to deal cards and objective cards to players
  */
 public class DealingPhase implements GamePhase {
+    /**
+     * The {@link Controller} instance managing the current game phase.
+     */
     private final Controller controller;
+
+    /**
+     * Counter to track how many players have chosen their private objective card.
+     */
     private int readyPlayers = 0;
 
+    /**
+     * Constructs a {@code DealingPhase} with the specified Controller and initiates the dealing of cards.
+     *
+     * @param controller The Controller instance managing this game phase.
+     */
     public DealingPhase(Controller controller) {
         this.controller = controller;
         this.dealCards();
     }
 
     /**
-     * method that adds cards to players
+     * Deals initial cards and sets up the game table.
      */
     private void dealCards() {
         try {

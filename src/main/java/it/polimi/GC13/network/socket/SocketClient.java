@@ -10,15 +10,38 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * class that represents the "virtual client" for the server calls the methods of this class
+ * Class that represents the "virtual client" for the server calls the methods of this class
  * the class then creates the messages and sends them to the client where they'll be elaborated
  */
 public class SocketClient implements ClientInterface, Runnable {
+    /**
+     * Output stream for sending messages to the server.
+     */
     private final ObjectOutputStream outputStream;
+
+    /**
+     * Input stream for receiving messages from the server.
+     */
     private final ObjectInputStream inputStream;
+
+    /**
+     * Dispatcher for routing messages received from the client to the server.
+     */
     private final ServerDispatcherInterface serverDispatcher;
+
+    /**
+     * Flag indicating if the connection to the client is open.
+     */
     private boolean connectionOpen = true;
 
+
+    /**
+     * Constructs a {@code SocketClient} object with the specified socket and server dispatcher.
+     *
+     * @param socket           The socket representing the network connection to the client.
+     * @param serverDispatcher The server dispatcher for routing client messages to the server.
+     * @throws IOException If an I/O error occurs while initializing the input and output streams.
+     */
     public SocketClient(Socket socket, ServerDispatcher serverDispatcher) throws IOException {
         this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
         this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -26,6 +49,7 @@ public class SocketClient implements ClientInterface, Runnable {
 
         this.serverDispatcher = serverDispatcher;
     }
+
 
     @Override
     public synchronized void sendMessageFromServer(MessagesFromServer message) {
@@ -41,10 +65,12 @@ public class SocketClient implements ClientInterface, Runnable {
         }
     }
 
+
     @Override
     public boolean isConnectionOpen() {
         return connectionOpen;
     }
+
 
     /**
      * Thread used to read messages sent by the client and forward them to the {@link ServerDispatcher}
