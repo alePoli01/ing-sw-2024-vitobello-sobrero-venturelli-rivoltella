@@ -428,7 +428,6 @@ public class TUI implements View {
             System.out.println("Players to finish the turn: " + this.playersPosition.entrySet().stream().filter(entry -> entry.getValue().getIntPosition() > lastTurnSetterPosition).map(Map.Entry::getKey).collect(Collectors.joining(" ")));
         }
         setInterrupt(true);
-        this.showHomeMenu();
     }
 
     private void setInterrupt(boolean interrupt) {
