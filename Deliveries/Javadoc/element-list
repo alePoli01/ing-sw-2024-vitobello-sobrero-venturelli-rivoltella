@@ -13,5 +13,9 @@ it.polimi.GC13.network.socket
 it.polimi.GC13.view
 it.polimi.GC13.view.GUI
 it.polimi.GC13.view.GUI.game
+it.polimi.GC13.view.GUI.game.goldCard
+it.polimi.GC13.view.GUI.game.objectiveCard
+it.polimi.GC13.view.GUI.game.resourceCard
+it.polimi.GC13.view.GUI.game.starterCard
 it.polimi.GC13.view.GUI.login
 it.polimi.GC13.view.TUI
