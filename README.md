@@ -39,7 +39,7 @@ Download the jar files from [here](https://1drv.ms/f/s!AojSp3-Z0yGVpx7XgWVWGXNQL
 ### Server
 To execute Server please run the following command
 ```
-java -jar server.jar rmiPort socketPort 
+java -jar Server.jar rmiPort socketPort 
 ```
 where:
 * ```rmiPort ``` : RMI port number.
@@ -50,7 +50,7 @@ Please, note that RMI port and socket port have to be different.
 ### Client
 To execute Client please run the following command
 ```
-java -jar client.jar ServerAdress rmiport socketport
+java -jar Client.jar ServerAdress rmiport socketport
 ```
 where:
 * ``` ServerAddress ``` : IP address of the server you intend to connect.
