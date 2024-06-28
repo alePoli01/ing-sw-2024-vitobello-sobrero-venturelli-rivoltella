@@ -54,7 +54,7 @@ public class MidPhase implements GamePhase {
                 // update player's scoreboard
                 player.getTable().addPlayerScore(player, cardToPlace.getPointsGiven(board, X, Y));
                 // check if players has reached 20 points, if so sets game's last turn
-                if (player.getScore() >= 2) {
+                if (player.getScore() >= 20) {
                     player.getGame().setLastRound(player);
                 }
             }

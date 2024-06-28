@@ -430,11 +430,14 @@ public class TUI implements View {
         setInterrupt(true);
     }
 
+    /**
+     * used to change interrupt value
+     * @param interrupt new interrupt value
+     */
     private void setInterrupt(boolean interrupt) {
         System.err.println("setting interrupt to: " + interrupt);
         this.interrupt = interrupt;
     }
-
 
     @Override
     public void placeCard() {
@@ -532,8 +535,7 @@ public class TUI implements View {
     public void updateTurn(String playerNickname, boolean turn) {
         if (playerNickname.equals(this.nickname)) {
             this.myTurn = turn;
-            // prints for the first time the main menu for
-            System.err.println("data:\n\tturnPlayed: " + this.turnPlayed + "\tinSubMenu: " + this.inSubMenu + "\tinterrupt: " + interrupt + "\tmyTurn: " + this.myTurn);
+            // prints for the first time the main menu
             if (this.turnPlayed == 0 && (this.playersPosition.get(this.nickname).equals(Position.FIRST) || !this.myTurn)) {
                 this.showHomeMenu();
             } else {
@@ -782,7 +784,6 @@ public class TUI implements View {
         }
     }
 
-
     @Override
     public void showHomeMenu() {
         this.inSubMenu = false;
@@ -790,7 +791,7 @@ public class TUI implements View {
 
         try {
             System.out.println("I have been called");
-            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "MENU SAYS: Invalid choice, enter a valid option.");
+            this.choice = userIntegerInput("Your choice", num -> !rangeVerifier(num, 1, 12), "Invalid choice, enter a valid option.");
             if (!this.inSubMenu) {
                 System.out.println("SELECTION: " + this.choice + "\n");
                 this.menuChoice(this.choice);
